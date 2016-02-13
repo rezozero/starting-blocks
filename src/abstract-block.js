@@ -40,6 +40,7 @@ export default class AbstractBlock {
         this.$cont = $cont;
         this.id = $cont[0].id;
         this.type = type;
+        this.onResizeDebounce = debounce($.proxy(this.onResize, this), 50, false);
 
         console.log('new block : ' + type);
 
@@ -57,7 +58,7 @@ export default class AbstractBlock {
             waitForAll: true
         });
 
-        window.addEventListener('resize', debounce($.proxy(this.onResize, this), 50, false));
+        window.addEventListener('resize', this.onResizeDebounce);
     }
 
     destroy() {
@@ -65,7 +66,7 @@ export default class AbstractBlock {
     }
 
     destroyEvents(){
-        window.removeEventListener('resize', debounce($.proxy(this.onResize, this), 50, false));
+        window.removeEventListener('resize', this.onResizeDebounce);
     }
 
     onResize() {

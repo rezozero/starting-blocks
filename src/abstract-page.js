@@ -47,6 +47,7 @@ export default class AbstractPage {
         this.context = context;
         this.type = type;
         this.isHome = isHome;
+        this.onResizeDebounce = debounce($.proxy(this.onResize, this), 50, false);
 
         this.init();
         this.initEvents();
@@ -104,13 +105,13 @@ export default class AbstractPage {
             this.$link.on('click', $.proxy(this.router.onLinkClick, this.router));
         }
 
-        window.addEventListener('resize', debounce($.proxy(this.onResize, this), 100, false));
+        window.addEventListener('resize', this.onResizeDebounce);
     }
 
     destroyEvents() {
         this.$link.off('click', $.proxy(this.router.onLinkClick, this.router));
 
-        window.removeEventListener('resize', debounce($.proxy(this.onResize, this), 100, false));
+        window.removeEventListener('resize', this.onResizeDebounce);
     }
 
     onLoad(e) {
