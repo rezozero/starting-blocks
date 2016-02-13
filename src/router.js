@@ -22,11 +22,12 @@
  * @file router.js
  * @author Ambroise Maupate
  */
-import {State} from "state.js";
-import {Home} from "pages/home.js";
-import {AbstractPage} from "abstract-page.js";
+import State from "state";
+import Home from "pages/home";
+import AbstractPage from "abstract-page";
+import $ from "jquery";
 
-class Router {
+export default class Router {
     constructor(options, routes, baseUrl) {
         this.baseUrl = baseUrl;
         this.routes = routes;
@@ -36,14 +37,20 @@ class Router {
         this.stateBlock = true;
         this.ajaxEnabled = true;
         this.transition = false;
+        this.loading = false;
+        this.window = $(window);
         this.currentRequest = null;
         this.options = {
             homeHasClass: false,
             ajaxEnabled: true,
+            pageClass: "page-content",
             noAjaxLinkClass: "no-ajax-link",
             navLinkClass: "nav-link",
             activeClass: "active",
+            pageBlockClass: ".page-block",
             $ajaxContainer: $("#ajax-container"),
+            $loading: $("#loading"),
+            minLoadDuration: 0,
             postLoad: function (state, data) {},
             preLoad: function (state) {},
             prePushState: function (state) {},
@@ -57,7 +64,7 @@ class Router {
 
     destroy() {
         if (this.options.ajaxEnabled) {
-            window.removeEventListener("popstate", $.proxy(_this.onPopState, this), false);
+            window.removeEventListener("popstate", $.proxy(this.onPopState, this), false);
         }
 
         this.options.onDestroy();
@@ -65,28 +72,37 @@ class Router {
 
     initEvents() {
         if (this.options.ajaxEnabled) {
-            window.addEventListener("popstate", $.proxy(_this.onPopState, this), false);
+            window.addEventListener("popstate", $.proxy(this.onPopState, this), false);
         }
     }
 
     onPopState(event) {
-        if (typeof event.state !== "undefined" && evente.state !== null) {
-            _this.transition = true;
-            _this.loadPage(event, event.state);
+        if (typeof event.state !== "undefined" && event.state !== null) {
+            this.transition = true;
+            this.loadPage(event, event.state);
         }
     }
 
-    boot(nodeType, id, context, isHome) {
+    /**
+     * Booting need a jQuery handler for
+     * the container.
+     *
+     * @param  {jQuery}  $data
+     * @param  {String}  context
+     * @param  {Boolean} isHome
+     */
+    boot($cont, context, isHome) {
         if(context == 'static') {
             this.loadBeginDate = new Date();
         }
+        var nodeType = $cont.attr('data-node-type');
 
-        if(isHome && _this.options.homeHasClass){
-            this.page = new Home(this, id, context, nodeType, isHome);
+        if(isHome && this.options.homeHasClass){
+            this.page = new Home(this, $cont, context, nodeType, isHome);
         } else if(nodeType && typeof this.routes[nodeType] !== 'undefined') {
-            this.page = new window[this.routes[nodeType]](this, id, context, nodeType, isHome);
+            this.page = new this.routes[nodeType](this, $cont, context, nodeType, isHome);
         } else {
-            this.page = new AbstractPage(this, id, context, nodeType, isHome);
+            this.page = new AbstractPage(this, $cont, context, nodeType, isHome);
         }
     }
 
@@ -101,7 +117,6 @@ class Router {
             if(linkClassName.indexOf(this.options.activeClass) == -1 &&
                linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 &&
                !this.transition) {
-
                 this.transition = true;
 
                 var state = new State(e.currentTarget, {
@@ -126,27 +141,42 @@ class Router {
         }
 
         this.loadBeginDate = new Date();
-        this.options.preLoad(state);
 
+        var proxiedPreLoad = $.proxy(this.options.preLoad, this);
+        proxiedPreLoad(state);
+
+        var _this = this;
         this.currentRequest = $.ajax({
             url: state.href,
+            dataType: "html",
             type: 'get',
             success: function(data){
+                // Extract only to new page content
+                // if the whole HTML is queried
+                var $data = null;
+                var $response = $($.parseHTML(data));
+                if ($response.hasClass(_this.options.pageClass)) {
+                    $data = $response;
+                } else {
+                    $data = $response.find('.' + _this.options.pageClass);
+                }
+
                 if(this.url == history.state.href) {
                     /*
                      * Display data to DOM
                      */
-                    this.options.$ajaxContainer.append(data);
+                    _this.options.$ajaxContainer.append($data);
 
                     /*
                      * Push a copy object not to set it as null.
                      */
-                    this.formerPages.push(this.page);
+                    _this.formerPages.push(_this.page);
 
                     // Init new page
-                    this.boot(state.nodeType, state.nodeName, 'ajax', state.isHome);
+                    _this.boot($data, 'ajax', state.isHome);
 
-                    this.options.postLoad(state, data);
+                    var proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
+                    proxiedPostLoad(state, $data);
 
                     // Analytics
                     if(typeof ga !== "undefined") {
@@ -156,6 +186,12 @@ class Router {
             }
         });
     }
-}
 
-export {Router};
+    pushFirstState(isHome){
+        history.pushState({
+            'firstPage': true,
+            'href':  window.location.href,
+            'isHome':isHome
+        }, null, window.location.href);
+    }
+}

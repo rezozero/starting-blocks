@@ -1,26 +1,3 @@
-# Page-block Framework
-## REZO ZERO
-
-- Maxime Bérard
-- Ambroise Maupate
-
-## Spec
-
-- ES6 (convert with Babel)
-- jQuery 2.2.0
-- waitForImages
-- debounce
-- RequireJS
-
-## Usage
-
-- Install dependencies: `npm install` and `bower install`.
-- Type `grunt` to convert ES6 scripts to `dist/` folder.
-- Type `grunt build` to optimize project in one file in `build/` folder.
-
-RequireJS bootstrap file :
-
-```js
 require.config({
     baseUrl: './dist',
     paths: {
@@ -58,7 +35,4 @@ require([
     );
     routerObj.initEvents();
     routerObj.boot($('.page-content').eq(0), 'static', isHome);
-
-    $('a').on('click', $.proxy(routerObj.onLinkClick, routerObj));
 });
-```

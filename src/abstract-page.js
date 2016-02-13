@@ -22,9 +22,13 @@
  * @file abstract-page.js
  * @author Ambroise Maupate
  */
-import {AbstractBlock} from "abstract-block.js";
+import TweenLite from "TweenLite";
+import waitForImages from "waitForImages";
+import debounce from "utils/debounce";
+import AbstractBlock from "abstract-block";
+import $ from "jquery";
 
-class AbstractPage {
+export default class AbstractPage {
     /**
      *
      * @param  {Router}  router
@@ -33,11 +37,13 @@ class AbstractPage {
      * @param  {String}  type
      * @param  {Boolean} isHome
      */
-    constructor(router, id, context, type, isHome) {
+    constructor(router, $cont, context, type, isHome) {
         type = type || 'page';
 
+        console.log('new page : ' + type);
         this.router = router;
-        this.id = id;
+        this.$cont = $cont;
+        this.id = $cont[0].id;
         this.context = context;
         this.type = type;
         this.isHome = isHome;
@@ -47,43 +53,37 @@ class AbstractPage {
     }
 
     init() {
-        this.loadDurationMin = 1200; // Time for animate loader
-        this.$cont = $('#page-content-'+this.id).eq(0);
+        this.$link = this.$cont.find('a').not('[target="_blank"]');
 
-        if (this.$cont.length) {
-            this.$link = this.$cont.find('a').not('[target="_blank"]');
-        } else {
-            this.$link = null;
-        }
         // Add target blank on external link
-        if(null !== this.$link && this.$link.length){
+        if(this.$link.length){
             this.externalLinkTarget(this.$link, this.router.baseUrl);
             this.$link = this.$cont.find('a').not('[target="_blank"]');
         }
 
         // --- Blocks --- //
         this.blocks = [];
-        this.$block = this.$cont.find('.page-block');
-        this.blockLength = this.$block.length;
+        this.$blocks = this.$cont.find(this.router.options.pageBlockClass);
+        this.blockLength = this.$blocks.length;
         if(this.blockLength) {
             this.initBlocks();
         }
 
         // --- Context --- //
-        if(this.context == 'static' &&
-           this.router.ajaxEnabled) {
-            this.router.pushFirstState(this.type, this.id, this.isHome);
+        if(this.context == 'static' && this.router.ajaxEnabled) {
+            this.router.pushFirstState(this.isHome);
         } else if(this.context == 'ajax'){
             this.initAjax();
         }
     }
 
     destroy() {
+        console.log('destroy:' + this.id);
         this.$cont.remove();
         this.destroyEvents();
         // --- Blocks --- //
-        if(this.blocks !== null){
-            for(var blockIndex in this.blocks) {
+        if (this.blocks !== null) {
+            for (var blockIndex in this.blocks) {
                 this.blocks[blockIndex].destroy();
             }
         }
@@ -99,31 +99,30 @@ class AbstractPage {
             this.onLoad();
         }
 
-        if(this.$link !== null && this.router.options.ajaxEnabled) {
-            this.$link.on('click', $.proxy(this.router.linkClick, this.router));
+        if(this.$link.length && this.router.options.ajaxEnabled) {
+            console.log('Binding links: ' + this.id);
+            this.$link.on('click', $.proxy(this.router.onLinkClick, this.router));
         }
 
-        $(window).on('resize', debounce($.proxy(this.onResize, this), 100, false));
+        window.addEventListener('resize', debounce($.proxy(this.onResize, this), 100, false));
     }
 
     destroyEvents() {
-        if(this.$link !== null && this.router.options.ajaxEnabled) {
-            this.$link.off('click', $.proxy(this.router.linkClick, this.router));
-        }
+        this.$link.off('click', $.proxy(this.router.onLinkClick, this.router));
 
-        $(window).off('resize', debounce($.proxy(this.onResize, this), 100, false));
+        window.removeEventListener('resize', debounce($.proxy(this.onResize, this), 100, false));
     }
 
-    onLoad(e){
+    onLoad(e) {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
 
-        var delay = (this.loadDuration > this.loadDurationMin) ? 0 : this.loadDurationMin - this.loadDuration;
+        var delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
         // Hide loading
-        setTimeout(function(){
+        setTimeout(f => {
             if(this.context == 'static'){
-                // this.show();
+                this.show();
             } else if(this.context == 'ajax'){
                 // Update body id
                 $('body').get(0).id = history.state.nodeName;
@@ -150,10 +149,11 @@ class AbstractPage {
         }, delay);
     }
 
-    show(onShow){
+    show(onShow) {
+        var _this = this;
         // Animate
-        TweenLite.to(this.$cont, 0.6, {opacity:1, onComplete: f => {
-            this.router.transition = false;
+        TweenLite.to(_this.$cont, 0.6, {opacity:1, onComplete: f => {
+            _this.router.transition = false;
 
             if (typeof onShow !== 'undefined') {
                 onShow();
@@ -163,12 +163,14 @@ class AbstractPage {
 
     showEnded() {
         if(this.context == 'ajax'){
-            removeClass(this.$cont[0], 'page-content-ajax');
+            this.$cont.removeClass('page-content-ajax');
         }
     }
 
-    hide(onHidden){
-        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
+    hide(onHidden) {
+        var _this = this;
+        console.log('hiding:' + _this.id);
+        TweenLite.to(_this.$cont, 0.6, {opacity:0, onComplete:onHidden});
     }
 
     initAjax() {
@@ -180,20 +182,24 @@ class AbstractPage {
     }
 
     initBlocks() {
-        for(var blockIndex in this.blockLength) {
-            var type = this.$block[blockIndex].getAttribute('data-node-type'),
-                id = this.$block[blockIndex].id;
+        // Protect "this" during "each" closure.
+        var _this = this;
 
-            if (typeof this.router.routes[type] !== "undefined") {
-                this.blocks[blockIndex] = new window[this.router.routes[type]](this, id, type);
+        this.$blocks.each(function (blockIndex, block) {
+            var type = block.getAttribute('data-node-type');
+            var id = block.id;
+            var $block = $(block);
+
+            if (typeof _this.router.routes[type] !== "undefined") {
+                _this.blocks[blockIndex] = new _this.router.routes[type](_this, $block, type);
             } else {
-                this.blocks[blockIndex] = new AbstractBlock(this, id, type);
+                _this.blocks[blockIndex] = new AbstractBlock(_this, $block, type);
             }
-        }
+        });
     }
 
     onResize(){
-
+        console.log('resize :' + this.id);
     }
 
     /**
@@ -221,5 +227,3 @@ class AbstractPage {
         }
     }
 }
-
-export {AbstractPage};

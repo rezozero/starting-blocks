@@ -22,18 +22,33 @@
  * @file abstract-block.js
  * @author Ambroise Maupate
  */
-class AbstractBlock {
-    constructor(page, id, type) {
+import debounce from "utils/debounce";
+import waitForImages from "waitForImages";
+import $ from "jquery";
+
+export default class AbstractBlock {
+    /**
+     *
+     * @param  {AbstractPage} page
+     * @param  {String} id
+     * @param  {String} type
+     */
+    constructor(page, $cont, type) {
+        type = type || 'block';
+
         this.page = page;
-        this.id = id;
+        this.$cont = $cont;
+        this.id = $cont[0].id;
         this.type = type;
+
+        console.log('new block : ' + type);
 
         this.init();
         this.initEvents();
     }
 
-    init(){
-        this.$cont = $('#' + this.id);
+    init() {
+
     }
 
     initEvents(){
@@ -42,7 +57,7 @@ class AbstractBlock {
             waitForAll: true
         });
 
-        $(window).on('resize', debounce($.proxy(this.onResize, this), 50, false));
+        window.addEventListener('resize', debounce($.proxy(this.onResize, this), 50, false));
     }
 
     destroy() {
@@ -50,11 +65,11 @@ class AbstractBlock {
     }
 
     destroyEvents(){
-        $(window).off('resize', debounce($.proxy(this.onResize, this), 50, false));
+        window.removeEventListener('resize', debounce($.proxy(this.onResize, this), 50, false));
     }
 
     onResize() {
-
+        console.log('resize :' + this.id);
     }
 
     /**
@@ -67,5 +82,3 @@ class AbstractBlock {
 
     }
 }
-
-export {AbstractBlock};

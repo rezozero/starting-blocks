@@ -5,15 +5,16 @@ module.exports = function(grunt) {
         "babel": {
             options: {
                 sourceMap: true,
-                "presets": ["es2015"]
+                presets: ["es2015"],
+                plugins: ['transform-es2015-modules-amd']
             },
             dist: {
-                files: {
-                    "dist/router.js": "src/router.js",
-                    "dist/state.js": "src/state.js",
-                    "dist/abstract-page.js": "src/abstract-page.js",
-                    "dist/abstract-block.js": "src/abstract-block.js"
-                }
+                files: [{
+                    expand: true,
+                    cwd: 'src',
+                    src: ['**/*.js'],
+                    dest: 'dist'
+                }]
             }
         },
         jshint: {
@@ -27,8 +28,24 @@ module.exports = function(grunt) {
                 esversion: 6,
                 '-W008': true // decimal point
             }
+        },
+        requirejs: {
+            compile: {
+                options: {
+                    optimize: "uglify",
+                    baseUrl: "./dist",
+                    name: "../bootstrap",
+                    out: "build/build.min.js",
+                    paths: {
+                        jquery: '../bower_components/jquery/dist/jquery.min',
+                        waitForImages: '../bower_components/waitForImages/dist/jquery.waitforimages.min',
+                        TweenLite: "../bower_components/gsap/src/minified/TweenLite.min",
+                    }
+                }
+            }
         }
     });
 
     grunt.registerTask("default", ["jshint", "babel"]);
+    grunt.registerTask("build", ["jshint", "babel", "requirejs"]);
 };

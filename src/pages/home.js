@@ -19,38 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file state.js
+ * @file home.js
  * @author Ambroise Maupate
  */
-import $ from "jquery";
+import AbstractPage from "abstract-page";
 
-export default class State {
-    constructor(link, options) {
-        this.options = {
-            previousType: "page",
-            navLinkClass: "nav-link",
-        };
-
-        if (options !== null) {
-            this.options = $.extend(this.options, options);
-        }
-
-        var context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link',
-            dataHome = link.getAttribute('data-is-home'),
-            isHome = (dataHome == '1') ? true : false,
-            title = link.getAttribute('data-title'),
-            nodeType = link.getAttribute('data-node-type');
-
-        if(title === '') title = link.innerHTML;
-        if(nodeType === '') nodeType = "page";
-
-        this.title = title;
-        this.href = link.href;
-        this.nodeType = nodeType;
-        this.nodeName = link.getAttribute('data-node-name');
-        this.index = Number(link.getAttribute('data-index'));
-        this.transition = this.options.previousType+'_to_'+nodeType;
-        this.context = context;
-        this.isHome = isHome;
+export default class Home extends AbstractPage {
+    constructor(router, id, context, type, isHome){
+        super(router, id, context, type, isHome);
     }
 }
