@@ -1,0 +1,22 @@
+{
+    "name": "Page block framework",
+    "version": "0.1.0",
+    "authors": [
+        "Ambroise Maupate <ambroise@rezo-zero.com>",
+        "Maxime Bérard <maxime@rezo-zero.com>"
+    ],
+    "description": "Starter theme for Roadiz CMS",
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "gsap": "~1.16.1",
+        "jquery": "~2.2.0",
+        "waitForImages": "~2.1.0",
+    }
+}
