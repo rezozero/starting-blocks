@@ -37,13 +37,13 @@ require(['main']);
 ## Use as vendor lib (bower)
 
 Before using *pageblock* in your project as a dependency. You’ll need to declare
-paths for each JS file you’ll need and to create your own `bootstrap.js` and `main.js`
-files.
+paths for each JS file you’ll need and to **create your own** `bootstrap.js` and `main.js`
+files. Some of this lib files will be located in `bower_components` folder and so they
+won’t be available anymore from your project path. Solution is to add them to your
+*RequireJS* paths configuration:
 
-### Example paths
-
-You’ll need to adapt this path array in your `bootstrap.js` file **AND** in your
-requirejs *Gulp* task to build a minified version.
+You’ll need to adapt this path array in your `bootstrap.js` file **and** in your
+`requirejs` *Gulp* task to build a minified version.
 
 ```js
 var paths = {
@@ -54,6 +54,7 @@ var paths = {
     // if you are using bower to fetch this lib.
     State: "./../bower_components/pageblock-framework/src/state",
     Router: "./../bower_components/pageblock-framework/src/router",
+    GraphicLoader: "./../bower_components/pageblock-framework/src/graphicLoader",
     Nav: "./../bower_components/pageblock-framework/src/nav",
     AbstractPage: "./../bower_components/pageblock-framework/src/abstract-page",
     AbstractBlock: "./../bower_components/pageblock-framework/src/abstract-block",
@@ -65,7 +66,7 @@ var paths = {
     // If you want to use example Page and Home classes in your project
     Page: "./../bower_components/pageblock-framework/src/pages/page",
     Home: "./../bower_components/pageblock-framework/src/pages/home",
-    // Then your own project files
+    // Then your own project vendor libs
     // …
 };
 ```
