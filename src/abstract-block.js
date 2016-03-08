@@ -22,9 +22,11 @@
  * @file abstract-block.js
  * @author Ambroise Maupate
  */
-import debounce from "utils/debounce";
 import waitForImages from "waitForImages";
 import $ from "jquery";
+
+import debounce from "utils/debounce";
+
 
 export default class AbstractBlock {
     /**

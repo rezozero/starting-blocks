@@ -10,7 +10,6 @@
 import Utils from "utils/utils";
 
 export default class BootstrapMedia {
-
     static isMediaMinSM() {
         var size = Utils.getViewportSize();
 

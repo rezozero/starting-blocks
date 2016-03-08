@@ -1,0 +1,7 @@
+.page-content-ajax {
+    opacity: 0;
+}
+.page-content-transitioning {
+    position: absolute;
+    top: 0;
+}

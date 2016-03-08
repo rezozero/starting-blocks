@@ -5,7 +5,7 @@
     "Ambroise Maupate <ambroise@rezo-zero.com>",
     "Maxime Bérard <maxime@rezo-zero.com>"
   ],
-  "description": "Starter theme for Roadiz CMS",
+  "description": "Page/block router and framework for standalone or Roadiz websites.",
   "license": "MIT",
   "ignore": [
     "**/.*",

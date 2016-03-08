@@ -25,6 +25,7 @@
 import State from "state";
 import Home from "pages/home";
 import AbstractPage from "abstract-page";
+import GraphicLoader from "graphicLoader";
 import $ from "jquery";
 
 export default class Router {
@@ -35,10 +36,22 @@ export default class Router {
      * @param {Object} options
      * @param {Object} routes
      * @param {String} baseUrl
+     * @param {GraphicLoader} loader
      */
-    constructor(options, routes, baseUrl) {
+    constructor(options, routes, baseUrl, loader) {
+        if (!baseUrl) {
+            throw "Router need baseUrl to be defined.";
+        }
+        if (!loader) {
+            throw "Router need a GraphicLoader instance to be defined.";
+        }
+        if (!(loader instanceof GraphicLoader)) {
+            throw "'loader' must be an instance of GraphicLoader.";
+        }
+
         this.baseUrl = baseUrl;
         this.routes = routes;
+        this.loader = loader;
         this.state = null;
         this.formerPages = [];
         this.page = null;
@@ -142,7 +155,7 @@ export default class Router {
         if(this.currentRequest && this.currentRequest.readyState != 4) {
             this.currentRequest.abort();
         }
-
+        this.loader.show();
         this.loadBeginDate = new Date();
 
         var proxiedPreLoad = $.proxy(this.options.preLoad, this);

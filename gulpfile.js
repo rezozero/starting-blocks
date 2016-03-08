@@ -5,10 +5,18 @@ var requireDir = require('require-dir');
  * Global array for declaring
  * source JS files.
  */
-appJsFiles = [
-    'bootstrap.js',
-    'src/**/*.js',
-];
+paths = {
+    'scripts': [
+        'src/**/*.js',
+    ],
+    'transScripts': [
+        'dist/**/*.js',
+    ],
+    'styles': [
+        'css/**/*.sass',
+        //'css/**/*.less',
+    ]
+};
 
 requireDir('./gulp-tasks');
 
@@ -18,6 +26,6 @@ gulp.task('default', ['requirejs']);
  * Watch tasks
  */
 gulp.task('watch', function (cb) {
-    return gulp.watch(appJsFiles, ['babel']);
+    return gulp.watch(paths.scripts, ['babel']);
 });
 

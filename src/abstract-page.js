@@ -24,14 +24,16 @@
  */
 import TweenLite from "TweenLite";
 import waitForImages from "waitForImages";
+import $ from "jquery";
+
 import debounce from "utils/debounce";
 import AbstractBlock from "abstract-block";
-import $ from "jquery";
+import Router from "router";
 
 export default class AbstractPage {
     /**
      * @param  {Router}  router
-     * @param  {String}  id
+     * @param  {String}  $cont
      * @param  {String}  context
      * @param  {String}  type
      * @param  {Boolean} isHome
@@ -39,7 +41,17 @@ export default class AbstractPage {
     constructor(router, $cont, context, type, isHome) {
         type = type || 'page';
 
-        console.log('new page : ' + type);
+        if (!$cont) {
+            throw "AbstractPage need a $cont (JQuery) to be defined.";
+        }
+        if (!router) {
+            throw "AbstractPage need a Router instance to be defined.";
+        }
+        if (!(router instanceof Router)) {
+            throw "'router' must be an instance of Router.";
+        }
+
+        console.log('New page : ' + type);
         this.router = router;
         this.$cont = $cont;
         this.id = $cont[0].id;
@@ -115,6 +127,7 @@ export default class AbstractPage {
     onLoad(e) {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
+        this.router.loader.hide();
 
         var delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
@@ -165,8 +178,9 @@ export default class AbstractPage {
 
     showEnded() {
         console.log('---- Show >>>>');
-
-        this.$cont.removeClass('page-content-ajax');
+        this.router.loader.hide();
+        this.$cont.removeClass(this.router.options.pageClass + '-ajax');
+        this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
 
     hide(onHidden) {
@@ -175,7 +189,7 @@ export default class AbstractPage {
     }
 
     initAjax() {
-
+        this.$cont.addClass(this.router.options.pageClass + '-transitioning');
     }
 
     initBlocks() {

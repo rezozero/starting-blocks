@@ -19,13 +19,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file home.js
+ * @file graphicLoader.js
  * @author Ambroise Maupate
  */
-import AbstractPage from "abstract-page";
 
-export default class Home extends AbstractPage {
-    constructor(router, id, context, type, isHome){
-        super(router, id, context, type, isHome);
+/**
+ * Interface for a graphic loader element.
+ *
+ * Any child implementations must implements
+ * show and hide methods.
+ */
+export default class GraphicLoader {
+
+    constructor() {
+
+    }
+
+    /**
+     * Show loader.
+     */
+    show() {
+        console.log('[GraphicLoader] Show loader.');
+    }
+
+    /**
+     * Hide loader.
+     */
+    hide() {
+        console.log('[GraphicLoader] Hide loader.');
     }
 }

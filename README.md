@@ -17,12 +17,12 @@
 - Install `gulp-cli` if you do not have it yet `npm install -g gulp-cli`.
 - Install dependencies: `npm install` and `bower install`.
 - Type `gulp watch` to convert ES6 scripts to `dist/` folder in background.
-- Type `grunt` to optimize project in one file in `build/` folder.
+- Type `gulp` to optimize project in one file in `build/` folder.
 
 RequireJS bootstrap file :
 
 ```js
-require.config({
+requirejs.config({
     baseUrl: './dist',
     paths: {
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
@@ -31,41 +31,14 @@ require.config({
     }
 });
 
-require([
-    'jquery',
-    'router',
-    'pages/page'
-], function($, Router, Page) {
-    var $body = $('body');
-    var nodeType = $body[0].getAttribute('data-node-type') || 'page';
-    var dataHome = $body[0].getAttribute('data-is-home');
-    var bodyId = $body[0].id;
-    var isHome = (dataHome == '1') ? true : false;
-
-    var routerObj = new Router.default(
-        {
-            homeHasClass: false,
-            ajaxEnabled: true,
-        },
-        {
-            /*
-             * Routes are nodeType corresponding to
-             * ES6 modules
-             */
-            'page' : Page.default,
-        },
-        // temp namespace is defined in your index.html
-        temp.baseUrl
-    );
-    routerObj.initEvents();
-    routerObj.boot($('.page-content').eq(0), 'static', isHome);
-});
+require(['main']);
 ```
 
 ## Use as vendor lib (bower)
 
 Before using *pageblock* in your project as a dependency. You’ll need to declare
-paths for each JS file you’ll need.
+paths for each JS file you’ll need and to create your own `bootstrap.js` and `main.js`
+files.
 
 ### Example paths
 

@@ -4,7 +4,7 @@ var plumber = require('gulp-plumber');
 var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('babel', ['lint'], function() {
-    return gulp.src(appJsFiles)
+    return gulp.src(paths.scripts)
         .pipe(plumber({
             handleError: function (err) {
                 console.log(err);

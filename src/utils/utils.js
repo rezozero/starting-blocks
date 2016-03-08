@@ -10,6 +10,7 @@
 import $ from "jquery";
 
 export default class Utils {
+
     /**
      * @param  {String} str
      * @return {String}
