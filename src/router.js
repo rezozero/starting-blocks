@@ -26,6 +26,7 @@ import State from "state";
 import Home from "pages/home";
 import AbstractPage from "abstract-page";
 import GraphicLoader from "graphicLoader";
+import Nav from "nav";
 import $ from "jquery";
 
 export default class Router {
@@ -37,8 +38,9 @@ export default class Router {
      * @param {Object} routes
      * @param {String} baseUrl
      * @param {GraphicLoader} loader
+     * @param {Nav} nav
      */
-    constructor(options, routes, baseUrl, loader) {
+    constructor(options, routes, baseUrl, loader, nav) {
         if (!baseUrl) {
             throw "Router need baseUrl to be defined.";
         }
@@ -49,9 +51,17 @@ export default class Router {
             throw "'loader' must be an instance of GraphicLoader.";
         }
 
+        if (!nav) {
+            throw "Router need a Nav instance to be defined.";
+        }
+        if (!(nav instanceof Nav)) {
+            throw "'nav' must be an instance of Nav.";
+        }
+
         this.baseUrl = baseUrl;
         this.routes = routes;
         this.loader = loader;
+        this.nav = nav;
         this.state = null;
         this.formerPages = [];
         this.page = null;
@@ -170,7 +180,7 @@ export default class Router {
             // ajax context is defined.
             cache: false,
             type: 'get',
-            success: function(data){
+            success: (data) => {
                 // Extract only to new page content
                 // if the whole HTML is queried
                 var $data = null;

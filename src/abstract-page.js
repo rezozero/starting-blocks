@@ -127,7 +127,9 @@ export default class AbstractPage {
     onLoad(e) {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
+
         this.router.loader.hide();
+        this.router.nav.update();
 
         var delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 

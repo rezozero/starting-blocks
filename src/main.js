@@ -2,6 +2,7 @@ import Page from "pages/page";
 import polyfills from "utils/polyfills";
 import Router from "router";
 import GraphicLoader from "graphicLoader";
+import Nav from "nav";
 import $ from "jquery";
 
 /*
@@ -32,7 +33,8 @@ let router = new Router(
     },
     // temp namespace is defined in your index.html
     temp.baseUrl,
-    new GraphicLoader()
+    new GraphicLoader(),
+    new Nav()
 );
 router.initEvents();
 router.boot($('.page-content').eq(0), 'static', isHome);

@@ -54,6 +54,7 @@ var paths = {
     // if you are using bower to fetch this lib.
     State: "./../bower_components/pageblock-framework/src/state",
     Router: "./../bower_components/pageblock-framework/src/router",
+    Nav: "./../bower_components/pageblock-framework/src/nav",
     AbstractPage: "./../bower_components/pageblock-framework/src/abstract-page",
     AbstractBlock: "./../bower_components/pageblock-framework/src/abstract-block",
     // Utils functions and classes

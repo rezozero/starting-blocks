@@ -18,6 +18,6 @@ gulp.task('requirejs', ['babel'], function() {
             // this array must be the same as your bootstrap.js one.
         }
     }))
-    //.pipe(uglify())
+    .pipe(uglify())
     .pipe(gulp.dest('build'));
 });

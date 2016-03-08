@@ -19,7 +19,6 @@ paths = {
 };
 
 requireDir('./gulp-tasks');
-
 gulp.task('default', ['requirejs']);
 
 /*
