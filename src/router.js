@@ -28,6 +28,14 @@ import AbstractPage from "abstract-page";
 import $ from "jquery";
 
 export default class Router {
+
+    /**
+     * Create a new Router.
+     *
+     * @param {Object} options
+     * @param {Object} routes
+     * @param {String} baseUrl
+     */
     constructor(options, routes, baseUrl) {
         this.baseUrl = baseUrl;
         this.routes = routes;
@@ -188,7 +196,7 @@ export default class Router {
      * Update page title against data-title attribute
      * from ajax loaded partial DOM.
      *
-     * @param  jQuery $data
+     * @param {jQuery} $data
      */
     updatePageTitle($data){
         if($data.length && $data[0].getAttribute('data-meta-title') !== ''){

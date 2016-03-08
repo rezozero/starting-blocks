@@ -30,7 +30,6 @@ import $ from "jquery";
 
 export default class AbstractPage {
     /**
-     *
      * @param  {Router}  router
      * @param  {String}  id
      * @param  {String}  context
@@ -183,7 +182,7 @@ export default class AbstractPage {
         // Protect "this" during "each" closure.
         var _this = this;
 
-        this.$blocks.each(function (blockIndex, block) {
+        this.$blocks.each((blockIndex, block) => {
             var type = block.getAttribute('data-node-type');
             var id = block.id;
             var $block = $(block);
@@ -203,8 +202,8 @@ export default class AbstractPage {
     /**
      * Add target blank to external links.
      *
-     * @param  {[type]} $links
-     * @param  {[type]} baseUrl
+     * @param  {JQuery} $links
+     * @param  {String} baseUrl
      */
     externalLinkTarget($links, baseUrl) {
         var linksLength = $links.length,

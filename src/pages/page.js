@@ -23,9 +23,27 @@
  * @author Ambroise Maupate
  */
 import AbstractPage from "abstract-page";
+import BootstrapMedia from "utils/bootstrapMedia";
 
+/**
+ * Some example "page"
+ */
 export default class Page extends AbstractPage {
     constructor(router, id, context, type, isHome){
         super(router, id, context, type, isHome);
+    }
+
+    onResize(){
+        super.onResize();
+
+        if (BootstrapMedia.isMediaMinSM()) {
+            console.log('-- sm');
+        }
+        if (BootstrapMedia.isMediaMinMD()) {
+            console.log('-- md');
+        }
+        if (BootstrapMedia.isMediaMinLG()) {
+            console.log('-- lg');
+        }
     }
 }

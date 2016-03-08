@@ -9,9 +9,18 @@ require.config({
 
 require([
     'jquery',
+    'utils/polyfills',
     'router',
     'pages/page'
-], function($, Router, Page) {
+], function($, polyfills, Router, Page) {
+    /*
+     * Declare polyfills
+     */
+    polyfills.default();
+
+    /*
+     * Begin main app ---
+     */
     var $body = $('body');
     var nodeType = $body[0].getAttribute('data-node-type') || 'page';
     var dataHome = $body[0].getAttribute('data-is-home');

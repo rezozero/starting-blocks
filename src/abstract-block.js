@@ -28,7 +28,6 @@ import $ from "jquery";
 
 export default class AbstractBlock {
     /**
-     *
      * @param  {AbstractPage} page
      * @param  {String} id
      * @param  {String} type

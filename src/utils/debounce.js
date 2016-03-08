@@ -7,10 +7,9 @@
  *
  * http://davidwalsh.name/javascript-debounce-function
  *
- * @param  {[function]} func     [function to debounce]
- * @param  {[Number]} wait       [time to wait]
- * @param  {[boolean]} immediate []
- * @return {[type]}           [description]
+ * @param {Function} func     [function to debounce]
+ * @param {Number} wait       [time to wait]
+ * @param {Boolean} immediate []
  */
 export default function debounce(func, wait, immediate) {
     var timeout;
