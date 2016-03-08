@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Test</title>
+        <title>Home page</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
@@ -17,7 +17,7 @@
     </head>
     <body id="home">
         <div id="main-container">
-            <div id="page-content-home" class="page-content" data-node-type="page">
+            <div id="page-content-home" class="page-content page-content-ajax" data-node-type="page" data-meta-title="Home page">
                 <h1>Home page</h1>
                 <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
                 <p><a href="page1.html">Link test to page 1</a></p>
@@ -32,8 +32,8 @@
             <div id="ajax-container"></div>
         </div>
 
-        <!-- <script data-main="./build/build.min.js" src="bower_components/requirejs/require.js"></script> -->
-        <script data-main="./bootstrap.js" src="bower_components/requirejs/require.js"></script>
+        <script data-main="./build/app.min.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+        <!-- <script data-main="./dist/bootstrap.js" src="bower_components/requirejs/require.js"></script> -->
         <script>
             var temp = {
                 baseUrl: 'http://localhost:8888'

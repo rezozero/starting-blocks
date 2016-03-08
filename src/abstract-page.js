@@ -101,7 +101,6 @@ export default class AbstractPage {
         }
 
         if(this.$link.length && this.router.options.ajaxEnabled) {
-            console.log('Binding links: ' + this.id);
             this.$link.on('click', $.proxy(this.router.onLinkClick, this.router));
         }
 
@@ -121,16 +120,18 @@ export default class AbstractPage {
         var delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
         // Hide loading
-        setTimeout(f => {
+        setTimeout(() => {
+            var onShowEnded = $.proxy(this.showEnded, this);
+
             if(this.context == 'static'){
-                this.show();
+                this.show(onShowEnded);
             } else if(this.context == 'ajax'){
                 // Update body id
                 $('body').get(0).id = history.state.nodeName;
                 // Hide formerPages - show
                 if (this.router.formerPages.length > 0) {
-                    var formerPage = this.router.formerPages[(this.router.formerPages.length - 1)],
-                        formerPageDestroy = $.proxy(formerPage.destroy, formerPage);
+                    var formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];
+                    var formerPageDestroy = $.proxy(formerPage.destroy, formerPage);
 
                     /*
                      * Very important,
@@ -144,18 +145,19 @@ export default class AbstractPage {
                     }
                     this.router.formerPages.pop();
                 }
-                //console.log(this.router.formerPages);
-                this.show($.proxy(this.showEnded, this));
+
+                this.show(onShowEnded);
             }
         }, delay);
     }
 
     show(onShow) {
+        // Protect "this" during closure.
         var _this = this;
+        console.log('>>>> Show ----');
         // Animate
-        TweenLite.to(_this.$cont, 0.6, {opacity:1, onComplete: f => {
+        var tween = TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
             _this.router.transition = false;
-
             if (typeof onShow !== 'undefined') {
                 onShow();
             }
@@ -163,23 +165,18 @@ export default class AbstractPage {
     }
 
     showEnded() {
-        if(this.context == 'ajax'){
-            this.$cont.removeClass('page-content-ajax');
-        }
+        console.log('---- Show >>>>');
+
+        this.$cont.removeClass('page-content-ajax');
     }
 
     hide(onHidden) {
-        var _this = this;
-        console.log('hiding:' + _this.id);
-        TweenLite.to(_this.$cont, 0.6, {opacity:0, onComplete:onHidden});
+        console.log('hiding:' + this.id);
+        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
     }
 
     initAjax() {
-        // --- Change title --- //
-        if(this.$cont.length && this.$cont[0].getAttribute('data-meta-title') !== ''){
-            var metaTitle = this.$cont[0].getAttribute('data-meta-title');
-            if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
-        }
+
     }
 
     initBlocks() {

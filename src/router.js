@@ -123,11 +123,6 @@ export default class Router {
                     previousType: this.page.type,
                     navLinkClass: this.options.navLinkClass,
                 });
-                /*
-                 * Hook prePushState method
-                 * to be able to modify state
-                 */
-                this.options.prePushState(state);
 
                 history.pushState(state, state.title, state.href);
                 this.loadPage(e, state);
@@ -149,6 +144,10 @@ export default class Router {
         this.currentRequest = $.ajax({
             url: state.href,
             dataType: "html",
+            // Need to disable cache to prevent
+            // browser to serve partial when no
+            // ajax context is defined.
+            cache: false,
             type: 'get',
             success: function(data){
                 // Extract only to new page content
@@ -160,31 +159,42 @@ export default class Router {
                 } else {
                     $data = $response.find('.' + _this.options.pageClass);
                 }
+                /*
+                 * Display data to DOM
+                 */
+                _this.options.$ajaxContainer.append($data);
 
-                if(this.url == history.state.href) {
-                    /*
-                     * Display data to DOM
-                     */
-                    _this.options.$ajaxContainer.append($data);
+                /*
+                 * Push a copy object not to set it as null.
+                 */
+                _this.formerPages.push(_this.page);
 
-                    /*
-                     * Push a copy object not to set it as null.
-                     */
-                    _this.formerPages.push(_this.page);
+                // Init new page
+                _this.updatePageTitle($data);
+                _this.boot($data, 'ajax', state.isHome);
 
-                    // Init new page
-                    _this.boot($data, 'ajax', state.isHome);
+                var proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
+                proxiedPostLoad(state, $data);
 
-                    var proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
-                    proxiedPostLoad(state, $data);
-
-                    // Analytics
-                    if(typeof ga !== "undefined") {
-                        ga('send', 'pageview', {'page':state.href, 'title':document.title});
-                    }
+                // Analytics
+                if(typeof ga !== "undefined") {
+                    ga('send', 'pageview', {'page':state.href, 'title':document.title});
                 }
             }
         });
+    }
+
+    /**
+     * Update page title against data-title attribute
+     * from ajax loaded partial DOM.
+     *
+     * @param  jQuery $data
+     */
+    updatePageTitle($data){
+        if($data.length && $data[0].getAttribute('data-meta-title') !== ''){
+            var metaTitle = $data[0].getAttribute('data-meta-title');
+            if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
+        }
     }
 
     pushFirstState(isHome){
