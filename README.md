@@ -64,6 +64,7 @@ var paths = {
     "utils/debounce": "/themes/PITheme/static/bower_components/pageblock/dist/utils/debounce",
     "utils/bootstrapMedia": "/themes/PITheme/static/bower_components/pageblock/dist/utils/bootstrapMedia",
     "utils/polyfills": "/themes/PITheme/static/bower_components/pageblock/dist/utils/polyfills",
+    "utils/scroll": "/themes/PITheme/static/bower_components/pageblock/dist/utils/scroll",
     // If you want to use example Page and Home classes in your project
     "pages/page": "/themes/PITheme/static/bower_components/pageblock/dist/pages/page"
     "pages/home": "/themes/PITheme/static/bower_components/pageblock/dist/pages/home"

@@ -61,19 +61,23 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                 console.log('%c' + siteName, 'background:' + bgColor + '; color: ' + color + '; font-size:14px; padding:5px 10px;');
                 console.log('%c   ', 'font-size:3px;');
 
-                var creditsLength = creditsList.length;
-                if (creditsLength) {
-                    for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
-                        console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
+                if (creditsList !== null) {
+                    var creditsLength = creditsList.length;
+                    if (creditsLength) {
+                        for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
+                            console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
+                        }
                     }
                 }
 
-                var thanksLength = thanksList.length;
-                if (thanksLength) {
-                    console.log("-");
-                    console.log("Thanks to");
-                    for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
-                        console.log(thanksList[indexThanks].name + ' : ' + thanksList[indexThanks].website);
+                if (thanksList !== null) {
+                    var thanksLength = thanksList.length;
+                    if (thanksLength) {
+                        console.log("-");
+                        console.log("Thanks to");
+                        for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
+                            console.log(thanksList[indexThanks].name + ' (' + thanksList[indexThanks].website + ')');
+                        }
                     }
                 }
 
@@ -106,8 +110,12 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             }
         }, {
             key: 'getRandomNumber',
-            value: function getRandomNumber(min, max) {
-                return Math.random() * (max - min) + min;
+            value: function getRandomNumber(min, max, decimal) {
+                var result = Math.random() * (max - min) + min;
+
+                if (typeof decimal !== 'undefined') {
+                    return result.toFixed(decimal);
+                } else return result;
             }
         }, {
             key: 'getRandomInt',
@@ -153,6 +161,31 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                     e = document.documentElement || document.body;
                 }
                 return { width: e[a + 'Width'], height: e[a + 'Height'] };
+            }
+        }, {
+            key: 'prefixProperty',
+            value: function prefixProperty(property) {
+                var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
+                var numPrefixes = prefixes.length;
+                var tmp = document.createElement("div");
+
+                for (var i = 0; i < numPrefixes; i++) {
+                    var prefix = prefixes[i];
+                    property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
+                    var prop = prefix + property;
+
+                    if (typeof tmp.style[prop] != "undefined") {
+                        return prop;
+                    }
+                }
+            }
+        }, {
+            key: 'getNormRatio',
+            value: function getNormRatio(val, min, max) {
+                if (val < min) return 0;
+                if (val > max) return 1;
+
+                return val === max ? 1 : (val - min) / (max - min);
             }
         }]);
 
