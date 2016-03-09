@@ -48,25 +48,35 @@ You’ll need to adapt this path array in your `bootstrap.js` file **and** in yo
 ```js
 var paths = {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-    waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
-    TweenLite: "./../bower_components/gsap/src/minified/TweenMax.min",
+    waitForImages: '/themes/PITheme/static/bower_components/waitForImages/dist/jquery.waitforimages.min',
+    TweenLite: "/themes/PITheme/static/bower_components/gsap/dist/minified/TweenMax.min",
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
-    State: "./../bower_components/pageblock-framework/src/state",
-    Router: "./../bower_components/pageblock-framework/src/router",
-    GraphicLoader: "./../bower_components/pageblock-framework/src/graphicLoader",
-    Nav: "./../bower_components/pageblock-framework/src/nav",
-    AbstractPage: "./../bower_components/pageblock-framework/src/abstract-page",
-    AbstractBlock: "./../bower_components/pageblock-framework/src/abstract-block",
+    "state": "/themes/PITheme/static/bower_components/pageblock/dist/state",
+    "router": "/themes/PITheme/static/bower_components/pageblock/dist/router",
+    "graphicLoader": "/themes/PITheme/static/bower_components/pageblock/dist/graphicLoader",
+    "nav": "/themes/PITheme/static/bower_components/pageblock/dist/nav",
+    "abstract-page": "/themes/PITheme/static/bower_components/pageblock/dist/abstract-page",
+    "abstract-block": "/themes/PITheme/static/bower_components/pageblock/dist/abstract-block",
     // Utils functions and classes
-    Utils: "./../bower_components/pageblock-framework/src/utils/utils",
-    gaTrackErrors: "./../bower_components/pageblock-framework/src/utils/gaTrackErrors",
-    debounce: "./../bower_components/pageblock-framework/src/utils/debounce",
-    BootstrapMedia: "./../bower_components/pageblock-framework/src/utils/bootstrapMedia",
+    "utils/utils": "/themes/PITheme/static/bower_components/pageblock/dist/utils/utils",
+    "utils/gaTrackErrors": "/themes/PITheme/static/bower_components/pageblock/dist/utils/gaTrackErrors",
+    "utils/debounce": "/themes/PITheme/static/bower_components/pageblock/dist/utils/debounce",
+    "utils/bootstrapMedia": "/themes/PITheme/static/bower_components/pageblock/dist/utils/bootstrapMedia",
+    "utils/polyfills": "/themes/PITheme/static/bower_components/pageblock/dist/utils/polyfills",
     // If you want to use example Page and Home classes in your project
-    Page: "./../bower_components/pageblock-framework/src/pages/page",
-    Home: "./../bower_components/pageblock-framework/src/pages/home",
+    "pages/page": "/themes/PITheme/static/bower_components/pageblock/dist/pages/page"
     // Then your own project vendor libs
     // …
 };
+```
+Then configure your `baseUrl` to build full path to get your script:
+
+```js
+// On a static website where dist folder is at server root
+baseUrl: '/dist'
+
+// If your dist folder is in a Roadiz theme
+// (and your Roadiz site is at server root)
+baseUrl: '/themes/PITheme/static/dist'
 ```
