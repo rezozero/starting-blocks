@@ -49,7 +49,7 @@ You’ll need to adapt this path array in your `bootstrap.js` file **and** in yo
 var paths = {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
     waitForImages: '/themes/PITheme/static/bower_components/waitForImages/dist/jquery.waitforimages.min',
-    TweenLite: "/themes/PITheme/static/bower_components/gsap/dist/minified/TweenMax.min",
+    TweenLite: "/themes/PITheme/static/bower_components/gsap/src/minified/TweenMax.min",
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
     "state": "/themes/PITheme/static/bower_components/pageblock/dist/state",
@@ -66,6 +66,7 @@ var paths = {
     "utils/polyfills": "/themes/PITheme/static/bower_components/pageblock/dist/utils/polyfills",
     // If you want to use example Page and Home classes in your project
     "pages/page": "/themes/PITheme/static/bower_components/pageblock/dist/pages/page"
+    "pages/home": "/themes/PITheme/static/bower_components/pageblock/dist/pages/home"
     // Then your own project vendor libs
     // …
 };

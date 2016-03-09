@@ -3,7 +3,7 @@ var uglify = require('gulp-uglify');
 var requirejsOptimize = require('gulp-requirejs-optimize');
 
 gulp.task('requirejs', ['babel'], function() {
-    return gulp.src(paths.transScripts)
+    return gulp.src('./bootstrap.js')
     .pipe(requirejsOptimize({
         out: 'app.min.js',
         optimize: "none",
