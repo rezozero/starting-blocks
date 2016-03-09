@@ -82,3 +82,44 @@ baseUrl: '/dist'
 // (and your Roadiz site is at server root)
 baseUrl: '/themes/PITheme/static/dist'
 ```
+
+## A JS router made to work with HTML partial responses
+
+This ES6 javascript router has been designed to handle as well complete HTML responses as
+*partial* HTML responses to lighten backend process and bandwidth.
+One of the most recurrent variable or member: `$cont` is always referring to the current page’ main-section.
+This is the DOM section which is extracted at the end of each complete AJAX requests. When it detects that AJAX
+response is *partial* it directly initialize `$cont` with the whole response data. Every new AJAX response will
+be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
+
+To declare a partial DOM section as the `$cont` you must add some classes and
+data to your HTML tags.
+
+```html
+<div id="page-content-home"
+     class="page-content page-content-ajax"
+     data-node-type="page"
+     data-meta-title="Home page">
+</div>
+```
+- `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website.
+- `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in your `Router` options (`pageClass: "page-content"`).
+- `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: page.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the `Router` construction (`'page' : Page`).
+- `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
+
+You’ll find `index.html` and `page1.html` examples files. You can even test them
+by spawning a simple server with `php -S localhost:8888` command (You must have at least *PHP 5.5*).
+Then go to your favorite browser and type `http://localhost:8888`.
+
+### Router dependencies
+
+A Router needs:
+
+- an options object in order to override default configuration
+- a route definition object to link `data-node-type` value to actual route *ES6* classes (you must import each class you’ll declare in your routes)
+- a `baseUrl` string which is your website protocol + domain + path, i.e. *http://mysuperwebsite.com* or *http://localhost:8888* in our examples. It is useful to bind AJAX only on internal links and not external links.
+- a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
+- a `Nav` or extending class instance to update your website navigation after AJAX requests.
+
+You can look at the `src/main.js` file to see an instanciation example with few parameters.
+

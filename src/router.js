@@ -42,17 +42,17 @@ export default class Router {
      */
     constructor(options, routes, baseUrl, loader, nav) {
         if (!baseUrl) {
-            throw "Router need baseUrl to be defined.";
+            throw "Router needs baseUrl to be defined.";
         }
         if (!loader) {
-            throw "Router need a GraphicLoader instance to be defined.";
+            throw "Router needs a GraphicLoader instance to be defined.";
         }
         if (!(loader instanceof GraphicLoader)) {
             throw "'loader' must be an instance of GraphicLoader.";
         }
 
         if (!nav) {
-            throw "Router need a Nav instance to be defined.";
+            throw "Router needs a Nav instance to be defined.";
         }
         if (!(nav instanceof Nav)) {
             throw "'nav' must be an instance of Nav.";

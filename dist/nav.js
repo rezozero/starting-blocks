@@ -1,5 +1,5 @@
-define(['exports'], function (exports) {
-  'use strict';
+define(["exports"], function (exports) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -35,14 +35,21 @@ define(['exports'], function (exports) {
     }
 
     /**
-     * Show loader.
+     * Update navigation state against a DOM container.
+     *
+     * @param {JQuery object} $cont
      */
 
 
     _createClass(Nav, [{
-      key: 'update',
-      value: function update() {
-        console.log('[Nav] Updated.');
+      key: "update",
+      value: function update($cont) {
+        if (!$cont) {
+          throw "Nav update method needs a JQuery DOM object.";
+        }
+        this.$cont = $cont;
+
+        console.log('[Nav] Updated for ' + this.$cont[0].id);
       }
     }]);
 

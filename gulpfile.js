@@ -24,7 +24,8 @@ gulp.task('default', ['requirejs']);
 /*
  * Watch tasks
  */
-gulp.task('watch', function (cb) {
+gulp.task('watch-js', function (cb) {
     return gulp.watch(paths.scripts, ['babel']);
 });
+gulp.task('watch', ['watch-js']);
 

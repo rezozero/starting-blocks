@@ -63,17 +63,17 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
             _classCallCheck(this, Router);
 
             if (!baseUrl) {
-                throw "Router need baseUrl to be defined.";
+                throw "Router needs baseUrl to be defined.";
             }
             if (!loader) {
-                throw "Router need a GraphicLoader instance to be defined.";
+                throw "Router needs a GraphicLoader instance to be defined.";
             }
             if (!(loader instanceof _graphicLoader2.default)) {
                 throw "'loader' must be an instance of GraphicLoader.";
             }
 
             if (!nav) {
-                throw "Router need a Nav instance to be defined.";
+                throw "Router needs a Nav instance to be defined.";
             }
             if (!(nav instanceof _nav2.default)) {
                 throw "'nav' must be an instance of Nav.";

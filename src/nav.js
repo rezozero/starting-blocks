@@ -36,9 +36,16 @@ export default class Nav {
     }
 
     /**
-     * Show loader.
+     * Update navigation state against a DOM container.
+     *
+     * @param {JQuery object} $cont
      */
-    update() {
-        console.log('[Nav] Updated.');
+    update($cont) {
+        if (!$cont) {
+            throw "Nav update method needs a JQuery DOM object.";
+        }
+        this.$cont = $cont;
+
+        console.log('[Nav] Updated for ' + this.$cont[0].id);
     }
 }
