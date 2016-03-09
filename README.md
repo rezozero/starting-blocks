@@ -43,31 +43,32 @@ won’t be available anymore from your project path. Solution is to add them to 
 *RequireJS* paths configuration:
 
 You’ll need to adapt this path array in your `bootstrap.js` file **and** in your
-`requirejs` *Gulp* task to build a minified version.
+`requirejs` *Gulp* task to build a minified version. Replace `/path/to/your/website`
+with your own website path or your *Roadiz* theme *static* path.
 
 ```js
 var paths = {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-    waitForImages: '/themes/PITheme/static/bower_components/waitForImages/dist/jquery.waitforimages.min',
-    TweenLite: "/themes/PITheme/static/bower_components/gsap/src/minified/TweenMax.min",
+    waitForImages: '/path/to/your/website/bower_components/waitForImages/dist/jquery.waitforimages.min',
+    TweenLite: "/path/to/your/website/bower_components/gsap/src/minified/TweenMax.min",
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
-    "state": "/themes/PITheme/static/bower_components/pageblock/dist/state",
-    "router": "/themes/PITheme/static/bower_components/pageblock/dist/router",
-    "graphicLoader": "/themes/PITheme/static/bower_components/pageblock/dist/graphicLoader",
-    "nav": "/themes/PITheme/static/bower_components/pageblock/dist/nav",
-    "abstract-page": "/themes/PITheme/static/bower_components/pageblock/dist/abstract-page",
-    "abstract-block": "/themes/PITheme/static/bower_components/pageblock/dist/abstract-block",
+    "state": "/path/to/your/website/bower_components/pageblock/dist/state",
+    "router": "/path/to/your/website/bower_components/pageblock/dist/router",
+    "graphicLoader": "/path/to/your/website/bower_components/pageblock/dist/graphicLoader",
+    "nav": "/path/to/your/website/bower_components/pageblock/dist/nav",
+    "abstract-page": "/path/to/your/website/bower_components/pageblock/dist/abstract-page",
+    "abstract-block": "/path/to/your/website/bower_components/pageblock/dist/abstract-block",
     // Utils functions and classes
-    "utils/utils": "/themes/PITheme/static/bower_components/pageblock/dist/utils/utils",
-    "utils/gaTrackErrors": "/themes/PITheme/static/bower_components/pageblock/dist/utils/gaTrackErrors",
-    "utils/debounce": "/themes/PITheme/static/bower_components/pageblock/dist/utils/debounce",
-    "utils/bootstrapMedia": "/themes/PITheme/static/bower_components/pageblock/dist/utils/bootstrapMedia",
-    "utils/polyfills": "/themes/PITheme/static/bower_components/pageblock/dist/utils/polyfills",
-    "utils/scroll": "/themes/PITheme/static/bower_components/pageblock/dist/utils/scroll",
+    "utils/utils": "/path/to/your/website/bower_components/pageblock/dist/utils/utils",
+    "utils/gaTrackErrors": "/path/to/your/website/bower_components/pageblock/dist/utils/gaTrackErrors",
+    "utils/debounce": "/path/to/your/website/bower_components/pageblock/dist/utils/debounce",
+    "utils/bootstrapMedia": "/path/to/your/website/bower_components/pageblock/dist/utils/bootstrapMedia",
+    "utils/polyfills": "/path/to/your/website/bower_components/pageblock/dist/utils/polyfills",
+    "utils/scroll": "/path/to/your/website/bower_components/pageblock/dist/utils/scroll",
     // If you want to use example Page and Home classes in your project
-    "pages/page": "/themes/PITheme/static/bower_components/pageblock/dist/pages/page"
-    "pages/home": "/themes/PITheme/static/bower_components/pageblock/dist/pages/home"
+    "pages/page": "/path/to/your/website/bower_components/pageblock/dist/pages/page"
+    "pages/home": "/path/to/your/website/bower_components/pageblock/dist/pages/home"
     // Then your own project vendor libs
     // …
 };
@@ -80,7 +81,7 @@ baseUrl: '/dist'
 
 // If your dist folder is in a Roadiz theme
 // (and your Roadiz site is at server root)
-baseUrl: '/themes/PITheme/static/dist'
+baseUrl: '/path/to/your/website/dist'
 ```
 
 ## A JS router made to work with HTML partial responses
