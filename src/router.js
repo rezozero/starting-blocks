@@ -104,6 +104,10 @@ export class Router {
         if (this.options.ajaxEnabled) {
             window.addEventListener("popstate", $.proxy(this.onPopState, this), false);
         }
+        /*
+         * Init nav events
+         */
+        this.nav.initEvents(this);
     }
 
     onPopState(event) {

@@ -153,6 +153,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 this.router.loader.hide();
                 this.router.nav.update(this.$cont);
+                this.router.nav.initEvents(this.router);
 
                 var delay = this.loadDuration > this.router.options.minLoadDuration ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 

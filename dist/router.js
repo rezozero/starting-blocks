@@ -119,6 +119,10 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                 if (this.options.ajaxEnabled) {
                     window.addEventListener("popstate", _jquery2.default.proxy(this.onPopState, this), false);
                 }
+                /*
+                 * Init nav events
+                 */
+                this.nav.initEvents(this);
             }
         }, {
             key: "onPopState",

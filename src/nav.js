@@ -32,7 +32,12 @@
 export class Nav {
 
     constructor() {
-
+        /**
+         * Page DOM section.
+         *
+         * @type {jQuery}
+         */
+        this.$cont = null;
     }
 
     /**
@@ -47,5 +52,17 @@ export class Nav {
         this.$cont = $cont;
 
         console.log('[Nav] Updated for ' + this.$cont[0].id);
+    }
+
+    /**
+     * Bind navigation against router.
+     *
+     * @param {Router} router
+     */
+    initEvents(router) {
+        if (!router) {
+            throw "Nav initEvents method needs a Router object.";
+        }
+        console.log('Init nav events');
     }
 }
