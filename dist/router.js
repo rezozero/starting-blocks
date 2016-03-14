@@ -207,7 +207,7 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                         // Extract only to new page content
                         // if the whole HTML is queried
                         var $data = null;
-                        var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data));
+                        var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
                         if ($response.hasClass(_this.options.pageClass)) {
                             $data = $response;
                         } else {
@@ -248,8 +248,8 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
         }, {
             key: "updatePageTitle",
             value: function updatePageTitle($data) {
-                if ($data.length && $data[0].getAttribute('data-meta-title') !== '') {
-                    var metaTitle = $data[0].getAttribute('data-meta-title');
+                if ($data.length && $data.attr('data-meta-title') !== '') {
+                    var metaTitle = $data.attr('data-meta-title');
                     if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
                 }
             }

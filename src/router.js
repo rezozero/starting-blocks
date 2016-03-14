@@ -129,7 +129,7 @@ export class Router {
         if(context == 'static') {
             this.loadBeginDate = new Date();
         }
-        var nodeType = $cont.attr('data-node-type');
+        let nodeType = $cont.attr('data-node-type');
 
         if(isHome && this.options.homeHasClass){
             this.page = new Home(this, $cont, context, nodeType, isHome);
@@ -142,7 +142,7 @@ export class Router {
     }
 
     onLinkClick(e) {
-        var linkClassName = e.currentTarget.className,
+        let linkClassName = e.currentTarget.className,
             linkHref = e.currentTarget.href;
 
         if(linkHref.indexOf('mailto:') == -1) {
@@ -154,7 +154,7 @@ export class Router {
                !this.transition) {
                 this.transition = true;
 
-                var state = new State(e.currentTarget, {
+                let state = new State(e.currentTarget, {
                     previousType: this.page.type,
                     navLinkClass: this.options.navLinkClass,
                 });
@@ -172,7 +172,7 @@ export class Router {
         this.loader.show();
         this.loadBeginDate = new Date();
 
-        var proxiedPreLoad = $.proxy(this.options.preLoad, this);
+        let proxiedPreLoad = $.proxy(this.options.preLoad, this);
         proxiedPreLoad(state);
 
         var _this = this;
@@ -187,8 +187,8 @@ export class Router {
             success: (data) => {
                 // Extract only to new page content
                 // if the whole HTML is queried
-                var $data = null;
-                var $response = $($.parseHTML(data));
+                let $data = null;
+                let $response = $($.parseHTML(data.trim()));
                 if ($response.hasClass(_this.options.pageClass)) {
                     $data = $response;
                 } else {
@@ -208,7 +208,7 @@ export class Router {
                 _this.updatePageTitle($data);
                 _this.boot($data, 'ajax', state.isHome);
 
-                var proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
+                let proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
                 proxiedPostLoad(state, $data);
 
                 // Analytics
@@ -226,8 +226,8 @@ export class Router {
      * @param {jQuery} $data
      */
     updatePageTitle($data){
-        if($data.length && $data[0].getAttribute('data-meta-title') !== ''){
-            var metaTitle = $data[0].getAttribute('data-meta-title');
+        if($data.length && $data.attr('data-meta-title') !== ''){
+            let metaTitle = $data.attr('data-meta-title');
             if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
         }
     }

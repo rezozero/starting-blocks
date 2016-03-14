@@ -1,4 +1,4 @@
-define(["utils/polyfills", "jquery", "router", "graphicLoader", "nav", "pages/page"], function (_polyfills, _jquery, _router, _graphicLoader, _nav, _page) {
+define(["jquery", "utils/polyfills", "router", "graphicLoader", "nav", "pages/page"], function (_jquery, _polyfills, _router, _graphicLoader, _nav, _page) {
   "use strict";
 
   var _jquery2 = _interopRequireDefault(_jquery);

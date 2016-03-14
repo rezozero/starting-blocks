@@ -1,5 +1,5 @@
-import {polyfills} from "utils/polyfills";
 import $ from "jquery";
+import {polyfills} from "utils/polyfills";
 import {Router} from "router";
 import {GraphicLoader} from "graphicLoader";
 import {Nav} from "nav";
