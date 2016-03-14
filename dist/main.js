@@ -1,15 +1,5 @@
-define(["pages/page", "utils/polyfills", "router", "graphicLoader", "nav", "jquery"], function (_page, _polyfills, _router, _graphicLoader, _nav, _jquery) {
+define(["utils/polyfills", "jquery", "router", "graphicLoader", "nav", "pages/page"], function (_polyfills, _jquery, _router, _graphicLoader, _nav, _page) {
   "use strict";
-
-  var _page2 = _interopRequireDefault(_page);
-
-  var _polyfills2 = _interopRequireDefault(_polyfills);
-
-  var _router2 = _interopRequireDefault(_router);
-
-  var _graphicLoader2 = _interopRequireDefault(_graphicLoader);
-
-  var _nav2 = _interopRequireDefault(_nav);
 
   var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -22,7 +12,7 @@ define(["pages/page", "utils/polyfills", "router", "graphicLoader", "nav", "jque
   /*
    * Declare polyfills
    */
-  (0, _polyfills2.default)();
+  (0, _polyfills.polyfills)();
 
   /*
    * Begin main app ---
@@ -33,7 +23,7 @@ define(["pages/page", "utils/polyfills", "router", "graphicLoader", "nav", "jque
   var bodyId = $body[0].id;
   var isHome = dataHome == '1' ? true : false;
 
-  var router = new _router2.default({
+  var router = new _router.Router({
     homeHasClass: false,
     ajaxEnabled: true
   }, {
@@ -41,10 +31,10 @@ define(["pages/page", "utils/polyfills", "router", "graphicLoader", "nav", "jque
      * Routes are nodeType corresponding to
      * ES6 modules
      */
-    'page': _page2.default
+    'page': _page.Page
   },
   // temp namespace is defined in your index.html
-  temp.baseUrl, new _graphicLoader2.default(), new _nav2.default());
+  temp.baseUrl, new _graphicLoader.GraphicLoader(), new _nav.Nav());
   router.initEvents();
   router.boot((0, _jquery2.default)('.page-content').eq(0), 'static', isHome);
 });

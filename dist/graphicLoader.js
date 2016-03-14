@@ -29,7 +29,7 @@ define(['exports'], function (exports) {
     };
   }();
 
-  var GraphicLoader = function () {
+  var GraphicLoader = exports.GraphicLoader = function () {
     function GraphicLoader() {
       _classCallCheck(this, GraphicLoader);
     }
@@ -44,6 +44,11 @@ define(['exports'], function (exports) {
       value: function show() {
         console.log('[GraphicLoader] Show loader.');
       }
+
+      /**
+       * Hide loader.
+       */
+
     }, {
       key: 'hide',
       value: function hide() {
@@ -53,7 +58,5 @@ define(['exports'], function (exports) {
 
     return GraphicLoader;
   }();
-
-  exports.default = GraphicLoader;
 });
 //# sourceMappingURL=graphicLoader.js.map

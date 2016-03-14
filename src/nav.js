@@ -29,7 +29,7 @@
  * Any child implementations must implements
  * update method.
  */
-export default class Nav {
+export class Nav {
 
     constructor() {
 

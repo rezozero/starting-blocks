@@ -29,7 +29,7 @@ define(['exports'], function (exports) {
         };
     }();
 
-    var Scroll = function () {
+    var Scroll = exports.Scroll = function () {
         function Scroll() {
             _classCallCheck(this, Scroll);
         }
@@ -58,6 +58,13 @@ define(['exports'], function (exports) {
             value: function _wheel(e) {
                 Scroll._preventDefault(e);
             }
+
+            /**
+             * Disable scroll.
+             *
+             * @return {void}
+             */
+
         }, {
             key: 'disable',
             value: function disable() {
@@ -67,6 +74,13 @@ define(['exports'], function (exports) {
                 window.onmousewheel = document.onmousewheel = Scroll._wheel;
                 document.onkeydown = Scroll._keydown;
             }
+
+            /**
+             * Enable scroll again.
+             *
+             * @return {void}
+             */
+
         }, {
             key: 'enable',
             value: function enable() {
@@ -79,7 +93,5 @@ define(['exports'], function (exports) {
 
         return Scroll;
     }();
-
-    exports.default = Scroll;
 });
 //# sourceMappingURL=scroll.js.map

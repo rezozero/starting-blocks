@@ -4,16 +4,7 @@ define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-
-    var _abstractPage2 = _interopRequireDefault(_abstractPage);
-
-    var _bootstrapMedia2 = _interopRequireDefault(_bootstrapMedia);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    exports.Page = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -88,13 +79,13 @@ define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, 
         if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
-    var Page = function (_AbstractPage) {
+    var Page = exports.Page = function (_AbstractPage) {
         _inherits(Page, _AbstractPage);
 
-        function Page(router, id, context, type, isHome) {
+        function Page() {
             _classCallCheck(this, Page);
 
-            return _possibleConstructorReturn(this, Object.getPrototypeOf(Page).call(this, router, id, context, type, isHome));
+            return _possibleConstructorReturn(this, Object.getPrototypeOf(Page).apply(this, arguments));
         }
 
         _createClass(Page, [{
@@ -102,21 +93,19 @@ define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, 
             value: function onResize() {
                 _get(Object.getPrototypeOf(Page.prototype), "onResize", this).call(this);
 
-                if (_bootstrapMedia2.default.isMediaMinSM()) {
+                if (_bootstrapMedia.BootstrapMedia.isMinSM()) {
                     console.log('-- sm');
                 }
-                if (_bootstrapMedia2.default.isMediaMinMD()) {
+                if (_bootstrapMedia.BootstrapMedia.isMinMD()) {
                     console.log('-- md');
                 }
-                if (_bootstrapMedia2.default.isMediaMinLG()) {
+                if (_bootstrapMedia.BootstrapMedia.isMinLG()) {
                     console.log('-- lg');
                 }
             }
         }]);
 
         return Page;
-    }(_abstractPage2.default);
-
-    exports.default = Page;
+    }(_abstractPage.AbstractPage);
 });
 //# sourceMappingURL=page.js.map

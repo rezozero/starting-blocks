@@ -22,7 +22,7 @@
  * @file polyfills.js
  * @author Ambroise Maupate
  */
-export default function polyfills() {
+export function polyfills() {
     /**
      * Request animation frame polyfill
      */

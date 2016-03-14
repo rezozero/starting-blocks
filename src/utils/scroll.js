@@ -22,7 +22,7 @@
  * @file scroll.js
  * @author Ambroise Maupate
  */
-export default class Scroll {
+export class Scroll {
 
     static _preventDefault(e) {
         e = e || window.event;

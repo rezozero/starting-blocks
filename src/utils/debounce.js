@@ -11,7 +11,7 @@
  * @param {Number} wait       [time to wait]
  * @param {Boolean} immediate []
  */
-export default function debounce(func, wait, immediate) {
+export function debounce(func, wait, immediate) {
     var timeout;
     return function() {
         var context = this, args = arguments;

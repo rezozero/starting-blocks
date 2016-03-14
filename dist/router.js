@@ -1,19 +1,10 @@
-define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav", "jquery"], function (exports, _state, _home, _abstractPage, _graphicLoader, _nav, _jquery) {
+define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoader", "nav"], function (exports, _jquery, _state, _home, _abstractPage, _graphicLoader, _nav) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-
-    var _state2 = _interopRequireDefault(_state);
-
-    var _home2 = _interopRequireDefault(_home);
-
-    var _abstractPage2 = _interopRequireDefault(_abstractPage);
-
-    var _graphicLoader2 = _interopRequireDefault(_graphicLoader);
-
-    var _nav2 = _interopRequireDefault(_nav);
+    exports.Router = undefined;
 
     var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -47,7 +38,7 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
         };
     }();
 
-    var Router = function () {
+    var Router = exports.Router = function () {
 
         /**
          * Create a new Router.
@@ -68,14 +59,14 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
             if (!loader) {
                 throw "Router needs a GraphicLoader instance to be defined.";
             }
-            if (!(loader instanceof _graphicLoader2.default)) {
+            if (!(loader instanceof _graphicLoader.GraphicLoader)) {
                 throw "'loader' must be an instance of GraphicLoader.";
             }
 
             if (!nav) {
                 throw "Router needs a Nav instance to be defined.";
             }
-            if (!(nav instanceof _nav2.default)) {
+            if (!(nav instanceof _nav.Nav)) {
                 throw "'nav' must be an instance of Nav.";
             }
 
@@ -101,7 +92,6 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
                 activeClass: "active",
                 pageBlockClass: ".page-block",
                 $ajaxContainer: (0, _jquery2.default)("#ajax-container"),
-                $loading: (0, _jquery2.default)("#loading"),
                 minLoadDuration: 0,
                 postLoad: function postLoad(state, data) {},
                 preLoad: function preLoad(state) {},
@@ -138,6 +128,16 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
                     this.loadPage(event, event.state);
                 }
             }
+
+            /**
+             * Booting need a jQuery handler for
+             * the container.
+             *
+             * @param  {jQuery}  $data
+             * @param  {String}  context
+             * @param  {Boolean} isHome
+             */
+
         }, {
             key: "boot",
             value: function boot($cont, context, isHome) {
@@ -147,11 +147,12 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
                 var nodeType = $cont.attr('data-node-type');
 
                 if (isHome && this.options.homeHasClass) {
-                    this.page = new _home2.default(this, $cont, context, nodeType, isHome);
+                    this.page = new _home.Home(this, $cont, context, nodeType, isHome);
                 } else if (nodeType && typeof this.routes[nodeType] !== 'undefined') {
                     this.page = new this.routes[nodeType](this, $cont, context, nodeType, isHome);
                 } else {
-                    this.page = new _abstractPage2.default(this, $cont, context, nodeType, isHome);
+                    console.log('Page (' + nodeType + ') has no defined route, using AbstractPage.');
+                    this.page = new _abstractPage.AbstractPage(this, $cont, context, nodeType, isHome);
                 }
             }
         }, {
@@ -167,7 +168,7 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
                     if (linkClassName.indexOf(this.options.activeClass) == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 && !this.transition) {
                         this.transition = true;
 
-                        var state = new _state2.default(e.currentTarget, {
+                        var state = new _state.State(e.currentTarget, {
                             previousType: this.page.type,
                             navLinkClass: this.options.navLinkClass
                         });
@@ -232,6 +233,14 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
                     }
                 });
             }
+
+            /**
+             * Update page title against data-title attribute
+             * from ajax loaded partial DOM.
+             *
+             * @param {jQuery} $data
+             */
+
         }, {
             key: "updatePageTitle",
             value: function updatePageTitle($data) {
@@ -253,7 +262,5 @@ define(["exports", "state", "pages/home", "abstract-page", "graphicLoader", "nav
 
         return Router;
     }();
-
-    exports.default = Router;
 });
 //# sourceMappingURL=router.js.map

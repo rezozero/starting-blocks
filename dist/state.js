@@ -4,6 +4,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.State = undefined;
 
     var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -19,7 +20,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
         }
     }
 
-    var State = function State(link, options) {
+    var State = exports.State = function State(link, options) {
         _classCallCheck(this, State);
 
         this.options = {
@@ -49,7 +50,5 @@ define(["exports", "jquery"], function (exports, _jquery) {
         this.context = context;
         this.isHome = isHome;
     };
-
-    exports.default = State;
 });
 //# sourceMappingURL=state.js.map

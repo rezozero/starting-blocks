@@ -4,7 +4,7 @@
  */
 import $ from "jquery";
 
-export default function gaTrackErrors(){
+export function gaTrackErrors(){
     if(typeof ga !== 'undefined') {
         // Pure JavaScript errors handler
         window.addEventListener('error', function (err) {

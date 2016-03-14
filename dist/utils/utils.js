@@ -4,6 +4,7 @@ define(['exports', 'jquery'], function (exports, _jquery) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.Utils = undefined;
 
     var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -37,19 +38,36 @@ define(['exports', 'jquery'], function (exports, _jquery) {
         };
     }();
 
-    var Utils = function () {
+    var Utils = exports.Utils = function () {
         function Utils() {
             _classCallCheck(this, Utils);
         }
 
         _createClass(Utils, null, [{
             key: 'stripTrailingSlash',
+
+
+            /**
+             * @param  {String} str
+             * @return {String}
+             */
             value: function stripTrailingSlash(str) {
                 if (str.substr(-1) == '/') {
                     return str.substr(0, str.length - 1);
                 }
                 return str;
             }
+
+            /**
+             * Log credits to console for code lovers.
+             *
+             * @param  {String} siteName
+             * @param  {String} bgColor
+             * @param  {Array}  creditsList
+             * @param  {Array}  thanksList
+             * @param  {String} textColor (optional)
+             */
+
         }, {
             key: 'logCredits',
             value: function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
@@ -84,17 +102,42 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                 console.log("-");
                 console.log(" ");
             }
+
+            /**
+             * Get style value.
+             *
+             * @param  {jQuery} element $el [element to check]
+             * @param  {String} style
+             * @return {mixed}
+             */
+
         }, {
             key: 'getStyleVal',
             value: function getStyleVal($el, style) {
                 var elStyle = $el.css(style);
                 return Math.round(Number(elStyle.substr(0, elStyle.length - 2)));
             }
+
+            /**
+             * Add class custom.
+             *
+             * @param {DOM object} el      [dom element]
+             * @param {String} classToAdd  [class to add]
+             */
+
         }, {
             key: 'addClass',
             value: function addClass(el, classToAdd) {
                 if (el.classList) el.classList.add(classToAdd);else el.className += ' ' + classToAdd;
             }
+
+            /**
+             * Remove class custom.
+             *
+             * @param {DOM object} el
+             * @param {String} classToRemove
+             */
+
         }, {
             key: 'removeClass',
             value: function removeClass(el, classToRemove) {
@@ -108,6 +151,16 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                     }
                 }
             }
+
+            /**
+             * Get random number.
+             *
+             * @param  {Number} min [min value]
+             * @param  {Number} max [max value]
+             * @param  {Number} decimal
+             * @return {Number}
+             */
+
         }, {
             key: 'getRandomNumber',
             value: function getRandomNumber(min, max, decimal) {
@@ -117,11 +170,26 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                     return result.toFixed(decimal);
                 } else return result;
             }
+
+            /**
+             * Get random integer.
+             *
+             * @param  {Number} min [min value]
+             * @param  {Number} max [max value]
+             * @return {Number}
+             */
+
         }, {
             key: 'getRandomInt',
             value: function getRandomInt(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
+
+            /**
+             * Replace placeholder for browser that
+             * do not support it.
+             */
+
         }, {
             key: 'replacePlaceholder',
             value: function replacePlaceholder() {
@@ -151,6 +219,14 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                     }
                 }
             }
+
+            /**
+             * Match CSS media queries and JavaScript window width.
+             *
+             * @see http://stackoverflow.com/a/11310353
+             * @return {Object}
+             */
+
         }, {
             key: 'getViewportSize',
             value: function getViewportSize() {
@@ -162,6 +238,14 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                 }
                 return { width: e[a + 'Width'], height: e[a + 'Height'] };
             }
+
+            /**
+             * Get a css property with the vendor prefix.
+             *
+             * @param  {String} property the css property
+             * @return {String}          the prefixed property
+             */
+
         }, {
             key: 'prefixProperty',
             value: function prefixProperty(property) {
@@ -179,6 +263,18 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                     }
                 }
             }
+
+            /**
+             * Gets normalized ratio of value inside range.
+             *
+             * from https://github.com/mout/mout/blob/master/src/math/norm.js
+             *
+             * @param  {Number} val
+             * @param  {Number} min
+             * @param  {Number} max
+             * @return {Number}
+             */
+
         }, {
             key: 'getNormRatio',
             value: function getNormRatio(val, min, max) {
@@ -191,7 +287,5 @@ define(['exports', 'jquery'], function (exports, _jquery) {
 
         return Utils;
     }();
-
-    exports.default = Utils;
 });
 //# sourceMappingURL=utils.js.map

@@ -29,7 +29,7 @@ define(["exports"], function (exports) {
     };
   }();
 
-  var Nav = function () {
+  var Nav = exports.Nav = function () {
     function Nav() {
       _classCallCheck(this, Nav);
     }
@@ -55,7 +55,5 @@ define(["exports"], function (exports) {
 
     return Nav;
   }();
-
-  exports.default = Nav;
 });
 //# sourceMappingURL=nav.js.map

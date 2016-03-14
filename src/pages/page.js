@@ -22,27 +22,24 @@
  * @file page.js
  * @author Ambroise Maupate
  */
-import AbstractPage from "abstract-page";
-import BootstrapMedia from "utils/bootstrapMedia";
+import {AbstractPage} from "abstract-page";
+import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
  * Some example "page"
  */
-export default class Page extends AbstractPage {
-    constructor(router, id, context, type, isHome){
-        super(router, id, context, type, isHome);
-    }
+export class Page extends AbstractPage {
 
     onResize(){
         super.onResize();
 
-        if (BootstrapMedia.isMediaMinSM()) {
+        if (BootstrapMedia.isMinSM()) {
             console.log('-- sm');
         }
-        if (BootstrapMedia.isMediaMinMD()) {
+        if (BootstrapMedia.isMinMD()) {
             console.log('-- md');
         }
-        if (BootstrapMedia.isMediaMinLG()) {
+        if (BootstrapMedia.isMinLG()) {
             console.log('-- lg');
         }
     }

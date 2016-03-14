@@ -4,7 +4,7 @@ define(['exports'], function (exports) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.default = polyfills;
+    exports.polyfills = polyfills;
     /**
      * Copyright © 2016, Ambroise Maupate
      *

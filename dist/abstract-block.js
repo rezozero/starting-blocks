@@ -4,12 +4,11 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.AbstractBlock = undefined;
 
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
     var _jquery2 = _interopRequireDefault(_jquery);
-
-    var _debounce2 = _interopRequireDefault(_debounce);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -41,7 +40,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
         };
     }();
 
-    var AbstractBlock = function () {
+    var AbstractBlock = exports.AbstractBlock = function () {
         /**
          * @param  {AbstractPage} page
          * @param  {String} id
@@ -57,7 +56,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             this.$cont = $cont;
             this.id = $cont[0].id;
             this.type = type;
-            this.onResizeDebounce = (0, _debounce2.default)(_jquery2.default.proxy(this.onResize, this), 50, false);
+            this.onResizeDebounce = (0, _debounce.debounce)(_jquery2.default.proxy(this.onResize, this), 50, false);
 
             console.log('new block : ' + type);
 
@@ -93,6 +92,14 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             value: function onResize() {
                 console.log('resize :' + this.id);
             }
+
+            /**
+             * onMapsReady.
+             *
+             * This method must be dispatched by Base.initMaps callback
+             * method.
+             */
+
         }, {
             key: "onMapsReady",
             value: function onMapsReady() {}
@@ -100,7 +107,5 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
 
         return AbstractBlock;
     }();
-
-    exports.default = AbstractBlock;
 });
 //# sourceMappingURL=abstract-block.js.map

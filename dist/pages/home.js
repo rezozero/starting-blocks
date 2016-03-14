@@ -1,23 +1,34 @@
-define(["exports", "abstract-page"], function (exports, _abstractPage) {
+define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, _abstractPage, _bootstrapMedia) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-
-    var _abstractPage2 = _interopRequireDefault(_abstractPage);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    exports.Home = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
             throw new TypeError("Cannot call a class as a function");
         }
     }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
 
     function _possibleConstructorReturn(self, call) {
         if (!self) {
@@ -26,6 +37,31 @@ define(["exports", "abstract-page"], function (exports, _abstractPage) {
 
         return call && (typeof call === "object" || typeof call === "function") ? call : self;
     }
+
+    var _get = function get(object, property, receiver) {
+        if (object === null) object = Function.prototype;
+        var desc = Object.getOwnPropertyDescriptor(object, property);
+
+        if (desc === undefined) {
+            var parent = Object.getPrototypeOf(object);
+
+            if (parent === null) {
+                return undefined;
+            } else {
+                return get(parent, property, receiver);
+            }
+        } else if ("value" in desc) {
+            return desc.value;
+        } else {
+            var getter = desc.get;
+
+            if (getter === undefined) {
+                return undefined;
+            }
+
+            return getter.call(receiver);
+        }
+    };
 
     function _inherits(subClass, superClass) {
         if (typeof superClass !== "function" && superClass !== null) {
@@ -43,18 +79,33 @@ define(["exports", "abstract-page"], function (exports, _abstractPage) {
         if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
-    var Home = function (_AbstractPage) {
+    var Home = exports.Home = function (_AbstractPage) {
         _inherits(Home, _AbstractPage);
 
-        function Home(router, id, context, type, isHome) {
+        function Home() {
             _classCallCheck(this, Home);
 
-            return _possibleConstructorReturn(this, Object.getPrototypeOf(Home).call(this, router, id, context, type, isHome));
+            return _possibleConstructorReturn(this, Object.getPrototypeOf(Home).apply(this, arguments));
         }
 
-        return Home;
-    }(_abstractPage2.default);
+        _createClass(Home, [{
+            key: "onResize",
+            value: function onResize() {
+                _get(Object.getPrototypeOf(Home.prototype), "onResize", this).call(this);
 
-    exports.default = Home;
+                if (_bootstrapMedia.BootstrapMedia.isMinSM()) {
+                    console.log('-- sm');
+                }
+                if (_bootstrapMedia.BootstrapMedia.isMinMD()) {
+                    console.log('-- md');
+                }
+                if (_bootstrapMedia.BootstrapMedia.isMinLG()) {
+                    console.log('-- lg');
+                }
+            }
+        }]);
+
+        return Home;
+    }(_abstractPage.AbstractPage);
 });
 //# sourceMappingURL=home.js.map

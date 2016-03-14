@@ -4,18 +4,13 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.AbstractPage = undefined;
 
     var _TweenLite2 = _interopRequireDefault(_TweenLite);
 
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
     var _jquery2 = _interopRequireDefault(_jquery);
-
-    var _debounce2 = _interopRequireDefault(_debounce);
-
-    var _abstractBlock2 = _interopRequireDefault(_abstractBlock);
-
-    var _router2 = _interopRequireDefault(_router);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -47,7 +42,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
         };
     }();
 
-    var AbstractPage = function () {
+    var AbstractPage = exports.AbstractPage = function () {
         /**
          * @param  {Router}  router
          * @param  {String}  $cont
@@ -67,7 +62,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             if (!router) {
                 throw "AbstractPage need a Router instance to be defined.";
             }
-            if (!(router instanceof _router2.default)) {
+            if (!(router instanceof _router.Router)) {
                 throw "'router' must be an instance of Router.";
             }
 
@@ -78,7 +73,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             this.context = context;
             this.type = type;
             this.isHome = isHome;
-            this.onResizeDebounce = (0, _debounce2.default)(_jquery2.default.proxy(this.onResize, this), 50, false);
+            this.onResizeDebounce = (0, _debounce.debounce)(_jquery2.default.proxy(this.onResize, this), 50, false);
 
             this.init();
             this.initEvents();
@@ -239,7 +234,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     if (typeof _this.router.routes[type] !== "undefined") {
                         _this.blocks[blockIndex] = new _this.router.routes[type](_this, $block, type);
                     } else {
-                        _this.blocks[blockIndex] = new _abstractBlock2.default(_this, $block, type);
+                        _this.blocks[blockIndex] = new _abstractBlock.AbstractBlock(_this, $block, type);
                     }
                 });
             }
@@ -248,6 +243,14 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             value: function onResize() {
                 console.log('resize :' + this.id);
             }
+
+            /**
+             * Add target blank to external links.
+             *
+             * @param  {JQuery} $links
+             * @param  {String} baseUrl
+             */
+
         }, {
             key: "externalLinkTarget",
             value: function externalLinkTarget($links, baseUrl) {
@@ -267,7 +270,5 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
         return AbstractPage;
     }();
-
-    exports.default = AbstractPage;
 });
 //# sourceMappingURL=abstract-page.js.map

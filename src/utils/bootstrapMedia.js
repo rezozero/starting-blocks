@@ -7,10 +7,10 @@
  * @copyright REZO ZERO 2016
  * @author Ambroise Maupate
  */
-import Utils from "utils/utils";
+import {Utils} from "utils/utils";
 
-export default class BootstrapMedia {
-    static isMediaMinSM() {
+export class BootstrapMedia {
+    static isMinSM() {
         var size = Utils.getViewportSize();
 
         if (size.width >= 768) {
@@ -20,7 +20,7 @@ export default class BootstrapMedia {
         }
     }
 
-    static isMediaMinMD() {
+    static isMinMD() {
         var size = Utils.getViewportSize();
 
         if (size.width >= 992) {
@@ -30,10 +30,20 @@ export default class BootstrapMedia {
         }
     }
 
-    static isMediaMinLG() {
+    static isMinLG() {
         var size = Utils.getViewportSize();
 
         if (size.width >= 1200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static isMinXL() {
+        var size = Utils.getViewportSize();
+
+        if (size.width >= 1920) {
             return true;
         } else {
             return false;

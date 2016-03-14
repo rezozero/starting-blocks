@@ -22,14 +22,14 @@
  * @file router.js
  * @author Ambroise Maupate
  */
-import State from "state";
-import Home from "pages/home";
-import AbstractPage from "abstract-page";
-import GraphicLoader from "graphicLoader";
-import Nav from "nav";
 import $ from "jquery";
+import {State} from "state";
+import {Home} from "pages/home";
+import {AbstractPage} from "abstract-page";
+import {GraphicLoader} from "graphicLoader";
+import {Nav} from "nav";
 
-export default class Router {
+export class Router {
 
     /**
      * Create a new Router.
@@ -80,7 +80,6 @@ export default class Router {
             activeClass: "active",
             pageBlockClass: ".page-block",
             $ajaxContainer: $("#ajax-container"),
-            $loading: $("#loading"),
             minLoadDuration: 0,
             postLoad: function (state, data) {},
             preLoad: function (state) {},
@@ -133,6 +132,7 @@ export default class Router {
         } else if(nodeType && typeof this.routes[nodeType] !== 'undefined') {
             this.page = new this.routes[nodeType](this, $cont, context, nodeType, isHome);
         } else {
+            console.log('Page (' + nodeType + ') has no defined route, using AbstractPage.');
             this.page = new AbstractPage(this, $cont, context, nodeType, isHome);
         }
     }

@@ -29,7 +29,7 @@
  * Any child implementations must implements
  * show and hide methods.
  */
-export default class GraphicLoader {
+export class GraphicLoader {
 
     constructor() {
 

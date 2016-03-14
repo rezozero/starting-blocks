@@ -4,7 +4,7 @@ define(['exports', 'jquery'], function (exports, _jquery) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.default = gaTrackErrors;
+    exports.gaTrackErrors = gaTrackErrors;
 
     var _jquery2 = _interopRequireDefault(_jquery);
 

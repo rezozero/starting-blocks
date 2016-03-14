@@ -24,11 +24,9 @@
  */
 import waitForImages from "waitForImages";
 import $ from "jquery";
+import {debounce} from "utils/debounce";
 
-import debounce from "utils/debounce";
-
-
-export default class AbstractBlock {
+export class AbstractBlock {
     /**
      * @param  {AbstractPage} page
      * @param  {String} id

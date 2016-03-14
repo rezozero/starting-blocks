@@ -4,7 +4,7 @@ define(["exports"], function (exports) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.default = debounce;
+    exports.debounce = debounce;
     /**
      * Debounce
      * Returns a function, that, as long as it continues to be invoked, will not

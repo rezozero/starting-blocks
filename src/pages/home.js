@@ -22,10 +22,25 @@
  * @file home.js
  * @author Ambroise Maupate
  */
-import AbstractPage from "abstract-page";
+import {AbstractPage} from "abstract-page";
+import {BootstrapMedia} from "utils/bootstrapMedia";
 
-export default class Home extends AbstractPage {
-    constructor(router, id, context, type, isHome){
-        super(router, id, context, type, isHome);
+/**
+ * Some example "home" page
+ */
+export class Home extends AbstractPage {
+
+    onResize(){
+        super.onResize();
+
+        if (BootstrapMedia.isMinSM()) {
+            console.log('-- sm');
+        }
+        if (BootstrapMedia.isMinMD()) {
+            console.log('-- md');
+        }
+        if (BootstrapMedia.isMinLG()) {
+            console.log('-- lg');
+        }
     }
 }

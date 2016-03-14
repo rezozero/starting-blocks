@@ -1,9 +1,9 @@
-import Page from "pages/page";
-import polyfills from "utils/polyfills";
-import Router from "router";
-import GraphicLoader from "graphicLoader";
-import Nav from "nav";
+import {polyfills} from "utils/polyfills";
 import $ from "jquery";
+import {Router} from "router";
+import {GraphicLoader} from "graphicLoader";
+import {Nav} from "nav";
+import {Page} from "pages/page";
 
 /*
  * Declare polyfills

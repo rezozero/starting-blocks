@@ -24,7 +24,7 @@
  */
 import $ from "jquery";
 
-export default class State {
+export class State {
     constructor(link, options) {
         this.options = {
             previousType: "page",

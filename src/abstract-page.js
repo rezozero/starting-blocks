@@ -25,12 +25,11 @@
 import TweenLite from "TweenLite";
 import waitForImages from "waitForImages";
 import $ from "jquery";
+import {debounce} from "utils/debounce";
+import {AbstractBlock} from "abstract-block";
+import {Router} from "router";
 
-import debounce from "utils/debounce";
-import AbstractBlock from "abstract-block";
-import Router from "router";
-
-export default class AbstractPage {
+export class AbstractPage {
     /**
      * @param  {Router}  router
      * @param  {String}  $cont

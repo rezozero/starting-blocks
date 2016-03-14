@@ -4,14 +4,7 @@ define(["exports", "utils/utils"], function (exports, _utils) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-
-    var _utils2 = _interopRequireDefault(_utils);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    exports.BootstrapMedia = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -37,15 +30,15 @@ define(["exports", "utils/utils"], function (exports, _utils) {
         };
     }();
 
-    var BootstrapMedia = function () {
+    var BootstrapMedia = exports.BootstrapMedia = function () {
         function BootstrapMedia() {
             _classCallCheck(this, BootstrapMedia);
         }
 
         _createClass(BootstrapMedia, null, [{
-            key: "isMediaMinSM",
-            value: function isMediaMinSM() {
-                var size = _utils2.default.getViewportSize();
+            key: "isMinSM",
+            value: function isMinSM() {
+                var size = _utils.Utils.getViewportSize();
 
                 if (size.width >= 768) {
                     return true;
@@ -54,9 +47,9 @@ define(["exports", "utils/utils"], function (exports, _utils) {
                 }
             }
         }, {
-            key: "isMediaMinMD",
-            value: function isMediaMinMD() {
-                var size = _utils2.default.getViewportSize();
+            key: "isMinMD",
+            value: function isMinMD() {
+                var size = _utils.Utils.getViewportSize();
 
                 if (size.width >= 992) {
                     return true;
@@ -65,11 +58,22 @@ define(["exports", "utils/utils"], function (exports, _utils) {
                 }
             }
         }, {
-            key: "isMediaMinLG",
-            value: function isMediaMinLG() {
-                var size = _utils2.default.getViewportSize();
+            key: "isMinLG",
+            value: function isMinLG() {
+                var size = _utils.Utils.getViewportSize();
 
                 if (size.width >= 1200) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }, {
+            key: "isMinXL",
+            value: function isMinXL() {
+                var size = _utils.Utils.getViewportSize();
+
+                if (size.width >= 1920) {
                     return true;
                 } else {
                     return false;
@@ -79,7 +83,5 @@ define(["exports", "utils/utils"], function (exports, _utils) {
 
         return BootstrapMedia;
     }();
-
-    exports.default = BootstrapMedia;
 });
 //# sourceMappingURL=bootstrapMedia.js.map
