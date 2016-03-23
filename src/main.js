@@ -13,16 +13,21 @@ polyfills();
 /*
  * Begin main app ---
  */
-let $body = $('body');
-let nodeType = $body[0].getAttribute('data-node-type') || 'page';
-let dataHome = $body[0].getAttribute('data-is-home');
-let bodyId = $body[0].id;
-let isHome = (dataHome == '1') ? true : false;
+const $body = $('body');
+const nodeType = $body[0].getAttribute('data-node-type') || 'page';
+const dataHome = $body[0].getAttribute('data-is-home');
+const bodyId = $body[0].id;
+const isHome = (dataHome == '1') ? true : false;
 
-let router = new Router(
+const router = new Router(
     {
         homeHasClass: false,
         ajaxEnabled: true,
+        preBoot: () => { console.log('--- preboot'); },
+        postLoad: () => { console.log('--- postLoad'); },
+        preLoad: () => { console.log('--- preLoad'); },
+        onDestroy: () => { console.log('--- onDestroy'); },
+        prePushState: () => { console.log('--- prePushState'); },
     },
     {
         /*

@@ -96,7 +96,8 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                 postLoad: function postLoad(state, data) {},
                 preLoad: function preLoad(state) {},
                 prePushState: function prePushState(state) {},
-                onDestroy: function onDestroy() {}
+                onDestroy: function onDestroy() {},
+                preBoot: function preBoot($cont, context, isHome) {}
             };
 
             if (options !== null) {
@@ -108,16 +109,16 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
             key: "destroy",
             value: function destroy() {
                 if (this.options.ajaxEnabled) {
-                    window.removeEventListener("popstate", _jquery2.default.proxy(this.onPopState, this), false);
+                    window.removeEventListener("popstate", this.onPopState.bind(this), false);
                 }
-
-                this.options.onDestroy();
+                var onDestroyBinded = this.options.onDestroy.bind(this);
+                onDestroyBinded();
             }
         }, {
             key: "initEvents",
             value: function initEvents() {
                 if (this.options.ajaxEnabled) {
-                    window.addEventListener("popstate", _jquery2.default.proxy(this.onPopState, this), false);
+                    window.addEventListener("popstate", this.onPopState.bind(this), false);
                 }
                 /*
                  * Init nav events
@@ -127,6 +128,7 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
         }, {
             key: "onPopState",
             value: function onPopState(event) {
+                console.log(this);
                 if (typeof event.state !== "undefined" && event.state !== null) {
                     this.transition = true;
                     this.loadPage(event, event.state);
@@ -148,6 +150,9 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                 if (context == 'static') {
                     this.loadBeginDate = new Date();
                 }
+                var preBootBinded = this.options.preBoot.bind(this);
+                preBootBinded($cont, context, isHome);
+
                 var nodeType = $cont.attr('data-node-type');
 
                 if (isHome && this.options.homeHasClass) {
@@ -177,6 +182,9 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                             navLinkClass: this.options.navLinkClass
                         });
 
+                        var prePushStateBinded = this.options.prePushState.bind(this);
+                        prePushStateBinded(state);
+
                         history.pushState(state, state.title, state.href);
                         this.loadPage(e, state);
                     }
@@ -185,16 +193,17 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
         }, {
             key: "loadPage",
             value: function loadPage(e, state) {
+                var _this = this;
+
                 if (this.currentRequest && this.currentRequest.readyState != 4) {
                     this.currentRequest.abort();
                 }
                 this.loader.show();
                 this.loadBeginDate = new Date();
 
-                var proxiedPreLoad = _jquery2.default.proxy(this.options.preLoad, this);
-                proxiedPreLoad(state);
+                var preLoadBinded = this.options.preLoad.bind(this);
+                preLoadBinded(state);
 
-                var _this = this;
                 this.currentRequest = _jquery2.default.ajax({
                     url: state.href,
                     dataType: "html",
@@ -227,8 +236,8 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                         _this.updatePageTitle($data);
                         _this.boot($data, 'ajax', state.isHome);
 
-                        var proxiedPostLoad = _jquery2.default.proxy(_this.options.postLoad, _this);
-                        proxiedPostLoad(state, $data);
+                        var postLoadBinded = _this.options.postLoad.bind(_this);
+                        postLoadBinded(state, $data);
 
                         // Analytics
                         if (typeof ga !== "undefined") {

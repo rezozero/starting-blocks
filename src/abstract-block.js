@@ -39,7 +39,7 @@ export class AbstractBlock {
         this.$cont = $cont;
         this.id = $cont[0].id;
         this.type = type;
-        this.onResizeDebounce = debounce($.proxy(this.onResize, this), 50, false);
+        this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
         console.log('new block : ' + type);
 
@@ -53,7 +53,7 @@ export class AbstractBlock {
 
     initEvents(){
         this.$cont.waitForImages({
-            finished: $.proxy(this.onLoad, this),
+            finished: this.onLoad.bind(this),
             waitForAll: true
         });
 
@@ -70,6 +70,10 @@ export class AbstractBlock {
 
     onResize() {
         console.log('resize :' + this.id);
+    }
+
+    onLoad() {
+
     }
 
     /**

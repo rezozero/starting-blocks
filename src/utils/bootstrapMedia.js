@@ -11,7 +11,7 @@ import {Utils} from "utils/utils";
 
 export class BootstrapMedia {
     static isMinSM() {
-        var size = Utils.getViewportSize();
+        const size = Utils.getViewportSize();
 
         if (size.width >= 768) {
             return true;
@@ -21,7 +21,7 @@ export class BootstrapMedia {
     }
 
     static isMinMD() {
-        var size = Utils.getViewportSize();
+        const size = Utils.getViewportSize();
 
         if (size.width >= 992) {
             return true;
@@ -31,7 +31,7 @@ export class BootstrapMedia {
     }
 
     static isMinLG() {
-        var size = Utils.getViewportSize();
+        const size = Utils.getViewportSize();
 
         if (size.width >= 1200) {
             return true;
@@ -41,7 +41,7 @@ export class BootstrapMedia {
     }
 
     static isMinXL() {
-        var size = Utils.getViewportSize();
+        const size = Utils.getViewportSize();
 
         if (size.width >= 1920) {
             return true;

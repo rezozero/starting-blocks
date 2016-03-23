@@ -19,10 +19,13 @@ define(["exports"], function (exports) {
      * @param {Boolean} immediate []
      */
     function debounce(func, wait, immediate) {
-        var timeout;
+        var _this = this,
+            _arguments = arguments;
+
+        var timeout = void 0;
         return function () {
-            var context = this,
-                args = arguments;
+            var context = _this,
+                args = _arguments;
             var later = function later() {
                 timeout = null;
                 if (!immediate) func.apply(context, args);

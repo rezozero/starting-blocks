@@ -73,7 +73,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             this.context = context;
             this.type = type;
             this.isHome = isHome;
-            this.onResizeDebounce = (0, _debounce.debounce)(_jquery2.default.proxy(this.onResize, this), 50, false);
+            this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
             this.init();
             this.initEvents();
@@ -123,7 +123,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             value: function initEvents() {
                 if (this.$cont.find('img').length) {
                     this.$cont.waitForImages({
-                        finished: _jquery2.default.proxy(this.onLoad, this),
+                        finished: this.onLoad.bind(this),
                         waitForAll: true
                     });
                 } else {
@@ -131,7 +131,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 }
 
                 if (this.$link.length && this.router.options.ajaxEnabled) {
-                    this.$link.on('click', _jquery2.default.proxy(this.router.onLinkClick, this.router));
+                    this.$link.on('click', this.router.onLinkClick.bind(this.router));
                 }
 
                 window.addEventListener('resize', this.onResizeDebounce);
@@ -139,14 +139,14 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
         }, {
             key: "destroyEvents",
             value: function destroyEvents() {
-                this.$link.off('click', _jquery2.default.proxy(this.router.onLinkClick, this.router));
+                this.$link.off('click', this.router.onLinkClick.bind(this.router));
 
                 window.removeEventListener('resize', this.onResizeDebounce);
             }
         }, {
             key: "onLoad",
             value: function onLoad(e) {
-                var _this2 = this;
+                var _this = this;
 
                 this.loadDate = new Date();
                 this.loadDuration = this.loadDate - this.router.loadBeginDate;
@@ -159,44 +159,44 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 // Hide loading
                 setTimeout(function () {
-                    var onShowEnded = _jquery2.default.proxy(_this2.showEnded, _this2);
+                    var onShowEnded = _this.showEnded.bind(_this);
 
-                    if (_this2.context == 'static') {
-                        _this2.show(onShowEnded);
-                    } else if (_this2.context == 'ajax') {
+                    if (_this.context == 'static') {
+                        _this.show(onShowEnded);
+                    } else if (_this.context == 'ajax') {
                         // Update body id
                         (0, _jquery2.default)('body').get(0).id = history.state.nodeName;
                         // Hide formerPages - show
-                        if (_this2.router.formerPages.length > 0) {
-                            var formerPage = _this2.router.formerPages[_this2.router.formerPages.length - 1];
-                            var formerPageDestroy = _jquery2.default.proxy(formerPage.destroy, formerPage);
+                        if (_this.router.formerPages.length > 0) {
+                            var formerPage = _this.router.formerPages[_this.router.formerPages.length - 1];
+                            var formerPageDestroy = formerPage.destroy.bind(formerPage);
 
                             /*
                              * Very important,
                              * DO NOT animate if there are more than 1 page
                              * in destroy queue!
                              */
-                            if (_this2.router.formerPages.length > 1) {
+                            if (_this.router.formerPages.length > 1) {
                                 formerPageDestroy();
                             } else {
                                 formerPage.hide(formerPageDestroy);
                             }
-                            _this2.router.formerPages.pop();
+                            _this.router.formerPages.pop();
                         }
 
-                        _this2.show(onShowEnded);
+                        _this.show(onShowEnded);
                     }
                 }, delay);
             }
         }, {
             key: "show",
             value: function show(onShow) {
-                // Protect "this" during closure.
-                var _this = this;
+                var _this2 = this;
+
                 console.log('>>>> Show ----');
                 // Animate
                 var tween = _TweenLite2.default.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
-                        _this.router.transition = false;
+                        _this2.router.transition = false;
                         if (typeof onShow !== 'undefined') {
                             onShow();
                         }
@@ -224,18 +224,17 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
         }, {
             key: "initBlocks",
             value: function initBlocks() {
-                // Protect "this" during "each" closure.
-                var _this = this;
+                var _this3 = this;
 
                 this.$blocks.each(function (blockIndex, block) {
                     var type = block.getAttribute('data-node-type');
                     var id = block.id;
                     var $block = (0, _jquery2.default)(block);
 
-                    if (typeof _this.router.routes[type] !== "undefined") {
-                        _this.blocks[blockIndex] = new _this.router.routes[type](_this, $block, type);
+                    if (typeof _this3.router.routes[type] !== "undefined") {
+                        _this3.blocks[blockIndex] = new _this3.router.routes[type](_this3, $block, type);
                     } else {
-                        _this.blocks[blockIndex] = new _abstractBlock.AbstractBlock(_this, $block, type);
+                        _this3.blocks[blockIndex] = new _abstractBlock.AbstractBlock(_this3, $block, type);
                     }
                 });
             }
@@ -255,13 +254,14 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
         }, {
             key: "externalLinkTarget",
             value: function externalLinkTarget($links, baseUrl) {
-                var linksLength = $links.length,
-                    abstractBaseUrl = baseUrl.split('://');
+                var linksLength = $links.length;
+                var abstractBaseUrl = baseUrl.split('://');
 
                 abstractBaseUrl = abstractBaseUrl[1];
 
                 for (var linkIndex = 0; linkIndex < linksLength; linkIndex++) {
                     var link = $links[linkIndex];
+                    console.log(link.href);
                     if (link.href.indexOf(abstractBaseUrl) == -1 && link.href.indexOf('javascript') == -1 && link.href.indexOf('mailto:') == -1 && link.href.charAt(0) != '/' && link.href.charAt(0) != '#') {
                         $links[linkIndex].target = '_blank';
                     }

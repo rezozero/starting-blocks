@@ -33,7 +33,7 @@ export class Utils {
      */
     static logCredits(siteName, bgColor, creditsList, thanksList, textColor){
 
-        var color = '#fff';
+        let color = '#fff';
         if(typeof textColor !== 'undefined') color = textColor;
 
         console.log('%c   ', 'font-size:3px;');
@@ -41,20 +41,20 @@ export class Utils {
         console.log('%c   ', 'font-size:3px;');
 
         if(creditsList !== null){
-            var creditsLength = creditsList.length;
+            let creditsLength = creditsList.length;
             if (creditsLength){
-                for(var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
+                for(let indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
                     console.log(creditsList[indexCredit].name +' - '+creditsList[indexCredit].website);
                 }
             }
         }
 
         if(thanksList !== null){
-            var thanksLength = thanksList.length;
+            let thanksLength = thanksList.length;
             if (thanksLength){
                 console.log("-");
                 console.log("Thanks to");
-                for(var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
+                for(let indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
                     console.log(thanksList[indexThanks].name +' ('+thanksList[indexThanks].website+')');
                 }
             }
@@ -72,7 +72,7 @@ export class Utils {
      * @return {mixed}
      */
     static getStyleVal($el, style){
-        var elStyle = $el.css(style);
+        const elStyle = $el.css(style);
         return Math.round(Number(elStyle.substr(0, elStyle.length - 2)));
     }
 
@@ -98,7 +98,7 @@ export class Utils {
             el.classList.remove(classToRemove);
         } else {
             el.className = el.className.replace(new RegExp('(^|\\b)' + classToRemove.split(' ').join('|') + '(\\b|$)', 'gi'), '');
-            var posLastCar = el.className.length-1;
+            const posLastCar = el.className.length-1;
             if(el.className[posLastCar] == ' ') {
                 el.className = el.className.substring(0, posLastCar);
             }
@@ -114,7 +114,7 @@ export class Utils {
      * @return {Number}
      */
     static getRandomNumber(min, max, decimal) {
-        var result = Math.random() * (max - min) + min;
+        const result = Math.random() * (max - min) + min;
 
         if(typeof decimal !== 'undefined'){
             return result.toFixed(decimal);
@@ -141,13 +141,13 @@ export class Utils {
         if (typeof Modernizr !== "undefined") {
             if(!Modernizr.input.placeholder){
                 $('[placeholder]').focus(function() {
-                    var input = $(this);
+                    const input = $(this);
                     if (input.val() == input.attr('placeholder')) {
                         input.val('');
                         input.removeClass('placeholder');
                     }
                 }).blur(function() {
-                    var input = $(this);
+                    const input = $(this);
                     if (input.val() === '' || input.val() == input.attr('placeholder')) {
                         input.addClass('placeholder');
                         input.val(input.attr('placeholder'));
@@ -155,7 +155,7 @@ export class Utils {
                 }).blur();
                 $('[placeholder]').parents('form').submit(function() {
                     $(this).find('[placeholder]').each(function() {
-                        var input = $(this);
+                        const input = $(this);
                         if (input.val() == input.attr('placeholder')) {
                             input.val('');
                         }
@@ -172,7 +172,7 @@ export class Utils {
      * @return {Object}
      */
     static getViewportSize() {
-        var e = window, a = 'inner';
+        let e = window, a = 'inner';
         if (!('innerWidth' in window )) {
             a = 'client';
             e = document.documentElement || document.body;
@@ -187,14 +187,14 @@ export class Utils {
      * @return {String}          the prefixed property
      */
     static prefixProperty(property){
-        var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
-        var numPrefixes = prefixes.length;
-        var tmp = document.createElement("div");
+        const prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
+        const numPrefixes = prefixes.length;
+        const tmp = document.createElement("div");
 
-        for(var i = 0; i < numPrefixes; i++) {
-            var prefix = prefixes[i];
+        for(let i = 0; i < numPrefixes; i++) {
+            let prefix = prefixes[i];
             property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
-            var prop = prefix + property;
+            const prop = prefix + property;
 
             if(typeof tmp.style[prop] != "undefined") {
                 return prop;

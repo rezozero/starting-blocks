@@ -49,8 +49,8 @@ define(['exports'], function (exports) {
          * Avoid `console` errors in browsers that lack a console.
          * @return {[type]} [description]
          */
-        (function () {
-            var method;
+        {
+            var method = void 0;
             var noop = function noop() {};
             var methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'timeStamp', 'trace', 'warn'];
             var length = methods.length;
@@ -64,7 +64,7 @@ define(['exports'], function (exports) {
                     console[method] = noop;
                 }
             }
-        })();
+        }
     }
 });
 //# sourceMappingURL=polyfills.js.map

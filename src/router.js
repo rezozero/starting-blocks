@@ -81,10 +81,11 @@ export class Router {
             pageBlockClass: ".page-block",
             $ajaxContainer: $("#ajax-container"),
             minLoadDuration: 0,
-            postLoad: function (state, data) {},
-            preLoad: function (state) {},
-            prePushState: function (state) {},
-            onDestroy: function () {},
+            postLoad: (state, data) => {},
+            preLoad: (state) => {},
+            prePushState: (state) => {},
+            onDestroy: () => {},
+            preBoot: ($cont, context, isHome) => {},
         };
 
         if (options !== null) {
@@ -94,15 +95,15 @@ export class Router {
 
     destroy() {
         if (this.options.ajaxEnabled) {
-            window.removeEventListener("popstate", $.proxy(this.onPopState, this), false);
+            window.removeEventListener("popstate", this.onPopState.bind(this), false);
         }
-
-        this.options.onDestroy();
+        const onDestroyBinded = this.options.onDestroy.bind(this);
+        onDestroyBinded();
     }
 
     initEvents() {
         if (this.options.ajaxEnabled) {
-            window.addEventListener("popstate", $.proxy(this.onPopState, this), false);
+            window.addEventListener("popstate", this.onPopState.bind(this), false);
         }
         /*
          * Init nav events
@@ -111,6 +112,7 @@ export class Router {
     }
 
     onPopState(event) {
+        console.log(this);
         if (typeof event.state !== "undefined" && event.state !== null) {
             this.transition = true;
             this.loadPage(event, event.state);
@@ -129,7 +131,10 @@ export class Router {
         if(context == 'static') {
             this.loadBeginDate = new Date();
         }
-        let nodeType = $cont.attr('data-node-type');
+        const preBootBinded = this.options.preBoot.bind(this);
+        preBootBinded($cont, context, isHome);
+
+        const nodeType = $cont.attr('data-node-type');
 
         if(isHome && this.options.homeHasClass){
             this.page = new Home(this, $cont, context, nodeType, isHome);
@@ -142,7 +147,7 @@ export class Router {
     }
 
     onLinkClick(e) {
-        let linkClassName = e.currentTarget.className,
+        const linkClassName = e.currentTarget.className,
             linkHref = e.currentTarget.href;
 
         if(linkHref.indexOf('mailto:') == -1) {
@@ -154,10 +159,13 @@ export class Router {
                !this.transition) {
                 this.transition = true;
 
-                let state = new State(e.currentTarget, {
+                const state = new State(e.currentTarget, {
                     previousType: this.page.type,
                     navLinkClass: this.options.navLinkClass,
                 });
+
+                const prePushStateBinded = this.options.prePushState.bind(this);
+                prePushStateBinded(state);
 
                 history.pushState(state, state.title, state.href);
                 this.loadPage(e, state);
@@ -172,10 +180,9 @@ export class Router {
         this.loader.show();
         this.loadBeginDate = new Date();
 
-        let proxiedPreLoad = $.proxy(this.options.preLoad, this);
-        proxiedPreLoad(state);
+        const preLoadBinded = this.options.preLoad.bind(this);
+        preLoadBinded(state);
 
-        var _this = this;
         this.currentRequest = $.ajax({
             url: state.href,
             dataType: "html",
@@ -188,28 +195,28 @@ export class Router {
                 // Extract only to new page content
                 // if the whole HTML is queried
                 let $data = null;
-                let $response = $($.parseHTML(data.trim()));
-                if ($response.hasClass(_this.options.pageClass)) {
+                const $response = $($.parseHTML(data.trim()));
+                if ($response.hasClass(this.options.pageClass)) {
                     $data = $response;
                 } else {
-                    $data = $response.find('.' + _this.options.pageClass);
+                    $data = $response.find('.' + this.options.pageClass);
                 }
                 /*
                  * Display data to DOM
                  */
-                _this.options.$ajaxContainer.append($data);
+                this.options.$ajaxContainer.append($data);
 
                 /*
                  * Push a copy object not to set it as null.
                  */
-                _this.formerPages.push(_this.page);
+                this.formerPages.push(this.page);
 
                 // Init new page
-                _this.updatePageTitle($data);
-                _this.boot($data, 'ajax', state.isHome);
+                this.updatePageTitle($data);
+                this.boot($data, 'ajax', state.isHome);
 
-                let proxiedPostLoad = $.proxy(_this.options.postLoad, _this);
-                proxiedPostLoad(state, $data);
+                const postLoadBinded = this.options.postLoad.bind(this);
+                postLoadBinded(state, $data);
 
                 // Analytics
                 if(typeof ga !== "undefined") {

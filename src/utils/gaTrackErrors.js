@@ -8,7 +8,7 @@ export function gaTrackErrors(){
     if(typeof ga !== 'undefined') {
         // Pure JavaScript errors handler
         window.addEventListener('error', function (err) {
-            var lineAndColumnInfo = err.colno ? ' line:' + err.lineno +', column:'+ err.colno : ' line:' + err.lineno;
+            const lineAndColumnInfo = err.colno ? ' line:' + err.lineno +', column:'+ err.colno : ' line:' + err.lineno;
             ga(
                 'send',
                 'event',

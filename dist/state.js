@@ -32,11 +32,11 @@ define(["exports", "jquery"], function (exports, _jquery) {
             this.options = _jquery2.default.extend(this.options, options);
         }
 
-        var context = link.className.indexOf(this.options.navLinkClass) >= 0 ? 'nav' : 'link',
-            dataHome = link.getAttribute('data-is-home'),
-            isHome = dataHome == '1' ? true : false,
-            title = link.getAttribute('data-title'),
-            nodeType = link.getAttribute('data-node-type');
+        var context = link.className.indexOf(this.options.navLinkClass) >= 0 ? 'nav' : 'link';
+        var dataHome = link.getAttribute('data-is-home');
+        var isHome = dataHome == '1' ? true : false;
+        var title = link.getAttribute('data-title');
+        var nodeType = link.getAttribute('data-node-type');
 
         if (title === '') title = link.innerHTML;
         if (nodeType === '') nodeType = "page";

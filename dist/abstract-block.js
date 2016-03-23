@@ -56,7 +56,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             this.$cont = $cont;
             this.id = $cont[0].id;
             this.type = type;
-            this.onResizeDebounce = (0, _debounce.debounce)(_jquery2.default.proxy(this.onResize, this), 50, false);
+            this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
             console.log('new block : ' + type);
 
@@ -71,7 +71,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             key: "initEvents",
             value: function initEvents() {
                 this.$cont.waitForImages({
-                    finished: _jquery2.default.proxy(this.onLoad, this),
+                    finished: this.onLoad.bind(this),
                     waitForAll: true
                 });
 
@@ -92,6 +92,9 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             value: function onResize() {
                 console.log('resize :' + this.id);
             }
+        }, {
+            key: "onLoad",
+            value: function onLoad() {}
 
             /**
              * onMapsReady.
