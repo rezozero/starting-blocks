@@ -33,14 +33,14 @@ export class Page extends AbstractPage {
     onResize(){
         super.onResize();
 
-        if (BootstrapMedia.isMinSM()) {
-            console.log('-- sm');
-        }
-        if (BootstrapMedia.isMinMD()) {
-            console.log('-- md');
-        }
-        if (BootstrapMedia.isMinLG()) {
-            console.log('-- lg');
-        }
+        // if (BootstrapMedia.isMinSM()) {
+        //     console.log('-- sm');
+        // }
+        // if (BootstrapMedia.isMinMD()) {
+        //     console.log('-- md');
+        // }
+        // if (BootstrapMedia.isMinLG()) {
+        //     console.log('-- lg');
+        // }
     }
 }

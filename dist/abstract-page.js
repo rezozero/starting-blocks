@@ -66,7 +66,6 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 throw "'router' must be an instance of Router.";
             }
 
-            console.log('New page : ' + type);
             this.router = router;
             this.$cont = $cont;
             this.id = $cont[0].id;
@@ -74,6 +73,8 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             this.type = type;
             this.isHome = isHome;
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
+
+            console.log('>> New page : ' + type + ' - ' + this.id);
 
             this.init();
             this.initEvents();
@@ -240,9 +241,9 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             }
         }, {
             key: "onResize",
-            value: function onResize() {
-                console.log('resize :' + this.id);
-            }
+            value: function onResize() {}
+            // console.log('resize :' + this.id);
+
 
             /**
              * Add target blank to external links.

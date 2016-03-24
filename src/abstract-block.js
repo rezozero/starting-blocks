@@ -41,7 +41,7 @@ export class AbstractBlock {
         this.type = type;
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        console.log('new block : ' + type);
+        console.log('> new block : ' + type + ' - '+this.id);
 
         this.init();
         this.initEvents();
@@ -69,7 +69,7 @@ export class AbstractBlock {
     }
 
     onResize() {
-        console.log('resize :' + this.id);
+        // console.log('resize :' + this.id);
     }
 
     onLoad() {

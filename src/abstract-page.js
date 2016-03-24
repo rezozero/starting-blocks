@@ -50,7 +50,6 @@ export class AbstractPage {
             throw "'router' must be an instance of Router.";
         }
 
-        console.log('New page : ' + type);
         this.router = router;
         this.$cont = $cont;
         this.id = $cont[0].id;
@@ -58,6 +57,8 @@ export class AbstractPage {
         this.type = type;
         this.isHome = isHome;
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
+
+        console.log('>> New page : ' + type + ' - ' + this.id);
 
         this.init();
         this.initEvents();
@@ -207,7 +208,7 @@ export class AbstractPage {
     }
 
     onResize(){
-        console.log('resize :' + this.id);
+        // console.log('resize :' + this.id);
     }
 
     /**

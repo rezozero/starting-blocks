@@ -58,7 +58,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             this.type = type;
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
-            console.log('new block : ' + type);
+            console.log('> new block : ' + type + ' - ' + this.id);
 
             this.init();
             this.initEvents();
@@ -90,7 +90,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
         }, {
             key: "onResize",
             value: function onResize() {
-                console.log('resize :' + this.id);
+                // console.log('resize :' + this.id);
             }
         }, {
             key: "onLoad",
