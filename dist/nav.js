@@ -56,7 +56,7 @@ define(["exports"], function (exports) {
                 }
                 this.$cont = $cont;
 
-                console.log('[Nav] Updated for ' + this.$cont[0].id);
+                // console.log('[Nav] Updated for ' + this.$cont[0].id);
             }
 
             /**
@@ -71,7 +71,7 @@ define(["exports"], function (exports) {
                 if (!router) {
                     throw "Nav initEvents method needs a Router object.";
                 }
-                console.log('Init nav events');
+                // console.log('Init nav events');
             }
         }]);
 

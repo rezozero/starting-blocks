@@ -154,7 +154,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 this.router.loader.hide();
                 this.router.nav.update(this.$cont);
-                this.router.nav.initEvents(this.router);
+                // this.router.nav.initEvents(this.router);
 
                 var delay = this.loadDuration > this.router.options.minLoadDuration ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
@@ -262,7 +262,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 for (var linkIndex = 0; linkIndex < linksLength; linkIndex++) {
                     var link = $links[linkIndex];
-                    console.log(link.href);
+                    // console.log(link.href);
                     if (link.href.indexOf(abstractBaseUrl) == -1 && link.href.indexOf('javascript') == -1 && link.href.indexOf('mailto:') == -1 && link.href.charAt(0) != '/' && link.href.charAt(0) != '#') {
                         $links[linkIndex].target = '_blank';
                     }

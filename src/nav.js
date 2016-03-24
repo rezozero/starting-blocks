@@ -51,7 +51,7 @@ export class Nav {
         }
         this.$cont = $cont;
 
-        console.log('[Nav] Updated for ' + this.$cont[0].id);
+        // console.log('[Nav] Updated for ' + this.$cont[0].id);
     }
 
     /**
@@ -63,6 +63,6 @@ export class Nav {
         if (!router) {
             throw "Nav initEvents method needs a Router object.";
         }
-        console.log('Init nav events');
+        // console.log('Init nav events');
     }
 }

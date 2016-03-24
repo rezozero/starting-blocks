@@ -130,7 +130,7 @@ export class AbstractPage {
 
         this.router.loader.hide();
         this.router.nav.update(this.$cont);
-        this.router.nav.initEvents(this.router);
+        // this.router.nav.initEvents(this.router);
 
         const delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
@@ -225,7 +225,7 @@ export class AbstractPage {
 
         for(let linkIndex = 0; linkIndex < linksLength; linkIndex++){
             const link = $links[linkIndex];
-            console.log(link.href);
+            // console.log(link.href);
             if(link.href.indexOf(abstractBaseUrl) == -1 &&
                link.href.indexOf('javascript') == -1 &&
                link.href.indexOf('mailto:') == -1 &&
