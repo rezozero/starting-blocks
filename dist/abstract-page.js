@@ -152,15 +152,15 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 this.loadDate = new Date();
                 this.loadDuration = this.loadDate - this.router.loadBeginDate;
 
-                this.router.loader.hide();
                 this.router.nav.update(this.$cont);
-                // this.router.nav.initEvents(this.router);
 
                 var delay = this.loadDuration > this.router.options.minLoadDuration ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
                 // Hide loading
                 setTimeout(function () {
                     var onShowEnded = _this.showEnded.bind(_this);
+
+                    _this.router.loader.hide();
 
                     if (_this.context == 'static') {
                         _this.show(onShowEnded);
@@ -207,7 +207,6 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             key: "showEnded",
             value: function showEnded() {
                 console.log('---- Show >>>>');
-                this.router.loader.hide();
                 this.$cont.removeClass(this.router.options.pageClass + '-ajax');
                 this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
             }

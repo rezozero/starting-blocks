@@ -128,15 +128,15 @@ export class AbstractPage {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
 
-        this.router.loader.hide();
         this.router.nav.update(this.$cont);
-        // this.router.nav.initEvents(this.router);
 
         const delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
         // Hide loading
         setTimeout(() => {
             const onShowEnded = this.showEnded.bind(this);
+
+            this.router.loader.hide();
 
             if(this.context == 'static'){
                 this.show(onShowEnded);
@@ -179,7 +179,6 @@ export class AbstractPage {
 
     showEnded() {
         console.log('---- Show >>>>');
-        this.router.loader.hide();
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
