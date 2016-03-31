@@ -2,7 +2,7 @@ import $ from "jquery";
 import {polyfills} from "utils/polyfills";
 import {Router} from "router";
 import {GraphicLoader} from "graphicLoader";
-import {Nav} from "nav";
+import {AbstractNav} from "abstract-nav";
 import {Page} from "pages/page";
 
 /*
@@ -39,7 +39,7 @@ const router = new Router(
     // temp namespace is defined in your index.html
     temp.baseUrl,
     new GraphicLoader(),
-    new Nav()
+    new AbstractNav()
 );
 router.initEvents();
 router.boot($('.page-content').eq(0), 'static', isHome);

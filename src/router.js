@@ -27,7 +27,7 @@ import {State} from "state";
 import {Home} from "pages/home";
 import {AbstractPage} from "abstract-page";
 import {GraphicLoader} from "graphicLoader";
-import {Nav} from "nav";
+import {AbstractNav} from "abstract-nav";
 
 export class Router {
 
@@ -38,7 +38,7 @@ export class Router {
      * @param {Object} routes
      * @param {String} baseUrl
      * @param {GraphicLoader} loader
-     * @param {Nav} nav
+     * @param {AbstractNav} nav
      */
     constructor(options, routes, baseUrl, loader, nav) {
         if (!baseUrl) {
@@ -54,7 +54,7 @@ export class Router {
         if (!nav) {
             throw "Router needs a Nav instance to be defined.";
         }
-        if (!(nav instanceof Nav)) {
+        if (!(nav instanceof AbstractNav)) {
             throw "'nav' must be an instance of Nav.";
         }
 

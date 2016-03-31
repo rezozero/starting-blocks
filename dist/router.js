@@ -1,4 +1,4 @@
-define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoader", "nav"], function (exports, _jquery, _state, _home, _abstractPage, _graphicLoader, _nav) {
+define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoader", "abstract-nav"], function (exports, _jquery, _state, _home, _abstractPage, _graphicLoader, _abstractNav) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -47,7 +47,7 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
          * @param {Object} routes
          * @param {String} baseUrl
          * @param {GraphicLoader} loader
-         * @param {Nav} nav
+         * @param {AbstractNav} nav
          */
 
         function Router(options, routes, baseUrl, loader, nav) {
@@ -66,7 +66,7 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
             if (!nav) {
                 throw "Router needs a Nav instance to be defined.";
             }
-            if (!(nav instanceof _nav.Nav)) {
+            if (!(nav instanceof _abstractNav.AbstractNav)) {
                 throw "'nav' must be an instance of Nav.";
             }
 

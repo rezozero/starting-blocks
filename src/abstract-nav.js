@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file nav.js
+ * @file abstract-nav.js
  * @author Ambroise Maupate
  */
 
@@ -29,7 +29,7 @@
  * Any child implementations must implements
  * update method.
  */
-export class Nav {
+export class AbstractNav {
 
     constructor() {
         /**

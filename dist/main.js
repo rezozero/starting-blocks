@@ -1,4 +1,4 @@
-define(["jquery", "utils/polyfills", "router", "graphicLoader", "nav", "pages/page"], function (_jquery, _polyfills, _router, _graphicLoader, _nav, _page) {
+define(["jquery", "utils/polyfills", "router", "graphicLoader", "abstract-nav", "pages/page"], function (_jquery, _polyfills, _router, _graphicLoader, _abstractNav, _page) {
     "use strict";
 
     var _jquery2 = _interopRequireDefault(_jquery);
@@ -49,7 +49,7 @@ define(["jquery", "utils/polyfills", "router", "graphicLoader", "nav", "pages/pa
         'page': _page.Page
     },
     // temp namespace is defined in your index.html
-    temp.baseUrl, new _graphicLoader.GraphicLoader(), new _nav.Nav());
+    temp.baseUrl, new _graphicLoader.GraphicLoader(), new _abstractNav.AbstractNav());
     router.initEvents();
     router.boot((0, _jquery2.default)('.page-content').eq(0), 'static', isHome);
 });
