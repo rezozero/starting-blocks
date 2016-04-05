@@ -45,11 +45,12 @@ export class AbstractNav {
      *
      * @param {JQuery object} $cont
      */
-    update($cont) {
-        if (!$cont) {
-            throw "Nav update method needs a JQuery DOM object.";
+    update(page) {
+        if (!page) {
+            throw "Nav update method needs a Page object.";
         }
-        this.$cont = $cont;
+
+        this.page = page;
 
         // console.log('[Nav] Updated for ' + this.$cont[0].id);
     }

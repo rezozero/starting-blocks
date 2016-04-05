@@ -152,7 +152,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 this.loadDate = new Date();
                 this.loadDuration = this.loadDate - this.router.loadBeginDate;
 
-                this.router.nav.update(this.$cont);
+                this.router.nav.update(this);
 
                 var delay = this.loadDuration > this.router.options.minLoadDuration ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
