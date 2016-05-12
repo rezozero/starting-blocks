@@ -117,7 +117,7 @@ export class Utils {
         const result = Math.random() * (max - min) + min;
 
         if(typeof decimal !== 'undefined'){
-            return result.toFixed(decimal);
+            return Number(result.toFixed(decimal));
         }
         else return result;
     }
