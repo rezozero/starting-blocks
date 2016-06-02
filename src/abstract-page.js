@@ -194,9 +194,9 @@ export class AbstractPage {
 
     initBlocks() {
 
-        for(var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+        for(let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
-            var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
+            let type = this.$blocks[blockIndex].getAttribute('data-node-type'),
                 id = this.$blocks[blockIndex].id;
 
             if (this.router.routes[type] !== "undefined") {
