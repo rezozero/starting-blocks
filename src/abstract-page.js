@@ -193,17 +193,18 @@ export class AbstractPage {
     }
 
     initBlocks() {
-        this.$blocks.each((blockIndex, block) => {
-            var type = block.getAttribute('data-node-type');
-            var id = block.id;
-            var $block = $(block);
 
-            if (typeof this.router.routes[type] !== "undefined") {
-                this.blocks[blockIndex] = new this.router.routes[type](this, $block, type);
+        for(var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+
+            var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
+                id = this.$blocks[blockIndex].id;
+
+            if (this.router.routes[type] !== "undefined") {
+                this.blocks[blockIndex] = new this.router.routes[type](this, this.$blocks.eq(blockIndex), type);
             } else {
-                this.blocks[blockIndex] = new AbstractBlock(this, $block, type);
+                this.blocks[blockIndex] = new AbstractBlock(this, this.$blocks.eq(blockIndex), type);
             }
-        });
+        }
     }
 
     onResize(){

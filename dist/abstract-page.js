@@ -224,19 +224,18 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
         }, {
             key: "initBlocks",
             value: function initBlocks() {
-                var _this3 = this;
 
-                this.$blocks.each(function (blockIndex, block) {
-                    var type = block.getAttribute('data-node-type');
-                    var id = block.id;
-                    var $block = (0, _jquery2.default)(block);
+                for (var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
-                    if (typeof _this3.router.routes[type] !== "undefined") {
-                        _this3.blocks[blockIndex] = new _this3.router.routes[type](_this3, $block, type);
+                    var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
+                        id = this.$blocks[blockIndex].id;
+
+                    if (this.router.routes[type] !== "undefined") {
+                        this.blocks[blockIndex] = new this.router.routes[type](this, this.$blocks.eq(blockIndex), type);
                     } else {
-                        _this3.blocks[blockIndex] = new _abstractBlock.AbstractBlock(_this3, $block, type);
+                        this.blocks[blockIndex] = new _abstractBlock.AbstractBlock(this, this.$blocks.eq(blockIndex), type);
                     }
-                });
+                }
             }
         }, {
             key: "onResize",
