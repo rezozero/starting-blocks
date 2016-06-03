@@ -230,7 +230,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
                         id = this.$blocks[blockIndex].id;
 
-                    if (this.router.routes[type] !== "undefined") {
+                    if (typeof this.router.routes[type] !== "undefined") {
                         this.blocks[blockIndex] = new this.router.routes[type](this, this.$blocks.eq(blockIndex), type);
                     } else {
                         this.blocks[blockIndex] = new _abstractBlock.AbstractBlock(this, this.$blocks.eq(blockIndex), type);
