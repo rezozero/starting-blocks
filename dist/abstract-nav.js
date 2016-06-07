@@ -30,6 +30,14 @@ define(["exports"], function (exports) {
     }();
 
     var AbstractNav = exports.AbstractNav = function () {
+
+        /**
+         * Interface for a navigation element.
+         *
+         * Any child implementations must implements
+         * update method.
+         */
+
         function AbstractNav() {
             _classCallCheck(this, AbstractNav);
 
@@ -44,7 +52,7 @@ define(["exports"], function (exports) {
         /**
          * Update navigation state against a DOM container.
          *
-         * @param {JQuery object} $cont
+         * @param {AbstractPage} page
          */
 
 

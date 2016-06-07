@@ -64,9 +64,19 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             this.initEvents();
         }
 
+        /**
+         *
+         */
+
+
         _createClass(AbstractBlock, [{
             key: "init",
             value: function init() {}
+
+            /**
+             *
+             */
+
         }, {
             key: "initEvents",
             value: function initEvents() {
@@ -101,6 +111,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
              *
              * This method must be dispatched by Base.initMaps callback
              * method.
+             * @deprecated Use directly AMD modules to load Maps external library.
              */
 
         }, {

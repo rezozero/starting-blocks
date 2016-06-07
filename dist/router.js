@@ -39,9 +39,33 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
     }();
 
     var Router = exports.Router = function () {
-
         /**
          * Create a new Router.
+         *
+         * Default options list: 
+         *
+         * * homeHasClass: false,
+         * * ajaxEnabled: true,
+         * * pageClass: "page-content",
+         * * noAjaxLinkClass: "no-ajax-link",
+         * * navLinkClass: "nav-link",
+         * * activeClass: "active",
+         * * pageBlockClass: ".page-block",
+         * * $ajaxContainer: $("#ajax-container"),
+         * * minLoadDuration: 0,
+         * * postLoad: (state, data) => {},
+         * * preLoad: (state) => {},
+         * * prePushState: (state) => {},
+         * * onDestroy: () => {},
+         * * preBoot: ($cont, context, isHome) => {},
+         *
+         * Routes example:
+         *
+         * ```js
+         * {
+         *    'page' : Page,
+         * }
+         * ```
          *
          * @param {Object} options
          * @param {Object} routes
@@ -70,12 +94,33 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                 throw "'nav' must be an instance of Nav.";
             }
 
+            /**
+             * @type {String}
+             */
             this.baseUrl = baseUrl;
+            /**
+             * @type {Object}
+             */
             this.routes = routes;
+            /**
+             * @type {GraphicLoader}
+             */
             this.loader = loader;
+            /**
+             * @type {AbstractNav}
+             */
             this.nav = nav;
+            /**
+             * @type {State|null}
+             */
             this.state = null;
+            /**
+             * @type {Array}
+             */
             this.formerPages = [];
+            /**
+             * @type {null}
+             */
             this.page = null;
             this.stateBlock = true;
             this.ajaxEnabled = true;
@@ -83,6 +128,9 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
             this.loading = false;
             this.window = (0, _jquery2.default)(window);
             this.currentRequest = null;
+            /**
+             * @type {Object}
+             */
             this.options = {
                 homeHasClass: false,
                 ajaxEnabled: true,
@@ -139,7 +187,7 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
              * Booting need a jQuery handler for
              * the container.
              *
-             * @param  {jQuery}  $data
+             * @param  {jQuery}  $cont
              * @param  {String}  context
              * @param  {Boolean} isHome
              */
@@ -164,6 +212,12 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                     this.page = new _abstractPage.AbstractPage(this, $cont, context, nodeType, isHome);
                 }
             }
+
+            /**
+             *
+             * @param e Event
+             */
+
         }, {
             key: "onLinkClick",
             value: function onLinkClick(e) {
@@ -190,6 +244,13 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                     }
                 }
             }
+
+            /**
+             *
+             * @param e
+             * @param state
+             */
+
         }, {
             key: "loadPage",
             value: function loadPage(e, state) {
@@ -262,6 +323,12 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
                     if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
                 }
             }
+
+            /**
+             *
+             * @param {boolean} isHome
+             */
+
         }, {
             key: "pushFirstState",
             value: function pushFirstState(isHome) {

@@ -106,9 +106,9 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             /**
              * Get style value.
              *
-             * @param  {jQuery} element $el [element to check]
+             * @param  {jQuery} $el [element to check]
              * @param  {String} style
-             * @return {mixed}
+             * @return {Number}
              */
 
         }, {
@@ -121,7 +121,7 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             /**
              * Add class custom.
              *
-             * @param {DOM object} el      [dom element]
+             * @param {HTMLElement} el [dom element]
              * @param {String} classToAdd  [class to add]
              */
 
@@ -134,7 +134,7 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             /**
              * Remove class custom.
              *
-             * @param {DOM object} el
+             * @param {HTMLElement} el
              * @param {String} classToRemove
              */
 

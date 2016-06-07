@@ -47,10 +47,16 @@ export class AbstractBlock {
         this.initEvents();
     }
 
+    /**
+     *
+     */
     init() {
 
     }
 
+    /**
+     *
+     */
     initEvents(){
         this.$cont.waitForImages({
             finished: this.onLoad.bind(this),
@@ -81,6 +87,7 @@ export class AbstractBlock {
      *
      * This method must be dispatched by Base.initMaps callback
      * method.
+     * @deprecated Use directly AMD modules to load Maps external library.
      */
     onMapsReady(){
 

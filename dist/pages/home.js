@@ -82,10 +82,20 @@ define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, 
   var Home = exports.Home = function (_AbstractPage) {
     _inherits(Home, _AbstractPage);
 
-    function Home() {
+    /**
+     * Some example "home" page.
+     *
+     * @param  {Router}  router
+     * @param  {jQuery}  $cont
+     * @param  {String}  context
+     * @param  {String}  type
+     * @param  {Boolean} isHome
+     */
+
+    function Home(router, $cont, context, type, isHome) {
       _classCallCheck(this, Home);
 
-      return _possibleConstructorReturn(this, Object.getPrototypeOf(Home).apply(this, arguments));
+      return _possibleConstructorReturn(this, Object.getPrototypeOf(Home).call(this, router, $cont, context, type, isHome));
     }
 
     _createClass(Home, [{

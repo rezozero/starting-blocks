@@ -30,9 +30,33 @@ import {GraphicLoader} from "graphicLoader";
 import {AbstractNav} from "abstract-nav";
 
 export class Router {
-
     /**
      * Create a new Router.
+     *
+     * Default options list: 
+     *
+     * * homeHasClass: false,
+     * * ajaxEnabled: true,
+     * * pageClass: "page-content",
+     * * noAjaxLinkClass: "no-ajax-link",
+     * * navLinkClass: "nav-link",
+     * * activeClass: "active",
+     * * pageBlockClass: ".page-block",
+     * * $ajaxContainer: $("#ajax-container"),
+     * * minLoadDuration: 0,
+     * * postLoad: (state, data) => {},
+     * * preLoad: (state) => {},
+     * * prePushState: (state) => {},
+     * * onDestroy: () => {},
+     * * preBoot: ($cont, context, isHome) => {},
+     *
+     * Routes example:
+     *
+     * ```js
+     * {
+     *    'page' : Page,
+     * }
+     * ```
      *
      * @param {Object} options
      * @param {Object} routes
@@ -58,12 +82,33 @@ export class Router {
             throw "'nav' must be an instance of Nav.";
         }
 
+        /**
+         * @type {String}
+         */
         this.baseUrl = baseUrl;
+        /**
+         * @type {Object}
+         */
         this.routes = routes;
+        /**
+         * @type {GraphicLoader}
+         */
         this.loader = loader;
+        /**
+         * @type {AbstractNav}
+         */
         this.nav = nav;
+        /**
+         * @type {State|null}
+         */
         this.state = null;
+        /**
+         * @type {Array}
+         */
         this.formerPages = [];
+        /**
+         * @type {null}
+         */
         this.page = null;
         this.stateBlock = true;
         this.ajaxEnabled = true;
@@ -71,6 +116,9 @@ export class Router {
         this.loading = false;
         this.window = $(window);
         this.currentRequest = null;
+        /**
+         * @type {Object}
+         */
         this.options = {
             homeHasClass: false,
             ajaxEnabled: true,
@@ -123,7 +171,7 @@ export class Router {
      * Booting need a jQuery handler for
      * the container.
      *
-     * @param  {jQuery}  $data
+     * @param  {jQuery}  $cont
      * @param  {String}  context
      * @param  {Boolean} isHome
      */
@@ -146,6 +194,10 @@ export class Router {
         }
     }
 
+    /**
+     *
+     * @param e Event
+     */
     onLinkClick(e) {
         const linkClassName = e.currentTarget.className,
             linkHref = e.currentTarget.href;
@@ -173,6 +225,11 @@ export class Router {
         }
     }
 
+    /**
+     *
+     * @param e
+     * @param state
+     */
     loadPage(e, state) {
         if(this.currentRequest && this.currentRequest.readyState != 4) {
             this.currentRequest.abort();
@@ -239,6 +296,10 @@ export class Router {
         }
     }
 
+    /**
+     *
+     * @param {boolean} isHome
+     */
     pushFirstState(isHome){
         history.pushState({
             'firstPage': true,

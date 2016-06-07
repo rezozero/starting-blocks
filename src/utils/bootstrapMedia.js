@@ -9,6 +9,9 @@
  */
 import {Utils} from "utils/utils";
 
+/**
+ * Static class to get bootstrap breakpoints.
+ */
 export class BootstrapMedia {
     static isMinSM() {
         const size = Utils.getViewportSize();

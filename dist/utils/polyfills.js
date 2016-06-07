@@ -29,10 +29,9 @@ define(['exports'], function (exports) {
      * @file polyfills.js
      * @author Ambroise Maupate
      */
+
     function polyfills() {
-        /**
-         * Request animation frame polyfill
-         */
+
         window.requestAnimFrame = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function ( /* function */callback) {
                 window.setTimeout(callback, 1000 / 60); // 60fps
@@ -45,7 +44,7 @@ define(['exports'], function (exports) {
             };
         }();
 
-        /**
+        /*
          * Avoid `console` errors in browsers that lack a console.
          * @return {[type]} [description]
          */

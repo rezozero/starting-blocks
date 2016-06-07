@@ -23,14 +23,14 @@
  * @author Ambroise Maupate
  */
 
-/**
- * Interface for a navigation element.
- *
- * Any child implementations must implements
- * update method.
- */
 export class AbstractNav {
 
+    /**
+     * Interface for a navigation element.
+     *
+     * Any child implementations must implements
+     * update method.
+     */
     constructor() {
         /**
          * Page DOM section.
@@ -43,7 +43,7 @@ export class AbstractNav {
     /**
      * Update navigation state against a DOM container.
      *
-     * @param {JQuery object} $cont
+     * @param {AbstractPage} page
      */
     update(page) {
         if (!page) {

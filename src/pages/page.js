@@ -27,8 +27,22 @@ import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
  * Some example "page"
+ * @extends AbstractPage
  */
 export class Page extends AbstractPage {
+
+    /**
+     * Some example "page" page.
+     *
+     * @param  {Router}  router
+     * @param  {jQuery}  $cont
+     * @param  {String}  context
+     * @param  {String}  type
+     * @param  {Boolean} isHome
+     */
+    constructor(router, $cont, context, type, isHome) {
+        super(router, $cont, context, type, isHome);
+    }
 
     onResize(){
         super.onResize();

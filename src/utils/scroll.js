@@ -22,8 +22,15 @@
  * @file scroll.js
  * @author Ambroise Maupate
  */
+/**
+ * @static
+ */
 export class Scroll {
-
+    /**
+     * 
+     * @param e
+     * @private
+     */
     static _preventDefault(e) {
         e = e || window.event;
         if (e.preventDefault)
@@ -31,6 +38,11 @@ export class Scroll {
         e.returnValue = false;
     }
 
+    /**
+     * 
+     * @param e
+     * @private
+     */
     static _keydown(e) {
         // left: 37, up: 38, right: 39, down: 40, spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
         let keys = [37, 38, 39, 40, 33, 34, 35];
@@ -42,6 +54,11 @@ export class Scroll {
         }
     }
 
+    /**
+     * 
+     * @param e
+     * @private
+     */
     static _wheel(e) {
         Scroll._preventDefault(e);
     }

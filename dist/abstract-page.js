@@ -45,7 +45,7 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
     var AbstractPage = exports.AbstractPage = function () {
         /**
          * @param  {Router}  router
-         * @param  {String}  $cont
+         * @param  {jQuery}  $cont
          * @param  {String}  context
          * @param  {String}  type
          * @param  {Boolean} isHome
@@ -66,11 +66,31 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 throw "'router' must be an instance of Router.";
             }
 
+            /**
+             *
+             * @type {Router}
+             */
             this.router = router;
+            /**
+             *
+             * @type {jQuery}
+             */
             this.$cont = $cont;
+            /**
+             * @type {String}
+             */
             this.id = $cont[0].id;
+            /**
+             * @type {String}
+             */
             this.context = context;
+            /**
+             * @type {String}
+             */
             this.type = type;
+            /**
+             * @type {Boolean}
+             */
             this.isHome = isHome;
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
@@ -79,6 +99,13 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             this.init();
             this.initEvents();
         }
+
+        /**
+         * Initialize page.
+         *
+         * You should always extends this method in your child implemetations.
+         */
+
 
         _createClass(AbstractPage, [{
             key: "init",
@@ -106,6 +133,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     this.initAjax();
                 }
             }
+
+            /**
+             *
+             */
+
         }, {
             key: "destroy",
             value: function destroy() {
@@ -119,6 +151,13 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     }
                 }
             }
+
+            /**
+             * Initialize basic events.
+             *
+             * Such as waitForImages and link click if you enabled Ajax navigation.
+             */
+
         }, {
             key: "initEvents",
             value: function initEvents() {
@@ -137,6 +176,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 window.addEventListener('resize', this.onResizeDebounce);
             }
+
+            /**
+             *
+             */
+
         }, {
             key: "destroyEvents",
             value: function destroyEvents() {
@@ -144,6 +188,12 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
 
                 window.removeEventListener('resize', this.onResizeDebounce);
             }
+
+            /**
+             * @param e
+             * @private
+             */
+
         }, {
             key: "onLoad",
             value: function onLoad(e) {
@@ -189,6 +239,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     }
                 }, delay);
             }
+
+            /**
+             * @param {Function} onShow
+             */
+
         }, {
             key: "show",
             value: function show(onShow) {
@@ -203,6 +258,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                         }
                     } });
             }
+
+            /**
+             *
+             */
+
         }, {
             key: "showEnded",
             value: function showEnded() {
@@ -210,6 +270,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                 this.$cont.removeClass(this.router.options.pageClass + '-ajax');
                 this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
             }
+
+            /**
+             * @param {Function} onHidden
+             */
+
         }, {
             key: "hide",
             value: function hide(onHidden) {
@@ -221,10 +286,14 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
             value: function initAjax() {
                 this.$cont.addClass(this.router.options.pageClass + '-transitioning');
             }
+
+            /**
+             * @private
+             */
+
         }, {
             key: "initBlocks",
             value: function initBlocks() {
-
                 for (var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
                     var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
@@ -237,6 +306,11 @@ define(["exports", "TweenLite", "waitForImages", "jquery", "utils/debounce", "ab
                     }
                 }
             }
+
+            /**
+             * 
+             */
+
         }, {
             key: "onResize",
             value: function onResize() {}

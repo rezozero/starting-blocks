@@ -36,11 +36,24 @@ define(['exports'], function (exports) {
 
         _createClass(Scroll, null, [{
             key: '_preventDefault',
+
+            /**
+             * 
+             * @param e
+             * @private
+             */
             value: function _preventDefault(e) {
                 e = e || window.event;
                 if (e.preventDefault) e.preventDefault();
                 e.returnValue = false;
             }
+
+            /**
+             * 
+             * @param e
+             * @private
+             */
+
         }, {
             key: '_keydown',
             value: function _keydown(e) {
@@ -53,6 +66,13 @@ define(['exports'], function (exports) {
                     }
                 }
             }
+
+            /**
+             * 
+             * @param e
+             * @private
+             */
+
         }, {
             key: '_wheel',
             value: function _wheel(e) {

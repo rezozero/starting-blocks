@@ -67,9 +67,9 @@ export class Utils {
     /**
      * Get style value.
      *
-     * @param  {jQuery} element $el [element to check]
+     * @param  {jQuery} $el [element to check]
      * @param  {String} style
-     * @return {mixed}
+     * @return {Number}
      */
     static getStyleVal($el, style){
         const elStyle = $el.css(style);
@@ -79,7 +79,7 @@ export class Utils {
     /**
      * Add class custom.
      *
-     * @param {DOM object} el      [dom element]
+     * @param {HTMLElement} el [dom element]
      * @param {String} classToAdd  [class to add]
      */
     static addClass(el, classToAdd){
@@ -90,7 +90,7 @@ export class Utils {
     /**
      * Remove class custom.
      *
-     * @param {DOM object} el
+     * @param {HTMLElement} el
      * @param {String} classToRemove
      */
     static removeClass(el, classToRemove){

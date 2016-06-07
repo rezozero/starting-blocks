@@ -22,15 +22,17 @@
  * @file graphicLoader.js
  * @author Ambroise Maupate
  */
-
 /**
- * Interface for a graphic loader element.
  *
- * Any child implementations must implements
- * show and hide methods.
  */
 export class GraphicLoader {
 
+    /**
+     * Interface for a graphic loader element.
+     *
+     * Any child implementations must implements
+     * show and hide methods.
+     */
     constructor() {
 
     }

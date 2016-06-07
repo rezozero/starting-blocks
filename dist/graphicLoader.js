@@ -30,6 +30,14 @@ define(['exports'], function (exports) {
   }();
 
   var GraphicLoader = exports.GraphicLoader = function () {
+
+    /**
+     * Interface for a graphic loader element.
+     *
+     * Any child implementations must implements
+     * show and hide methods.
+     */
+
     function GraphicLoader() {
       _classCallCheck(this, GraphicLoader);
     }

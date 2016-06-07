@@ -32,7 +32,7 @@ import {Router} from "router";
 export class AbstractPage {
     /**
      * @param  {Router}  router
-     * @param  {String}  $cont
+     * @param  {jQuery}  $cont
      * @param  {String}  context
      * @param  {String}  type
      * @param  {Boolean} isHome
@@ -50,11 +50,31 @@ export class AbstractPage {
             throw "'router' must be an instance of Router.";
         }
 
+        /**
+         *
+         * @type {Router}
+         */
         this.router = router;
+        /**
+         *
+         * @type {jQuery}
+         */
         this.$cont = $cont;
+        /**
+         * @type {String}
+         */
         this.id = $cont[0].id;
+        /**
+         * @type {String}
+         */
         this.context = context;
+        /**
+         * @type {String}
+         */
         this.type = type;
+        /**
+         * @type {Boolean}
+         */
         this.isHome = isHome;
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
@@ -64,6 +84,11 @@ export class AbstractPage {
         this.initEvents();
     }
 
+    /**
+     * Initialize page.
+     *
+     * You should always extends this method in your child implemetations.
+     */
     init() {
         this.$link = this.$cont.find('a').not('[target="_blank"]');
 
@@ -89,6 +114,9 @@ export class AbstractPage {
         }
     }
 
+    /**
+     *
+     */
     destroy() {
         console.log('destroy:' + this.id);
         this.$cont.remove();
@@ -101,6 +129,11 @@ export class AbstractPage {
         }
     }
 
+    /**
+     * Initialize basic events.
+     *
+     * Such as waitForImages and link click if you enabled Ajax navigation.
+     */
     initEvents() {
         if (this.$cont.find('img').length) {
             this.$cont.waitForImages({
@@ -118,12 +151,19 @@ export class AbstractPage {
         window.addEventListener('resize', this.onResizeDebounce);
     }
 
+    /**
+     *
+     */
     destroyEvents() {
         this.$link.off('click', this.router.onLinkClick.bind(this.router));
 
         window.removeEventListener('resize', this.onResizeDebounce);
     }
 
+    /**
+     * @param e
+     * @private
+     */
     onLoad(e) {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
@@ -166,6 +206,9 @@ export class AbstractPage {
         }, delay);
     }
 
+    /**
+     * @param {Function} onShow
+     */
     show(onShow) {
         console.log('>>>> Show ----');
         // Animate
@@ -177,12 +220,18 @@ export class AbstractPage {
         }});
     }
 
+    /**
+     *
+     */
     showEnded() {
         console.log('---- Show >>>>');
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
 
+    /**
+     * @param {Function} onHidden
+     */
     hide(onHidden) {
         console.log('hiding:' + this.id);
         TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
@@ -192,8 +241,10 @@ export class AbstractPage {
         this.$cont.addClass(this.router.options.pageClass + '-transitioning');
     }
 
+    /**
+     * @private
+     */
     initBlocks() {
-
         for(let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
             let type = this.$blocks[blockIndex].getAttribute('data-node-type'),
@@ -207,6 +258,9 @@ export class AbstractPage {
         }
     }
 
+    /**
+     * 
+     */
     onResize(){
         // console.log('resize :' + this.id);
     }

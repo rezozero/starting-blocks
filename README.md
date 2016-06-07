@@ -124,3 +124,13 @@ A Router needs:
 
 You can look at the `src/main.js` file to see an instanciation example with few parameters.
 
+## Docs
+
+To generate documentation, you’ll at least NodeJS v4.4 and to install ESDoc.
+
+```bash
+sudo npm install -g esdoc;
+esdoc -c esdoc.json;
+```
+
+Documentation will be available in `doc/` folder.
