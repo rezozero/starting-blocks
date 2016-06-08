@@ -27,7 +27,7 @@ import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
  * Some example "page"
- * @extends AbstractPage
+ * @extends {AbstractPage}
  */
 export class Page extends AbstractPage {
 
