@@ -219,7 +219,9 @@ export class Router {
                 const prePushStateBinded = this.options.prePushState.bind(this);
                 prePushStateBinded(state);
 
-                history.pushState(state, state.title, state.href);
+                if (history.pushState) {
+                    history.pushState(state, state.title, state.href);
+                }
                 this.loadPage(e, state);
             }
         }
@@ -301,10 +303,12 @@ export class Router {
      * @param {boolean} isHome
      */
     pushFirstState(isHome){
-        history.pushState({
-            'firstPage': true,
-            'href':  window.location.href,
-            'isHome':isHome
-        }, null, window.location.href);
+        if (history.pushState) {
+            history.pushState({
+                'firstPage': true,
+                'href':  window.location.href,
+                'isHome':isHome
+            }, null, window.location.href);
+        }
     }
 }

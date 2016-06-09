@@ -91,6 +91,7 @@ export class AbstractPage {
      */
     init() {
         this.$link = this.$cont.find('a').not('[target="_blank"]');
+        this.bindedLinkClick = this.router.onLinkClick.bind(this.router);
 
         // Add target blank on external link
         if(this.$link.length){
@@ -145,7 +146,7 @@ export class AbstractPage {
         }
 
         if(this.$link.length && this.router.options.ajaxEnabled) {
-            this.$link.on('click', this.router.onLinkClick.bind(this.router));
+            this.$link.on('click', this.bindedLinkClick);
         }
 
         window.addEventListener('resize', this.onResizeDebounce);
@@ -155,8 +156,7 @@ export class AbstractPage {
      *
      */
     destroyEvents() {
-        this.$link.off('click', this.router.onLinkClick.bind(this.router));
-
+        this.$link.off('click', this.bindedLinkClick);
         window.removeEventListener('resize', this.onResizeDebounce);
     }
 

@@ -12,8 +12,12 @@ gulp.task('babel', ['lint'], function() {
         }))
         .pipe(sourcemaps.init())
         .pipe(babel({
-            presets: ['es2015'],
-            plugins: ['transform-es2015-modules-amd'],
+            presets: [
+                'es2015'
+            ],
+            plugins: [
+                'transform-es2015-modules-amd'
+            ],
         }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
