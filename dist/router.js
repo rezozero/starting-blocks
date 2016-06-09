@@ -1,4 +1,4 @@
-define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoader", "abstract-nav"], function (exports, _jquery, _state, _home, _abstractPage, _graphicLoader, _abstractNav) {
+define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery, _state, _home) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -20,29 +20,11 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
         }
     }
 
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
     var Router = exports.Router = function () {
         /**
          * Create a new Router.
          *
-         * Default options list: 
+         * Default options list:
          *
          * * homeHasClass: false,
          * * ajaxEnabled: true,
@@ -59,22 +41,15 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
          * * onDestroy: () => {},
          * * preBoot: ($cont, context, isHome) => {},
          *
-         * Routes example:
-         *
-         * ```js
-         * {
-         *    'page' : Page,
-         * }
-         * ```
          *
          * @param {Object} options
-         * @param {Object} routes
+         * @param {ClassFactory} classFactory
          * @param {String} baseUrl
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
 
-        function Router(options, routes, baseUrl, loader, nav) {
+        function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
             if (!baseUrl) {
@@ -83,25 +58,21 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
             if (!loader) {
                 throw "Router needs a GraphicLoader instance to be defined.";
             }
-            if (!(loader instanceof _graphicLoader.GraphicLoader)) {
-                throw "'loader' must be an instance of GraphicLoader.";
+            if (!classFactory) {
+                throw "Router needs a ClassFactory instance to be defined.";
             }
-
             if (!nav) {
                 throw "Router needs a Nav instance to be defined.";
             }
-            if (!(nav instanceof _abstractNav.AbstractNav)) {
-                throw "'nav' must be an instance of Nav.";
-            }
 
+            /**
+             * @type {ClassFactory}
+             */
+            this.classFactory = classFactory;
             /**
              * @type {String}
              */
             this.baseUrl = baseUrl;
-            /**
-             * @type {Object}
-             */
-            this.routes = routes;
             /**
              * @type {GraphicLoader}
              */
@@ -153,196 +124,182 @@ define(["exports", "jquery", "state", "pages/home", "abstract-page", "graphicLoa
             }
         }
 
-        _createClass(Router, [{
-            key: "destroy",
-            value: function destroy() {
-                if (this.options.ajaxEnabled) {
-                    window.removeEventListener("popstate", this.onPopState.bind(this), false);
-                }
-                var onDestroyBinded = this.options.onDestroy.bind(this);
-                onDestroyBinded();
+        Router.prototype.destroy = function destroy() {
+            if (this.options.ajaxEnabled) {
+                window.removeEventListener("popstate", this.onPopState.bind(this), false);
             }
-        }, {
-            key: "initEvents",
-            value: function initEvents() {
-                if (this.options.ajaxEnabled) {
-                    window.addEventListener("popstate", this.onPopState.bind(this), false);
-                }
-                /*
-                 * Init nav events
-                 */
-                this.nav.initEvents(this);
-            }
-        }, {
-            key: "onPopState",
-            value: function onPopState(event) {
-                console.log(this);
-                if (typeof event.state !== "undefined" && event.state !== null) {
-                    this.transition = true;
-                    this.loadPage(event, event.state);
-                }
-            }
+            var onDestroyBinded = this.options.onDestroy.bind(this);
+            onDestroyBinded();
+        };
 
-            /**
-             * Booting need a jQuery handler for
-             * the container.
-             *
-             * @param  {jQuery}  $cont
-             * @param  {String}  context
-             * @param  {Boolean} isHome
+        Router.prototype.initEvents = function initEvents() {
+            if (this.options.ajaxEnabled) {
+                window.addEventListener("popstate", this.onPopState.bind(this), false);
+            }
+            /*
+             * Init nav events
              */
+            this.nav.initEvents(this);
+        };
 
-        }, {
-            key: "boot",
-            value: function boot($cont, context, isHome) {
-                if (context == 'static') {
-                    this.loadBeginDate = new Date();
-                }
-                var preBootBinded = this.options.preBoot.bind(this);
-                preBootBinded($cont, context, isHome);
-
-                var nodeType = $cont.attr('data-node-type');
-
-                if (isHome && this.options.homeHasClass) {
-                    this.page = new _home.Home(this, $cont, context, nodeType, isHome);
-                } else if (nodeType && typeof this.routes[nodeType] !== 'undefined') {
-                    this.page = new this.routes[nodeType](this, $cont, context, nodeType, isHome);
-                } else {
-                    console.log('Page (' + nodeType + ') has no defined route, using AbstractPage.');
-                    this.page = new _abstractPage.AbstractPage(this, $cont, context, nodeType, isHome);
-                }
+        Router.prototype.onPopState = function onPopState(event) {
+            if (typeof event.state !== "undefined" && event.state !== null) {
+                this.transition = true;
+                this.loadPage(event, event.state);
             }
+        };
 
-            /**
-             *
-             * @param e Event
-             */
+        /**
+         * Booting need a jQuery handler for
+         * the container.
+         *
+         * @param  {jQuery}  $cont
+         * @param  {String}  context
+         * @param  {Boolean} isHome
+         */
 
-        }, {
-            key: "onLinkClick",
-            value: function onLinkClick(e) {
-                var linkClassName = e.currentTarget.className,
-                    linkHref = e.currentTarget.href;
 
-                if (linkHref.indexOf('mailto:') == -1) {
-                    e.preventDefault();
-
-                    // Check if link is not active
-                    if (linkClassName.indexOf(this.options.activeClass) == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 && !this.transition) {
-                        this.transition = true;
-
-                        var state = new _state.State(e.currentTarget, {
-                            previousType: this.page.type,
-                            navLinkClass: this.options.navLinkClass
-                        });
-
-                        var prePushStateBinded = this.options.prePushState.bind(this);
-                        prePushStateBinded(state);
-
-                        if (history.pushState) {
-                            history.pushState(state, state.title, state.href);
-                        }
-                        this.loadPage(e, state);
-                    }
-                }
-            }
-
-            /**
-             *
-             * @param e
-             * @param state
-             */
-
-        }, {
-            key: "loadPage",
-            value: function loadPage(e, state) {
-                var _this = this;
-
-                if (this.currentRequest && this.currentRequest.readyState != 4) {
-                    this.currentRequest.abort();
-                }
-                this.loader.show();
+        Router.prototype.boot = function boot($cont, context, isHome) {
+            if (context == 'static') {
                 this.loadBeginDate = new Date();
+            }
+            var preBootBinded = this.options.preBoot.bind(this);
+            preBootBinded($cont, context, isHome);
 
-                var preLoadBinded = this.options.preLoad.bind(this);
-                preLoadBinded(state);
+            var nodeType = $cont.attr('data-node-type');
 
-                this.currentRequest = _jquery2.default.ajax({
-                    url: state.href,
-                    dataType: "html",
-                    // Need to disable cache to prevent
-                    // browser to serve partial when no
-                    // ajax context is defined.
-                    cache: false,
-                    type: 'get',
-                    success: function success(data) {
-                        // Extract only to new page content
-                        // if the whole HTML is queried
-                        var $data = null;
-                        var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
-                        if ($response.hasClass(_this.options.pageClass)) {
-                            $data = $response;
-                        } else {
-                            $data = $response.find('.' + _this.options.pageClass);
-                        }
-                        /*
-                         * Display data to DOM
-                         */
-                        _this.options.$ajaxContainer.append($data);
+            if (isHome && this.options.homeHasClass) {
+                this.page = new _home.Home(this, $cont, context, nodeType, isHome);
+            } else {
+                this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
+            }
+        };
 
-                        /*
-                         * Push a copy object not to set it as null.
-                         */
-                        _this.formerPages.push(_this.page);
+        /**
+         *
+         * @param e Event
+         */
 
-                        // Init new page
-                        _this.updatePageTitle($data);
-                        _this.boot($data, 'ajax', state.isHome);
 
-                        var postLoadBinded = _this.options.postLoad.bind(_this);
-                        postLoadBinded(state, $data);
+        Router.prototype.onLinkClick = function onLinkClick(e) {
+            var linkClassName = e.currentTarget.className,
+                linkHref = e.currentTarget.href;
 
-                        // Analytics
-                        if (typeof ga !== "undefined") {
-                            ga('send', 'pageview', { 'page': state.href, 'title': document.title });
-                        }
+            if (linkHref.indexOf('mailto:') == -1) {
+                e.preventDefault();
+
+                // Check if link is not active
+                if (linkClassName.indexOf(this.options.activeClass) == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 && !this.transition) {
+                    this.transition = true;
+
+                    var state = new _state.State(e.currentTarget, {
+                        previousType: this.page.type,
+                        navLinkClass: this.options.navLinkClass
+                    });
+
+                    var prePushStateBinded = this.options.prePushState.bind(this);
+                    prePushStateBinded(state);
+
+                    if (history.pushState) {
+                        history.pushState(state, state.title, state.href);
                     }
-                });
-            }
-
-            /**
-             * Update page title against data-title attribute
-             * from ajax loaded partial DOM.
-             *
-             * @param {jQuery} $data
-             */
-
-        }, {
-            key: "updatePageTitle",
-            value: function updatePageTitle($data) {
-                if ($data.length && $data.attr('data-meta-title') !== '') {
-                    var metaTitle = $data.attr('data-meta-title');
-                    if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
+                    this.loadPage(e, state);
                 }
             }
+        };
 
-            /**
-             *
-             * @param {boolean} isHome
-             */
+        /**
+         *
+         * @param e
+         * @param state
+         */
 
-        }, {
-            key: "pushFirstState",
-            value: function pushFirstState(isHome) {
-                if (history.pushState) {
-                    history.pushState({
-                        'firstPage': true,
-                        'href': window.location.href,
-                        'isHome': isHome
-                    }, null, window.location.href);
-                }
+
+        Router.prototype.loadPage = function loadPage(e, state) {
+            var _this = this;
+
+            if (this.currentRequest && this.currentRequest.readyState != 4) {
+                this.currentRequest.abort();
             }
-        }]);
+            this.loader.show();
+            this.loadBeginDate = new Date();
+
+            var preLoadBinded = this.options.preLoad.bind(this);
+            preLoadBinded(state);
+
+            this.currentRequest = _jquery2.default.ajax({
+                url: state.href,
+                dataType: "html",
+                // Need to disable cache to prevent
+                // browser to serve partial when no
+                // ajax context is defined.
+                cache: false,
+                type: 'get',
+                success: function success(data) {
+                    // Extract only to new page content
+                    // if the whole HTML is queried
+                    var $data = null;
+                    var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
+                    if ($response.hasClass(_this.options.pageClass)) {
+                        $data = $response;
+                    } else {
+                        $data = $response.find('.' + _this.options.pageClass);
+                    }
+                    /*
+                     * Display data to DOM
+                     */
+                    _this.options.$ajaxContainer.append($data);
+
+                    /*
+                     * Push a copy object not to set it as null.
+                     */
+                    _this.formerPages.push(_this.page);
+
+                    // Init new page
+                    _this.updatePageTitle($data);
+                    _this.boot($data, 'ajax', state.isHome);
+
+                    var postLoadBinded = _this.options.postLoad.bind(_this);
+                    postLoadBinded(state, $data);
+
+                    // Analytics
+                    if (typeof ga !== "undefined") {
+                        ga('send', 'pageview', { 'page': state.href, 'title': document.title });
+                    }
+                }
+            });
+        };
+
+        /**
+         * Update page title against data-title attribute
+         * from ajax loaded partial DOM.
+         *
+         * @param {jQuery} $data
+         */
+
+
+        Router.prototype.updatePageTitle = function updatePageTitle($data) {
+            if ($data.length && $data.attr('data-meta-title') !== '') {
+                var metaTitle = $data.attr('data-meta-title');
+                if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
+            }
+        };
+
+        /**
+         *
+         * @param {boolean} isHome
+         */
+
+
+        Router.prototype.pushFirstState = function pushFirstState(isHome) {
+            if (history.pushState) {
+                history.pushState({
+                    'firstPage': true,
+                    'href': window.location.href,
+                    'isHome': isHome
+                }, null, window.location.href);
+            }
+        };
 
         return Router;
     }();

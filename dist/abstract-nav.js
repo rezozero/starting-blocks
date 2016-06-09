@@ -11,24 +11,6 @@ define(["exports"], function (exports) {
         }
     }
 
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
     var AbstractNav = exports.AbstractNav = function () {
 
         /**
@@ -56,33 +38,26 @@ define(["exports"], function (exports) {
          */
 
 
-        _createClass(AbstractNav, [{
-            key: "update",
-            value: function update(page) {
-                if (!page) {
-                    throw "Nav update method needs a Page object.";
-                }
-
-                this.page = page;
-
-                // console.log('[Nav] Updated for ' + this.$cont[0].id);
+        AbstractNav.prototype.update = function update(page) {
+            if (!page) {
+                throw "Nav update method needs a Page object.";
             }
 
-            /**
-             * Bind navigation against router.
-             *
-             * @param {Router} router
-             */
+            this.page = page;
+        };
 
-        }, {
-            key: "initEvents",
-            value: function initEvents(router) {
-                if (!router) {
-                    throw "Nav initEvents method needs a Router object.";
-                }
-                // console.log('Init nav events');
+        /**
+         * Bind navigation against router.
+         *
+         * @param {Router} router
+         */
+
+
+        AbstractNav.prototype.initEvents = function initEvents(router) {
+            if (!router) {
+                throw "Nav initEvents method needs a Router object.";
             }
-        }]);
+        };
 
         return AbstractNav;
     }();

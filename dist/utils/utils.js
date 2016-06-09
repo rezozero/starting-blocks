@@ -20,270 +20,238 @@ define(['exports', 'jquery'], function (exports, _jquery) {
         }
     }
 
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
     var Utils = exports.Utils = function () {
         function Utils() {
             _classCallCheck(this, Utils);
         }
 
-        _createClass(Utils, null, [{
-            key: 'stripTrailingSlash',
+        /**
+         * @param  {String} str
+         * @return {String}
+         */
+
+        Utils.stripTrailingSlash = function stripTrailingSlash(str) {
+            if (str.substr(-1) == '/') {
+                return str.substr(0, str.length - 1);
+            }
+            return str;
+        };
+
+        /**
+         * Log credits to console for code lovers.
+         *
+         * @param  {String} siteName
+         * @param  {String} bgColor
+         * @param  {Array}  creditsList
+         * @param  {Array}  thanksList
+         * @param  {String} textColor (optional)
+         */
 
 
-            /**
-             * @param  {String} str
-             * @return {String}
-             */
-            value: function stripTrailingSlash(str) {
-                if (str.substr(-1) == '/') {
-                    return str.substr(0, str.length - 1);
+        Utils.logCredits = function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
+
+            var color = '#fff';
+            if (typeof textColor !== 'undefined') color = textColor;
+
+            console.log('%c   ', 'font-size:3px;');
+            console.log('%c' + siteName, 'background:' + bgColor + '; color: ' + color + '; font-size:14px; padding:5px 10px;');
+            console.log('%c   ', 'font-size:3px;');
+
+            if (creditsList !== null) {
+                var creditsLength = creditsList.length;
+                if (creditsLength) {
+                    for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
+                        console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
+                    }
                 }
-                return str;
             }
 
-            /**
-             * Log credits to console for code lovers.
-             *
-             * @param  {String} siteName
-             * @param  {String} bgColor
-             * @param  {Array}  creditsList
-             * @param  {Array}  thanksList
-             * @param  {String} textColor (optional)
-             */
+            if (thanksList !== null) {
+                var thanksLength = thanksList.length;
+                if (thanksLength) {
+                    console.log("-");
+                    console.log("Thanks to");
+                    for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
+                        console.log(thanksList[indexThanks].name + ' (' + thanksList[indexThanks].website + ')');
+                    }
+                }
+            }
 
-        }, {
-            key: 'logCredits',
-            value: function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
+            console.log("-");
+            console.log(" ");
+        };
 
-                var color = '#fff';
-                if (typeof textColor !== 'undefined') color = textColor;
+        /**
+         * Get style value.
+         *
+         * @param  {jQuery} $el [element to check]
+         * @param  {String} style
+         * @return {Number}
+         */
 
-                console.log('%c   ', 'font-size:3px;');
-                console.log('%c' + siteName, 'background:' + bgColor + '; color: ' + color + '; font-size:14px; padding:5px 10px;');
-                console.log('%c   ', 'font-size:3px;');
 
-                if (creditsList !== null) {
-                    var creditsLength = creditsList.length;
-                    if (creditsLength) {
-                        for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
-                            console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
+        Utils.getStyleVal = function getStyleVal($el, style) {
+            var elStyle = $el.css(style);
+            return Math.round(Number(elStyle.substr(0, elStyle.length - 2)));
+        };
+
+        /**
+         * Add class custom.
+         *
+         * @param {HTMLElement} el [dom element]
+         * @param {String} classToAdd  [class to add]
+         */
+
+
+        Utils.addClass = function addClass(el, classToAdd) {
+            if (el.classList) el.classList.add(classToAdd);else el.className += ' ' + classToAdd;
+        };
+
+        /**
+         * Remove class custom.
+         *
+         * @param {HTMLElement} el
+         * @param {String} classToRemove
+         */
+
+
+        Utils.removeClass = function removeClass(el, classToRemove) {
+            if (el.classList) {
+                el.classList.remove(classToRemove);
+            } else {
+                el.className = el.className.replace(new RegExp('(^|\\b)' + classToRemove.split(' ').join('|') + '(\\b|$)', 'gi'), '');
+                var posLastCar = el.className.length - 1;
+                if (el.className[posLastCar] == ' ') {
+                    el.className = el.className.substring(0, posLastCar);
+                }
+            }
+        };
+
+        /**
+         * Get random number.
+         *
+         * @param  {Number} min [min value]
+         * @param  {Number} max [max value]
+         * @param  {Number} decimal
+         * @return {Number}
+         */
+
+
+        Utils.getRandomNumber = function getRandomNumber(min, max, decimal) {
+            var result = Math.random() * (max - min) + min;
+
+            if (typeof decimal !== 'undefined') {
+                return Number(result.toFixed(decimal));
+            } else return result;
+        };
+
+        /**
+         * Get random integer.
+         *
+         * @param  {Number} min [min value]
+         * @param  {Number} max [max value]
+         * @return {Number}
+         */
+
+
+        Utils.getRandomInt = function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+
+        /**
+         * Replace placeholder for browser that
+         * do not support it.
+         */
+
+
+        Utils.replacePlaceholder = function replacePlaceholder() {
+            if (typeof Modernizr !== "undefined") {
+                if (!Modernizr.input.placeholder) {
+                    (0, _jquery2.default)('[placeholder]').focus(function () {
+                        var input = (0, _jquery2.default)(this);
+                        if (input.val() == input.attr('placeholder')) {
+                            input.val('');
+                            input.removeClass('placeholder');
                         }
-                    }
-                }
-
-                if (thanksList !== null) {
-                    var thanksLength = thanksList.length;
-                    if (thanksLength) {
-                        console.log("-");
-                        console.log("Thanks to");
-                        for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
-                            console.log(thanksList[indexThanks].name + ' (' + thanksList[indexThanks].website + ')');
+                    }).blur(function () {
+                        var input = (0, _jquery2.default)(this);
+                        if (input.val() === '' || input.val() == input.attr('placeholder')) {
+                            input.addClass('placeholder');
+                            input.val(input.attr('placeholder'));
                         }
-                    }
-                }
-
-                console.log("-");
-                console.log(" ");
-            }
-
-            /**
-             * Get style value.
-             *
-             * @param  {jQuery} $el [element to check]
-             * @param  {String} style
-             * @return {Number}
-             */
-
-        }, {
-            key: 'getStyleVal',
-            value: function getStyleVal($el, style) {
-                var elStyle = $el.css(style);
-                return Math.round(Number(elStyle.substr(0, elStyle.length - 2)));
-            }
-
-            /**
-             * Add class custom.
-             *
-             * @param {HTMLElement} el [dom element]
-             * @param {String} classToAdd  [class to add]
-             */
-
-        }, {
-            key: 'addClass',
-            value: function addClass(el, classToAdd) {
-                if (el.classList) el.classList.add(classToAdd);else el.className += ' ' + classToAdd;
-            }
-
-            /**
-             * Remove class custom.
-             *
-             * @param {HTMLElement} el
-             * @param {String} classToRemove
-             */
-
-        }, {
-            key: 'removeClass',
-            value: function removeClass(el, classToRemove) {
-                if (el.classList) {
-                    el.classList.remove(classToRemove);
-                } else {
-                    el.className = el.className.replace(new RegExp('(^|\\b)' + classToRemove.split(' ').join('|') + '(\\b|$)', 'gi'), '');
-                    var posLastCar = el.className.length - 1;
-                    if (el.className[posLastCar] == ' ') {
-                        el.className = el.className.substring(0, posLastCar);
-                    }
-                }
-            }
-
-            /**
-             * Get random number.
-             *
-             * @param  {Number} min [min value]
-             * @param  {Number} max [max value]
-             * @param  {Number} decimal
-             * @return {Number}
-             */
-
-        }, {
-            key: 'getRandomNumber',
-            value: function getRandomNumber(min, max, decimal) {
-                var result = Math.random() * (max - min) + min;
-
-                if (typeof decimal !== 'undefined') {
-                    return Number(result.toFixed(decimal));
-                } else return result;
-            }
-
-            /**
-             * Get random integer.
-             *
-             * @param  {Number} min [min value]
-             * @param  {Number} max [max value]
-             * @return {Number}
-             */
-
-        }, {
-            key: 'getRandomInt',
-            value: function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-
-            /**
-             * Replace placeholder for browser that
-             * do not support it.
-             */
-
-        }, {
-            key: 'replacePlaceholder',
-            value: function replacePlaceholder() {
-                if (typeof Modernizr !== "undefined") {
-                    if (!Modernizr.input.placeholder) {
-                        (0, _jquery2.default)('[placeholder]').focus(function () {
+                    }).blur();
+                    (0, _jquery2.default)('[placeholder]').parents('form').submit(function () {
+                        (0, _jquery2.default)(this).find('[placeholder]').each(function () {
                             var input = (0, _jquery2.default)(this);
                             if (input.val() == input.attr('placeholder')) {
                                 input.val('');
-                                input.removeClass('placeholder');
                             }
-                        }).blur(function () {
-                            var input = (0, _jquery2.default)(this);
-                            if (input.val() === '' || input.val() == input.attr('placeholder')) {
-                                input.addClass('placeholder');
-                                input.val(input.attr('placeholder'));
-                            }
-                        }).blur();
-                        (0, _jquery2.default)('[placeholder]').parents('form').submit(function () {
-                            (0, _jquery2.default)(this).find('[placeholder]').each(function () {
-                                var input = (0, _jquery2.default)(this);
-                                if (input.val() == input.attr('placeholder')) {
-                                    input.val('');
-                                }
-                            });
                         });
-                    }
+                    });
                 }
             }
+        };
 
-            /**
-             * Match CSS media queries and JavaScript window width.
-             *
-             * @see http://stackoverflow.com/a/11310353
-             * @return {Object}
-             */
+        /**
+         * Match CSS media queries and JavaScript window width.
+         *
+         * @see http://stackoverflow.com/a/11310353
+         * @return {Object}
+         */
 
-        }, {
-            key: 'getViewportSize',
-            value: function getViewportSize() {
-                var e = window,
-                    a = 'inner';
-                if (!('innerWidth' in window)) {
-                    a = 'client';
-                    e = document.documentElement || document.body;
-                }
-                return { width: e[a + 'Width'], height: e[a + 'Height'] };
+
+        Utils.getViewportSize = function getViewportSize() {
+            var e = window,
+                a = 'inner';
+            if (!('innerWidth' in window)) {
+                a = 'client';
+                e = document.documentElement || document.body;
             }
+            return { width: e[a + 'Width'], height: e[a + 'Height'] };
+        };
 
-            /**
-             * Get a css property with the vendor prefix.
-             *
-             * @param  {String} property the css property
-             * @return {String}          the prefixed property
-             */
+        /**
+         * Get a css property with the vendor prefix.
+         *
+         * @param  {String} property the css property
+         * @return {String}          the prefixed property
+         */
 
-        }, {
-            key: 'prefixProperty',
-            value: function prefixProperty(property) {
-                var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
-                var numPrefixes = prefixes.length;
-                var tmp = document.createElement("div");
 
-                for (var i = 0; i < numPrefixes; i++) {
-                    var prefix = prefixes[i];
-                    property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
-                    var prop = prefix + property;
+        Utils.prefixProperty = function prefixProperty(property) {
+            var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
+            var numPrefixes = prefixes.length;
+            var tmp = document.createElement("div");
 
-                    if (typeof tmp.style[prop] != "undefined") {
-                        return prop;
-                    }
+            for (var i = 0; i < numPrefixes; i++) {
+                var prefix = prefixes[i];
+                property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
+                var prop = prefix + property;
+
+                if (typeof tmp.style[prop] != "undefined") {
+                    return prop;
                 }
             }
+        };
 
-            /**
-             * Gets normalized ratio of value inside range.
-             *
-             * from https://github.com/mout/mout/blob/master/src/math/norm.js
-             *
-             * @param  {Number} val
-             * @param  {Number} min
-             * @param  {Number} max
-             * @return {Number}
-             */
+        /**
+         * Gets normalized ratio of value inside range.
+         *
+         * from https://github.com/mout/mout/blob/master/src/math/norm.js
+         *
+         * @param  {Number} val
+         * @param  {Number} min
+         * @param  {Number} max
+         * @return {Number}
+         */
 
-        }, {
-            key: 'getNormRatio',
-            value: function getNormRatio(val, min, max) {
-                if (val < min) return 0;
-                if (val > max) return 1;
 
-                return val === max ? 1 : (val - min) / (max - min);
-            }
-        }]);
+        Utils.getNormRatio = function getNormRatio(val, min, max) {
+            if (val < min) return 0;
+            if (val > max) return 1;
+
+            return val === max ? 1 : (val - min) / (max - min);
+        };
 
         return Utils;
     }();

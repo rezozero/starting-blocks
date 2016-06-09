@@ -22,7 +22,6 @@
  * @file abstract-nav.js
  * @author Ambroise Maupate
  */
-
 export class AbstractNav {
 
     /**
@@ -51,8 +50,6 @@ export class AbstractNav {
         }
 
         this.page = page;
-
-        // console.log('[Nav] Updated for ' + this.$cont[0].id);
     }
 
     /**
@@ -64,6 +61,5 @@ export class AbstractNav {
         if (!router) {
             throw "Nav initEvents method needs a Router object.";
         }
-        // console.log('Init nav events');
     }
 }

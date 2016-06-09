@@ -22,9 +22,8 @@
  * @file graphicLoader.js
  * @author Ambroise Maupate
  */
-/**
- *
- */
+import log from "loglevel";
+
 export class GraphicLoader {
 
     /**
@@ -41,13 +40,13 @@ export class GraphicLoader {
      * Show loader.
      */
     show() {
-        console.log('[GraphicLoader] Show loader.');
+        log.debug('[GraphicLoader] Show loader.');
     }
 
     /**
      * Hide loader.
      */
     hide() {
-        console.log('[GraphicLoader] Hide loader.');
+        log.debug('[GraphicLoader] Hide loader.');
     }
 }

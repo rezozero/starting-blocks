@@ -1,10 +1,12 @@
-define(["exports", "waitForImages", "jquery", "utils/debounce"], function (exports, _waitForImages, _jquery, _debounce) {
+define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], function (exports, _loglevel, _waitForImages, _jquery, _debounce) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.AbstractBlock = undefined;
+
+    var _loglevel2 = _interopRequireDefault(_loglevel);
 
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
@@ -21,24 +23,6 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             throw new TypeError("Cannot call a class as a function");
         }
     }
-
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
 
     var AbstractBlock = exports.AbstractBlock = function () {
         /**
@@ -58,7 +42,7 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
             this.type = type;
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
-            console.log('> new block : ' + type + ' - ' + this.id);
+            _loglevel2.default.debug('    + New block : ' + type + ' - #' + this.id);
 
             this.init();
             this.initEvents();
@@ -69,55 +53,44 @@ define(["exports", "waitForImages", "jquery", "utils/debounce"], function (expor
          */
 
 
-        _createClass(AbstractBlock, [{
-            key: "init",
-            value: function init() {}
+        AbstractBlock.prototype.init = function init() {};
 
-            /**
-             *
-             */
+        /**
+         *
+         */
 
-        }, {
-            key: "initEvents",
-            value: function initEvents() {
-                this.$cont.waitForImages({
-                    finished: this.onLoad.bind(this),
-                    waitForAll: true
-                });
 
-                window.addEventListener('resize', this.onResizeDebounce);
-            }
-        }, {
-            key: "destroy",
-            value: function destroy() {
-                this.destroyEvents();
-            }
-        }, {
-            key: "destroyEvents",
-            value: function destroyEvents() {
-                window.removeEventListener('resize', this.onResizeDebounce);
-            }
-        }, {
-            key: "onResize",
-            value: function onResize() {
-                // console.log('resize :' + this.id);
-            }
-        }, {
-            key: "onLoad",
-            value: function onLoad() {}
+        AbstractBlock.prototype.initEvents = function initEvents() {
+            this.$cont.waitForImages({
+                finished: this.onLoad.bind(this),
+                waitForAll: true
+            });
 
-            /**
-             * onMapsReady.
-             *
-             * This method must be dispatched by Base.initMaps callback
-             * method.
-             * @deprecated Use directly AMD modules to load Maps external library.
-             */
+            window.addEventListener('resize', this.onResizeDebounce);
+        };
 
-        }, {
-            key: "onMapsReady",
-            value: function onMapsReady() {}
-        }]);
+        AbstractBlock.prototype.destroy = function destroy() {
+            this.destroyEvents();
+        };
+
+        AbstractBlock.prototype.destroyEvents = function destroyEvents() {
+            window.removeEventListener('resize', this.onResizeDebounce);
+        };
+
+        AbstractBlock.prototype.onResize = function onResize() {};
+
+        AbstractBlock.prototype.onLoad = function onLoad() {};
+
+        /**
+         * onMapsReady.
+         *
+         * This method must be dispatched by Base.initMaps callback
+         * method.
+         * @deprecated Use directly AMD modules to load Maps external library.
+         */
+
+
+        AbstractBlock.prototype.onMapsReady = function onMapsReady() {};
 
         return AbstractBlock;
     }();

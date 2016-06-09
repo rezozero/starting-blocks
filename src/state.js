@@ -26,14 +26,14 @@ import $ from "jquery";
 
 export class State {
     /**
-     * 
+     *
      * @param {String} link
      * @param {Object} options
      */
     constructor(link, options) {
         this.options = {
             previousType: "page",
-            navLinkClass: "nav-link",
+            navLinkClass: "nav-link"
         };
 
         if (options !== null) {

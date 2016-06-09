@@ -1,33 +1,24 @@
-define(['exports'], function (exports) {
+define(['exports', 'loglevel'], function (exports, _loglevel) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.GraphicLoader = undefined;
+
+  var _loglevel2 = _interopRequireDefault(_loglevel);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   }
-
-  var _createClass = function () {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
-    }
-
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
 
   var GraphicLoader = exports.GraphicLoader = function () {
 
@@ -47,22 +38,18 @@ define(['exports'], function (exports) {
      */
 
 
-    _createClass(GraphicLoader, [{
-      key: 'show',
-      value: function show() {
-        console.log('[GraphicLoader] Show loader.');
-      }
+    GraphicLoader.prototype.show = function show() {
+      _loglevel2.default.debug('[GraphicLoader] Show loader.');
+    };
 
-      /**
-       * Hide loader.
-       */
+    /**
+     * Hide loader.
+     */
 
-    }, {
-      key: 'hide',
-      value: function hide() {
-        console.log('[GraphicLoader] Hide loader.');
-      }
-    }]);
+
+    GraphicLoader.prototype.hide = function hide() {
+      _loglevel2.default.debug('[GraphicLoader] Hide loader.');
+    };
 
     return GraphicLoader;
   }();

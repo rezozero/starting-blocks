@@ -29,32 +29,9 @@ import {BootstrapMedia} from "utils/bootstrapMedia";
  * Some example "page"
  * @extends {AbstractPage}
  */
-export class Page extends AbstractPage {
-
-    /**
-     * Some example "page" page.
-     *
-     * @param  {Router}  router
-     * @param  {jQuery}  $cont
-     * @param  {String}  context
-     * @param  {String}  type
-     * @param  {Boolean} isHome
-     */
-    constructor(router, $cont, context, type, isHome) {
-        super(router, $cont, context, type, isHome);
-    }
-
-    onResize(){
-        super.onResize();
-
-        // if (BootstrapMedia.isMinSM()) {
-        //     console.log('-- sm');
-        // }
-        // if (BootstrapMedia.isMinMD()) {
-        //     console.log('-- md');
-        // }
-        // if (BootstrapMedia.isMinLG()) {
-        //     console.log('-- lg');
-        // }
+export class Page extends AbstractPage
+{
+    init() {
+        super.init();
     }
 }

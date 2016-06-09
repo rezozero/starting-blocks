@@ -22,12 +22,11 @@
  * @file abstract-page.js
  * @author Ambroise Maupate
  */
+import log from "loglevel";
 import TweenLite from "TweenLite";
 import waitForImages from "waitForImages";
 import $ from "jquery";
 import {debounce} from "utils/debounce";
-import {AbstractBlock} from "abstract-block";
-import {Router} from "router";
 
 export class AbstractPage {
     /**
@@ -45,9 +44,6 @@ export class AbstractPage {
         }
         if (!router) {
             throw "AbstractPage need a Router instance to be defined.";
-        }
-        if (!(router instanceof Router)) {
-            throw "'router' must be an instance of Router.";
         }
 
         /**
@@ -78,7 +74,7 @@ export class AbstractPage {
         this.isHome = isHome;
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        console.log('>> New page : ' + type + ' - ' + this.id);
+        log.debug('+ New page : ' + type + ' - #' + this.id);
 
         this.init();
         this.initEvents();
@@ -119,7 +115,7 @@ export class AbstractPage {
      *
      */
     destroy() {
-        console.log('destroy:' + this.id);
+        log.debug('destroy:' + this.id);
         this.$cont.remove();
         this.destroyEvents();
         // --- Blocks --- //
@@ -210,7 +206,7 @@ export class AbstractPage {
      * @param {Function} onShow
      */
     show(onShow) {
-        console.log('>>>> Show ----');
+        log.debug('>>>> Show ----');
         // Animate
         var tween = TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
             this.router.transition = false;
@@ -224,7 +220,7 @@ export class AbstractPage {
      *
      */
     showEnded() {
-        console.log('---- Show >>>>');
+        log.debug('---- Show >>>>');
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
@@ -233,7 +229,7 @@ export class AbstractPage {
      * @param {Function} onHidden
      */
     hide(onHidden) {
-        console.log('hiding:' + this.id);
+        log.debug('hiding:' + this.id);
         TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
     }
 
@@ -250,19 +246,28 @@ export class AbstractPage {
             let type = this.$blocks[blockIndex].getAttribute('data-node-type'),
                 id = this.$blocks[blockIndex].id;
 
-            if (typeof this.router.routes[type] !== "undefined") {
-                this.blocks[blockIndex] = new this.router.routes[type](this, this.$blocks.eq(blockIndex), type);
-            } else {
-                this.blocks[blockIndex] = new AbstractBlock(this, this.$blocks.eq(blockIndex), type);
-            }
+            this.blocks[blockIndex] = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
         }
     }
 
     /**
-     * 
+     * @param  {String} id
+     * @return {AbstractBlock|null}
+     */
+    getBlockById(id) {
+        for (let i in this.blocks) {
+            if (this.blocks[i].id == id) {
+                return this.blocks[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
      */
     onResize(){
-        // console.log('resize :' + this.id);
+
     }
 
     /**
@@ -279,7 +284,6 @@ export class AbstractPage {
 
         for(let linkIndex = 0; linkIndex < linksLength; linkIndex++){
             const link = $links[linkIndex];
-            // console.log(link.href);
             if(link.href.indexOf(abstractBaseUrl) == -1 &&
                link.href.indexOf('javascript') == -1 &&
                link.href.indexOf('mailto:') == -1 &&

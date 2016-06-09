@@ -22,11 +22,13 @@
  * @file abstract-block.js
  * @author Ambroise Maupate
  */
+import log from "loglevel";
 import waitForImages from "waitForImages";
 import $ from "jquery";
 import {debounce} from "utils/debounce";
 
-export class AbstractBlock {
+export class AbstractBlock
+{
     /**
      * @param  {AbstractPage} page
      * @param  {String} id
@@ -41,7 +43,7 @@ export class AbstractBlock {
         this.type = type;
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        console.log('> new block : ' + type + ' - '+this.id);
+        log.debug('    + New block : ' + type + ' - #'+this.id);
 
         this.init();
         this.initEvents();
@@ -75,7 +77,7 @@ export class AbstractBlock {
     }
 
     onResize() {
-        // console.log('resize :' + this.id);
+
     }
 
     onLoad() {

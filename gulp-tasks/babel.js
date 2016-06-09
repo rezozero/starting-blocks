@@ -16,7 +16,8 @@ gulp.task('babel', ['lint'], function() {
                 'es2015'
             ],
             plugins: [
-                'transform-es2015-modules-amd'
+                'transform-es2015-modules-amd',
+                ['transform-es2015-classes', {loose: true}] // Really important for IE <= 10
             ],
         }))
         .pipe(sourcemaps.write('.'))

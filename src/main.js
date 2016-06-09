@@ -1,15 +1,17 @@
 import $ from "jquery";
+import log from "loglevel";
 import {polyfills} from "utils/polyfills";
 import {Router} from "router";
 import {GraphicLoader} from "graphicLoader";
 import {AbstractNav} from "abstract-nav";
-import {Page} from "pages/page";
+import {ClassFactory} from "class-factory";
 
 /*
  * Declare polyfills
  */
 polyfills();
 
+log.setLevel(0);
 /*
  * Begin main app ---
  */
@@ -22,20 +24,14 @@ const isHome = (dataHome == '1') ? true : false;
 const router = new Router(
     {
         homeHasClass: false,
-        ajaxEnabled: true,
-        preBoot: () => { console.log('--- preboot'); },
-        postLoad: () => { console.log('--- postLoad'); },
-        preLoad: () => { console.log('--- preLoad'); },
-        onDestroy: () => { console.log('--- onDestroy'); },
-        prePushState: () => { console.log('--- prePushState'); },
+        ajaxEnabled: false,
+        preBoot: () => { log.debug('--- preboot'); },
+        postLoad: () => { log.debug('--- postLoad'); },
+        preLoad: () => { log.debug('--- preLoad'); },
+        onDestroy: () => { log.debug('--- onDestroy'); },
+        prePushState: () => { log.debug('--- prePushState'); }
     },
-    {
-        /*
-         * Routes are nodeType corresponding to
-         * ES6 modules
-         */
-        'page' : Page,
-    },
+    new ClassFactory(),
     // temp namespace is defined in your index.html
     temp.baseUrl,
     new GraphicLoader(),

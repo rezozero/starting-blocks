@@ -25,15 +25,12 @@
 import $ from "jquery";
 import {State} from "state";
 import {Home} from "pages/home";
-import {AbstractPage} from "abstract-page";
-import {GraphicLoader} from "graphicLoader";
-import {AbstractNav} from "abstract-nav";
 
 export class Router {
     /**
      * Create a new Router.
      *
-     * Default options list: 
+     * Default options list:
      *
      * * homeHasClass: false,
      * * ajaxEnabled: true,
@@ -50,46 +47,35 @@ export class Router {
      * * onDestroy: () => {},
      * * preBoot: ($cont, context, isHome) => {},
      *
-     * Routes example:
-     *
-     * ```js
-     * {
-     *    'page' : Page,
-     * }
-     * ```
      *
      * @param {Object} options
-     * @param {Object} routes
+     * @param {ClassFactory} classFactory
      * @param {String} baseUrl
      * @param {GraphicLoader} loader
      * @param {AbstractNav} nav
      */
-    constructor(options, routes, baseUrl, loader, nav) {
+    constructor(options, classFactory, baseUrl, loader, nav) {
         if (!baseUrl) {
             throw "Router needs baseUrl to be defined.";
         }
         if (!loader) {
             throw "Router needs a GraphicLoader instance to be defined.";
         }
-        if (!(loader instanceof GraphicLoader)) {
-            throw "'loader' must be an instance of GraphicLoader.";
+        if (!classFactory) {
+            throw "Router needs a ClassFactory instance to be defined.";
         }
-
         if (!nav) {
             throw "Router needs a Nav instance to be defined.";
         }
-        if (!(nav instanceof AbstractNav)) {
-            throw "'nav' must be an instance of Nav.";
-        }
 
+        /**
+         * @type {ClassFactory}
+         */
+        this.classFactory = classFactory;
         /**
          * @type {String}
          */
         this.baseUrl = baseUrl;
-        /**
-         * @type {Object}
-         */
-        this.routes = routes;
         /**
          * @type {GraphicLoader}
          */
@@ -133,7 +119,7 @@ export class Router {
             preLoad: (state) => {},
             prePushState: (state) => {},
             onDestroy: () => {},
-            preBoot: ($cont, context, isHome) => {},
+            preBoot: ($cont, context, isHome) => {}
         };
 
         if (options !== null) {
@@ -160,7 +146,6 @@ export class Router {
     }
 
     onPopState(event) {
-        console.log(this);
         if (typeof event.state !== "undefined" && event.state !== null) {
             this.transition = true;
             this.loadPage(event, event.state);
@@ -186,11 +171,8 @@ export class Router {
 
         if(isHome && this.options.homeHasClass){
             this.page = new Home(this, $cont, context, nodeType, isHome);
-        } else if(nodeType && typeof this.routes[nodeType] !== 'undefined') {
-            this.page = new this.routes[nodeType](this, $cont, context, nodeType, isHome);
         } else {
-            console.log('Page (' + nodeType + ') has no defined route, using AbstractPage.');
-            this.page = new AbstractPage(this, $cont, context, nodeType, isHome);
+            this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
         }
     }
 
@@ -213,7 +195,7 @@ export class Router {
 
                 const state = new State(e.currentTarget, {
                     previousType: this.page.type,
-                    navLinkClass: this.options.navLinkClass,
+                    navLinkClass: this.options.navLinkClass
                 });
 
                 const prePushStateBinded = this.options.prePushState.bind(this);

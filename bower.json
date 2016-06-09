@@ -18,6 +18,7 @@
     "gsap": "~1.16.1",
     "jquery": "~2.2.0",
     "waitForImages": "~2.2.0",
-    "requirejs": "2.1.22"
+    "requirejs": "2.1.22",
+    "loglevel": "~1.4.1"
   }
 }

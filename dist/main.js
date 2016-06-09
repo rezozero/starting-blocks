@@ -1,7 +1,9 @@
-define(["jquery", "utils/polyfills", "router", "graphicLoader", "abstract-nav", "pages/page"], function (_jquery, _polyfills, _router, _graphicLoader, _abstractNav, _page) {
+define(["jquery", "loglevel", "utils/polyfills", "router", "graphicLoader", "abstract-nav", "class-factory"], function (_jquery, _loglevel, _polyfills, _router, _graphicLoader, _abstractNav, _classFactory) {
     "use strict";
 
     var _jquery2 = _interopRequireDefault(_jquery);
+
+    var _loglevel2 = _interopRequireDefault(_loglevel);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -14,6 +16,7 @@ define(["jquery", "utils/polyfills", "router", "graphicLoader", "abstract-nav", 
      */
     (0, _polyfills.polyfills)();
 
+    _loglevel2.default.setLevel(0);
     /*
      * Begin main app ---
      */
@@ -25,29 +28,23 @@ define(["jquery", "utils/polyfills", "router", "graphicLoader", "abstract-nav", 
 
     var router = new _router.Router({
         homeHasClass: false,
-        ajaxEnabled: true,
+        ajaxEnabled: false,
         preBoot: function preBoot() {
-            console.log('--- preboot');
+            _loglevel2.default.debug('--- preboot');
         },
         postLoad: function postLoad() {
-            console.log('--- postLoad');
+            _loglevel2.default.debug('--- postLoad');
         },
         preLoad: function preLoad() {
-            console.log('--- preLoad');
+            _loglevel2.default.debug('--- preLoad');
         },
         onDestroy: function onDestroy() {
-            console.log('--- onDestroy');
+            _loglevel2.default.debug('--- onDestroy');
         },
         prePushState: function prePushState() {
-            console.log('--- prePushState');
+            _loglevel2.default.debug('--- prePushState');
         }
-    }, {
-        /*
-         * Routes are nodeType corresponding to
-         * ES6 modules
-         */
-        'page': _page.Page
-    },
+    }, new _classFactory.ClassFactory(),
     // temp namespace is defined in your index.html
     temp.baseUrl, new _graphicLoader.GraphicLoader(), new _abstractNav.AbstractNav());
     router.initEvents();
