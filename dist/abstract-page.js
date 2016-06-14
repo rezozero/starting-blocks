@@ -73,6 +73,9 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
              * @type {Boolean}
              */
             this.isHome = isHome;
+
+            this.name = this.$cont.length ? this.$cont[0].getAttribute('data-node-name') : '';
+
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
             _loglevel2.default.debug('+ New page : ' + type + ' - #' + this.id);

@@ -72,6 +72,9 @@ export class AbstractPage {
          * @type {Boolean}
          */
         this.isHome = isHome;
+
+        this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
+
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
         log.debug('+ New page : ' + type + ' - #' + this.id);

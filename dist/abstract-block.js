@@ -40,6 +40,8 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
             this.$cont = $cont;
             this.id = $cont[0].id;
             this.type = type;
+            this.name = this.$cont.length ? this.$cont[0].getAttribute('data-node-name') : '';
+
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
             _loglevel2.default.debug('    + New block : ' + type + ' - #' + this.id);
