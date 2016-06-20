@@ -68,7 +68,7 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
                 waitForAll: true
             });
 
-            window.addEventListener('resize', this.onResizeDebounce);
+            this.page.router.$window.on('resize', this.onResizeDebounce);
         };
 
         AbstractBlock.prototype.destroy = function destroy() {
@@ -76,7 +76,7 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
         };
 
         AbstractBlock.prototype.destroyEvents = function destroyEvents() {
-            window.removeEventListener('resize', this.onResizeDebounce);
+            this.page.router.$window.off('resize', this.onResizeDebounce);
         };
 
         AbstractBlock.prototype.onResize = function onResize() {};

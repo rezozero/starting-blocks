@@ -152,7 +152,7 @@ export class AbstractPage {
             this.$link.on('click', this.bindedLinkClick);
         }
 
-        window.addEventListener('resize', this.onResizeDebounce);
+        this.router.$window.on('resize', this.onResizeDebounce);
     }
 
     /**
@@ -160,7 +160,7 @@ export class AbstractPage {
      */
     destroyEvents() {
         this.$link.off('click', this.bindedLinkClick);
-        window.removeEventListener('resize', this.onResizeDebounce);
+        this.router.$window.off('resize', this.onResizeDebounce);
     }
 
     /**
@@ -185,7 +185,8 @@ export class AbstractPage {
                 this.show(onShowEnded);
             } else if(this.context == 'ajax'){
                 // Update body id
-                $('body').get(0).id = history.state.nodeName;
+                if(this.name !== '') document.body.id = this.name;
+                // $('body').get(0).id = history.state.nodeName;
                 // Hide formerPages - show
                 if (this.router.formerPages.length > 0) {
                     const formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];

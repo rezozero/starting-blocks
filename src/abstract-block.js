@@ -67,7 +67,7 @@ export class AbstractBlock
             waitForAll: true
         });
 
-        window.addEventListener('resize', this.onResizeDebounce);
+        this.page.router.$window.on('resize', this.onResizeDebounce);
     }
 
     destroy() {
@@ -75,7 +75,7 @@ export class AbstractBlock
     }
 
     destroyEvents(){
-        window.removeEventListener('resize', this.onResizeDebounce);
+        this.page.router.$window.off('resize', this.onResizeDebounce);
     }
 
     onResize() {

@@ -159,7 +159,7 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
                 this.$link.on('click', this.bindedLinkClick);
             }
 
-            window.addEventListener('resize', this.onResizeDebounce);
+            this.router.$window.on('resize', this.onResizeDebounce);
         };
 
         /**
@@ -169,7 +169,7 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
 
         AbstractPage.prototype.destroyEvents = function destroyEvents() {
             this.$link.off('click', this.bindedLinkClick);
-            window.removeEventListener('resize', this.onResizeDebounce);
+            this.router.$window.off('resize', this.onResizeDebounce);
         };
 
         /**
@@ -198,7 +198,8 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
                     _this.show(onShowEnded);
                 } else if (_this.context == 'ajax') {
                     // Update body id
-                    (0, _jquery2.default)('body').get(0).id = history.state.nodeName;
+                    if (_this.name !== '') document.body.id = _this.name;
+                    // $('body').get(0).id = history.state.nodeName;
                     // Hide formerPages - show
                     if (_this.router.formerPages.length > 0) {
                         var formerPage = _this.router.formerPages[_this.router.formerPages.length - 1];

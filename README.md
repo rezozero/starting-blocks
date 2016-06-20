@@ -100,12 +100,16 @@ data to your HTML tags.
 <div id="page-content-home"
      class="page-content page-content-ajax"
      data-node-type="page"
+     data-node-name="home"
+     data-is-home="1"
      data-meta-title="Home page">
 </div>
 ```
 - `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website.
 - `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in your `Router` options (`pageClass: "page-content"`).
 - `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: page.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the `Router` construction (`'page' : Page`).
+- `data-node-name`
+- `data-is-home`
 - `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
 
 You’ll find `index.html` and `page1.html` examples files. You can even test them
