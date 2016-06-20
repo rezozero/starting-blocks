@@ -100,7 +100,7 @@ export class Router {
         this.ajaxEnabled = true;
         this.transition = false;
         this.loading = false;
-        this.window = $(window);
+        this.$window = $(window);
         this.currentRequest = null;
         /**
          * @type {Object}

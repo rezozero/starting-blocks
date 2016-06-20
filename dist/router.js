@@ -97,7 +97,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             this.ajaxEnabled = true;
             this.transition = false;
             this.loading = false;
-            this.window = (0, _jquery2.default)(window);
+            this.$window = (0, _jquery2.default)(window);
             this.currentRequest = null;
             /**
              * @type {Object}
