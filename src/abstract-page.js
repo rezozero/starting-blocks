@@ -73,6 +73,10 @@ export class AbstractPage {
          */
         this.isHome = isHome;
 
+        if(this.$cont[0].getAttribute('data-is-home') == '1'){
+            this.isHome = true;
+        }
+
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
