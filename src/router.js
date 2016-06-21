@@ -43,6 +43,7 @@ export class Router {
      * * minLoadDuration: 0,
      * * postLoad: (state, data) => {},
      * * preLoad: (state) => {},
+     * * preLoadPageDelay: 0
      * * prePushState: (state) => {},
      * * onDestroy: () => {},
      * * preBoot: ($cont, context, isHome) => {},
@@ -115,6 +116,7 @@ export class Router {
             pageBlockClass: ".page-block",
             $ajaxContainer: $("#ajax-container"),
             minLoadDuration: 0,
+            preLoadPageDelay: 0,
             postLoad: (state, data) => {},
             preLoad: (state) => {},
             prePushState: (state) => {},
@@ -224,47 +226,51 @@ export class Router {
         const preLoadBinded = this.options.preLoad.bind(this);
         preLoadBinded(state);
 
-        this.currentRequest = $.ajax({
-            url: state.href,
-            dataType: "html",
-            // Need to disable cache to prevent
-            // browser to serve partial when no
-            // ajax context is defined.
-            cache: false,
-            type: 'get',
-            success: (data) => {
-                // Extract only to new page content
-                // if the whole HTML is queried
-                let $data = null;
-                const $response = $($.parseHTML(data.trim()));
-                if ($response.hasClass(this.options.pageClass)) {
-                    $data = $response;
-                } else {
-                    $data = $response.find('.' + this.options.pageClass);
+        setTimeout( () => {
+
+            this.currentRequest = $.ajax({
+                url: state.href,
+                dataType: "html",
+                // Need to disable cache to prevent
+                // browser to serve partial when no
+                // ajax context is defined.
+                cache: false,
+                type: 'get',
+                success: (data) => {
+                    // Extract only to new page content
+                    // if the whole HTML is queried
+                    let $data = null;
+                    const $response = $($.parseHTML(data.trim()));
+                    if ($response.hasClass(this.options.pageClass)) {
+                        $data = $response;
+                    } else {
+                        $data = $response.find('.' + this.options.pageClass);
+                    }
+                    /*
+                     * Display data to DOM
+                     */
+                    this.options.$ajaxContainer.append($data);
+
+                    /*
+                     * Push a copy object not to set it as null.
+                     */
+                    this.formerPages.push(this.page);
+
+                    // Init new page
+                    this.updatePageTitle($data);
+                    this.boot($data, 'ajax', state.isHome);
+
+                    const postLoadBinded = this.options.postLoad.bind(this);
+                    postLoadBinded(state, $data);
+
+                    // Analytics
+                    if(typeof ga !== "undefined") {
+                        ga('send', 'pageview', {'page':state.href, 'title':document.title});
+                    }
                 }
-                /*
-                 * Display data to DOM
-                 */
-                this.options.$ajaxContainer.append($data);
+            });
 
-                /*
-                 * Push a copy object not to set it as null.
-                 */
-                this.formerPages.push(this.page);
-
-                // Init new page
-                this.updatePageTitle($data);
-                this.boot($data, 'ajax', state.isHome);
-
-                const postLoadBinded = this.options.postLoad.bind(this);
-                postLoadBinded(state, $data);
-
-                // Analytics
-                if(typeof ga !== "undefined") {
-                    ga('send', 'pageview', {'page':state.href, 'title':document.title});
-                }
-            }
-        });
+        }, this.options.preLoadPageDelay);
     }
 
     /**

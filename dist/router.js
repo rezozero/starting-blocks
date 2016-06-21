@@ -37,6 +37,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          * * minLoadDuration: 0,
          * * postLoad: (state, data) => {},
          * * preLoad: (state) => {},
+         * * preLoadPageDelay: 0
          * * prePushState: (state) => {},
          * * onDestroy: () => {},
          * * preBoot: ($cont, context, isHome) => {},
@@ -112,6 +113,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 pageBlockClass: ".page-block",
                 $ajaxContainer: (0, _jquery2.default)("#ajax-container"),
                 minLoadDuration: 0,
+                preLoadPageDelay: 0,
                 postLoad: function postLoad(state, data) {},
                 preLoad: function preLoad(state) {},
                 prePushState: function prePushState(state) {},
@@ -227,47 +229,50 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             var preLoadBinded = this.options.preLoad.bind(this);
             preLoadBinded(state);
 
-            this.currentRequest = _jquery2.default.ajax({
-                url: state.href,
-                dataType: "html",
-                // Need to disable cache to prevent
-                // browser to serve partial when no
-                // ajax context is defined.
-                cache: false,
-                type: 'get',
-                success: function success(data) {
-                    // Extract only to new page content
-                    // if the whole HTML is queried
-                    var $data = null;
-                    var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
-                    if ($response.hasClass(_this.options.pageClass)) {
-                        $data = $response;
-                    } else {
-                        $data = $response.find('.' + _this.options.pageClass);
+            setTimeout(function () {
+
+                _this.currentRequest = _jquery2.default.ajax({
+                    url: state.href,
+                    dataType: "html",
+                    // Need to disable cache to prevent
+                    // browser to serve partial when no
+                    // ajax context is defined.
+                    cache: false,
+                    type: 'get',
+                    success: function success(data) {
+                        // Extract only to new page content
+                        // if the whole HTML is queried
+                        var $data = null;
+                        var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
+                        if ($response.hasClass(_this.options.pageClass)) {
+                            $data = $response;
+                        } else {
+                            $data = $response.find('.' + _this.options.pageClass);
+                        }
+                        /*
+                         * Display data to DOM
+                         */
+                        _this.options.$ajaxContainer.append($data);
+
+                        /*
+                         * Push a copy object not to set it as null.
+                         */
+                        _this.formerPages.push(_this.page);
+
+                        // Init new page
+                        _this.updatePageTitle($data);
+                        _this.boot($data, 'ajax', state.isHome);
+
+                        var postLoadBinded = _this.options.postLoad.bind(_this);
+                        postLoadBinded(state, $data);
+
+                        // Analytics
+                        if (typeof ga !== "undefined") {
+                            ga('send', 'pageview', { 'page': state.href, 'title': document.title });
+                        }
                     }
-                    /*
-                     * Display data to DOM
-                     */
-                    _this.options.$ajaxContainer.append($data);
-
-                    /*
-                     * Push a copy object not to set it as null.
-                     */
-                    _this.formerPages.push(_this.page);
-
-                    // Init new page
-                    _this.updatePageTitle($data);
-                    _this.boot($data, 'ajax', state.isHome);
-
-                    var postLoadBinded = _this.options.postLoad.bind(_this);
-                    postLoadBinded(state, $data);
-
-                    // Analytics
-                    if (typeof ga !== "undefined") {
-                        ga('send', 'pageview', { 'page': state.href, 'title': document.title });
-                    }
-                }
-            });
+                });
+            }, this.options.preLoadPageDelay);
         };
 
         /**
