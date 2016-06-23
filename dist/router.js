@@ -99,6 +99,10 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             this.transition = false;
             this.loading = false;
             this.$window = (0, _jquery2.default)(window);
+            /**
+             * @deprecated use this.$window instead
+             */
+            this.window = this.$window;
             this.currentRequest = null;
             /**
              * @type {Object}

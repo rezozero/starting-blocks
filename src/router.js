@@ -102,6 +102,10 @@ export class Router {
         this.transition = false;
         this.loading = false;
         this.$window = $(window);
+        /**
+         * @deprecated use this.$window instead
+         */
+        this.window = this.$window;
         this.currentRequest = null;
         /**
          * @type {Object}
