@@ -46,13 +46,6 @@ define(["exports"], function (exports) {
             this.page = page;
         };
 
-        /**
-         * Bind navigation against router.
-         *
-         * @param {Router} router
-         */
-
-
         AbstractNav.prototype.initEvents = function initEvents(router) {
             if (!router) {
                 throw "Nav initEvents method needs a Router object.";

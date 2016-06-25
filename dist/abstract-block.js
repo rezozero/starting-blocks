@@ -57,11 +57,6 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
 
         AbstractBlock.prototype.init = function init() {};
 
-        /**
-         *
-         */
-
-
         AbstractBlock.prototype.initEvents = function initEvents() {
             this.$cont.waitForImages({
                 finished: this.onLoad.bind(this),
@@ -82,15 +77,6 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
         AbstractBlock.prototype.onResize = function onResize() {};
 
         AbstractBlock.prototype.onLoad = function onLoad() {};
-
-        /**
-         * onMapsReady.
-         *
-         * This method must be dispatched by Base.initMaps callback
-         * method.
-         * @deprecated Use directly AMD modules to load Maps external library.
-         */
-
 
         AbstractBlock.prototype.onMapsReady = function onMapsReady() {};
 

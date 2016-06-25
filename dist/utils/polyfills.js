@@ -49,7 +49,7 @@ define(['exports'], function (exports) {
          * @return {[type]} [description]
          */
         {
-            var method = void 0;
+            var method = undefined;
             var noop = function noop() {};
             var methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'timeStamp', 'trace', 'warn'];
             var length = methods.length;

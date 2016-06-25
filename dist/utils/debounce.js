@@ -22,7 +22,7 @@ define(["exports"], function (exports) {
         var _this = this,
             _arguments = arguments;
 
-        var timeout = void 0;
+        var timeout = undefined;
         return function () {
             var context = _this,
                 args = _arguments;

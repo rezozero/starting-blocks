@@ -25,28 +25,12 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             _classCallCheck(this, Utils);
         }
 
-        /**
-         * @param  {String} str
-         * @return {String}
-         */
-
         Utils.stripTrailingSlash = function stripTrailingSlash(str) {
             if (str.substr(-1) == '/') {
                 return str.substr(0, str.length - 1);
             }
             return str;
         };
-
-        /**
-         * Log credits to console for code lovers.
-         *
-         * @param  {String} siteName
-         * @param  {String} bgColor
-         * @param  {Array}  creditsList
-         * @param  {Array}  thanksList
-         * @param  {String} textColor (optional)
-         */
-
 
         Utils.logCredits = function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
 
@@ -81,39 +65,14 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             console.log(" ");
         };
 
-        /**
-         * Get style value.
-         *
-         * @param  {jQuery} $el [element to check]
-         * @param  {String} style
-         * @return {Number}
-         */
-
-
         Utils.getStyleVal = function getStyleVal($el, style) {
             var elStyle = $el.css(style);
             return Math.round(Number(elStyle.substr(0, elStyle.length - 2)));
         };
 
-        /**
-         * Add class custom.
-         *
-         * @param {HTMLElement} el [dom element]
-         * @param {String} classToAdd  [class to add]
-         */
-
-
         Utils.addClass = function addClass(el, classToAdd) {
             if (el.classList) el.classList.add(classToAdd);else el.className += ' ' + classToAdd;
         };
-
-        /**
-         * Remove class custom.
-         *
-         * @param {HTMLElement} el
-         * @param {String} classToRemove
-         */
-
 
         Utils.removeClass = function removeClass(el, classToRemove) {
             if (el.classList) {
@@ -127,16 +86,6 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             }
         };
 
-        /**
-         * Get random number.
-         *
-         * @param  {Number} min [min value]
-         * @param  {Number} max [max value]
-         * @param  {Number} decimal
-         * @return {Number}
-         */
-
-
         Utils.getRandomNumber = function getRandomNumber(min, max, decimal) {
             var result = Math.random() * (max - min) + min;
 
@@ -145,24 +94,9 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             } else return result;
         };
 
-        /**
-         * Get random integer.
-         *
-         * @param  {Number} min [min value]
-         * @param  {Number} max [max value]
-         * @return {Number}
-         */
-
-
         Utils.getRandomInt = function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         };
-
-        /**
-         * Replace placeholder for browser that
-         * do not support it.
-         */
-
 
         Utils.replacePlaceholder = function replacePlaceholder() {
             if (typeof Modernizr !== "undefined") {
@@ -192,14 +126,6 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             }
         };
 
-        /**
-         * Match CSS media queries and JavaScript window width.
-         *
-         * @see http://stackoverflow.com/a/11310353
-         * @return {Object}
-         */
-
-
         Utils.getViewportSize = function getViewportSize() {
             var e = window,
                 a = 'inner';
@@ -209,14 +135,6 @@ define(['exports', 'jquery'], function (exports, _jquery) {
             }
             return { width: e[a + 'Width'], height: e[a + 'Height'] };
         };
-
-        /**
-         * Get a css property with the vendor prefix.
-         *
-         * @param  {String} property the css property
-         * @return {String}          the prefixed property
-         */
-
 
         Utils.prefixProperty = function prefixProperty(property) {
             var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
@@ -233,18 +151,6 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                 }
             }
         };
-
-        /**
-         * Gets normalized ratio of value inside range.
-         *
-         * from https://github.com/mout/mout/blob/master/src/math/norm.js
-         *
-         * @param  {Number} val
-         * @param  {Number} min
-         * @param  {Number} max
-         * @return {Number}
-         */
-
 
         Utils.getNormRatio = function getNormRatio(val, min, max) {
             if (val < min) return 0;

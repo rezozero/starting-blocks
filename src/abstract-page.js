@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 import log from "loglevel";
-import TweenLite from "TweenLite";
+import TweenMax from "TweenMax";
 import waitForImages from "waitForImages";
 import $ from "jquery";
 import {debounce} from "utils/debounce";

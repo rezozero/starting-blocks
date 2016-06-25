@@ -42,11 +42,6 @@ define(['exports', 'loglevel'], function (exports, _loglevel) {
       _loglevel2.default.debug('[GraphicLoader] Show loader.');
     };
 
-    /**
-     * Hide loader.
-     */
-
-
     GraphicLoader.prototype.hide = function hide() {
       _loglevel2.default.debug('[GraphicLoader] Hide loader.');
     };

@@ -1,4 +1,4 @@
-define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/debounce"], function (exports, _loglevel, _TweenLite, _waitForImages, _jquery, _debounce) {
+define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/debounce"], function (exports, _loglevel, _TweenMax, _waitForImages, _jquery, _debounce) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -8,7 +8,7 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
 
     var _loglevel2 = _interopRequireDefault(_loglevel);
 
-    var _TweenLite2 = _interopRequireDefault(_TweenLite);
+    var _TweenMax2 = _interopRequireDefault(_TweenMax);
 
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
@@ -121,11 +121,6 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
             }
         };
 
-        /**
-         *
-         */
-
-
         AbstractPage.prototype.destroy = function destroy() {
             _loglevel2.default.debug('destroy:' + this.id);
             this.$cont.remove();
@@ -137,13 +132,6 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
                 }
             }
         };
-
-        /**
-         * Initialize basic events.
-         *
-         * Such as waitForImages and link click if you enabled Ajax navigation.
-         */
-
 
         AbstractPage.prototype.initEvents = function initEvents() {
             if (this.$cont.find('img').length) {
@@ -162,21 +150,10 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
             this.router.$window.on('resize', this.onResizeDebounce);
         };
 
-        /**
-         *
-         */
-
-
         AbstractPage.prototype.destroyEvents = function destroyEvents() {
             this.$link.off('click', this.bindedLinkClick);
             this.router.$window.off('resize', this.onResizeDebounce);
         };
-
-        /**
-         * @param e
-         * @private
-         */
-
 
         AbstractPage.prototype.onLoad = function onLoad(e) {
             var _this = this;
@@ -223,17 +200,12 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
             }, delay);
         };
 
-        /**
-         * @param {Function} onShow
-         */
-
-
         AbstractPage.prototype.show = function show(onShow) {
             var _this2 = this;
 
             _loglevel2.default.debug('>>>> Show ----');
             // Animate
-            var tween = _TweenLite2.default.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
+            var tween = TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
                     _this2.router.transition = false;
                     if (typeof onShow !== 'undefined') {
                         onShow();
@@ -241,35 +213,20 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
                 } });
         };
 
-        /**
-         *
-         */
-
-
         AbstractPage.prototype.showEnded = function showEnded() {
             _loglevel2.default.debug('---- Show >>>>');
             this.$cont.removeClass(this.router.options.pageClass + '-ajax');
             this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
         };
 
-        /**
-         * @param {Function} onHidden
-         */
-
-
         AbstractPage.prototype.hide = function hide(onHidden) {
             _loglevel2.default.debug('hiding:' + this.id);
-            _TweenLite2.default.to(this.$cont, 0.6, { opacity: 0, onComplete: onHidden });
+            TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: onHidden });
         };
 
         AbstractPage.prototype.initAjax = function initAjax() {
             this.$cont.addClass(this.router.options.pageClass + '-transitioning');
         };
-
-        /**
-         * @private
-         */
-
 
         AbstractPage.prototype.initBlocks = function initBlocks() {
             for (var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
@@ -281,12 +238,6 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
             }
         };
 
-        /**
-         * @param  {String} id
-         * @return {AbstractBlock|null}
-         */
-
-
         AbstractPage.prototype.getBlockById = function getBlockById(id) {
             for (var i in this.blocks) {
                 if (this.blocks[i].id == id) {
@@ -296,20 +247,7 @@ define(["exports", "loglevel", "TweenLite", "waitForImages", "jquery", "utils/de
             return null;
         };
 
-        /**
-         *
-         */
-
-
         AbstractPage.prototype.onResize = function onResize() {};
-
-        /**
-         * Add target blank to external links.
-         *
-         * @param  {JQuery} $links
-         * @param  {String} baseUrl
-         */
-
 
         AbstractPage.prototype.externalLinkTarget = function externalLinkTarget($links, baseUrl) {
             var linksLength = $links.length;

@@ -155,16 +155,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             }
         };
 
-        /**
-         * Booting need a jQuery handler for
-         * the container.
-         *
-         * @param  {jQuery}  $cont
-         * @param  {String}  context
-         * @param  {Boolean} isHome
-         */
-
-
         Router.prototype.boot = function boot($cont, context, isHome) {
             if (context == 'static') {
                 this.loadBeginDate = new Date();
@@ -180,12 +170,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
             }
         };
-
-        /**
-         *
-         * @param e Event
-         */
-
 
         Router.prototype.onLinkClick = function onLinkClick(e) {
             var linkClassName = e.currentTarget.className,
@@ -213,13 +197,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 }
             }
         };
-
-        /**
-         *
-         * @param e
-         * @param state
-         */
-
 
         Router.prototype.loadPage = function loadPage(e, state) {
             var _this = this;
@@ -279,26 +256,12 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             }, this.options.preLoadPageDelay);
         };
 
-        /**
-         * Update page title against data-title attribute
-         * from ajax loaded partial DOM.
-         *
-         * @param {jQuery} $data
-         */
-
-
         Router.prototype.updatePageTitle = function updatePageTitle($data) {
             if ($data.length && $data.attr('data-meta-title') !== '') {
                 var metaTitle = $data.attr('data-meta-title');
                 if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
             }
         };
-
-        /**
-         *
-         * @param {boolean} isHome
-         */
-
 
         Router.prototype.pushFirstState = function pushFirstState(isHome) {
             if (history.pushState) {
