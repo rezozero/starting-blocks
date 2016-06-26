@@ -24,12 +24,16 @@ const isHome = (dataHome == '1') ? true : false;
 const router = new Router(
     {
         homeHasClass: false,
-        ajaxEnabled: false,
-        preBoot: () => { log.debug('--- preboot'); },
-        postLoad: () => { log.debug('--- postLoad'); },
-        preLoad: () => { log.debug('--- preLoad'); },
-        onDestroy: () => { log.debug('--- onDestroy'); },
-        prePushState: () => { log.debug('--- prePushState'); }
+        ajaxEnabled: true,
+        /*
+         * Do not use Arrow function
+         * these will be bind to the router before their use.
+         */
+        preBoot: function(){ log.debug('ℹ️ preboot'); },
+        postLoad: function(){ log.debug('ℹ️ postLoad'); },
+        preLoad: function(){ log.debug('ℹ️ preLoad'); },
+        onDestroy: function(){ log.debug('ℹ️ onDestroy'); },
+        prePushState: function(){ log.debug('ℹ️ prePushState'); }
     },
     new ClassFactory(),
     // temp namespace is defined in your index.html

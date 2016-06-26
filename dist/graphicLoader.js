@@ -39,11 +39,11 @@ define(['exports', 'loglevel'], function (exports, _loglevel) {
 
 
     GraphicLoader.prototype.show = function show() {
-      _loglevel2.default.debug('[GraphicLoader] Show loader.');
+      _loglevel2.default.debug('🌀 Show loader');
     };
 
     GraphicLoader.prototype.hide = function hide() {
-      _loglevel2.default.debug('[GraphicLoader] Hide loader.');
+      _loglevel2.default.debug('🌀 Hide loader');
     };
 
     return GraphicLoader;

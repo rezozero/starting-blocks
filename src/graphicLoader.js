@@ -40,13 +40,13 @@ export class GraphicLoader {
      * Show loader.
      */
     show() {
-        log.debug('[GraphicLoader] Show loader.');
+        log.debug('🌀 Show loader');
     }
 
     /**
      * Hide loader.
      */
     hide() {
-        log.debug('[GraphicLoader] Hide loader.');
+        log.debug('🌀 Hide loader');
     }
 }

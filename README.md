@@ -11,6 +11,7 @@
 - waitForImages
 - debounce
 - RequireJS
+- loglevel
 
 ## Usage
 
@@ -26,8 +27,9 @@ requirejs.config({
     baseUrl: './dist',
     paths: {
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
+        TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min",
         waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
-        TweenLite: "./../bower_components/gsap/src/minified/TweenMax.min",
+        loglevel: "./../bower_components/loglevel/dist/loglevel.min"
     }
 });
 
@@ -49,8 +51,8 @@ with your own website path or your *Roadiz* theme *static* path.
 ```js
 var paths = {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
+    TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min",
     waitForImages: '/path/to/your/website/bower_components/waitForImages/dist/jquery.waitforimages.min',
-    TweenLite: "/path/to/your/website/bower_components/gsap/src/minified/TweenMax.min",
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
     "state": "/path/to/your/website/bower_components/pageblock/dist/state",
@@ -121,7 +123,7 @@ Then go to your favorite browser and type `http://localhost:8888`.
 A Router needs:
 
 - an options object in order to override default configuration
-- a route definition object to link `data-node-type` value to actual route *ES6* classes (you must import each class you’ll declare in your routes)
+- a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *pageblock-framework*.
 - a `baseUrl` string which is your website protocol + domain + path, i.e. *http://mysuperwebsite.com* or *http://localhost:8888* in our examples. It is useful to bind AJAX only on internal links and not external links.
 - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.

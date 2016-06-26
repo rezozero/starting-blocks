@@ -69,7 +69,7 @@ export class ClassFactory
             /*case 'map-block':
                 return new MapBlock(page, $cont, nodeTypeName);*/
             default:
-                log.info('    "' + nodeTypeName + '" has no defined route, using AbstractBlock.');
+                log.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
                 return new AbstractBlock(page, $cont, nodeTypeName);
         }
     }

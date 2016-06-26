@@ -26,6 +26,11 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
 
     var AbstractBlock = exports.AbstractBlock = function () {
         /**
+         * Abstract block constructor.
+         *
+         * It‘s better to extend this class by using `init` method instead
+         * of extending `constructor`.
+         *
          * @param  {AbstractPage} page
          * @param  {String} id
          * @param  {String} type
@@ -41,32 +46,36 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
             this.id = $cont[0].id;
             this.type = type;
             this.name = this.$cont.length ? this.$cont[0].getAttribute('data-node-name') : '';
-
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
-            _loglevel2.default.debug('    + New block : ' + type + ' - #' + this.id);
+            _loglevel2.default.debug('\t✳️ #' + this.id + '\t' + type);
 
             this.init();
             this.initEvents();
         }
 
         /**
-         *
+         * Basic members initialization for children classes.
          */
 
 
         AbstractBlock.prototype.init = function init() {};
 
         AbstractBlock.prototype.initEvents = function initEvents() {
-            this.$cont.waitForImages({
-                finished: this.onLoad.bind(this),
-                waitForAll: true
-            });
+            if (this.$cont.find('img').length) {
+                this.$cont.waitForImages({
+                    finished: this.onLoad.bind(this),
+                    waitForAll: true
+                });
+            } else {
+                this.onLoad();
+            }
 
             this.page.router.$window.on('resize', this.onResizeDebounce);
         };
 
         AbstractBlock.prototype.destroy = function destroy() {
+            _loglevel2.default.debug('\t🗑 #' + this.id);
             this.destroyEvents();
         };
 
@@ -77,8 +86,6 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
         AbstractBlock.prototype.onResize = function onResize() {};
 
         AbstractBlock.prototype.onLoad = function onLoad() {};
-
-        AbstractBlock.prototype.onMapsReady = function onMapsReady() {};
 
         return AbstractBlock;
     }();

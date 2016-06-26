@@ -82,7 +82,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
 
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
 
-            _loglevel2.default.debug('+ New page : ' + type + ' - #' + this.id);
+            _loglevel2.default.debug('✳️ #' + this.id + '\t' + type);
 
             this.init();
             this.initEvents();
@@ -91,7 +91,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
         /**
          * Initialize page.
          *
-         * You should always extends this method in your child implemetations.
+         * You should always extends this method in your child implemetations instead
+         * of extending page constructor.
          */
 
 
@@ -122,7 +123,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
         };
 
         AbstractPage.prototype.destroy = function destroy() {
-            _loglevel2.default.debug('destroy:' + this.id);
+            _loglevel2.default.debug('🗑 #' + this.id);
             this.$cont.remove();
             this.destroyEvents();
             // --- Blocks --- //
@@ -176,7 +177,6 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
                 } else if (_this.context == 'ajax') {
                     // Update body id
                     if (_this.name !== '') document.body.id = _this.name;
-                    // $('body').get(0).id = history.state.nodeName;
                     // Hide formerPages - show
                     if (_this.router.formerPages.length > 0) {
                         var formerPage = _this.router.formerPages[_this.router.formerPages.length - 1];
@@ -203,7 +203,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
         AbstractPage.prototype.show = function show(onShow) {
             var _this2 = this;
 
-            _loglevel2.default.debug('>>>> Show ----');
+            _loglevel2.default.debug('▶️ #' + this.id);
             // Animate
             var tween = TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
                     _this2.router.transition = false;
@@ -214,13 +214,12 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
         };
 
         AbstractPage.prototype.showEnded = function showEnded() {
-            _loglevel2.default.debug('---- Show >>>>');
             this.$cont.removeClass(this.router.options.pageClass + '-ajax');
             this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
         };
 
         AbstractPage.prototype.hide = function hide(onHidden) {
-            _loglevel2.default.debug('hiding:' + this.id);
+            _loglevel2.default.debug('◀️ #' + this.id);
             TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: onHidden });
         };
 

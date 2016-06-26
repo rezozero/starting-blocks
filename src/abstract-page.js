@@ -81,7 +81,7 @@ export class AbstractPage {
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        log.debug('+ New page : ' + type + ' - #' + this.id);
+        log.debug('✳️ #' + this.id + '\t' + type);
 
         this.init();
         this.initEvents();
@@ -90,7 +90,8 @@ export class AbstractPage {
     /**
      * Initialize page.
      *
-     * You should always extends this method in your child implemetations.
+     * You should always extends this method in your child implemetations instead
+     * of extending page constructor.
      */
     init() {
         this.$link = this.$cont.find('a').not('[target="_blank"]');
@@ -119,10 +120,10 @@ export class AbstractPage {
     }
 
     /**
-     *
+     * Destroy current page and all its blocks.
      */
     destroy() {
-        log.debug('destroy:' + this.id);
+        log.debug('🗑 #' + this.id);
         this.$cont.remove();
         this.destroyEvents();
         // --- Blocks --- //
@@ -186,7 +187,6 @@ export class AbstractPage {
             } else if(this.context == 'ajax'){
                 // Update body id
                 if(this.name !== '') document.body.id = this.name;
-                // $('body').get(0).id = history.state.nodeName;
                 // Hide formerPages - show
                 if (this.router.formerPages.length > 0) {
                     const formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];
@@ -214,7 +214,7 @@ export class AbstractPage {
      * @param {Function} onShow
      */
     show(onShow) {
-        log.debug('>>>> Show ----');
+        log.debug('▶️ #' + this.id);
         // Animate
         var tween = TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
             this.router.transition = false;
@@ -228,7 +228,6 @@ export class AbstractPage {
      *
      */
     showEnded() {
-        log.debug('---- Show >>>>');
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
@@ -237,7 +236,7 @@ export class AbstractPage {
      * @param {Function} onHidden
      */
     hide(onHidden) {
-        log.debug('hiding:' + this.id);
+        log.debug('◀️ #' + this.id);
         TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
     }
 

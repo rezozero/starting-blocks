@@ -30,6 +30,11 @@ import {debounce} from "utils/debounce";
 export class AbstractBlock
 {
     /**
+     * Abstract block constructor.
+     *
+     * It‘s better to extend this class by using `init` method instead
+     * of extending `constructor`.
+     *
      * @param  {AbstractPage} page
      * @param  {String} id
      * @param  {String} type
@@ -42,38 +47,53 @@ export class AbstractBlock
         this.id = $cont[0].id;
         this.type = type;
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
-
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        log.debug('    + New block : ' + type + ' - #'+this.id);
+        log.debug('\t✳️ #'+this.id + '\t' + type);
 
         this.init();
         this.initEvents();
     }
 
     /**
-     *
+     * Basic members initialization for children classes.
      */
     init() {
 
     }
 
     /**
+     * Bind load and resize events for this specific block.
      *
+     * Do not forget to call `super.initEvents();` while extending this method.
      */
     initEvents(){
-        this.$cont.waitForImages({
-            finished: this.onLoad.bind(this),
-            waitForAll: true
-        });
+        if (this.$cont.find('img').length) {
+            this.$cont.waitForImages({
+                finished: this.onLoad.bind(this),
+                waitForAll: true
+            });
+        } else {
+            this.onLoad();
+        }
 
         this.page.router.$window.on('resize', this.onResizeDebounce);
     }
 
+    /*
+     * Destroy current block.
+     */
     destroy() {
+        log.debug('\t🗑 #'+this.id);
         this.destroyEvents();
     }
 
+    /*
+     * Unbind event block events.
+     *
+     * Make sure you’ve used binded methods to be able to
+     * `off` them correctly.
+     */
     destroyEvents(){
         this.page.router.$window.off('resize', this.onResizeDebounce);
     }
@@ -83,17 +103,6 @@ export class AbstractBlock
     }
 
     onLoad() {
-
-    }
-
-    /**
-     * onMapsReady.
-     *
-     * This method must be dispatched by Base.initMaps callback
-     * method.
-     * @deprecated Use directly AMD modules to load Maps external library.
-     */
-    onMapsReady(){
 
     }
 }
