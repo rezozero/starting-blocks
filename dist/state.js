@@ -20,7 +20,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
         }
     }
 
-    var State = exports.State = function State(link, options) {
+    var State = exports.State = function State(router, link, options) {
         _classCallCheck(this, State);
 
         this.options = {
@@ -36,7 +36,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
         var dataHome = link.getAttribute('data-is-home');
         var isHome = dataHome == '1' ? true : false;
         var title = link.getAttribute('data-title');
-        var nodeType = link.getAttribute('data-node-type');
+        var nodeType = link.getAttribute(router.options.objectTypeAttr);
 
         if (title === '') title = link.innerHTML;
         if (nodeType === '') nodeType = "page";

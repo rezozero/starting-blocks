@@ -61,6 +61,13 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
 
         AbstractBlock.prototype.init = function init() {};
 
+        /**
+         * Bind load and resize events for this specific block.
+         *
+         * Do not forget to call `super.initEvents();` while extending this method.
+         */
+
+
         AbstractBlock.prototype.initEvents = function initEvents() {
             if (this.$cont.find('img').length) {
                 this.$cont.waitForImages({
@@ -74,10 +81,23 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
             this.page.router.$window.on('resize', this.onResizeDebounce);
         };
 
+        /*
+         * Destroy current block.
+         */
+
+
         AbstractBlock.prototype.destroy = function destroy() {
             _loglevel2.default.debug('\t🗑 #' + this.id);
             this.destroyEvents();
         };
+
+        /*
+         * Unbind event block events.
+         *
+         * Make sure you’ve used binded methods to be able to
+         * `off` them correctly.
+         */
+
 
         AbstractBlock.prototype.destroyEvents = function destroyEvents() {
             this.page.router.$window.off('resize', this.onResizeDebounce);

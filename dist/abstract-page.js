@@ -1,4 +1,4 @@
-define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/debounce"], function (exports, _loglevel, _TweenMax, _waitForImages, _jquery, _debounce) {
+define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload", "utils/debounce"], function (exports, _loglevel, _TweenMax, _waitForImages, _jquery, _Lazyload, _debounce) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -13,6 +13,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
     var _jquery2 = _interopRequireDefault(_jquery);
+
+    var _Lazyload2 = _interopRequireDefault(_Lazyload);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -46,7 +48,6 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             if (!router) {
                 throw "AbstractPage need a Router instance to be defined.";
             }
-
             /**
              *
              * @type {Router}
@@ -73,6 +74,10 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
              * @type {Boolean}
              */
             this.isHome = isHome;
+            /**
+             * @type {Lazyload}
+             */
+            this.lazyload = null;
 
             if (this.$cont[0].getAttribute('data-is-home') == '1') {
                 this.isHome = true;
@@ -91,12 +96,14 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
         /**
          * Initialize page.
          *
-         * You should always extends this method in your child implemetations instead
+         * You should always extends this method in your child implementations instead
          * of extending page constructor.
          */
 
 
         AbstractPage.prototype.init = function init() {
+            var _this = this;
+
             this.$link = this.$cont.find('a').not('[target="_blank"]');
             this.bindedLinkClick = this.router.onLinkClick.bind(this.router);
 
@@ -104,6 +111,21 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             if (this.$link.length) {
                 this.externalLinkTarget(this.$link, this.router.baseUrl);
                 this.$link = this.$cont.find('a').not('[target="_blank"]');
+            }
+
+            // --- Lazyload --- //
+            if (this.router.options.lazyloadEnabled) {
+                setTimeout(function () {
+                    _this.beforeLazyload();
+                    _this.lazyload = new _Lazyload2.default({
+                        elements_selector: '.' + _this.router.options.lazyloadClass,
+                        data_src: _this.router.options.lazyloadSrcAttr.replace('data-', ''),
+                        data_srcset: _this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
+                        callback_set: _this.onLazyImageSet.bind(_this),
+                        callback_load: _this.onLazyImageLoad.bind(_this),
+                        callback_processed: _this.onLazyImageProcessed.bind(_this)
+                    });
+                }, 0);
             }
 
             // --- Blocks --- //
@@ -122,6 +144,11 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             }
         };
 
+        /**
+         * Destroy current page and all its blocks.
+         */
+
+
         AbstractPage.prototype.destroy = function destroy() {
             _loglevel2.default.debug('🗑 #' + this.id);
             this.$cont.remove();
@@ -132,7 +159,20 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
                     this.blocks[blockIndex].destroy();
                 }
             }
+            /*
+             * Remove Lazyload instance and listeners
+             */
+            if (null !== this.lazyload) {
+                this.lazyload.destroy();
+            }
         };
+
+        /**
+         * Initialize basic events.
+         *
+         * Such as waitForImages and link click if you enabled Ajax navigation.
+         */
+
 
         AbstractPage.prototype.initEvents = function initEvents() {
             if (this.$cont.find('img').length) {
@@ -151,35 +191,45 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             this.router.$window.on('resize', this.onResizeDebounce);
         };
 
+        /**
+         *
+         */
+
+
         AbstractPage.prototype.destroyEvents = function destroyEvents() {
             this.$link.off('click', this.bindedLinkClick);
             this.router.$window.off('resize', this.onResizeDebounce);
         };
 
+        /**
+         * @param e
+         * @private
+         */
+
+
         AbstractPage.prototype.onLoad = function onLoad(e) {
-            var _this = this;
+            var _this2 = this;
 
             this.loadDate = new Date();
             this.loadDuration = this.loadDate - this.router.loadBeginDate;
-
             this.router.nav.update(this);
 
             var delay = this.loadDuration > this.router.options.minLoadDuration ? 0 : this.router.options.minLoadDuration - this.loadDuration;
 
             // Hide loading
             setTimeout(function () {
-                var onShowEnded = _this.showEnded.bind(_this);
+                var onShowEnded = _this2.showEnded.bind(_this2);
 
-                _this.router.loader.hide();
+                _this2.router.loader.hide();
 
-                if (_this.context == 'static') {
-                    _this.show(onShowEnded);
-                } else if (_this.context == 'ajax') {
+                if (_this2.context == 'static') {
+                    _this2.show(onShowEnded);
+                } else if (_this2.context == 'ajax') {
                     // Update body id
-                    if (_this.name !== '') document.body.id = _this.name;
+                    if (_this2.name !== '') document.body.id = _this2.name;
                     // Hide formerPages - show
-                    if (_this.router.formerPages.length > 0) {
-                        var formerPage = _this.router.formerPages[_this.router.formerPages.length - 1];
+                    if (_this2.router.formerPages.length > 0) {
+                        var formerPage = _this2.router.formerPages[_this2.router.formerPages.length - 1];
                         var formerPageDestroy = formerPage.destroy.bind(formerPage);
 
                         /*
@@ -187,36 +237,51 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
                          * DO NOT animate if there are more than 1 page
                          * in destroy queue!
                          */
-                        if (_this.router.formerPages.length > 1) {
+                        if (_this2.router.formerPages.length > 1) {
                             formerPageDestroy();
                         } else {
                             formerPage.hide(formerPageDestroy);
                         }
-                        _this.router.formerPages.pop();
+                        _this2.router.formerPages.pop();
                     }
 
-                    _this.show(onShowEnded);
+                    _this2.show(onShowEnded);
                 }
             }, delay);
         };
 
+        /**
+         * @param {Function} onShow
+         */
+
+
         AbstractPage.prototype.show = function show(onShow) {
-            var _this2 = this;
+            var _this3 = this;
 
             _loglevel2.default.debug('▶️ #' + this.id);
             // Animate
             var tween = TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
-                    _this2.router.transition = false;
+                    _this3.router.transition = false;
                     if (typeof onShow !== 'undefined') {
                         onShow();
                     }
                 } });
         };
 
+        /**
+         *
+         */
+
+
         AbstractPage.prototype.showEnded = function showEnded() {
             this.$cont.removeClass(this.router.options.pageClass + '-ajax');
             this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
         };
+
+        /**
+         * @param {Function} onHidden
+         */
+
 
         AbstractPage.prototype.hide = function hide(onHidden) {
             _loglevel2.default.debug('◀️ #' + this.id);
@@ -227,15 +292,26 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             this.$cont.addClass(this.router.options.pageClass + '-transitioning');
         };
 
+        /**
+         * @private
+         */
+
+
         AbstractPage.prototype.initBlocks = function initBlocks() {
             for (var blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
-                var type = this.$blocks[blockIndex].getAttribute('data-node-type'),
+                var type = this.$blocks[blockIndex].getAttribute(this.router.options.objectTypeAttr),
                     id = this.$blocks[blockIndex].id;
 
                 this.blocks[blockIndex] = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
             }
         };
+
+        /**
+         * @param  {String} id
+         * @return {AbstractBlock|null}
+         */
+
 
         AbstractPage.prototype.getBlockById = function getBlockById(id) {
             for (var i in this.blocks) {
@@ -246,7 +322,58 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "utils/deb
             return null;
         };
 
+        /**
+         *
+         */
+
+
         AbstractPage.prototype.onResize = function onResize() {};
+
+        /**
+         * Called before init lazyload images.
+         */
+
+
+        AbstractPage.prototype.beforeLazyload = function beforeLazyload() {};
+
+        /**
+         * After image src switched.
+         *
+         * @param {HTMLImage} element
+         */
+
+
+        AbstractPage.prototype.onLazyImageSet = function onLazyImageSet(element) {
+            _loglevel2.default.debug('\t🖼 «' + element.id + '» set');
+        };
+
+        /**
+         * After lazyload image loaded.
+         *
+         * @param {HTMLImage} element
+         */
+
+
+        AbstractPage.prototype.onLazyImageLoad = function onLazyImageLoad(element) {
+            _loglevel2.default.debug('\t🖼 «' + element.id + '» load');
+        };
+
+        /**
+         * Before lazyload.
+         */
+
+
+        AbstractPage.prototype.onLazyImageProcessed = function onLazyImageProcessed(index) {
+            _loglevel2.default.debug('\t🖼 Lazy load processed');
+        };
+
+        /**
+         * Add target blank to external links.
+         *
+         * @param  {JQuery} $links
+         * @param  {String} baseUrl
+         */
+
 
         AbstractPage.prototype.externalLinkTarget = function externalLinkTarget($links, baseUrl) {
             var linksLength = $links.length;

@@ -34,12 +34,17 @@ export class Router {
      *
      * * homeHasClass: false,
      * * ajaxEnabled: true,
-     * * pageClass: "page-content",
+     * * pageClass: "page-content", (Without point!)
+     * * objectTypeAttr: "data-node-type",
      * * noAjaxLinkClass: "no-ajax-link",
      * * navLinkClass: "nav-link",
      * * activeClass: "active",
-     * * pageBlockClass: ".page-block",
+     * * pageBlockClass: ".page-block", (With point!)
      * * $ajaxContainer: $("#ajax-container"),
+     * * lazyloadEnabled: false,
+     * * lazyloadSrcAttr: 'data-src',
+     * * lazyloadClass: 'lazyload',
+     * * lazyloadSrcSetAttr: 'data-src-set',
      * * minLoadDuration: 0,
      * * postLoad: (state, data) => {},
      * * preLoad: (state) => {},
@@ -114,10 +119,15 @@ export class Router {
             homeHasClass: false,
             ajaxEnabled: true,
             pageClass: "page-content",
+            objectTypeAttr: "data-node-type",
             noAjaxLinkClass: "no-ajax-link",
             navLinkClass: "nav-link",
             activeClass: "active",
             pageBlockClass: ".page-block",
+            lazyloadEnabled: false,
+            lazyloadSrcAttr: 'data-src',
+            lazyloadClass: 'lazyload',
+            lazyloadSrcSetAttr: 'data-src-set',
             $ajaxContainer: $("#ajax-container"),
             minLoadDuration: 0,
             preLoadPageDelay: 0,
@@ -173,7 +183,7 @@ export class Router {
         const preBootBinded = this.options.preBoot.bind(this);
         preBootBinded($cont, context, isHome);
 
-        const nodeType = $cont.attr('data-node-type');
+        const nodeType = $cont.attr(this.options.objectTypeAttr);
 
         if(isHome && this.options.homeHasClass){
             this.page = new Home(this, $cont, context, nodeType, isHome);
@@ -199,18 +209,18 @@ export class Router {
                !this.transition) {
                 this.transition = true;
 
-                const state = new State(e.currentTarget, {
+                this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     navLinkClass: this.options.navLinkClass
                 });
 
                 const prePushStateBinded = this.options.prePushState.bind(this);
-                prePushStateBinded(state);
+                prePushStateBinded(this.state);
 
                 if (history.pushState) {
-                    history.pushState(state, state.title, state.href);
+                    history.pushState(this.state, this.state.title, this.state.href);
                 }
-                this.loadPage(e, state);
+                this.loadPage(e, this.state);
             }
         }
     }

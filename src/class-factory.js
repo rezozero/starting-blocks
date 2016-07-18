@@ -59,6 +59,9 @@ export class ClassFactory
      * Returns an AbstractBlock child class instance
      * according to the nodeTypeName or an AbstractBlock as default.
      *
+     * Comment out the default case if you don’t want a default block to be instantiated
+     * for each block.
+     *
      * @param  {String}  nodeTypeName
      * @param  {AbstractPage} page
      * @param  {jQuery}  $cont

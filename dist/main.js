@@ -21,14 +21,13 @@ define(["jquery", "loglevel", "utils/polyfills", "router", "graphicLoader", "abs
    * Begin main app ---
    */
   var $body = (0, _jquery2.default)('body');
-  var nodeType = $body[0].getAttribute('data-node-type') || 'page';
   var dataHome = $body[0].getAttribute('data-is-home');
-  var bodyId = $body[0].id;
   var isHome = dataHome == '1' ? true : false;
 
   var router = new _router.Router({
     homeHasClass: false,
     ajaxEnabled: true,
+    lazyloadEnabled: true,
     /*
      * Do not use Arrow function
      * these will be bind to the router before their use.

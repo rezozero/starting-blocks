@@ -19,6 +19,7 @@
     "jquery": "~2.2.0",
     "waitForImages": "~2.2.0",
     "requirejs": "2.2.0",
-    "loglevel": "~1.4.1"
+    "loglevel": "~1.4.1",
+    "vanilla-lazyload": "~1.6.0"
   }
 }

@@ -27,10 +27,11 @@ import $ from "jquery";
 export class State {
     /**
      *
+     * @param {Router} router
      * @param {String} link
      * @param {Object} options
      */
-    constructor(link, options) {
+    constructor(router, link, options) {
         this.options = {
             previousType: "page",
             navLinkClass: "nav-link"
@@ -42,9 +43,9 @@ export class State {
 
         const context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
         const dataHome = link.getAttribute('data-is-home');
-        const isHome = (dataHome == '1') ? true : false;
+        const isHome = (dataHome == '1') ? (true) : (false);
         let title = link.getAttribute('data-title');
-        let nodeType = link.getAttribute('data-node-type');
+        let nodeType = link.getAttribute(router.options.objectTypeAttr);
 
         if(title === '') title = link.innerHTML;
         if(nodeType === '') nodeType = "page";

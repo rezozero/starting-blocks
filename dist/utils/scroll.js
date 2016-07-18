@@ -16,11 +16,24 @@ define(['exports'], function (exports) {
             _classCallCheck(this, Scroll);
         }
 
+        /**
+         * 
+         * @param e
+         * @private
+         */
+
         Scroll._preventDefault = function _preventDefault(e) {
             e = e || window.event;
             if (e.preventDefault) e.preventDefault();
             e.returnValue = false;
         };
+
+        /**
+         * 
+         * @param e
+         * @private
+         */
+
 
         Scroll._keydown = function _keydown(e) {
             // left: 37, up: 38, right: 39, down: 40, spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
@@ -33,9 +46,23 @@ define(['exports'], function (exports) {
             }
         };
 
+        /**
+         * 
+         * @param e
+         * @private
+         */
+
+
         Scroll._wheel = function _wheel(e) {
             Scroll._preventDefault(e);
         };
+
+        /**
+         * Disable scroll.
+         *
+         * @return {void}
+         */
+
 
         Scroll.disable = function disable() {
             if (window.addEventListener) {
@@ -44,6 +71,13 @@ define(['exports'], function (exports) {
             window.onmousewheel = document.onmousewheel = Scroll._wheel;
             document.onkeydown = Scroll._keydown;
         };
+
+        /**
+         * Enable scroll again.
+         *
+         * @return {void}
+         */
+
 
         Scroll.enable = function enable() {
             if (window.removeEventListener) {

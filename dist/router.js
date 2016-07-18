@@ -28,12 +28,17 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          *
          * * homeHasClass: false,
          * * ajaxEnabled: true,
-         * * pageClass: "page-content",
+         * * pageClass: "page-content", (Without point!)
+         * * objectTypeAttr: "data-node-type",
          * * noAjaxLinkClass: "no-ajax-link",
          * * navLinkClass: "nav-link",
          * * activeClass: "active",
-         * * pageBlockClass: ".page-block",
+         * * pageBlockClass: ".page-block", (With point!)
          * * $ajaxContainer: $("#ajax-container"),
+         * * lazyloadEnabled: false,
+         * * lazyloadSrcAttr: 'data-src',
+         * * lazyloadClass: 'lazyload',
+         * * lazyloadSrcSetAttr: 'data-src-set',
          * * minLoadDuration: 0,
          * * postLoad: (state, data) => {},
          * * preLoad: (state) => {},
@@ -111,10 +116,15 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 homeHasClass: false,
                 ajaxEnabled: true,
                 pageClass: "page-content",
+                objectTypeAttr: "data-node-type",
                 noAjaxLinkClass: "no-ajax-link",
                 navLinkClass: "nav-link",
                 activeClass: "active",
                 pageBlockClass: ".page-block",
+                lazyloadEnabled: false,
+                lazyloadSrcAttr: 'data-src',
+                lazyloadClass: 'lazyload',
+                lazyloadSrcSetAttr: 'data-src-set',
                 $ajaxContainer: (0, _jquery2.default)("#ajax-container"),
                 minLoadDuration: 0,
                 preLoadPageDelay: 0,
@@ -155,6 +165,16 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             }
         };
 
+        /**
+         * Booting need a jQuery handler for
+         * the container.
+         *
+         * @param  {jQuery}  $cont
+         * @param  {String}  context
+         * @param  {Boolean} isHome
+         */
+
+
         Router.prototype.boot = function boot($cont, context, isHome) {
             if (context == 'static') {
                 this.loadBeginDate = new Date();
@@ -162,7 +182,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             var preBootBinded = this.options.preBoot.bind(this);
             preBootBinded($cont, context, isHome);
 
-            var nodeType = $cont.attr('data-node-type');
+            var nodeType = $cont.attr(this.options.objectTypeAttr);
 
             if (isHome && this.options.homeHasClass) {
                 this.page = new _home.Home(this, $cont, context, nodeType, isHome);
@@ -170,6 +190,12 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
             }
         };
+
+        /**
+         *
+         * @param e Event
+         */
+
 
         Router.prototype.onLinkClick = function onLinkClick(e) {
             var linkClassName = e.currentTarget.className,
@@ -182,21 +208,28 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                 if (linkClassName.indexOf(this.options.activeClass) == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 && !this.transition) {
                     this.transition = true;
 
-                    var state = new _state.State(e.currentTarget, {
+                    this.state = new _state.State(this, e.currentTarget, {
                         previousType: this.page.type,
                         navLinkClass: this.options.navLinkClass
                     });
 
                     var prePushStateBinded = this.options.prePushState.bind(this);
-                    prePushStateBinded(state);
+                    prePushStateBinded(this.state);
 
                     if (history.pushState) {
-                        history.pushState(state, state.title, state.href);
+                        history.pushState(this.state, this.state.title, this.state.href);
                     }
-                    this.loadPage(e, state);
+                    this.loadPage(e, this.state);
                 }
             }
         };
+
+        /**
+         *
+         * @param e
+         * @param state
+         */
+
 
         Router.prototype.loadPage = function loadPage(e, state) {
             var _this = this;
@@ -256,12 +289,26 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             }, this.options.preLoadPageDelay);
         };
 
+        /**
+         * Update page title against data-title attribute
+         * from ajax loaded partial DOM.
+         *
+         * @param {jQuery} $data
+         */
+
+
         Router.prototype.updatePageTitle = function updatePageTitle($data) {
             if ($data.length && $data.attr('data-meta-title') !== '') {
                 var metaTitle = $data.attr('data-meta-title');
                 if (metaTitle !== null && metaTitle !== '') document.title = metaTitle;
             }
         };
+
+        /**
+         *
+         * @param {boolean} isHome
+         */
+
 
         Router.prototype.pushFirstState = function pushFirstState(isHome) {
             if (history.pushState) {

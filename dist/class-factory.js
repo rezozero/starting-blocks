@@ -25,6 +25,19 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
             _classCallCheck(this, ClassFactory);
         }
 
+        /**
+         * Returns an AbstractPage child class instance
+         * according to the nodeTypeName or an AbstractPage as default.
+         *
+         * @param  {String}  nodeTypeName
+         * @param  {Router}  router
+         * @param  {jQuery}  $cont
+         * @param  {String}  context
+         * @param  {String}  nodeType
+         * @param  {Boolean} isHome
+         * @return {AbstractPage}
+         */
+
         ClassFactory.prototype.getPageInstance = function getPageInstance(nodeTypeName, router, $cont, context, nodeType, isHome) {
             switch (nodeTypeName) {
                 case 'home':
@@ -35,6 +48,20 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
                     return new _page.Page(router, $cont, context, nodeType, isHome);
             }
         };
+
+        /**
+         * Returns an AbstractBlock child class instance
+         * according to the nodeTypeName or an AbstractBlock as default.
+         *
+         * Comment out the default case if you don’t want a default block to be instantiated
+         * for each block.
+         *
+         * @param  {String}  nodeTypeName
+         * @param  {AbstractPage} page
+         * @param  {jQuery}  $cont
+         * @return {AbstractBlock}
+         */
+
 
         ClassFactory.prototype.getBlockInstance = function getBlockInstance(nodeTypeName, page, $cont) {
             switch (nodeTypeName) {

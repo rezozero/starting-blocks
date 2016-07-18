@@ -16,15 +16,14 @@ log.setLevel(0);
  * Begin main app ---
  */
 const $body = $('body');
-const nodeType = $body[0].getAttribute('data-node-type') || 'page';
 const dataHome = $body[0].getAttribute('data-is-home');
-const bodyId = $body[0].id;
 const isHome = (dataHome == '1') ? true : false;
 
 const router = new Router(
     {
         homeHasClass: false,
         ajaxEnabled: true,
+        lazyloadEnabled: true,
         /*
          * Do not use Arrow function
          * these will be bind to the router before their use.

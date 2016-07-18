@@ -26,6 +26,7 @@ import log from "loglevel";
 import TweenMax from "TweenMax";
 import waitForImages from "waitForImages";
 import $ from "jquery";
+import Lazyload from 'Lazyload';
 import {debounce} from "utils/debounce";
 
 export class AbstractPage {
@@ -45,7 +46,6 @@ export class AbstractPage {
         if (!router) {
             throw "AbstractPage need a Router instance to be defined.";
         }
-
         /**
          *
          * @type {Router}
@@ -72,6 +72,10 @@ export class AbstractPage {
          * @type {Boolean}
          */
         this.isHome = isHome;
+        /**
+         * @type {Lazyload}
+         */
+        this.lazyload = null;
 
         if(this.$cont[0].getAttribute('data-is-home') == '1'){
             this.isHome = true;
@@ -90,7 +94,7 @@ export class AbstractPage {
     /**
      * Initialize page.
      *
-     * You should always extends this method in your child implemetations instead
+     * You should always extends this method in your child implementations instead
      * of extending page constructor.
      */
     init() {
@@ -101,6 +105,21 @@ export class AbstractPage {
         if(this.$link.length){
             this.externalLinkTarget(this.$link, this.router.baseUrl);
             this.$link = this.$cont.find('a').not('[target="_blank"]');
+        }
+
+        // --- Lazyload --- //
+        if (this.router.options.lazyloadEnabled) {
+            setTimeout(() => {
+                this.beforeLazyload();
+                this.lazyload = new Lazyload({
+                    elements_selector: '.'+this.router.options.lazyloadClass,
+                    data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
+                    data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
+                    callback_set: this.onLazyImageSet.bind(this),
+                    callback_load: this.onLazyImageLoad.bind(this),
+                    callback_processed: this.onLazyImageProcessed.bind(this)
+                });
+            }, 0);
         }
 
         // --- Blocks --- //
@@ -131,6 +150,12 @@ export class AbstractPage {
             for (var blockIndex in this.blocks) {
                 this.blocks[blockIndex].destroy();
             }
+        }
+        /*
+         * Remove Lazyload instance and listeners
+         */
+        if (null !== this.lazyload) {
+            this.lazyload.destroy();
         }
     }
 
@@ -171,7 +196,6 @@ export class AbstractPage {
     onLoad(e) {
         this.loadDate = new Date();
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
-
         this.router.nav.update(this);
 
         const delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
@@ -250,7 +274,7 @@ export class AbstractPage {
     initBlocks() {
         for(let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
 
-            let type = this.$blocks[blockIndex].getAttribute('data-node-type'),
+            let type = this.$blocks[blockIndex].getAttribute(this.router.options.objectTypeAttr),
                 id = this.$blocks[blockIndex].id;
 
             this.blocks[blockIndex] = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
@@ -275,6 +299,38 @@ export class AbstractPage {
      */
     onResize(){
 
+    }
+
+    /**
+     * Called before init lazyload images.
+     */
+    beforeLazyload() {
+
+    }
+
+    /**
+     * After image src switched.
+     *
+     * @param {HTMLImage} element
+     */
+    onLazyImageSet(element) {
+        log.debug('\t🖼 «'+element.id+'» set');
+    }
+
+    /**
+     * After lazyload image loaded.
+     *
+     * @param {HTMLImage} element
+     */
+    onLazyImageLoad(element) {
+        log.debug('\t🖼 «'+element.id+'» load');
+    }
+
+    /**
+     * Before lazyload.
+     */
+    onLazyImageProcessed(index) {
+        log.debug('\t🖼 Lazy load processed');
     }
 
     /**
