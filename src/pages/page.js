@@ -23,6 +23,7 @@
  * @author Ambroise Maupate
  */
 import {AbstractPage} from "abstract-page";
+import log from "loglevel";
 import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
@@ -33,5 +34,6 @@ export class Page extends AbstractPage
 {
     init() {
         super.init();
+
     }
 }

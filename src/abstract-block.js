@@ -57,6 +57,7 @@ export class AbstractBlock
 
     /**
      * Basic members initialization for children classes.
+     * Do not search for page blocks here, use onPageReady
      */
     init() {
 
@@ -103,6 +104,13 @@ export class AbstractBlock
     }
 
     onLoad() {
+
+    }
+
+    /**
+     * Called once all page blocks have been created.
+     */
+    onPageReady() {
 
     }
 }

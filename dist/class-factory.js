@@ -65,10 +65,10 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
 
         ClassFactory.prototype.getBlockInstance = function getBlockInstance(nodeTypeName, page, $cont) {
             switch (nodeTypeName) {
-                /*case 'map-block':
-                    return new MapBlock(page, $cont, nodeTypeName);*/
-                default:
-                    _loglevel2.default.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
+                case 'map-block':
+                    return new MapBlock(page, $cont, nodeTypeName);
+                case 'block':
+                    //log.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
                     return new _abstractBlock.AbstractBlock(page, $cont, nodeTypeName);
             }
         };

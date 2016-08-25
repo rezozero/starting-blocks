@@ -56,6 +56,7 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
 
         /**
          * Basic members initialization for children classes.
+         * Do not search for page blocks here, use onPageReady
          */
 
 
@@ -106,6 +107,13 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
         AbstractBlock.prototype.onResize = function onResize() {};
 
         AbstractBlock.prototype.onLoad = function onLoad() {};
+
+        /**
+         * Called once all page blocks have been created.
+         */
+
+
+        AbstractBlock.prototype.onPageReady = function onPageReady() {};
 
         return AbstractBlock;
     }();

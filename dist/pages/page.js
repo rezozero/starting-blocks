@@ -1,10 +1,18 @@
-define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, _abstractPage, _bootstrapMedia) {
+define(["exports", "abstract-page", "loglevel", "utils/bootstrapMedia"], function (exports, _abstractPage, _loglevel, _bootstrapMedia) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.Page = undefined;
+
+  var _loglevel2 = _interopRequireDefault(_loglevel);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {

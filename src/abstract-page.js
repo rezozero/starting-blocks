@@ -273,11 +273,22 @@ export class AbstractPage {
      */
     initBlocks() {
         for(let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-
             let type = this.$blocks[blockIndex].getAttribute(this.router.options.objectTypeAttr),
                 id = this.$blocks[blockIndex].id;
 
-            this.blocks[blockIndex] = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
+            let block = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
+            /*
+             * Prevent undefined blocks to be appended to block collection.
+             */
+            if (block) {
+                this.blocks.push(block);
+            }
+        }
+        /*
+         * Notify all blocks that page init is over.
+         */
+        for (let i = this.blocks.length - 1; i >= 0; i--) {
+            this.blocks[i].onPageReady();
         }
     }
 
@@ -287,7 +298,9 @@ export class AbstractPage {
      */
     getBlockById(id) {
         for (let i in this.blocks) {
-            if (this.blocks[i].id == id) {
+            if (this.blocks[i] &&
+                this.blocks[i].id &&
+                this.blocks[i].id == id) {
                 return this.blocks[i];
             }
         }

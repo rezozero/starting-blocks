@@ -69,10 +69,10 @@ export class ClassFactory
      */
     getBlockInstance(nodeTypeName, page, $cont) {
         switch(nodeTypeName){
-            /*case 'map-block':
-                return new MapBlock(page, $cont, nodeTypeName);*/
-            default:
-                log.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
+            case 'map-block':
+                return new MapBlock(page, $cont, nodeTypeName);
+            case 'block':
+                //log.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
                 return new AbstractBlock(page, $cont, nodeTypeName);
         }
     }
