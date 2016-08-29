@@ -14,6 +14,11 @@ define(['exports', 'jquery'], function (exports, _jquery) {
         };
     }
 
+    /**
+     * Method to track JS errors if your Google Analytics account.
+     *
+     * @see http://blog.gospodarets.com/track_javascript_angularjs_and_jquery_errors_with_google_analytics/
+     */
     function gaTrackErrors() {
         if (typeof ga !== 'undefined') {
             // Pure JavaScript errors handler
@@ -38,9 +43,6 @@ define(['exports', 'jquery'], function (exports, _jquery) {
                 }), 0, true);
             });
         }
-    } /**
-       * Tracks errors with Analytics
-       * http://blog.gospodarets.com/track_javascript_angularjs_and_jquery_errors_with_google_analytics/
-       */
+    }
 });
 //# sourceMappingURL=gaTrackErrors.js.map

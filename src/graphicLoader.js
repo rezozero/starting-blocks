@@ -24,6 +24,11 @@
  */
 import log from "loglevel";
 
+/**
+ * Handle your application main loader animation.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ */
 export class GraphicLoader {
 
     /**
@@ -31,6 +36,8 @@ export class GraphicLoader {
      *
      * Any child implementations must implements
      * show and hide methods.
+     *
+     * @abstract
      */
     constructor() {
 
@@ -38,6 +45,8 @@ export class GraphicLoader {
 
     /**
      * Show loader.
+     *
+     * @abstract
      */
     show() {
         log.debug('🌀 Show loader');
@@ -45,6 +54,8 @@ export class GraphicLoader {
 
     /**
      * Hide loader.
+     *
+     * @abstract
      */
     hide() {
         log.debug('🌀 Hide loader');

@@ -30,6 +30,13 @@ define(['exports'], function (exports) {
      * @author Ambroise Maupate
      */
 
+    /**
+     * Execute some polyfill for older and crappy browsers.
+     *
+     * - window.requestAnimFrame
+     * - window.cancelAnimFrame
+     * - Avoid `console` errors in browsers that lack a console.
+     */
     function polyfills() {
 
         window.requestAnimFrame = function () {

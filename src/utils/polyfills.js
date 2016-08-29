@@ -23,6 +23,13 @@
  * @author Ambroise Maupate
  */
 
+/**
+ * Execute some polyfill for older and crappy browsers.
+ *
+ * - window.requestAnimFrame
+ * - window.cancelAnimFrame
+ * - Avoid `console` errors in browsers that lack a console.
+ */
 export function polyfills() {
 
     window.requestAnimFrame = function(){

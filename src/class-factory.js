@@ -28,13 +28,17 @@ import {Home} from "pages/home";
 import {AbstractBlock} from "abstract-block";
 
 /**
- * This class need to be redefined for each of your projects.
+ * Router mapper class.
+ *
+ * This class maps your `data-node-type` with your *ES6* classes.
+ *
+ * **You must define your own ClassFactory for each of your projects.**.
  */
 export class ClassFactory
 {
     /**
-     * Returns an AbstractPage child class instance
-     * according to the nodeTypeName or an AbstractPage as default.
+     * Returns an `AbstractPage` child class instance
+     * according to the `nodeTypeName` or an `AbstractPage` as default.
      *
      * @param  {String}  nodeTypeName
      * @param  {Router}  router
@@ -42,6 +46,7 @@ export class ClassFactory
      * @param  {String}  context
      * @param  {String}  nodeType
      * @param  {Boolean} isHome
+     *
      * @return {AbstractPage}
      */
     getPageInstance(nodeTypeName, router, $cont, context, nodeType, isHome) {
@@ -56,7 +61,7 @@ export class ClassFactory
     }
 
     /**
-     * Returns an AbstractBlock child class instance
+     * Returns an `AbstractBlock` child class instance
      * according to the nodeTypeName or an AbstractBlock as default.
      *
      * Comment out the default case if you don’t want a default block to be instantiated

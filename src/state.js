@@ -24,14 +24,25 @@
  */
 import $ from "jquery";
 
+/**
+ * State object is meant to carry informations during HTML5 History changes.
+ */
 export class State {
     /**
      *
      * @param {Router} router
      * @param {String} link
-     * @param {Object} options
+     * @param {Object} options Extends state options.
      */
     constructor(router, link, options) {
+        /**
+         * Keep custom informations such as:
+         *
+         * - `previousType`: Default `"page"`
+         * - `navLinkClass`: Default `"nav-link"`
+         *
+         * @type {Object}
+         */
         this.options = {
             previousType: "page",
             navLinkClass: "nav-link"
@@ -50,13 +61,42 @@ export class State {
         if(title === '') title = link.innerHTML;
         if(nodeType === '') nodeType = "page";
 
+        /**
+         * @type {String}
+         */
         this.title = title;
+        /**
+         * @type {String}
+         */
         this.href = link.href;
+        /**
+         * @type {String}
+         */
         this.nodeType = nodeType;
+        /**
+         * @type {String}
+         */
         this.nodeName = link.getAttribute('data-node-name');
+        /**
+         * @type {Number}
+         */
         this.index = Number(link.getAttribute('data-index'));
+        /**
+         * @type {String}
+         */
         this.transition = this.options.previousType+'_to_'+nodeType;
+        /**
+         * History change context:
+         *
+         * - `nav`
+         * - `link`
+         *
+         * @type {String}
+         */
         this.context = context;
+        /**
+         * @type {Boolean}
+         */
         this.isHome = isHome;
     }
 }

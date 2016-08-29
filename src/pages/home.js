@@ -26,11 +26,15 @@ import {AbstractPage} from "abstract-page";
 import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
- * Some example "home" page
+ * Some example "home" page.
+ *
  * @extends {AbstractPage}
  */
 export class Home extends AbstractPage {
 
+    /**
+     * @override Do not forget to call `super.init()`
+     */
     init() {
         super.init();
     }

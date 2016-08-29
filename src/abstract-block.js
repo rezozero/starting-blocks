@@ -27,6 +27,13 @@ import waitForImages from "waitForImages";
 import $ from "jquery";
 import {debounce} from "utils/debounce";
 
+/**
+ * Base class for creating block implementations.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
+ */
 export class AbstractBlock
 {
     /**
@@ -57,7 +64,9 @@ export class AbstractBlock
 
     /**
      * Basic members initialization for children classes.
-     * Do not search for page blocks here, use onPageReady
+     * Do not search for page blocks here, use `onPageReady` method instead
+     *
+     * @abstract
      */
     init() {
 
@@ -67,6 +76,8 @@ export class AbstractBlock
      * Bind load and resize events for this specific block.
      *
      * Do not forget to call `super.initEvents();` while extending this method.
+     *
+     * @abstract
      */
     initEvents(){
         if (this.$cont.find('img').length) {
@@ -83,6 +94,8 @@ export class AbstractBlock
 
     /*
      * Destroy current block.
+     *
+     * Do not forget to call `super.destroy();` while extending this method.
      */
     destroy() {
         log.debug('\t🗑 #'+this.id);
@@ -94,21 +107,33 @@ export class AbstractBlock
      *
      * Make sure you’ve used binded methods to be able to
      * `off` them correctly.
+     *
+     * Do not forget to call `super.destroyEvents();` while extending this method.
+     *
+     * @abstract
      */
     destroyEvents(){
         this.page.router.$window.off('resize', this.onResizeDebounce);
     }
 
+    /**
+     * @abstract
+     */
     onResize() {
 
     }
 
+    /**
+     * @abstract
+     */
     onLoad() {
 
     }
 
     /**
      * Called once all page blocks have been created.
+     *
+     * @abstract
      */
     onPageReady() {
 

@@ -32,26 +32,26 @@ export class Router {
      *
      * Default options list:
      *
-     * * homeHasClass: false,
-     * * ajaxEnabled: true,
-     * * pageClass: "page-content", (Without point!)
-     * * objectTypeAttr: "data-node-type",
-     * * noAjaxLinkClass: "no-ajax-link",
-     * * navLinkClass: "nav-link",
-     * * activeClass: "active",
-     * * pageBlockClass: ".page-block", (With point!)
-     * * $ajaxContainer: $("#ajax-container"),
-     * * lazyloadEnabled: false,
-     * * lazyloadSrcAttr: 'data-src',
-     * * lazyloadClass: 'lazyload',
-     * * lazyloadSrcSetAttr: 'data-src-set',
-     * * minLoadDuration: 0,
-     * * postLoad: (state, data) => {},
-     * * preLoad: (state) => {},
-     * * preLoadPageDelay: 0
-     * * prePushState: (state) => {},
-     * * onDestroy: () => {},
-     * * preBoot: ($cont, context, isHome) => {},
+     * * `homeHasClass`: false,
+     * * `ajaxEnabled`: true,
+     * * `pageClass`: "page-content", (Without point!)
+     * * `objectTypeAttr`: "data-node-type",
+     * * `noAjaxLinkClass`: "no-ajax-link",
+     * * `navLinkClass`: "nav-link",
+     * * `activeClass`: "active",
+     * * `pageBlockClass`: ".page-block", (With point!)
+     * * `$ajaxContainer`: $("#ajax-container"),
+     * * `lazyloadEnabled`: false,
+     * * `lazyloadSrcAttr`: 'data-src',
+     * * `lazyloadClass`: 'lazyload',
+     * * `lazyloadSrcSetAttr`: 'data-src-set',
+     * * `minLoadDuration`: 0,
+     * * `postLoad`: (state, data) => {},
+     * * `preLoad`: (state) => {},
+     * * `preLoadPageDelay`: 0
+     * * `prePushState`: (state) => {},
+     * * `onDestroy`: () => {},
+     * * `preBoot`: ($cont, context, isHome) => {},
      *
      *
      * @param {Object} options
@@ -151,6 +151,10 @@ export class Router {
         onDestroyBinded();
     }
 
+    /**
+     * Initialize Router events.
+     *
+     */
     initEvents() {
         if (this.options.ajaxEnabled) {
             window.addEventListener("popstate", this.onPopState.bind(this), false);
@@ -160,7 +164,11 @@ export class Router {
          */
         this.nav.initEvents(this);
     }
-
+    /**
+     * @private
+     * @param  {Event} event
+     * @return
+     */
     onPopState(event) {
         if (typeof event.state !== "undefined" && event.state !== null) {
             this.transition = true;
@@ -169,11 +177,13 @@ export class Router {
     }
 
     /**
-     * Booting need a jQuery handler for
-     * the container.
+     * Booting need a jQuery handler for the jQuery container.
      *
-     * @param  {jQuery}  $cont
-     * @param  {String}  context
+     * Call this method in your `main.js` or app entry point **after** creating
+     * the router and calling `initEvents` method.
+     *
+     * @param  {jQuery}  $cont The jQuery DOM element to boot in.
+     * @param  {String}  context ["static" or custom string]
      * @param  {Boolean} isHome
      */
     boot($cont, context, isHome) {
@@ -193,7 +203,7 @@ export class Router {
     }
 
     /**
-     *
+     * @private
      * @param e Event
      */
     onLinkClick(e) {
@@ -226,9 +236,11 @@ export class Router {
     }
 
     /**
+     * Perform a AJAX load for an History event.
      *
      * @param e
      * @param state
+     * @private
      */
     loadPage(e, state) {
         if(this.currentRequest && this.currentRequest.readyState != 4) {
@@ -240,8 +252,7 @@ export class Router {
         const preLoadBinded = this.options.preLoad.bind(this);
         preLoadBinded(state);
 
-        setTimeout( () => {
-
+        setTimeout(() => {
             this.currentRequest = $.ajax({
                 url: state.href,
                 dataType: "html",
@@ -250,41 +261,47 @@ export class Router {
                 // ajax context is defined.
                 cache: false,
                 type: 'get',
-                success: (data) => {
-                    // Extract only to new page content
-                    // if the whole HTML is queried
-                    let $data = null;
-                    const $response = $($.parseHTML(data.trim()));
-                    if ($response.hasClass(this.options.pageClass)) {
-                        $data = $response;
-                    } else {
-                        $data = $response.find('.' + this.options.pageClass);
-                    }
-                    /*
-                     * Display data to DOM
-                     */
-                    this.options.$ajaxContainer.append($data);
-
-                    /*
-                     * Push a copy object not to set it as null.
-                     */
-                    this.formerPages.push(this.page);
-
-                    // Init new page
-                    this.updatePageTitle($data);
-                    this.boot($data, 'ajax', state.isHome);
-
-                    const postLoadBinded = this.options.postLoad.bind(this);
-                    postLoadBinded(state, $data);
-
-                    // Analytics
-                    if(typeof ga !== "undefined") {
-                        ga('send', 'pageview', {'page':state.href, 'title':document.title});
-                    }
-                }
+                success: this._onDataLoaded.bind(this)
             });
 
         }, this.options.preLoadPageDelay);
+    }
+
+    /**
+     * @private
+     * @param {Object} data jQuery AJAX response
+     */
+    _onDataLoaded(data) {
+         // Extract only to new page content
+        // if the whole HTML is queried
+        let $data = null;
+        const $response = $($.parseHTML(data.trim()));
+        if ($response.hasClass(this.options.pageClass)) {
+            $data = $response;
+        } else {
+            $data = $response.find('.' + this.options.pageClass);
+        }
+        /*
+         * Display data to DOM
+         */
+        this.options.$ajaxContainer.append($data);
+
+        /*
+         * Push a copy object not to set it as null.
+         */
+        this.formerPages.push(this.page);
+
+        // Init new page
+        this.updatePageTitle($data);
+        this.boot($data, 'ajax', state.isHome);
+
+        const postLoadBinded = this.options.postLoad.bind(this);
+        postLoadBinded(state, $data);
+
+        // Analytics
+        if(typeof ga !== "undefined") {
+            ga('send', 'pageview', {'page':state.href, 'title':document.title});
+        }
     }
 
     /**

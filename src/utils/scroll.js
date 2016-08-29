@@ -22,12 +22,13 @@
  * @file scroll.js
  * @author Ambroise Maupate
  */
+
 /**
  * @static
  */
 export class Scroll {
     /**
-     * 
+     *
      * @param e
      * @private
      */
@@ -39,7 +40,7 @@ export class Scroll {
     }
 
     /**
-     * 
+     *
      * @param e
      * @private
      */
@@ -55,7 +56,7 @@ export class Scroll {
     }
 
     /**
-     * 
+     *
      * @param e
      * @private
      */

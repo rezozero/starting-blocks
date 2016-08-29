@@ -26,26 +26,26 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          *
          * Default options list:
          *
-         * * homeHasClass: false,
-         * * ajaxEnabled: true,
-         * * pageClass: "page-content", (Without point!)
-         * * objectTypeAttr: "data-node-type",
-         * * noAjaxLinkClass: "no-ajax-link",
-         * * navLinkClass: "nav-link",
-         * * activeClass: "active",
-         * * pageBlockClass: ".page-block", (With point!)
-         * * $ajaxContainer: $("#ajax-container"),
-         * * lazyloadEnabled: false,
-         * * lazyloadSrcAttr: 'data-src',
-         * * lazyloadClass: 'lazyload',
-         * * lazyloadSrcSetAttr: 'data-src-set',
-         * * minLoadDuration: 0,
-         * * postLoad: (state, data) => {},
-         * * preLoad: (state) => {},
-         * * preLoadPageDelay: 0
-         * * prePushState: (state) => {},
-         * * onDestroy: () => {},
-         * * preBoot: ($cont, context, isHome) => {},
+         * * `homeHasClass`: false,
+         * * `ajaxEnabled`: true,
+         * * `pageClass`: "page-content", (Without point!)
+         * * `objectTypeAttr`: "data-node-type",
+         * * `noAjaxLinkClass`: "no-ajax-link",
+         * * `navLinkClass`: "nav-link",
+         * * `activeClass`: "active",
+         * * `pageBlockClass`: ".page-block", (With point!)
+         * * `$ajaxContainer`: $("#ajax-container"),
+         * * `lazyloadEnabled`: false,
+         * * `lazyloadSrcAttr`: 'data-src',
+         * * `lazyloadClass`: 'lazyload',
+         * * `lazyloadSrcSetAttr`: 'data-src-set',
+         * * `minLoadDuration`: 0,
+         * * `postLoad`: (state, data) => {},
+         * * `preLoad`: (state) => {},
+         * * `preLoadPageDelay`: 0
+         * * `prePushState`: (state) => {},
+         * * `onDestroy`: () => {},
+         * * `preBoot`: ($cont, context, isHome) => {},
          *
          *
          * @param {Object} options
@@ -54,7 +54,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
-
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -148,6 +147,12 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             onDestroyBinded();
         };
 
+        /**
+         * Initialize Router events.
+         *
+         */
+
+
         Router.prototype.initEvents = function initEvents() {
             if (this.options.ajaxEnabled) {
                 window.addEventListener("popstate", this.onPopState.bind(this), false);
@@ -157,6 +162,12 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
              */
             this.nav.initEvents(this);
         };
+        /**
+         * @private
+         * @param  {Event} event
+         * @return
+         */
+
 
         Router.prototype.onPopState = function onPopState(event) {
             if (typeof event.state !== "undefined" && event.state !== null) {
@@ -166,11 +177,13 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
         };
 
         /**
-         * Booting need a jQuery handler for
-         * the container.
+         * Booting need a jQuery handler for the jQuery container.
          *
-         * @param  {jQuery}  $cont
-         * @param  {String}  context
+         * Call this method in your `main.js` or app entry point **after** creating
+         * the router and calling `initEvents` method.
+         *
+         * @param  {jQuery}  $cont The jQuery DOM element to boot in.
+         * @param  {String}  context ["static" or custom string]
          * @param  {Boolean} isHome
          */
 
@@ -192,7 +205,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
         };
 
         /**
-         *
+         * @private
          * @param e Event
          */
 
@@ -225,9 +238,11 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
         };
 
         /**
+         * Perform a AJAX load for an History event.
          *
          * @param e
          * @param state
+         * @private
          */
 
 
@@ -244,7 +259,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             preLoadBinded(state);
 
             setTimeout(function () {
-
                 _this.currentRequest = _jquery2.default.ajax({
                     url: state.href,
                     dataType: "html",
@@ -253,40 +267,48 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                     // ajax context is defined.
                     cache: false,
                     type: 'get',
-                    success: function success(data) {
-                        // Extract only to new page content
-                        // if the whole HTML is queried
-                        var $data = null;
-                        var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
-                        if ($response.hasClass(_this.options.pageClass)) {
-                            $data = $response;
-                        } else {
-                            $data = $response.find('.' + _this.options.pageClass);
-                        }
-                        /*
-                         * Display data to DOM
-                         */
-                        _this.options.$ajaxContainer.append($data);
-
-                        /*
-                         * Push a copy object not to set it as null.
-                         */
-                        _this.formerPages.push(_this.page);
-
-                        // Init new page
-                        _this.updatePageTitle($data);
-                        _this.boot($data, 'ajax', state.isHome);
-
-                        var postLoadBinded = _this.options.postLoad.bind(_this);
-                        postLoadBinded(state, $data);
-
-                        // Analytics
-                        if (typeof ga !== "undefined") {
-                            ga('send', 'pageview', { 'page': state.href, 'title': document.title });
-                        }
-                    }
+                    success: _this._onDataLoaded.bind(_this)
                 });
             }, this.options.preLoadPageDelay);
+        };
+
+        /**
+         * @private
+         * @param {Object} data jQuery AJAX response
+         */
+
+
+        Router.prototype._onDataLoaded = function _onDataLoaded(data) {
+            // Extract only to new page content
+            // if the whole HTML is queried
+            var $data = null;
+            var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
+            if ($response.hasClass(this.options.pageClass)) {
+                $data = $response;
+            } else {
+                $data = $response.find('.' + this.options.pageClass);
+            }
+            /*
+             * Display data to DOM
+             */
+            this.options.$ajaxContainer.append($data);
+
+            /*
+             * Push a copy object not to set it as null.
+             */
+            this.formerPages.push(this.page);
+
+            // Init new page
+            this.updatePageTitle($data);
+            this.boot($data, 'ajax', state.isHome);
+
+            var postLoadBinded = this.options.postLoad.bind(this);
+            postLoadBinded(state, $data);
+
+            // Analytics
+            if (typeof ga !== "undefined") {
+                ga('send', 'pageview', { 'page': state.href, 'title': document.title });
+            }
         };
 
         /**

@@ -30,13 +30,16 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
     var AbstractPage = exports.AbstractPage = function () {
         /**
+         * Base constructor for Pages.
+         *
+         * Do not override this method, override `init` method instead.
+         *
          * @param  {Router}  router
          * @param  {jQuery}  $cont
          * @param  {String}  context
          * @param  {String}  type
          * @param  {Boolean} isHome
          */
-
         function AbstractPage(router, $cont, context, type, isHome) {
             _classCallCheck(this, AbstractPage);
 
@@ -319,6 +322,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         };
 
         /**
+         * Get a page’ block instance from its `id`.
+         *
          * @param  {String} id
          * @return {AbstractBlock|null}
          */
@@ -334,7 +339,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         };
 
         /**
-         *
+         * @abstract
          */
 
 
@@ -342,6 +347,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
         /**
          * Called before init lazyload images.
+         *
+         * @abstract
          */
 
 
@@ -350,6 +357,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         /**
          * After image src switched.
          *
+         * @abstract
          * @param {HTMLImage} element
          */
 
@@ -361,6 +369,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         /**
          * After lazyload image loaded.
          *
+         * @abstract
          * @param {HTMLImage} element
          */
 
@@ -371,6 +380,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
         /**
          * Before lazyload.
+         *
+         * @abstract
          */
 
 

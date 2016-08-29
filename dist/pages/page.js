@@ -53,6 +53,9 @@ define(["exports", "abstract-page", "loglevel", "utils/bootstrapMedia"], functio
       return _possibleConstructorReturn(this, _AbstractPage.apply(this, arguments));
     }
 
+    /**
+     * @override Do not forget to call `super.init()`
+     */
     Page.prototype.init = function init() {
       _AbstractPage.prototype.init.call(this);
     };

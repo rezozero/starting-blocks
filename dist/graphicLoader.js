@@ -27,14 +27,17 @@ define(['exports', 'loglevel'], function (exports, _loglevel) {
      *
      * Any child implementations must implements
      * show and hide methods.
+     *
+     * @abstract
      */
-
     function GraphicLoader() {
       _classCallCheck(this, GraphicLoader);
     }
 
     /**
      * Show loader.
+     *
+     * @abstract
      */
 
 
@@ -44,6 +47,8 @@ define(['exports', 'loglevel'], function (exports, _loglevel) {
 
     /**
      * Hide loader.
+     *
+     * @abstract
      */
 
 

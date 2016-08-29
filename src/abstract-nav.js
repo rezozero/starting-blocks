@@ -22,6 +22,12 @@
  * @file abstract-nav.js
  * @author Ambroise Maupate
  */
+
+/**
+ * Base class for handling your website main navigation.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ */
 export class AbstractNav {
 
     /**
@@ -42,6 +48,7 @@ export class AbstractNav {
     /**
      * Update navigation state against a DOM container.
      *
+     * @abstract
      * @param {AbstractPage} page
      */
     update(page) {
@@ -56,6 +63,7 @@ export class AbstractNav {
      * Bind navigation against router.
      *
      * @param {Router} router
+     * @abstract
      */
     initEvents(router) {
         if (!router) {

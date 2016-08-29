@@ -29,8 +29,17 @@ import $ from "jquery";
 import Lazyload from 'Lazyload';
 import {debounce} from "utils/debounce";
 
+/**
+ * Base class for creating page implementations.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ */
 export class AbstractPage {
     /**
+     * Base constructor for Pages.
+     *
+     * Do not override this method, override `init` method instead.
+     *
      * @param  {Router}  router
      * @param  {jQuery}  $cont
      * @param  {String}  context
@@ -293,6 +302,8 @@ export class AbstractPage {
     }
 
     /**
+     * Get a page’ block instance from its `id`.
+     *
      * @param  {String} id
      * @return {AbstractBlock|null}
      */
@@ -308,7 +319,7 @@ export class AbstractPage {
     }
 
     /**
-     *
+     * @abstract
      */
     onResize(){
 
@@ -316,6 +327,8 @@ export class AbstractPage {
 
     /**
      * Called before init lazyload images.
+     *
+     * @abstract
      */
     beforeLazyload() {
 
@@ -324,6 +337,7 @@ export class AbstractPage {
     /**
      * After image src switched.
      *
+     * @abstract
      * @param {HTMLImage} element
      */
     onLazyImageSet(element) {
@@ -333,6 +347,7 @@ export class AbstractPage {
     /**
      * After lazyload image loaded.
      *
+     * @abstract
      * @param {HTMLImage} element
      */
     onLazyImageLoad(element) {
@@ -341,6 +356,8 @@ export class AbstractPage {
 
     /**
      * Before lazyload.
+     *
+     * @abstract
      */
     onLazyImageProcessed(index) {
         log.debug('\t🖼 Lazy load processed');

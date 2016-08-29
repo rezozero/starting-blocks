@@ -27,11 +27,15 @@ import log from "loglevel";
 import {BootstrapMedia} from "utils/bootstrapMedia";
 
 /**
- * Some example "page"
+ * Some example "page".
+ *
  * @extends {AbstractPage}
  */
 export class Page extends AbstractPage
 {
+    /**
+     * @override Do not forget to call `super.init()`
+     */
     init() {
         super.init();
 

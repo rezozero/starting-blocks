@@ -26,8 +26,8 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
         }
 
         /**
-         * Returns an AbstractPage child class instance
-         * according to the nodeTypeName or an AbstractPage as default.
+         * Returns an `AbstractPage` child class instance
+         * according to the `nodeTypeName` or an `AbstractPage` as default.
          *
          * @param  {String}  nodeTypeName
          * @param  {Router}  router
@@ -35,9 +35,9 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
          * @param  {String}  context
          * @param  {String}  nodeType
          * @param  {Boolean} isHome
+         *
          * @return {AbstractPage}
          */
-
         ClassFactory.prototype.getPageInstance = function getPageInstance(nodeTypeName, router, $cont, context, nodeType, isHome) {
             switch (nodeTypeName) {
                 case 'home':
@@ -50,7 +50,7 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
         };
 
         /**
-         * Returns an AbstractBlock child class instance
+         * Returns an `AbstractBlock` child class instance
          * according to the nodeTypeName or an AbstractBlock as default.
          *
          * Comment out the default case if you don’t want a default block to be instantiated
