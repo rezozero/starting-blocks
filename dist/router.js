@@ -215,6 +215,8 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             var linkClassName = e.currentTarget.className,
                 linkHref = e.currentTarget.href;
 
+            console.log('LINK CLICK');
+
             if (linkHref.indexOf('mailto:') == -1) {
                 e.preventDefault();
 
@@ -268,7 +270,9 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                     // ajax context is defined.
                     cache: false,
                     type: 'get',
-                    success: _this._onDataLoaded.bind(_this, data, state)
+                    success: function success(data) {
+                        _this._onDataLoaded(data, state);
+                    }
                 });
             }, this.options.preLoadPageDelay);
         };
@@ -282,6 +286,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
         Router.prototype._onDataLoaded = function _onDataLoaded(data, state) {
             // Extract only to new page content
             // if the whole HTML is queried
+
             var $data = null;
             var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
             if ($response.hasClass(this.options.pageClass)) {
