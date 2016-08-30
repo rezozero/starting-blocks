@@ -268,7 +268,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                     // ajax context is defined.
                     cache: false,
                     type: 'get',
-                    success: _this._onDataLoaded.bind(_this, state)
+                    success: _this._onDataLoaded.bind(_this, data, state)
                 });
             }, this.options.preLoadPageDelay);
         };
