@@ -261,7 +261,7 @@ export class Router {
                 // ajax context is defined.
                 cache: false,
                 type: 'get',
-                success: this._onDataLoaded.bind(this)
+                success: this._onDataLoaded.bind(this, state)
             });
 
         }, this.options.preLoadPageDelay);
@@ -271,7 +271,7 @@ export class Router {
      * @private
      * @param {Object} data jQuery AJAX response
      */
-    _onDataLoaded(data) {
+    _onDataLoaded(data, state) {
          // Extract only to new page content
         // if the whole HTML is queried
         let $data = null;
@@ -281,6 +281,7 @@ export class Router {
         } else {
             $data = $response.find('.' + this.options.pageClass);
         }
+
         /*
          * Display data to DOM
          */

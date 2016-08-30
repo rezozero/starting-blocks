@@ -54,6 +54,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
+
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -267,7 +268,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
                     // ajax context is defined.
                     cache: false,
                     type: 'get',
-                    success: _this._onDataLoaded.bind(_this)
+                    success: _this._onDataLoaded.bind(_this, state)
                 });
             }, this.options.preLoadPageDelay);
         };
@@ -278,7 +279,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
          */
 
 
-        Router.prototype._onDataLoaded = function _onDataLoaded(data) {
+        Router.prototype._onDataLoaded = function _onDataLoaded(data, state) {
             // Extract only to new page content
             // if the whole HTML is queried
             var $data = null;
@@ -288,6 +289,7 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             } else {
                 $data = $response.find('.' + this.options.pageClass);
             }
+
             /*
              * Display data to DOM
              */
