@@ -215,8 +215,6 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             var linkClassName = e.currentTarget.className,
                 linkHref = e.currentTarget.href;
 
-            console.log('LINK CLICK');
-
             if (linkHref.indexOf('mailto:') == -1) {
                 e.preventDefault();
 

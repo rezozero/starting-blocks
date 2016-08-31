@@ -210,8 +210,6 @@ export class Router {
         const linkClassName = e.currentTarget.className,
             linkHref = e.currentTarget.href;
 
-        console.log('LINK CLICK');
-
         if(linkHref.indexOf('mailto:') == -1) {
             e.preventDefault();
 
