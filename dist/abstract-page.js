@@ -318,7 +318,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
              * Notify all blocks that page init is over.
              */
             for (var i = this.blocks.length - 1; i >= 0; i--) {
-                this.blocks[i].onPageReady();
+                if (typeof this.blocks[i].onPageReady == 'function') this.blocks[i].onPageReady();
             }
         };
 

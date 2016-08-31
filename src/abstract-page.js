@@ -297,7 +297,7 @@ export class AbstractPage {
          * Notify all blocks that page init is over.
          */
         for (let i = this.blocks.length - 1; i >= 0; i--) {
-            this.blocks[i].onPageReady();
+            if(typeof this.blocks[i].onPageReady == 'function') this.blocks[i].onPageReady();
         }
     }
 
