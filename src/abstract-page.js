@@ -90,6 +90,8 @@ export class AbstractPage {
             this.isHome = true;
         }
 
+        this.ready = false;
+
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
@@ -213,6 +215,7 @@ export class AbstractPage {
         setTimeout(() => {
             const onShowEnded = this.showEnded.bind(this);
 
+            this.ready = true;
             this.router.loader.hide();
 
             if(this.context == 'static'){

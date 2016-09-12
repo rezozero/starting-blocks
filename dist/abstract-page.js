@@ -87,6 +87,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
                 this.isHome = true;
             }
 
+            this.ready = false;
+
             this.name = this.$cont.length ? this.$cont[0].getAttribute('data-node-name') : '';
 
             this.onResizeDebounce = (0, _debounce.debounce)(this.onResize.bind(this), 50, false);
@@ -224,6 +226,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
             setTimeout(function () {
                 var onShowEnded = _this2.showEnded.bind(_this2);
 
+                _this2.ready = true;
                 _this2.router.loader.hide();
 
                 if (_this2.context == 'static') {
