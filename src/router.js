@@ -23,6 +23,8 @@
  * @author Ambroise Maupate
  */
 import $ from "jquery";
+import isMobile from "isMobile";
+import {Utils} from "utils/utils";
 import {State} from "state";
 import {Home} from "pages/home";
 
@@ -107,6 +109,11 @@ export class Router {
         this.transition = false;
         this.loading = false;
         this.$window = $(window);
+        this.$body = $('body');
+
+        this.deviceType = (isMobile.any === false) ? 'desktop' : 'mobile';
+        Utils.addClass(this.$body[0],'is-'+this.deviceType);
+
         /**
          * @deprecated use this.$window instead
          */

@@ -1,4 +1,4 @@
-define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery, _state, _home) {
+define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], function (exports, _jquery, _isMobile, _utils, _state, _home) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -7,6 +7,8 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
     exports.Router = undefined;
 
     var _jquery2 = _interopRequireDefault(_jquery);
+
+    var _isMobile2 = _interopRequireDefault(_isMobile);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -104,6 +106,11 @@ define(["exports", "jquery", "state", "pages/home"], function (exports, _jquery,
             this.transition = false;
             this.loading = false;
             this.$window = (0, _jquery2.default)(window);
+            this.$body = (0, _jquery2.default)('body');
+
+            this.deviceType = _isMobile2.default.any === false ? 'desktop' : 'mobile';
+            _utils.Utils.addClass(this.$body[0], 'is-' + this.deviceType);
+
             /**
              * @deprecated use this.$window instead
              */

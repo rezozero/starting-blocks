@@ -17,6 +17,7 @@
   "dependencies": {
     "gsap": "~1.18.5",
     "jquery": "~2.2.0",
+    "isMobile": "~0.3.6",
     "waitForImages": "~2.2.0",
     "requirejs": "2.2.0",
     "loglevel": "~1.4.1",

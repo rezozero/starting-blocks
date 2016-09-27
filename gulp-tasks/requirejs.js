@@ -11,7 +11,8 @@ gulp.task('requirejs', ['babel'], function() {
         paths: {
             jquery: 'empty:',
             TweenMax: "empty:",
-            Lazyload: './../bower_components/vanilla-lazyload/dist/lazyload',
+            isMobile: './../bower_components/vanilla-lazyload/dist/lazyload',
+            Lazyload: './../bower_components/isMobile/isMobile.min',
             waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
             loglevel: "./../bower_components/loglevel/dist/loglevel.min",
             // Add here additionnal lib
