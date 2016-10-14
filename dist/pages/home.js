@@ -48,7 +48,6 @@ define(["exports", "abstract-page", "utils/bootstrapMedia"], function (exports, 
     /**
      * @override Do not forget to call `super.init()`
      */
-
     Home.prototype.init = function init() {
       _AbstractPage.prototype.init.call(this);
     };

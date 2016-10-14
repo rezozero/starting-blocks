@@ -56,7 +56,6 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
-
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 

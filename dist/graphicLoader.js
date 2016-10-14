@@ -30,7 +30,6 @@ define(['exports', 'loglevel'], function (exports, _loglevel) {
      *
      * @abstract
      */
-
     function GraphicLoader() {
       _classCallCheck(this, GraphicLoader);
     }

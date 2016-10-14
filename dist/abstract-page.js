@@ -40,7 +40,6 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
          * @param  {String}  type
          * @param  {Boolean} isHome
          */
-
         function AbstractPage(router, $cont, context, type, isHome) {
             _classCallCheck(this, AbstractPage);
 
@@ -409,7 +408,12 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
             for (var linkIndex = 0; linkIndex < linksLength; linkIndex++) {
                 var link = $links[linkIndex];
-                if (link.href.indexOf(abstractBaseUrl) == -1 && link.href.indexOf('javascript') == -1 && link.href.indexOf('mailto:') == -1 && link.href.charAt(0) != '/' && link.href.charAt(0) != '#') {
+                /*
+                 * Use RAW href data not to automatically
+                 * get protocol and domain in string
+                 */
+                var linkString = link.getAttribute('href');
+                if (linkString.indexOf(abstractBaseUrl) == -1 && linkString.indexOf('javascript') == -1 && linkString.indexOf('mailto:') == -1 && linkString.charAt(0) != '/' && linkString.charAt(0) != '#') {
                     $links[linkIndex].target = '_blank';
                 }
             }

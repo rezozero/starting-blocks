@@ -19,7 +19,6 @@ define(["exports"], function (exports) {
      * Any child implementations must implements
      * update method.
      */
-
     function AbstractNav() {
       _classCallCheck(this, AbstractNav);
 
