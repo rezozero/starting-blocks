@@ -40,6 +40,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
          * @param  {String}  type
          * @param  {Boolean} isHome
          */
+
         function AbstractPage(router, $cont, context, type, isHome) {
             _classCallCheck(this, AbstractPage);
 
@@ -265,8 +266,9 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
             var _this3 = this;
 
             _loglevel2.default.debug('▶️ #' + this.id);
+
             // Animate
-            var tween = TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
+            TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
                     _this3.router.transition = false;
                     if (typeof onShow !== 'undefined') {
                         onShow();
@@ -291,6 +293,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
         AbstractPage.prototype.hide = function hide(onHidden) {
             _loglevel2.default.debug('◀️ #' + this.id);
+
             TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: onHidden });
         };
 

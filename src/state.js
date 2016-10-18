@@ -99,4 +99,15 @@ export class State {
          */
         this.isHome = isHome;
     }
+
+    /**
+     * Update
+     * @param  {AbstractPage} page
+     * @return {this}      
+     */
+    update(page){
+        this.transition = this.options.previousType+'_to_'+page.type;
+        this.nodeName = page.name;
+        this.isHome = page.isHome;
+    }
 }

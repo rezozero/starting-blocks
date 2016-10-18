@@ -207,6 +207,8 @@ export class Router {
         } else {
             this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
         }
+
+        if(context == 'ajax') this.state.update(this.page);
     }
 
     /**

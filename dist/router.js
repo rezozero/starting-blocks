@@ -56,6 +56,7 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
+
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -209,6 +210,8 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
             } else {
                 this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
             }
+
+            if (context == 'ajax') this.state.update(this.page);
         };
 
         /**

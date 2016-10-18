@@ -251,8 +251,9 @@ export class AbstractPage {
      */
     show(onShow) {
         log.debug('▶️ #' + this.id);
+
         // Animate
-        var tween = TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
+        TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
             this.router.transition = false;
             if (typeof onShow !== 'undefined') {
                 onShow();
@@ -273,6 +274,7 @@ export class AbstractPage {
      */
     hide(onHidden) {
         log.debug('◀️ #' + this.id);
+
         TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
     }
 

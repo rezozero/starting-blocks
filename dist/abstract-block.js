@@ -35,6 +35,7 @@ define(["exports", "loglevel", "waitForImages", "jquery", "utils/debounce"], fun
      * @param  {String} id
      * @param  {String} type
      */
+
     function AbstractBlock(page, $cont, type) {
       _classCallCheck(this, AbstractBlock);
 
