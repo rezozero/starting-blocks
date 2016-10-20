@@ -263,13 +263,10 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
 
         AbstractPage.prototype.show = function show(onShow) {
-            var _this3 = this;
-
             _loglevel2.default.debug('▶️ #' + this.id);
 
             // Animate
             TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
-                    _this3.router.transition = false;
                     if (typeof onShow !== 'undefined') {
                         onShow();
                     }
@@ -282,6 +279,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
 
         AbstractPage.prototype.showEnded = function showEnded() {
+            this.router.transition = false;
             this.$cont.removeClass(this.router.options.pageClass + '-ajax');
             this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
         };

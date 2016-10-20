@@ -254,7 +254,6 @@ export class AbstractPage {
 
         // Animate
         TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
-            this.router.transition = false;
             if (typeof onShow !== 'undefined') {
                 onShow();
             }
@@ -265,6 +264,7 @@ export class AbstractPage {
      *
      */
     showEnded() {
+        this.router.transition = false;
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
     }
