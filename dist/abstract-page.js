@@ -326,7 +326,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         };
 
         /**
-         * Get a page’ block instance from its `id`.
+         * Get a page block instance from its `id`.
          *
          * @param  {String} id
          * @return {AbstractBlock|null}
@@ -336,6 +336,40 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         AbstractPage.prototype.getBlockById = function getBlockById(id) {
             for (var i in this.blocks) {
                 if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id == id) {
+                    return this.blocks[i];
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Get a page block index from its `id`.
+         *
+         * @param  {String} id
+         * @return {AbstractBlock|null}
+         */
+
+
+        AbstractPage.prototype.getIndexBlockById = function getIndexBlockById(id) {
+            for (var i in this.blocks) {
+                if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id == id) {
+                    return i;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Get the first page block instance from its `type`.
+         *
+         * @param  {String} type
+         * @return {AbstractBlock|null}
+         */
+
+
+        AbstractPage.prototype.getFirstBlockByType = function getFirstBlockByType(type) {
+            for (var i in this.blocks) {
+                if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type == type) {
                     return this.blocks[i];
                 }
             }

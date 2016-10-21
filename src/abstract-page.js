@@ -307,7 +307,7 @@ export class AbstractPage {
     }
 
     /**
-     * Get a page’ block instance from its `id`.
+     * Get a page block instance from its `id`.
      *
      * @param  {String} id
      * @return {AbstractBlock|null}
@@ -317,6 +317,40 @@ export class AbstractPage {
             if (this.blocks[i] &&
                 this.blocks[i].id &&
                 this.blocks[i].id == id) {
+                return this.blocks[i];
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get a page block index from its `id`.
+     *
+     * @param  {String} id
+     * @return {AbstractBlock|null}
+     */
+    getIndexBlockById(id) {
+        for (let i in this.blocks) {
+            if (this.blocks[i] &&
+                this.blocks[i].id &&
+                this.blocks[i].id == id) {
+                return i;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the first page block instance from its `type`.
+     *
+     * @param  {String} type
+     * @return {AbstractBlock|null}
+     */
+    getFirstBlockByType(type){
+        for (let i in this.blocks) {
+            if (this.blocks[i] &&
+                this.blocks[i].type &&
+                this.blocks[i].type == type) {
                 return this.blocks[i];
             }
         }
