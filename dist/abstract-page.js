@@ -266,10 +266,8 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
             _loglevel2.default.debug('▶️ #' + this.id);
 
             // Animate
-            TweenLite.to(this.$cont, 0.6, { 'opacity': 1, onComplete: function onComplete() {
-                    if (typeof onShow !== 'undefined') {
-                        onShow();
-                    }
+            TweenLite.to(this.$cont, 0.6, { opacity: 1, onComplete: function onComplete() {
+                    if (typeof onShow !== 'undefined') onShow();
                 } });
         };
 
@@ -292,7 +290,9 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         AbstractPage.prototype.hide = function hide(onHidden) {
             _loglevel2.default.debug('◀️ #' + this.id);
 
-            TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: onHidden });
+            TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: function onComplete() {
+                    if (typeof onHidden !== 'undefined') onHidden();
+                } });
         };
 
         AbstractPage.prototype.initAjax = function initAjax() {

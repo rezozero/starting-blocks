@@ -253,10 +253,8 @@ export class AbstractPage {
         log.debug('▶️ #' + this.id);
 
         // Animate
-        TweenLite.to(this.$cont, 0.6, {'opacity':1, onComplete: () => {
-            if (typeof onShow !== 'undefined') {
-                onShow();
-            }
+        TweenLite.to(this.$cont, 0.6, {opacity:1, onComplete: () => {
+            if (typeof onShow !== 'undefined') onShow();
         }});
     }
 
@@ -275,7 +273,9 @@ export class AbstractPage {
     hide(onHidden) {
         log.debug('◀️ #' + this.id);
 
-        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete:onHidden});
+        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete: () => {
+            if (typeof onHidden !== 'undefined') onHidden();
+        }});
     }
 
     initAjax() {
