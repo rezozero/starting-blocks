@@ -51,11 +51,15 @@ define(["exports", "jquery"], function (exports, _jquery) {
       var context = link.className.indexOf(this.options.navLinkClass) >= 0 ? 'nav' : 'link';
       var dataHome = link.getAttribute('data-is-home');
       var isHome = dataHome == '1' ? true : false;
-      var title = link.getAttribute('data-title');
-      var nodeType = link.getAttribute(router.options.objectTypeAttr);
 
+      var title = link.getAttribute('data-title');
       if (title === '') title = link.innerHTML;
-      if (nodeType === '') nodeType = "page";
+
+      var nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr);
+      if (nodeType === null || nodeType === '') {
+        var objectTypeAttr = link.getAttribute(router.options.objectTypeAttr);
+        if (objectTypeAttr !== null && objectTypeAttr !== '') nodeType = objectTypeAttr;else nodeType = "page";
+      }
 
       /**
        * @type {String}

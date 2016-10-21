@@ -38,6 +38,7 @@ export class Router {
      * * `ajaxEnabled`: true,
      * * `pageClass`: "page-content", (Without point!)
      * * `objectTypeAttr`: "data-node-type",
+     * * `ajaxLinkTypeAttr` : "data-node-type"
      * * `noAjaxLinkClass`: "no-ajax-link",
      * * `navLinkClass`: "nav-link",
      * * `activeClass`: "active",
@@ -127,6 +128,7 @@ export class Router {
             ajaxEnabled: true,
             pageClass: "page-content",
             objectTypeAttr: "data-node-type",
+            ajaxLinkTypeAttr: "data-node-type",
             noAjaxLinkClass: "no-ajax-link",
             navLinkClass: "nav-link",
             activeClass: "active",

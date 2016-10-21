@@ -55,11 +55,16 @@ export class State {
         const context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
         const dataHome = link.getAttribute('data-is-home');
         const isHome = (dataHome == '1') ? (true) : (false);
-        let title = link.getAttribute('data-title');
-        let nodeType = link.getAttribute(router.options.objectTypeAttr);
 
+        let title = link.getAttribute('data-title');
         if(title === '') title = link.innerHTML;
-        if(nodeType === '') nodeType = "page";
+
+        let nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr);
+        if(nodeType === null || nodeType === ''){
+            let objectTypeAttr = link.getAttribute(router.options.objectTypeAttr);
+            if(objectTypeAttr !== null && objectTypeAttr !== '') nodeType = objectTypeAttr;
+            else nodeType = "page";
+        }
 
         /**
          * @type {String}
