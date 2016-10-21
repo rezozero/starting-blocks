@@ -329,7 +329,7 @@ export class AbstractPage {
      * @param  {String} id
      * @return {AbstractBlock|null}
      */
-    getIndexBlockById(id) {
+    getBlockIndexById(id) {
         for (let i in this.blocks) {
             if (this.blocks[i] &&
                 this.blocks[i].id &&
@@ -352,6 +352,23 @@ export class AbstractPage {
                 this.blocks[i].type &&
                 this.blocks[i].type == type) {
                 return this.blocks[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the first page block index from its `type`.
+     *
+     * @param  {String} type
+     * @return {AbstractBlock|null}
+     */
+    getFirstBlockIndexByType(type){
+        for (let i in this.blocks) {
+            if (this.blocks[i] &&
+                this.blocks[i].type &&
+                this.blocks[i].type == type) {
+                return i;
             }
         }
         return null;

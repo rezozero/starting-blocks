@@ -350,7 +350,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
          */
 
 
-        AbstractPage.prototype.getIndexBlockById = function getIndexBlockById(id) {
+        AbstractPage.prototype.getBlockIndexById = function getBlockIndexById(id) {
             for (var i in this.blocks) {
                 if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id == id) {
                     return i;
@@ -371,6 +371,23 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
             for (var i in this.blocks) {
                 if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type == type) {
                     return this.blocks[i];
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Get the first page block index from its `type`.
+         *
+         * @param  {String} type
+         * @return {AbstractBlock|null}
+         */
+
+
+        AbstractPage.prototype.getFirstBlockIndexByType = function getFirstBlockIndexByType(type) {
+            for (var i in this.blocks) {
+                if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type == type) {
+                    return i;
                 }
             }
             return null;
