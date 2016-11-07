@@ -45,6 +45,7 @@ export class State {
          */
         this.options = {
             previousType: "page",
+            previousName: "home",
             navLinkClass: "nav-link"
         };
 

@@ -41,6 +41,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
        */
       this.options = {
         previousType: "page",
+        previousName: "home",
         navLinkClass: "nav-link"
       };
 

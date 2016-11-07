@@ -235,6 +235,7 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
 
                     this.state = new _state.State(this, e.currentTarget, {
                         previousType: this.page.type,
+                        previousName: this.page.name,
                         navLinkClass: this.options.navLinkClass
                     });
 

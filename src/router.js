@@ -232,6 +232,7 @@ export class Router {
 
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
+                    previousName: this.page.name,
                     navLinkClass: this.options.navLinkClass
                 });
 
