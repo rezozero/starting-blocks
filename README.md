@@ -41,7 +41,7 @@ require(['main']);
 
 ## Use as vendor lib (bower)
 
-Before using *starting-blocks* in your project as a dependency. You’ll need to declare
+Before using *Starting Blocks* in your project as a dependency. You’ll need to declare
 paths for each JS file you’ll need and to **create your own** `bootstrap.js` and `main.js`
 files. Some of this lib files will be located in `bower_components` folder and so they
 won’t be available anymore from your project path. Solution is to add them to your
