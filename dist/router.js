@@ -342,7 +342,8 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
 
             // Analytics
             if (typeof ga !== "undefined") {
-                ga('send', 'pageview', { 'page': state.href, 'title': document.title });
+                _loglevel2.default.debug('🚩 Push Analytics for: ' + window.location.pathname);
+                ga('send', 'pageview', { 'page': window.location.pathname, 'title': document.title });
             }
         };
 

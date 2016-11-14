@@ -335,7 +335,8 @@ export class Router {
 
         // Analytics
         if(typeof ga !== "undefined") {
-            ga('send', 'pageview', {'page':state.href, 'title':document.title});
+            log.debug('🚩 Push Analytics for: ' + window.location.pathname);
+            ga('send', 'pageview', {'page': window.location.pathname, 'title':document.title});
         }
     }
 
