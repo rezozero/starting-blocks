@@ -23,6 +23,7 @@ const router = new Router(
     {
         homeHasClass: false,
         ajaxEnabled: true,
+        useCache: true,
         lazyloadEnabled: true,
         /*
          * Do not use Arrow function

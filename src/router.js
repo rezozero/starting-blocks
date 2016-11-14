@@ -44,6 +44,7 @@ export class Router {
      * * `noAjaxLinkClass`: "no-ajax-link",
      * * `navLinkClass`: "nav-link",
      * * `activeClass`: "active",
+     * * `useCache`: true,
      * * `pageBlockClass`: ".page-block", (With point!)
      * * `$ajaxContainer`: $("#ajax-container"),
      * * `lazyloadEnabled`: false,
