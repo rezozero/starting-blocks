@@ -115,5 +115,10 @@ export class State {
         this.transition = this.options.previousType+'_to_'+page.type;
         this.nodeName = page.name;
         this.isHome = page.isHome;
+        this.nodeType = page.type;
+
+        if(history.replaceState){
+            history.replaceState(this, document.title, window.location.href);
+        }
     }
 }

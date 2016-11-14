@@ -60,6 +60,7 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
+
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -374,13 +375,15 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
          */
 
 
-        Router.prototype.pushFirstState = function pushFirstState(isHome) {
+        Router.prototype.pushFirstState = function pushFirstState(isHome, type, name) {
             if (history.pushState) {
                 history.pushState({
                     'firstPage': true,
                     'href': window.location.href,
-                    'isHome': isHome
-                }, null, window.location.href);
+                    'isHome': isHome,
+                    'nodeType': type,
+                    'nodeName': name
+                }, document.title, window.location.href);
             }
         };
 
