@@ -27,6 +27,7 @@ define(["exports", "jquery"], function (exports, _jquery) {
      * @param {String} link
      * @param {Object} options Extends state options.
      */
+
     function State(router, link, options) {
       _classCallCheck(this, State);
 
@@ -111,6 +112,11 @@ define(["exports", "jquery"], function (exports, _jquery) {
       this.transition = this.options.previousType + '_to_' + page.type;
       this.nodeName = page.name;
       this.isHome = page.isHome;
+      this.nodeType = page.type;
+
+      if (history.replaceState) {
+        history.replaceState(this, document.title, window.location.href);
+      }
     };
 
     return State;

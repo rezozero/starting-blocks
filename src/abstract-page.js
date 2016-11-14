@@ -143,7 +143,7 @@ export class AbstractPage {
 
         // --- Context --- //
         if(this.context == 'static' && this.router.ajaxEnabled) {
-            this.router.pushFirstState(this.isHome);
+            this.router.pushFirstState(this.isHome, this.type, this.name);
         } else if(this.context == 'ajax'){
             this.initAjax();
         }

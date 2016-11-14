@@ -360,13 +360,15 @@ export class Router {
     /**
      * @param {boolean} isHome
      */
-    pushFirstState(isHome){
+    pushFirstState(isHome, type, name){
         if (history.pushState) {
             history.pushState({
                 'firstPage': true,
                 'href':  window.location.href,
-                'isHome':isHome
-            }, null, window.location.href);
+                'isHome':isHome,
+                'nodeType':type,
+                'nodeName':name
+            }, document.title, window.location.href);
         }
     }
 }

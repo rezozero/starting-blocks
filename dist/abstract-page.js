@@ -40,6 +40,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
          * @param  {String}  type
          * @param  {Boolean} isHome
          */
+
         function AbstractPage(router, $cont, context, type, isHome) {
             _classCallCheck(this, AbstractPage);
 
@@ -143,7 +144,7 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
 
             // --- Context --- //
             if (this.context == 'static' && this.router.ajaxEnabled) {
-                this.router.pushFirstState(this.isHome);
+                this.router.pushFirstState(this.isHome, this.type, this.name);
             } else if (this.context == 'ajax') {
                 this.initAjax();
             }

@@ -21,6 +21,7 @@ define(['exports'], function (exports) {
          * @param e
          * @private
          */
+
         Scroll._preventDefault = function _preventDefault(e) {
             e = e || window.event;
             if (e.preventDefault) e.preventDefault();
