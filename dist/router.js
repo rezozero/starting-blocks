@@ -38,6 +38,7 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
          * * `noAjaxLinkClass`: "no-ajax-link",
          * * `navLinkClass`: "nav-link",
          * * `activeClass`: "active",
+         * * `useCache`: true,
          * * `pageBlockClass`: ".page-block", (With point!)
          * * `$ajaxContainer`: $("#ajax-container"),
          * * `lazyloadEnabled`: false,

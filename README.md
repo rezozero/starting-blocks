@@ -137,6 +137,11 @@ A Router needs:
 
 You can look at the `src/main.js` file to see an instanciation example with few parameters.
 
+### Caching responses
+
+By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
+successful. You can disable this feature with `useCache` router option.
+
 ## Docs
 
 To generate documentation, you’ll at least NodeJS v4.4 and to install ESDoc.

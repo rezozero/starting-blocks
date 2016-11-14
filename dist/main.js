@@ -27,6 +27,7 @@ define(["jquery", "loglevel", "utils/polyfills", "router", "graphicLoader", "abs
   var router = new _router.Router({
     homeHasClass: false,
     ajaxEnabled: true,
+    useCache: true,
     lazyloadEnabled: true,
     /*
      * Do not use Arrow function
