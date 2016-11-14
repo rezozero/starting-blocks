@@ -269,35 +269,40 @@ export class Router {
         const preLoadBinded = this.options.preLoad.bind(this);
         preLoadBinded(state);
 
-        setTimeout(() => {
-            if (this.options.useCache && this.cacheProvider.exists(state.href)) {
-                log.debug('📎 Use cache-provider for: ' + state.href);
-                this._onDataLoaded(this.cacheProvider.fetch(state.href), state);
-            } else {
-                this.currentRequest = $.ajax({
-                    url: state.href,
-                    dataType: "html",
-                    headers: {
-                        // Send header to allow backends to
-                        // send partial response for saving
-                        // bandwidth and process time
-                        'X-Allow-Partial' : 1
-                    },
-                    // Need to disable cache to prevent
-                    // browser to serve partial when no
-                    // ajax context is defined.
-                    cache: false,
-                    type: 'get',
-                    success: (data) => {
-                        if (this.options.useCache) {
-                            this.cacheProvider.save(state.href, data);
-                        }
-                        this._onDataLoaded(data, state);
+        setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
+    }
+    /**
+     * Actually load the state url resource.
+     *
+     * @param  {State} state
+     */
+    doPageLoad(state) {
+        if (this.options.useCache && this.cacheProvider.exists(state.href)) {
+            log.debug('📎 Use cache-provider for: ' + state.href);
+            this._onDataLoaded(this.cacheProvider.fetch(state.href), state);
+        } else {
+            this.currentRequest = $.ajax({
+                url: state.href,
+                dataType: "html",
+                headers: {
+                    // Send header to allow backends to
+                    // send partial response for saving
+                    // bandwidth and process time
+                    'X-Allow-Partial' : 1
+                },
+                // Need to disable cache to prevent
+                // browser to serve partial when no
+                // ajax context is defined.
+                cache: false,
+                type: 'get',
+                success: (data) => {
+                    if (this.options.useCache) {
+                        this.cacheProvider.save(state.href, data);
                     }
-                });
-            }
-
-        }, this.options.preLoadPageDelay);
+                    this._onDataLoaded(data, state);
+                }
+            });
+        }
     }
 
     /**
@@ -305,9 +310,8 @@ export class Router {
      * @param {Object} data jQuery AJAX response
      */
     _onDataLoaded(data, state) {
-         // Extract only to new page content
+        // Extract only to new page content
         // if the whole HTML is queried
-
         let $data = null;
         const $response = $($.parseHTML(data.trim()));
         if ($response.hasClass(this.options.pageClass)) {
@@ -354,7 +358,6 @@ export class Router {
     }
 
     /**
-     *
      * @param {boolean} isHome
      */
     pushFirstState(isHome){

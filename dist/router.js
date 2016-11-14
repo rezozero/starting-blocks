@@ -264,8 +264,6 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
 
 
         Router.prototype.loadPage = function loadPage(e, state) {
-            var _this = this;
-
             if (this.currentRequest && this.currentRequest.readyState != 4) {
                 this.currentRequest.abort();
             }
@@ -275,34 +273,44 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
             var preLoadBinded = this.options.preLoad.bind(this);
             preLoadBinded(state);
 
-            setTimeout(function () {
-                if (_this.options.useCache && _this.cacheProvider.exists(state.href)) {
-                    _loglevel2.default.debug('📎 Use cache-provider for: ' + state.href);
-                    _this._onDataLoaded(_this.cacheProvider.fetch(state.href), state);
-                } else {
-                    _this.currentRequest = _jquery2.default.ajax({
-                        url: state.href,
-                        dataType: "html",
-                        headers: {
-                            // Send header to allow backends to
-                            // send partial response for saving
-                            // bandwidth and process time
-                            'X-Allow-Partial': 1
-                        },
-                        // Need to disable cache to prevent
-                        // browser to serve partial when no
-                        // ajax context is defined.
-                        cache: false,
-                        type: 'get',
-                        success: function success(data) {
-                            if (_this.options.useCache) {
-                                _this.cacheProvider.save(state.href, data);
-                            }
-                            _this._onDataLoaded(data, state);
+            setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
+        };
+        /**
+         * Actually load the state url resource.
+         *
+         * @param  {State} state
+         */
+
+
+        Router.prototype.doPageLoad = function doPageLoad(state) {
+            var _this = this;
+
+            if (this.options.useCache && this.cacheProvider.exists(state.href)) {
+                _loglevel2.default.debug('📎 Use cache-provider for: ' + state.href);
+                this._onDataLoaded(this.cacheProvider.fetch(state.href), state);
+            } else {
+                this.currentRequest = _jquery2.default.ajax({
+                    url: state.href,
+                    dataType: "html",
+                    headers: {
+                        // Send header to allow backends to
+                        // send partial response for saving
+                        // bandwidth and process time
+                        'X-Allow-Partial': 1
+                    },
+                    // Need to disable cache to prevent
+                    // browser to serve partial when no
+                    // ajax context is defined.
+                    cache: false,
+                    type: 'get',
+                    success: function success(data) {
+                        if (_this.options.useCache) {
+                            _this.cacheProvider.save(state.href, data);
                         }
-                    });
-                }
-            }, this.options.preLoadPageDelay);
+                        _this._onDataLoaded(data, state);
+                    }
+                });
+            }
         };
 
         /**
@@ -314,7 +322,6 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
         Router.prototype._onDataLoaded = function _onDataLoaded(data, state) {
             // Extract only to new page content
             // if the whole HTML is queried
-
             var $data = null;
             var $response = (0, _jquery2.default)(_jquery2.default.parseHTML(data.trim()));
             if ($response.hasClass(this.options.pageClass)) {
@@ -363,7 +370,6 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
         };
 
         /**
-         *
          * @param {boolean} isHome
          */
 
