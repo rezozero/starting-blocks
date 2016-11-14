@@ -1,5 +1,5 @@
-# Page-block Framework
-## REZO ZERO
+# Starting blocks
+## A page transition and blocks ES6 framework by REZO ZERO
 
 - Maxime Bérard
 - Ambroise Maupate
@@ -41,7 +41,7 @@ require(['main']);
 
 ## Use as vendor lib (bower)
 
-Before using *pageblock* in your project as a dependency. You’ll need to declare
+Before using *Starting Blocks* in your project as a dependency. You’ll need to declare
 paths for each JS file you’ll need and to **create your own** `bootstrap.js` and `main.js`
 files. Some of this lib files will be located in `bower_components` folder and so they
 won’t be available anymore from your project path. Solution is to add them to your
@@ -61,22 +61,23 @@ var paths = {
     waitForImages: '/path/to/your/website/bower_components/waitForImages/dist/jquery.waitforimages.min',
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
-    "state": "/path/to/your/website/bower_components/pageblock/dist/state",
-    "router": "/path/to/your/website/bower_components/pageblock/dist/router",
-    "graphicLoader": "/path/to/your/website/bower_components/pageblock/dist/graphicLoader",
-    "nav": "/path/to/your/website/bower_components/pageblock/dist/nav",
-    "abstract-page": "/path/to/your/website/bower_components/pageblock/dist/abstract-page",
-    "abstract-block": "/path/to/your/website/bower_components/pageblock/dist/abstract-block",
+    "state": "/path/to/your/website/bower_components/starting-blocks/dist/state",
+    "cache-provider": "/path/to/your/website/bower_components/starting-blocks/dist/cache-provider",
+    "router": "/path/to/your/website/bower_components/starting-blocks/dist/router",
+    "graphicLoader": "/path/to/your/website/bower_components/starting-blocks/dist/graphicLoader",
+    "nav": "/path/to/your/website/bower_components/starting-blocks/dist/nav",
+    "abstract-page": "/path/to/your/website/bower_components/starting-blocks/dist/abstract-page",
+    "abstract-block": "/path/to/your/website/bower_components/starting-blocks/dist/abstract-block",
     // Utils functions and classes
-    "utils/utils": "/path/to/your/website/bower_components/pageblock/dist/utils/utils",
-    "utils/gaTrackErrors": "/path/to/your/website/bower_components/pageblock/dist/utils/gaTrackErrors",
-    "utils/debounce": "/path/to/your/website/bower_components/pageblock/dist/utils/debounce",
-    "utils/bootstrapMedia": "/path/to/your/website/bower_components/pageblock/dist/utils/bootstrapMedia",
-    "utils/polyfills": "/path/to/your/website/bower_components/pageblock/dist/utils/polyfills",
-    "utils/scroll": "/path/to/your/website/bower_components/pageblock/dist/utils/scroll",
+    "utils/utils": "/path/to/your/website/bower_components/starting-blocks/dist/utils/utils",
+    "utils/gaTrackErrors": "/path/to/your/website/bower_components/starting-blocks/dist/utils/gaTrackErrors",
+    "utils/debounce": "/path/to/your/website/bower_components/starting-blocks/dist/utils/debounce",
+    "utils/bootstrapMedia": "/path/to/your/website/bower_components/starting-blocks/dist/utils/bootstrapMedia",
+    "utils/polyfills": "/path/to/your/website/bower_components/starting-blocks/dist/utils/polyfills",
+    "utils/scroll": "/path/to/your/website/bower_components/starting-blocks/dist/utils/scroll",
     // If you want to use example Page and Home classes in your project
-    "pages/page": "/path/to/your/website/bower_components/pageblock/dist/pages/page"
-    "pages/home": "/path/to/your/website/bower_components/pageblock/dist/pages/home"
+    "pages/page": "/path/to/your/website/bower_components/starting-blocks/dist/pages/page"
+    "pages/home": "/path/to/your/website/bower_components/starting-blocks/dist/pages/home"
     // Then your own project vendor libs
     // …
 };
@@ -129,12 +130,17 @@ Then go to your favorite browser and type `http://localhost:8888`.
 A Router needs:
 
 - an options object in order to override default configuration
-- a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *pageblock-framework*.
+- a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
 - a `baseUrl` string which is your website protocol + domain + path, i.e. *http://mysuperwebsite.com* or *http://localhost:8888* in our examples. It is useful to bind AJAX only on internal links and not external links.
 - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.
 
 You can look at the `src/main.js` file to see an instanciation example with few parameters.
+
+### Caching responses
+
+By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
+successful. You can disable this feature with `useCache` router option.
 
 ## Docs
 

@@ -40,7 +40,6 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
          * @param  {String}  type
          * @param  {Boolean} isHome
          */
-
         function AbstractPage(router, $cont, context, type, isHome) {
             _classCallCheck(this, AbstractPage);
 

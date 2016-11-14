@@ -1,11 +1,11 @@
 {
-  "name": "Page block framework",
-  "version": "0.1.0",
+  "name": "starting-blocks",
+  "version": "1.0.0",
   "authors": [
     "Ambroise Maupate <ambroise@rezo-zero.com>",
     "Maxime Bérard <maxime@rezo-zero.com>"
   ],
-  "description": "Page/block router and framework for standalone or Roadiz websites.",
+  "description": "Page transitions and blocks router and framework for standalone or Roadiz websites.",
   "license": "MIT",
   "ignore": [
     "**/.*",
@@ -19,7 +19,7 @@
     "jquery": "~2.2.0",
     "isMobile": "~0.3.6",
     "waitForImages": "~2.2.0",
-    "requirejs": "2.2.0",
+    "requirejs": "2.3.2",
     "loglevel": "~1.4.1",
     "vanilla-lazyload": "~1.6.0"
   }

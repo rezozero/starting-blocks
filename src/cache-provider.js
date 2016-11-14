@@ -19,24 +19,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file home.js
+ * @file cache-provider.js
  * @author Ambroise Maupate
  */
-import {AbstractPage} from "abstract-page";
-import log from "loglevel";
-import {BootstrapMedia} from "utils/bootstrapMedia";
 
-/**
- * Some example "home" page.
- *
- * @extends {AbstractPage}
- */
-export class Home extends AbstractPage {
+export class CacheProvider {
+
+    constructor() {
+        this.hash = {};
+    }
 
     /**
-     * @override Do not forget to call `super.init()`
+     * @param  {String} href
+     * @return {Boolean}
      */
-    init() {
-        super.init();
+    exists(href) {
+        if (href in this.hash) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param  {String} href
+     * @return {Object}
+     */
+    fetch(href) {
+        return this.hash[href];
+    }
+
+    /**
+     * @param  {String} href
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    save(href, data) {
+        this.hash[href] = data;
+        return this;
     }
 }
