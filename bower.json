@@ -1,6 +1,10 @@
 {
   "name": "starting-blocks",
-  "version": "1.0.0",
+  "homepage": "http://starting-blocks.rezo-zero.com/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:rezozero/starting-blocks.git"
+  },
   "authors": [
     "Ambroise Maupate <ambroise@rezo-zero.com>",
     "Maxime Bérard <maxime@rezo-zero.com>"
@@ -14,6 +18,13 @@
     "test",
     "tests"
   ],
+  "keywords": [
+    "transitions",
+    "page",
+    "blocks",
+    "ajax",
+    "roadiz"
+  ],
   "dependencies": {
     "gsap": "~1.19.0",
     "jquery": "~2.2.0",
@@ -22,5 +33,9 @@
     "requirejs": "2.3.2",
     "loglevel": "~1.4.1",
     "vanilla-lazyload": "~1.6.0"
-  }
+  },
+  "moduleType": [
+    "amd",
+    "es6"
+  ]
 }
