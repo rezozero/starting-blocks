@@ -24,8 +24,10 @@
  */
 import $ from "jquery";
 import isMobile from "isMobile";
+import log from "loglevel";
 import {Utils} from "utils/utils";
 import {State} from "state";
+import {CacheProvider} from "cache-provider";
 import {Home} from "pages/home";
 
 export class Router {
@@ -120,6 +122,7 @@ export class Router {
          */
         this.window = this.$window;
         this.currentRequest = null;
+        this.cacheProvider = new CacheProvider();
         /**
          * @type {Object}
          */
@@ -140,6 +143,7 @@ export class Router {
             $ajaxContainer: $("#ajax-container"),
             minLoadDuration: 0,
             preLoadPageDelay: 0,
+            useCache: true,
             postLoad: (state, data) => {},
             preLoad: (state) => {},
             prePushState: (state) => {},
@@ -265,18 +269,32 @@ export class Router {
         preLoadBinded(state);
 
         setTimeout(() => {
-            this.currentRequest = $.ajax({
-                url: state.href,
-                dataType: "html",
-                // Need to disable cache to prevent
-                // browser to serve partial when no
-                // ajax context is defined.
-                cache: false,
-                type: 'get',
-                success: (data) => {
-                    this._onDataLoaded(data, state);
-                }
-            });
+            if (this.options.useCache && this.cacheProvider.exists(state.href)) {
+                log.debug('📎 Use cache-provider for: ' + state.href);
+                this._onDataLoaded(this.cacheProvider.fetch(state.href), state);
+            } else {
+                this.currentRequest = $.ajax({
+                    url: state.href,
+                    dataType: "html",
+                    headers: {
+                        // Send header to allow backends to
+                        // send partial response for saving
+                        // bandwidth and process time
+                        'X-Allow-Partial' : 1
+                    },
+                    // Need to disable cache to prevent
+                    // browser to serve partial when no
+                    // ajax context is defined.
+                    cache: false,
+                    type: 'get',
+                    success: (data) => {
+                        if (this.options.useCache) {
+                            this.cacheProvider.save(state.href, data);
+                        }
+                        this._onDataLoaded(data, state);
+                    }
+                });
+            }
 
         }, this.options.preLoadPageDelay);
     }

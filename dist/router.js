@@ -1,4 +1,4 @@
-define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], function (exports, _jquery, _isMobile, _utils, _state, _home) {
+define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "cache-provider", "pages/home"], function (exports, _jquery, _isMobile, _loglevel, _utils, _state, _cacheProvider, _home) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -9,6 +9,8 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
     var _jquery2 = _interopRequireDefault(_jquery);
 
     var _isMobile2 = _interopRequireDefault(_isMobile);
+
+    var _loglevel2 = _interopRequireDefault(_loglevel);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -57,7 +59,6 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
-
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -117,6 +118,7 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
              */
             this.window = this.$window;
             this.currentRequest = null;
+            this.cacheProvider = new _cacheProvider.CacheProvider();
             /**
              * @type {Object}
              */
@@ -137,6 +139,7 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
                 $ajaxContainer: (0, _jquery2.default)("#ajax-container"),
                 minLoadDuration: 0,
                 preLoadPageDelay: 0,
+                useCache: true,
                 postLoad: function postLoad(state, data) {},
                 preLoad: function preLoad(state) {},
                 prePushState: function prePushState(state) {},
@@ -272,18 +275,32 @@ define(["exports", "jquery", "isMobile", "utils/utils", "state", "pages/home"], 
             preLoadBinded(state);
 
             setTimeout(function () {
-                _this.currentRequest = _jquery2.default.ajax({
-                    url: state.href,
-                    dataType: "html",
-                    // Need to disable cache to prevent
-                    // browser to serve partial when no
-                    // ajax context is defined.
-                    cache: false,
-                    type: 'get',
-                    success: function success(data) {
-                        _this._onDataLoaded(data, state);
-                    }
-                });
+                if (_this.options.useCache && _this.cacheProvider.exists(state.href)) {
+                    _loglevel2.default.debug('📎 Use cache-provider for: ' + state.href);
+                    _this._onDataLoaded(_this.cacheProvider.fetch(state.href), state);
+                } else {
+                    _this.currentRequest = _jquery2.default.ajax({
+                        url: state.href,
+                        dataType: "html",
+                        headers: {
+                            // Send header to allow backends to
+                            // send partial response for saving
+                            // bandwidth and process time
+                            'X-Allow-Partial': 1
+                        },
+                        // Need to disable cache to prevent
+                        // browser to serve partial when no
+                        // ajax context is defined.
+                        cache: false,
+                        type: 'get',
+                        success: function success(data) {
+                            if (_this.options.useCache) {
+                                _this.cacheProvider.save(state.href, data);
+                            }
+                            _this._onDataLoaded(data, state);
+                        }
+                    });
+                }
             }, this.options.preLoadPageDelay);
         };
 

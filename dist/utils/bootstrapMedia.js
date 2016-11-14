@@ -22,7 +22,6 @@ define(["exports", "utils/utils"], function (exports, _utils) {
          *
          * @return {Boolean}
          */
-
         BootstrapMedia.isMinXS = function isMinXS() {
             var size = _utils.Utils.getViewportSize();
             if (size.width >= 480) {

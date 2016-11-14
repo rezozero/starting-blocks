@@ -62,6 +62,7 @@ var paths = {
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.
     "state": "/path/to/your/website/bower_components/pageblock/dist/state",
+    "cache-provider": "/path/to/your/website/bower_components/pageblock/dist/cache-provider",
     "router": "/path/to/your/website/bower_components/pageblock/dist/router",
     "graphicLoader": "/path/to/your/website/bower_components/pageblock/dist/graphicLoader",
     "nav": "/path/to/your/website/bower_components/pageblock/dist/nav",

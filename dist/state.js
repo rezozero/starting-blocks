@@ -27,7 +27,6 @@ define(["exports", "jquery"], function (exports, _jquery) {
      * @param {String} link
      * @param {Object} options Extends state options.
      */
-
     function State(router, link, options) {
       _classCallCheck(this, State);
 
