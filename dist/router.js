@@ -241,7 +241,8 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
                     this.state = new _state.State(this, e.currentTarget, {
                         previousType: this.page.type,
                         previousName: this.page.name,
-                        navLinkClass: this.options.navLinkClass
+                        navLinkClass: this.options.navLinkClass,
+                        previousHref: window.location.href
                     });
 
                     var prePushStateBinded = this.options.prePushState.bind(this);

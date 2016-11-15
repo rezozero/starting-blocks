@@ -35,14 +35,17 @@ define(["exports", "jquery"], function (exports, _jquery) {
        * Keep custom informations such as:
        *
        * - `previousType`: Default `"page"`
+       * - `previousName`: Default `"home"`
        * - `navLinkClass`: Default `"nav-link"`
+       * - `previousHref`: Default `window.location.href`
        *
        * @type {Object}
        */
       this.options = {
         previousType: "page",
         previousName: "home",
-        navLinkClass: "nav-link"
+        navLinkClass: "nav-link",
+        previousHref: window.location.href
       };
 
       if (options !== null) {
@@ -99,6 +102,9 @@ define(["exports", "jquery"], function (exports, _jquery) {
        * @type {Boolean}
        */
       this.isHome = isHome;
+
+      console.log('STATE');
+      console.log(this);
     }
 
     /**
