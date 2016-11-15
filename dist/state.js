@@ -102,9 +102,6 @@ define(["exports", "jquery"], function (exports, _jquery) {
        * @type {Boolean}
        */
       this.isHome = isHome;
-
-      console.log('STATE');
-      console.log(this);
     }
 
     /**
