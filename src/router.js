@@ -238,7 +238,8 @@ export class Router {
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     previousName: this.page.name,
-                    navLinkClass: this.options.navLinkClass
+                    navLinkClass: this.options.navLinkClass,
+                    previousHref: window.location.href
                 });
 
                 const prePushStateBinded = this.options.prePushState.bind(this);
