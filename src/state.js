@@ -107,9 +107,6 @@ export class State {
          * @type {Boolean}
          */
         this.isHome = isHome;
-
-        console.log('STATE');
-        console.log(this);
     }
 
     /**
