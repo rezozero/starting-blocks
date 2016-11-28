@@ -109,7 +109,6 @@ export class Router {
          */
         this.page = null;
         this.stateBlock = true;
-        this.ajaxEnabled = true;
         this.transition = false;
         this.loading = false;
         this.$window = $(window);
@@ -309,6 +308,7 @@ export class Router {
     /**
      * @private
      * @param {Object} data jQuery AJAX response
+     * @param {State} state
      */
     _onDataLoaded(data, state) {
         // Extract only to new page content
@@ -360,6 +360,8 @@ export class Router {
 
     /**
      * @param {boolean} isHome
+     * @param {string} type
+     * @param {string} name
      */
     pushFirstState(isHome, type, name){
         if (history.pushState) {
