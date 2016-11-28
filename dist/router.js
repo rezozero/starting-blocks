@@ -60,7 +60,6 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
          * @param {GraphicLoader} loader
          * @param {AbstractNav} nav
          */
-
         function Router(options, classFactory, baseUrl, loader, nav) {
             _classCallCheck(this, Router);
 
@@ -106,7 +105,6 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
              */
             this.page = null;
             this.stateBlock = true;
-            this.ajaxEnabled = true;
             this.transition = false;
             this.loading = false;
             this.$window = (0, _jquery2.default)(window);
@@ -318,6 +316,7 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
         /**
          * @private
          * @param {Object} data jQuery AJAX response
+         * @param {State} state
          */
 
 
@@ -373,6 +372,8 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
 
         /**
          * @param {boolean} isHome
+         * @param {string} type
+         * @param {string} name
          */
 
 

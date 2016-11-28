@@ -38,7 +38,6 @@ define(["exports", "loglevel", "pages/page", "pages/home", "abstract-block"], fu
          *
          * @return {AbstractPage}
          */
-
         ClassFactory.prototype.getPageInstance = function getPageInstance(nodeTypeName, router, $cont, context, nodeType, isHome) {
             switch (nodeTypeName) {
                 case 'home':
