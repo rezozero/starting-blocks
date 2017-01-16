@@ -23,14 +23,15 @@
  * @author Ambroise Maupate
  */
 import $ from "jquery";
-import isMobile from "isMobile";
-import log from "loglevel";
-import {Utils} from "utils/utils";
-import {State} from "state";
-import {CacheProvider} from "cache-provider";
-import {Home} from "pages/home";
+import isMobile from "ismobilejs/isMobile";
+import log from "loglevel/dist/loglevel";
+import Utils from "./utils/utils";
+import State from "./state";
+import CacheProvider from "./cache-provider";
+import Home from "./pages/home";
 
-export class Router {
+
+export default class Router {
     /**
      * Create a new Router.
      *

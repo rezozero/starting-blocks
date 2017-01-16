@@ -22,16 +22,16 @@
  * @file page.js
  * @author Ambroise Maupate
  */
-import {AbstractPage} from "abstract-page";
-import log from "loglevel";
-import {BootstrapMedia} from "utils/bootstrapMedia";
+import AbstractPage from "./../abstract-page";
+import log from "loglevel/dist/loglevel";
+import BootstrapMedia from "./../utils/bootstrapMedia";
 
 /**
  * Some example "page".
  *
  * @extends {AbstractPage}
  */
-export class Page extends AbstractPage
+export default class Page extends AbstractPage
 {
     /**
      * @override Do not forget to call `super.init()`

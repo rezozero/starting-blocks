@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 
-export class CacheProvider {
+export default class CacheProvider {
 
     constructor() {
         this.hash = {};

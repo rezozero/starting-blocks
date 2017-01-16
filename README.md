@@ -6,92 +6,40 @@
 
 ## Spec
 
-- ES6 (convert with Babel)
+- Gulp (for development)
+- ES6 (you’ll have to handle *Babel* transpiler yourself)
+- [**Webpack**](https://webpack.github.io/docs/)
 - jQuery 2.2.0
-- waitForImages
+- waitForImages (for dispatching *onLoad* events to pages and blocks)
+- vanilla-lazyload (for optional automatic image lazyloading)
 - debounce
-- RequireJS
 - loglevel
 
 ## Usage
 
-- Install `gulp-cli` if you do not have it yet `npm install -g gulp-cli`.
-- Install dependencies: `npm install` and `bower install`.
-- Type `gulp watch` to convert ES6 scripts to `dist/` folder in background.
-- Type `gulp` to optimize project in one file in `build/` folder.
-
-RequireJS bootstrap file :
-
-```js
-requirejs.config({
-    baseUrl: './dist',
-    paths: {
-        jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-        TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
-        TweenLite: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
-        //Draggable: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
-        //CSSPlugin: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
-        waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
-        loglevel: "./../bower_components/loglevel/dist/loglevel.min"
-    }
-});
-
-require(['main']);
-```
+- Install dependencies: `npm install`.
+- Type `npm run dev` to improve Starting blocks locally.
+- Type `npm run build` to optimize project in one file in `build/` folder.
 
 ## Use as vendor lib (bower)
 
-Before using *Starting Blocks* in your project as a dependency. You’ll need to declare
-paths for each JS file you’ll need and to **create your own** `bootstrap.js` and `main.js`
-files. Some of this lib files will be located in `bower_components` folder and so they
-won’t be available anymore from your project path. Solution is to add them to your
-*RequireJS* paths configuration:
+Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks. 
 
-You’ll need to adapt this path array in your `bootstrap.js` file **and** in your
-`requirejs` *Gulp* task to build a minified version. Replace `/path/to/your/website`
-with your own website path or your *Roadiz* theme *static* path.
+### Resolve dependencies
+
+In order to deal with non-ES6 libs and none relative paths, you must add *GSAP*
+lib in webpack `resolve` configuration:
+
 
 ```js
-var paths = {
-    jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-    TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
-    TweenLite: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
-    //Draggable: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
-    //CSSPlugin: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
-    waitForImages: '/path/to/your/website/bower_components/waitForImages/dist/jquery.waitforimages.min',
-    // Include current page-block sources from their location in bower_components
-    // if you are using bower to fetch this lib.
-    "state": "/path/to/your/website/bower_components/starting-blocks/dist/state",
-    "cache-provider": "/path/to/your/website/bower_components/starting-blocks/dist/cache-provider",
-    "router": "/path/to/your/website/bower_components/starting-blocks/dist/router",
-    "graphicLoader": "/path/to/your/website/bower_components/starting-blocks/dist/graphicLoader",
-    "nav": "/path/to/your/website/bower_components/starting-blocks/dist/nav",
-    "abstract-page": "/path/to/your/website/bower_components/starting-blocks/dist/abstract-page",
-    "abstract-block": "/path/to/your/website/bower_components/starting-blocks/dist/abstract-block",
-    // Utils functions and classes
-    "utils/utils": "/path/to/your/website/bower_components/starting-blocks/dist/utils/utils",
-    "utils/gaTrackErrors": "/path/to/your/website/bower_components/starting-blocks/dist/utils/gaTrackErrors",
-    "utils/debounce": "/path/to/your/website/bower_components/starting-blocks/dist/utils/debounce",
-    "utils/bootstrapMedia": "/path/to/your/website/bower_components/starting-blocks/dist/utils/bootstrapMedia",
-    "utils/polyfills": "/path/to/your/website/bower_components/starting-blocks/dist/utils/polyfills",
-    "utils/scroll": "/path/to/your/website/bower_components/starting-blocks/dist/utils/scroll",
-    // If you want to use example Page and Home classes in your project
-    "pages/page": "/path/to/your/website/bower_components/starting-blocks/dist/pages/page"
-    "pages/home": "/path/to/your/website/bower_components/starting-blocks/dist/pages/home"
-    // Then your own project vendor libs
-    // …
-};
+resolve: {
+    alias: {
+        TweenLite: "gsap/src/uncompressed/TweenLite.js",
+        TweenMax: "gsap/src/uncompressed/TweenMax.js"
+    }
+}
 ```
-Then configure your `baseUrl` to build full path to get your script:
 
-```js
-// On a static website where dist folder is at server root
-baseUrl: '/dist'
-
-// If your dist folder is in a Roadiz theme
-// (and your Roadiz site is at server root)
-baseUrl: '/path/to/your/website/dist'
-```
 
 ## A JS router made to work with HTML partial responses
 
@@ -131,11 +79,10 @@ A Router needs:
 
 - an options object in order to override default configuration
 - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
-- a `baseUrl` string which is your website protocol + domain + path, i.e. *http://mysuperwebsite.com* or *http://localhost:8888* in our examples. It is useful to bind AJAX only on internal links and not external links.
 - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.
 
-You can look at the `src/main.js` file to see an instanciation example with few parameters.
+You can look at the `src/main.js` file to see an instantiation example with few parameters.
 
 ### Caching responses
 
@@ -147,8 +94,7 @@ successful. You can disable this feature with `useCache` router option.
 To generate documentation, you’ll at least NodeJS v4.4 and to install ESDoc.
 
 ```bash
-sudo npm install -g esdoc;
-esdoc -c esdoc.json;
+npm run doc;
 ```
 
 Documentation will be available in `doc/` folder.
