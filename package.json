@@ -1,5 +1,18 @@
 {
+  "name": "starting-blocks",
+  "version": "2.0.0",
   "main": "src/index.js",
+  "description": "An HTML page and blocks transition framework written in ES6 to go along Roadiz CMS.",
+  "author": "Rezo Zero",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rezozero/starting-blocks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rezozero/starting-blocks/issues"
+  },
+  "homepage": "http://startingblocks.rezo-zero.com",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "gulp watch",
