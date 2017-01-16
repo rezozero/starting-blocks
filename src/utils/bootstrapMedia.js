@@ -7,12 +7,13 @@
  * @copyright REZO ZERO 2016
  * @author Ambroise Maupate
  */
-import {Utils} from "utils/utils";
+import Utils from "./utils";
+
 
 /**
  * Static class to get bootstrap breakpoints.
  */
-export class BootstrapMedia {
+export default class BootstrapMedia {
     /**
      * Test if viewport width in greater or equal than bootstrap XS breakpoint (480px).
      *

@@ -1,10 +1,10 @@
 import $ from "jquery";
-import log from "loglevel";
-import {polyfills} from "utils/polyfills";
-import {Router} from "router";
-import {GraphicLoader} from "graphicLoader";
-import {AbstractNav} from "abstract-nav";
-import {ClassFactory} from "class-factory";
+import log from "loglevel/dist/loglevel";
+import polyfills from "./utils/polyfills";
+import Router from "./router";
+import GraphicLoader from "./graphicLoader";
+import AbstractNav from "./abstract-nav";
+import ClassFactory from "./class-factory";
 
 /*
  * Declare polyfills
@@ -18,6 +18,9 @@ log.setLevel(0);
 const $body = $('body');
 const dataHome = $body[0].getAttribute('data-is-home');
 const isHome = (dataHome == '1') ? true : false;
+
+if (!location.origin)
+    location.origin = location.protocol + "//" + location.host;
 
 const router = new Router(
     {
@@ -37,7 +40,7 @@ const router = new Router(
     },
     new ClassFactory(),
     // temp namespace is defined in your index.html
-    temp.baseUrl,
+    location.origin,
     new GraphicLoader(),
     new AbstractNav()
 );

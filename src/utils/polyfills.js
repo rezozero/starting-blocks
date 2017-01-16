@@ -30,7 +30,7 @@
  * - window.cancelAnimFrame
  * - Avoid `console` errors in browsers that lack a console.
  */
-export function polyfills() {
+export default function polyfills() {
 
     window.requestAnimFrame = function(){
         return (

@@ -10,11 +10,10 @@
 #
 all: install build
 
-install : node_modules bower_components
+install : node_modules
 
 update :
 	npm update;
-	bower update;
 
 uninstall : clean
 	rm -rf bower_components;
@@ -44,9 +43,6 @@ doc :
 # Credentials required, of course
 push-doc : doc
 	rsync -avcz doc/ pageblock@vps1.rezo-zero.com:~/public_html/;
-
-bower_components:
-	bower install;
 
 node_modules:
 	npm install;

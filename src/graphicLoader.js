@@ -22,14 +22,14 @@
  * @file graphicLoader.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
+import log from "loglevel/dist/loglevel";
 
 /**
  * Handle your application main loader animation.
  *
  * **Do not instanciate this class directly, create a sub-class**.
  */
-export class GraphicLoader {
+export default class GraphicLoader {
 
     /**
      * Interface for a graphic loader element.

@@ -27,7 +27,7 @@ import $ from "jquery";
 /**
  * State object is meant to carry informations during HTML5 History changes.
  */
-export class State {
+export default class State {
     /**
      *
      * @param {Router} router

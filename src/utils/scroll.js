@@ -26,7 +26,7 @@
 /**
  * @static
  */
-export class Scroll {
+export default class Scroll {
     /**
      *
      * @param e
