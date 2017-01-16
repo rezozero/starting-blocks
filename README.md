@@ -6,12 +6,13 @@
 
 ## Spec
 
-- Gulp
-- ES6 (converted with Babel)
+- Gulp (for development)
+- ES6 (you’ll have to handle *Babel* transpiler yourself)
+- [**Webpack**](https://webpack.github.io/docs/)
 - jQuery 2.2.0
-- waitForImages
+- waitForImages (for dispatching *onLoad* events to pages and blocks)
+- vanilla-lazyload (for optional automatic image lazyloading)
 - debounce
-- Webpack
 - loglevel
 
 ## Usage
