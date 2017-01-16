@@ -5,7 +5,7 @@ import $ from "jquery";
  *
  * @see http://blog.gospodarets.com/track_javascript_angularjs_and_jquery_errors_with_google_analytics/
  */
-export function gaTrackErrors(){
+export default function gaTrackErrors(){
     if(typeof ga !== 'undefined') {
         // Pure JavaScript errors handler
         window.addEventListener('error', function (err) {

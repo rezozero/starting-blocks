@@ -22,19 +22,25 @@
  * @file abstract-page.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import TweenMax from "TweenMax";
-import waitForImages from "waitForImages";
+import log from "loglevel/dist/loglevel";
+
+import TweenLite from "gsap/src/uncompressed/TweenLite";
+/*
+ * Needed to animation CSS props with GSAP
+ */
+import CSSPlugin from "gsap/src/uncompressed/plugins/CSSPlugin";
+import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
-import Lazyload from 'Lazyload';
-import {debounce} from "utils/debounce";
+import Lazyload from 'vanilla-lazyload/src/lazyload';
+import debounce from "./utils/debounce";
+
 
 /**
  * Base class for creating page implementations.
  *
  * **Do not instanciate this class directly, create a sub-class**.
  */
-export class AbstractPage {
+export default class AbstractPage {
     /**
      * Base constructor for Pages.
      *

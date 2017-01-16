@@ -22,10 +22,10 @@
  * @file abstract-block.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import waitForImages from "waitForImages";
+import log from "loglevel/dist/loglevel";
+import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
-import {debounce} from "utils/debounce";
+import debounce from "./utils/debounce";
 
 /**
  * Base class for creating block implementations.
@@ -34,7 +34,7 @@ import {debounce} from "utils/debounce";
  *
  * @abstract
  */
-export class AbstractBlock
+export default class AbstractBlock
 {
     /**
      * Abstract block constructor.

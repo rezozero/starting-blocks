@@ -9,7 +9,7 @@
  */
 import $ from "jquery";
 
-export class Utils {
+export default class Utils {
 
     /**
      * @param  {String} str

@@ -10,21 +10,20 @@
 #
 all: install build
 
-install : node_modules bower_components
+install : node_modules
 
 update :
 	npm update;
-	bower update;
 
 uninstall : clean
 	rm -rf bower_components;
 	rm -rf node_modules;
 
 watch :
-	gulp watch;
+	npm run dev;
 
 build :
-	gulp;
+	npm run build;
 #
 # Clean generated files
 #
@@ -38,15 +37,12 @@ clean :
 # needs esdoc: sudo npm install -g esdoc;
 #
 doc :
-	esdoc -c esdoc.json;
+	npm run doc;
 #
 # Push generated Documentation on Rezo Zero host.
 # Credentials required, of course
 push-doc : doc
 	rsync -avcz doc/ pageblock@vps1.rezo-zero.com:~/public_html/;
-
-bower_components:
-	bower install;
 
 node_modules:
 	npm install;

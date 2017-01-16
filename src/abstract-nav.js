@@ -28,7 +28,7 @@
  *
  * **Do not instanciate this class directly, create a sub-class**.
  */
-export class AbstractNav {
+export default class AbstractNav {
 
     /**
      * Interface for a navigation element.

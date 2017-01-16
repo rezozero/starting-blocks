@@ -22,10 +22,10 @@
  * @file class-factory.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import {Page} from "pages/page";
-import {Home} from "pages/home";
-import {AbstractBlock} from "abstract-block";
+import log from "loglevel/dist/loglevel";
+import Page from "./pages/page";
+import Home from "./pages/home";
+import AbstractBlock from "./abstract-block";
 
 /**
  * Router mapper class.
@@ -34,7 +34,7 @@ import {AbstractBlock} from "abstract-block";
  *
  * **You must define your own ClassFactory for each of your projects.**.
  */
-export class ClassFactory
+export default class ClassFactory
 {
     /**
      * Returns an `AbstractPage` child class instance
