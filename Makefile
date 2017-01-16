@@ -20,10 +20,10 @@ uninstall : clean
 	rm -rf node_modules;
 
 watch :
-	gulp watch;
+	npm run dev;
 
 build :
-	gulp;
+	npm run build;
 #
 # Clean generated files
 #
@@ -37,7 +37,7 @@ clean :
 # needs esdoc: sudo npm install -g esdoc;
 #
 doc :
-	esdoc -c esdoc.json;
+	npm run doc;
 #
 # Push generated Documentation on Rezo Zero host.
 # Credentials required, of course

@@ -1,6 +1,3 @@
-/**
- * Created by ambroisemaupate on 16/01/2017.
- */
 var gulp = require('gulp');
 var inject = require('gulp-inject');
 

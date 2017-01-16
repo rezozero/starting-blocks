@@ -27,9 +27,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
             new webpack.ProvidePlugin({
                 jQuery: 'jquery',
                 $: 'jquery',
-                jquery: 'jquery',
-                TweenLite: 'TweenLite',
-                TweenMax: 'TweenMax'
+                jquery: 'jquery'
             })
         ],
         descriptionFiles: ["package.json"],

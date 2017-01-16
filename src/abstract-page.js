@@ -29,7 +29,6 @@ import TweenLite from "gsap/src/uncompressed/TweenLite";
  * Needed to animation CSS props with GSAP
  */
 import CSSPlugin from "gsap/src/uncompressed/plugins/CSSPlugin";
-
 import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
 import Lazyload from 'vanilla-lazyload/src/lazyload';

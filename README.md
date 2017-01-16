@@ -24,6 +24,22 @@
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks. 
 
+### Resolve dependencies
+
+In order to deal with non-ES6 libs and none relative paths, you must add *GSAP*
+lib in webpack `resolve` configuration:
+
+
+```js
+resolve: {
+    alias: {
+        TweenLite: "gsap/src/uncompressed/TweenLite.js",
+        TweenMax: "gsap/src/uncompressed/TweenMax.js"
+    }
+}
+```
+
+
 ## A JS router made to work with HTML partial responses
 
 This ES6 javascript router has been designed to handle as well complete HTML responses as
