@@ -1,6 +1,6 @@
 {
   "name": "starting-blocks",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An HTML page and blocks transition framework written in ES6 to go along Roadiz CMS.",
   "author": "Rezo Zero",
   "license": "MIT",
