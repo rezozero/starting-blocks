@@ -49,7 +49,13 @@ gulp.task('webpack', ['clean-build'], function(cb) {
     };
 
     if (process.env.NODE_ENV === 'production') {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
+        config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            },
+            comments: false,
+            sourceMap: false,
+        }));
         config.plugins.push(new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify('production')
