@@ -1,7 +1,6 @@
 {
   "name": "starting-blocks",
   "version": "2.0.0",
-  "main": "src/index.js",
   "description": "An HTML page and blocks transition framework written in ES6 to go along Roadiz CMS.",
   "author": "Rezo Zero",
   "license": "MIT",
@@ -23,6 +22,15 @@
     "node": ">=4.2.0",
     "npm": "^3.0.0"
   },
+  "dependencies": {
+      "gsap": "^1.19.0",
+      "ismobilejs": "^0.4.0",
+      "jquery.waitforimages": "^2.2.0",
+      "loglevel": "^1.4.1",
+      "vanilla-lazyload": "^3.0.0",
+      "webpack": "^1.14.0",
+      "webpack-stream": "^3.2.0"
+  },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.9",
@@ -37,7 +45,6 @@
     "del": "^2.2.0",
     "es6-promise": "^3.1.2",
     "esdoc": "^0.5.2",
-    "gsap": "^1.19.0",
     "gulp": "^3.9.1",
     "gulp-concat-sourcemap": "^1.3.1",
     "gulp-eslint": "^2.0.0",
@@ -46,13 +53,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-rev": "^7.0.0",
     "gulp-sourcemaps": "^1.6.0",
-    "ismobilejs": "^0.4.0",
-    "jquery.waitforimages": "^2.2.0",
-    "loglevel": "^1.4.1",
     "require-dir": "^0.3.0",
-    "vanilla-lazyload": "^3.0.0",
-    "vinyl-named": "^1.1.0",
-    "webpack": "^1.14.0",
-    "webpack-stream": "^3.2.0"
+    "vinyl-named": "^1.1.0"
   }
 }
