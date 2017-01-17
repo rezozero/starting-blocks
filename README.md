@@ -7,7 +7,7 @@
 ## Spec
 
 - *Gulp* (for development)
-- ES6 (you’ll have to handle *Babel* transpiler yourself)
+- *ES6*: you’ll have to handle transpiling in your project with *Webpack* using *babel-loader* over this lib sources.
 - [**Webpack**](https://webpack.github.io/docs/)
 - *jQuery* 2.2.0
 - *GSAP*
