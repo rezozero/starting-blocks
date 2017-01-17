@@ -6,14 +6,16 @@
 
 ## Spec
 
-- Gulp (for development)
-- ES6 (you’ll have to handle *Babel* transpiler yourself)
+- *Gulp* (for development)
+- *ES6*: you’ll have to handle transpiling in your project with *Webpack* using *babel-loader* over this lib sources.
 - [**Webpack**](https://webpack.github.io/docs/)
-- jQuery 2.2.0
-- waitForImages (for dispatching *onLoad* events to pages and blocks)
-- vanilla-lazyload (for optional automatic image lazyloading)
-- debounce
-- loglevel
+- *jQuery* 2.2.0
+- *GSAP*
+- *ismobilejs*
+- *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
+- *vanilla-lazyload* (for optional automatic image lazyloading)
+- *debounce* (http://davidwalsh.name/javascript-debounce-function)
+- *loglevel*
 
 ## Usage
 
@@ -21,7 +23,11 @@
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file in `build/` folder.
 
-## Use as vendor lib (bower)
+## Use as vendor lib (NPM)
+
+```shell
+npm install starting-blocks --save
+```
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks. 
 
@@ -30,13 +36,29 @@ Before using *Starting Blocks* in your own project as a dependency you’ll need
 In order to deal with non-ES6 libs and none relative paths, you must add *GSAP*
 lib in webpack `resolve` configuration:
 
-
 ```js
 resolve: {
     alias: {
         TweenLite: "gsap/src/uncompressed/TweenLite.js",
         TweenMax: "gsap/src/uncompressed/TweenMax.js"
     }
+}
+```
+
+### Use Babel loader from *node_modules*
+
+In your Roadiz theme or any other project using *Starting blocks*, make sure that your 
+Webpack loader is configured to use *Babel* for starting-blocks sources… even if it’s in `node_modules/` folder.
+
+```js
+module: {
+    loaders: [
+        {
+            test: /\.js$/,
+            exclude: /node_modules(?!\/starting-blocks)/,
+            loader: 'babel-loader'
+        }
+    ]
 }
 ```
 
