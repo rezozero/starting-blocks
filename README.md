@@ -29,7 +29,7 @@
 npm install starting-blocks --save
 ```
 
-Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks. 
+Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks.
 
 ### Resolve dependencies
 
@@ -39,15 +39,15 @@ lib in webpack `resolve` configuration:
 ```js
 resolve: {
     alias: {
-        TweenLite: "gsap/src/uncompressed/TweenLite.js",
-        TweenMax: "gsap/src/uncompressed/TweenMax.js"
+        TweenLite: "gsap/TweenLite",
+        TweenMax: "gsap/TweenMax"
     }
 }
 ```
 
 ### Use Babel loader from *node_modules*
 
-In your Roadiz theme or any other project using *Starting blocks*, make sure that your 
+In your Roadiz theme or any other project using *Starting blocks*, make sure that your
 Webpack loader is configured to use *Babel* for starting-blocks sources… even if it’s in `node_modules/` folder.
 
 ```js
