@@ -16,11 +16,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
             filename: "app.js"
         },
         resolve: {
-            extensions: ['', '.js', '.jsx'],
-            alias: {
-                TweenLite: "gsap/src/uncompressed/TweenLite.js",
-                TweenMax: "gsap/src/uncompressed/TweenMax.js",
-            }
+            extensions: ['', '.js', '.jsx']
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
@@ -49,7 +45,13 @@ gulp.task('webpack', ['clean-build'], function(cb) {
     };
 
     if (process.env.NODE_ENV === 'production') {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
+        config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            },
+            comments: false,
+            sourceMap: false,
+        }));
         config.plugins.push(new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify('production')
@@ -57,7 +59,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
         }));
         console.log('Uglified scripts.');
     } else {
-        config.devtool = "eval";
+        config.devtool = "eval-source-map";
         console.log('With eval source maps.');
     }
 
