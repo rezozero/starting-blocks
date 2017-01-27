@@ -56,7 +56,7 @@ export default class AbstractBlock
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        log.debug('\t✳️ #'+this.id + '\t' + type);
+        log.debug('\t✳️ #'+this.id + ' %c[' + type + ']', 'color:grey');
 
         this.init();
         this.initEvents();
