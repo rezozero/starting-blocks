@@ -23,9 +23,6 @@
  * @author Ambroise Maupate
  */
 import AbstractPage from "./../abstract-page";
-import log from "loglevel/dist/loglevel";
-import BootstrapMedia from "./../utils/bootstrapMedia";
-
 /**
  * Some example "page".
  *
@@ -33,11 +30,5 @@ import BootstrapMedia from "./../utils/bootstrapMedia";
  */
 export default class Page extends AbstractPage
 {
-    /**
-     * @override Do not forget to call `super.init()`
-     */
-    init() {
-        super.init();
 
-    }
 }

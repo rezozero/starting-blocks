@@ -19,7 +19,6 @@ gulp.task('webpack', ['clean-build'], function(cb) {
             extensions: ['', '.js', '.jsx']
         },
         plugins: [
-            new webpack.HotModuleReplacementPlugin(),
             new webpack.ProvidePlugin({
                 jQuery: 'jquery',
                 $: 'jquery',

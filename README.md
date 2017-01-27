@@ -10,7 +10,6 @@
 - *ES6*: you’ll have to handle transpiling in your project with *Webpack* using *babel-loader* over this lib sources.
 - [**Webpack**](https://webpack.github.io/docs/)
 - *jQuery* 2.2.0
-- *GSAP*
 - *ismobilejs*
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
@@ -30,20 +29,6 @@ npm install starting-blocks --save
 ```
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks.
-
-### Resolve dependencies
-
-In order to deal with non-ES6 libs and none relative paths, you must add *GSAP*
-lib in webpack `resolve` configuration:
-
-```js
-resolve: {
-    alias: {
-        TweenLite: "gsap/TweenLite",
-        TweenMax: "gsap/TweenMax"
-    }
-}
-```
 
 ### Use Babel loader from *node_modules*
 

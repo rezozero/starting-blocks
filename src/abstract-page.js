@@ -23,12 +23,6 @@
  * @author Ambroise Maupate
  */
 import log from "loglevel/dist/loglevel";
-
-/*
- * Needed to animation CSS props with GSAP
- */
-import TweenLite from "gsap/TweenLite";
-import CSSPlugin from "gsap/CSSPlugin";
 import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
 import Lazyload from 'vanilla-lazyload/src/lazyload';
@@ -101,7 +95,7 @@ export default class AbstractPage {
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        log.debug('✳️ #' + this.id + '\t' + type);
+        log.debug('✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
 
         this.init();
         this.initEvents();
@@ -234,7 +228,6 @@ export default class AbstractPage {
                 if (this.router.formerPages.length > 0) {
                     const formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];
                     const formerPageDestroy = formerPage.destroy.bind(formerPage);
-
                     /*
                      * Very important,
                      * DO NOT animate if there are more than 1 page
@@ -258,11 +251,8 @@ export default class AbstractPage {
      */
     show(onShow) {
         log.debug('▶️ #' + this.id);
-
-        // Animate
-        TweenLite.to(this.$cont, 0.6, {opacity:1, onComplete: () => {
-            if (typeof onShow !== 'undefined') onShow();
-        }});
+        this.$cont[0].style.opacity = '1';
+        if (typeof onShow !== 'undefined') onShow();
     }
 
     /**
@@ -279,10 +269,8 @@ export default class AbstractPage {
      */
     hide(onHidden) {
         log.debug('◀️ #' + this.id);
-
-        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete: () => {
-            if (typeof onHidden !== 'undefined') onHidden();
-        }});
+        this.$cont[0].style.opacity = '0';
+        if (typeof onHidden !== 'undefined') onHidden();
     }
 
     initAjax() {
