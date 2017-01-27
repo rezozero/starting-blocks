@@ -16,11 +16,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
             filename: "app.js"
         },
         resolve: {
-            extensions: ['', '.js', '.jsx'],
-            alias: {
-                TweenLite: "gsap/src/uncompressed/TweenLite.js",
-                TweenMax: "gsap/src/uncompressed/TweenMax.js",
-            }
+            extensions: ['', '.js', '.jsx']
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
@@ -63,7 +59,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
         }));
         console.log('Uglified scripts.');
     } else {
-        config.devtool = "eval";
+        config.devtool = "eval-source-map";
         console.log('With eval source maps.');
     }
 

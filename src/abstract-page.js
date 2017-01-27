@@ -24,16 +24,15 @@
  */
 import log from "loglevel/dist/loglevel";
 
-import TweenLite from "gsap/src/uncompressed/TweenLite";
 /*
  * Needed to animation CSS props with GSAP
  */
-import CSSPlugin from "gsap/src/uncompressed/plugins/CSSPlugin";
+import TweenLite from "gsap/TweenLite";
+import CSSPlugin from "gsap/CSSPlugin";
 import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
 import Lazyload from 'vanilla-lazyload/src/lazyload';
 import debounce from "./utils/debounce";
-
 
 /**
  * Base class for creating page implementations.
@@ -330,7 +329,7 @@ export default class AbstractPage {
         }
         return null;
     }
-    
+
     /**
      * Get a page block index from its `id`.
      *
@@ -347,7 +346,7 @@ export default class AbstractPage {
         }
         return null;
     }
-    
+
     /**
      * Get the first page block instance from its `type`.
      *
