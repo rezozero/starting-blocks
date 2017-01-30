@@ -22,7 +22,7 @@
  * @file abstract-block.js
  * @author Ambroise Maupate
  */
-import log from "loglevel/dist/loglevel";
+import log from "loglevel";
 import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
 import $ from "jquery";
 import debounce from "./utils/debounce";

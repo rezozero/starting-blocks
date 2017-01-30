@@ -1,5 +1,5 @@
 import $ from "jquery";
-import log from "loglevel/dist/loglevel";
+import log from "loglevel";
 import polyfills from "./utils/polyfills";
 import Router from "./router";
 import GraphicLoader from "./graphicLoader";

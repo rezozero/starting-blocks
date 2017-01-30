@@ -22,7 +22,7 @@
  * @file class-factory.js
  * @author Ambroise Maupate
  */
-import log from "loglevel/dist/loglevel";
+import log from "loglevel";
 import Page from "./pages/page";
 import Home from "./pages/home";
 import AbstractBlock from "./abstract-block";

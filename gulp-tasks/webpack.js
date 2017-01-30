@@ -67,7 +67,9 @@ gulp.task('webpack', ['clean-build'], function(cb) {
 gulp.task('webpack-bundle', function(cb) {
     var config = {
         output: {
-            filename: "bundle.js"
+            filename: "bundle.js",
+            library: "starting-blocks",
+            libraryTarget: "commonjs2"
         },
         resolve: {
             extensions: ['', '.js', '.jsx']

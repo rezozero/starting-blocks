@@ -23,8 +23,8 @@
  * @author Ambroise Maupate
  */
 import $ from "jquery";
-import isMobile from "ismobilejs/isMobile";
-import log from "loglevel/dist/loglevel";
+import isMobile from "ismobilejs";
+import log from "loglevel";
 import Utils from "./utils/utils";
 import State from "./state";
 import CacheProvider from "./cache-provider";
