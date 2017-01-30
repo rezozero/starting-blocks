@@ -7,8 +7,7 @@
 ## Spec
 
 - *Gulp* (for development)
-- *ES6*: you’ll have to handle transpiling in your project with *Webpack* using *babel-loader* over this lib sources.
-- [**Webpack**](https://webpack.github.io/docs/)
+- *CommonJS 2* module syntax
 - *jQuery* 2.2.4
 - *ismobilejs*
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
@@ -16,35 +15,41 @@
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
 
-## Usage
-
-- Install dependencies: `npm install`.
-- Type `npm run dev` to improve Starting blocks locally.
-- Type `npm run build` to optimize project in one file in `build/` folder.
-
-## Use as vendor lib (NPM)
+## Usage with NPM
 
 ```shell
 npm install starting-blocks --save
 ```
 
-Before using *Starting Blocks* in your own project as a dependency you’ll need to import each *ES6* class using relative path to your `node_modules/` folder. You’ll need and to **create your own** `main.js` file and your `class-factory.js` according to your website pages and blocks.
+Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
+and your `class-factory.js` according to your website pages and blocks. Any other router dependencies can be
+customize such as `AbstractNav` to fit your own navigation needs.
 
-### Use Babel loader from *node_modules*
+*Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
 
-In your Roadiz theme or any other project using *Starting blocks*, make sure that your
-Webpack loader is configured to use *Babel* for starting-blocks sources… even if it’s in `node_modules/` folder.
+### CommonJS2 syntax with ES6
+
+*Starting Blocks* is bundled with *NPM* in order to use *ES6* `import` syntax.
+You won’t need to know where each class is stored, just use the *curly brace* syntax.
+This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
 ```js
-module: {
-    loaders: [
-        {
-            test: /\.js$/,
-            exclude: /node_modules(?!\/starting-blocks)/,
-            loader: 'babel-loader'
-        }
-    ]
-}
+import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks";
+
+const router = new Router(
+    {
+        homeHasClass: false,
+        ajaxEnabled: false,
+        useCache: true,
+        lazyloadEnabled: true,
+    },
+    new ClassFactory(),
+    location.origin,
+    new GraphicLoader(),
+    new AbstractNav()
+);
+router.initEvents();
+router.boot($('.page-content').eq(0), 'static', isHome);
 ```
 
 
@@ -105,3 +110,11 @@ npm run doc;
 ```
 
 Documentation will be available in `doc/` folder.
+
+## Improving Starting blocks
+
+To work locally on *Starting blocks*, we provided some HTML example files.
+
+- Install dependencies: `npm install`.
+- Type `npm run dev` to improve Starting blocks locally.
+- Type `npm run build` to optimize project in one file as: `bundle.js`.
