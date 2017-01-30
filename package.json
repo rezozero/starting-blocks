@@ -1,6 +1,6 @@
 {
   "name": "starting-blocks",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "An JS page and blocks framework written in ES6 to go along Roadiz CMS.",
   "author": "Rezo Zero",
   "license": "MIT",
@@ -22,13 +22,15 @@
     "node": ">=4.2.0",
     "npm": "^3.0.0"
   },
+  "main": "bundle.js",
   "dependencies": {
       "ismobilejs": "^0.4.0",
       "jquery.waitforimages": "^2.2.0",
       "loglevel": "^1.4.1",
       "vanilla-lazyload": "^3.0.0",
       "webpack": "^1.14.0",
-      "webpack-stream": "^3.2.0"
+      "webpack-stream": "^3.2.0",
+      "jquery": "^2.2.4"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
