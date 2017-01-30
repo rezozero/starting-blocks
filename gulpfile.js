@@ -7,6 +7,8 @@ var requireDir = require('require-dir');
  */
 paths = {
     'entry' : 'src/main.js',
+    'bundleEntry' : 'src/bundle.js',
+    'bundleOut' : './',
     'distScripts' : 'build',
     'scripts': [
         'src/**/*.js',
@@ -22,7 +24,7 @@ paths = {
 };
 
 requireDir('./gulp-tasks');
-gulp.task('default', ['inject-js']);
+gulp.task('default', ['inject-js', 'webpack-bundle']);
 
 /*
  * Watch tasks

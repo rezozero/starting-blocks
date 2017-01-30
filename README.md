@@ -9,7 +9,7 @@
 - *Gulp* (for development)
 - *ES6*: you’ll have to handle transpiling in your project with *Webpack* using *babel-loader* over this lib sources.
 - [**Webpack**](https://webpack.github.io/docs/)
-- *jQuery* 2.2.0
+- *jQuery* 2.2.4
 - *ismobilejs*
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
