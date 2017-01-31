@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 import log from "loglevel";
-import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
+import waitForImages from "jquery.waitforimages";
 import $ from "jquery";
 import debounce from "./utils/debounce";
 

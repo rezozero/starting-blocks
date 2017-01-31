@@ -23,9 +23,9 @@
  * @author Ambroise Maupate
  */
 import log from "loglevel";
-import waitForImages from "jquery.waitforimages/dist/jquery.waitforimages";
+import waitForImages from "jquery.waitforimages";
 import $ from "jquery";
-import Lazyload from 'vanilla-lazyload/src/lazyload';
+import Lazyload from 'vanilla-lazyload';
 import debounce from "./utils/debounce";
 
 /**

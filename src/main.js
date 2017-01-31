@@ -27,7 +27,7 @@ const router = new Router(
         homeHasClass: false,
         ajaxEnabled: true,
         useCache: true,
-        lazyloadEnabled: true,
+        lazyloadEnabled: false,
         /*
          * Do not use Arrow function
          * these will be bind to the router before their use.
