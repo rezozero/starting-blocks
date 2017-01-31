@@ -9,15 +9,23 @@
 - *Gulp* (for development)
 - *CommonJS 2* module syntax
 - *jQuery* 2.2.4
-- *ismobilejs*
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
+- *ismobilejs*
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
 
 ## Usage with NPM
 
 ```shell
+# Install dependencies that are NOT bundled
+# with starting-blocks
+npm install jquery.waitforimages --save
+npm install jquery --save
+npm install loglevel --save
+npm install ismobilejs --save
+
+# Install starting-blocks
 npm install starting-blocks --save
 ```
 

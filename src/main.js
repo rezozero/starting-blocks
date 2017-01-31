@@ -1,9 +1,6 @@
 import $ from "jquery";
 import log from "loglevel";
-import polyfills from "./utils/polyfills";
-import Router from "./router";
-import GraphicLoader from "./graphicLoader";
-import AbstractNav from "./abstract-nav";
+import {polyfills, Router, GraphicLoader, AbstractNav} from "../bundle.js";
 import ClassFactory from "./class-factory";
 
 /*
@@ -27,7 +24,7 @@ const router = new Router(
         homeHasClass: false,
         ajaxEnabled: true,
         useCache: true,
-        lazyloadEnabled: false,
+        lazyloadEnabled: true,
         /*
          * Do not use Arrow function
          * these will be bind to the router before their use.
