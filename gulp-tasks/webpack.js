@@ -24,7 +24,7 @@ gulp.task('webpack', ['clean-build'], function(cb) {
                 { test: /\.css$/, loader: "style!css" },
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules|bower_components)/,
+                    exclude: /(node_modules|bundle\.js)/,
                     loader: 'babel-loader'
                 }
             ]
@@ -87,10 +87,12 @@ gulp.task('webpack-bundle', function(cb) {
         },
         plugins: [],
         externals: {
-            // require("jquery") is external and available
-            //  on the global var jQuery
-            "jquery": "jQuery",
-            "$": "$"
+            "jQuery": "jQuery",
+            "jquery": "jquery",
+            "$": "$",
+            "loglevel": "loglevel",
+            "jquery.waitforimages": "jquery.waitforimages",
+            "ismobilejs": "ismobilejs"
         }
     };
 
