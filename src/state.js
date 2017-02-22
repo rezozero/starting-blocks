@@ -38,10 +38,12 @@ export default class State {
         /**
          * Keep custom informations such as:
          *
-         * - `previousType`: Default `"page"`
-         * - `previousName`: Default `"home"`
-         * - `navLinkClass`: Default `"nav-link"`
-         * - `previousHref`: Default `window.location.href`
+         * | Options        | Defaults         |
+         * | -------------- | ---------------- |
+         * | `previousType` | "page" |
+         * | `previousName` | "home" |
+         * | `navLinkClass` | "nav-link" |
+         * | `previousHref` | `window.location.href` |
          *
          * @type {Object}
          */
@@ -112,7 +114,7 @@ export default class State {
     /**
      * Update
      * @param  {AbstractPage} page
-     * @return {this}      
+     * @return {this}
      */
     update(page){
         this.transition = this.options.previousType+'_to_'+page.type;

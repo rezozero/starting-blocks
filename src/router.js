@@ -28,35 +28,41 @@ import log from "loglevel";
 import Utils from "./utils/utils";
 import State from "./state";
 import CacheProvider from "./cache-provider";
-
+/**
+ * Application main page router.
+ */
 export default class Router {
     /**
      * Create a new Router.
      *
-     * Default options list:
+     * ### Default options list:
      *
-     * * `homeHasClass`: false,
-     * * `ajaxEnabled`: true,
-     * * `pageClass`: "page-content", (Without point!)
-     * * `objectTypeAttr`: "data-node-type",
-     * * `ajaxLinkTypeAttr` : "data-node-type"
-     * * `noAjaxLinkClass`: "no-ajax-link",
-     * * `navLinkClass`: "nav-link",
-     * * `activeClass`: "active",
-     * * `useCache`: true,
-     * * `pageBlockClass`: ".page-block", (With point!)
-     * * `$ajaxContainer`: $("#ajax-container"),
-     * * `lazyloadEnabled`: false,
-     * * `lazyloadSrcAttr`: 'data-src',
-     * * `lazyloadClass`: 'lazyload',
-     * * `lazyloadSrcSetAttr`: 'data-src-set',
-     * * `minLoadDuration`: 0,
-     * * `postLoad`: (state, data) => {},
-     * * `preLoad`: (state) => {},
-     * * `preLoadPageDelay`: 0
-     * * `prePushState`: (state) => {},
-     * * `onDestroy`: () => {},
-     * * `preBoot`: ($cont, context, isHome) => {},
+     * | Options | Default value |
+     * | ----- | ----- |
+     * | `homeHasClass` | `false` |
+     * | `ajaxEnabled` | `true` |
+     * | `pageClass` | "page-content" **without point!** |
+     * | `objectTypeAttr` | "data-node-type" |
+     * | `ajaxLinkTypeAttr`  | "data-node-type" |
+     * | `noAjaxLinkClass` | "no-ajax-link" |
+     * | `navLinkClass` | "nav-link" |
+     * | `activeClass` | "active" |
+     * | `useCache` | `true` |
+     * | `pageBlockClass` | `".page-block"` **with point!** |
+     * | `$ajaxContainer` | `$("#ajax-container")` |
+     * | `lazyloadEnabled` | `false` |
+     * | `lazyloadSrcAttr` | "data-src" |
+     * | `lazyloadClass` | "lazyload" |
+     * | `lazyloadSrcSetAttr` | "data-src-set" |
+     * | `lazyloadThreshold` | `300` |
+     * | `lazyloadThrottle` | `150` |
+     * | `minLoadDuration` | `0` |
+     * | `postLoad` | `(state, data) => {}` |
+     * | `preLoad` | `(state) => {}` |
+     * | `preLoadPageDelay` |  |
+     * | `prePushState` | `(state) => {}` |
+     * | `onDestroy` | `() => {}` |
+     * | `preBoot` | `($cont, context, isHome) => {}` |
      *
      *
      * @param {Object} options
