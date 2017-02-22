@@ -1,6 +1,6 @@
 {
   "name": "starting-blocks",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "An JS page and blocks framework written in ES6 to go along Roadiz CMS.",
   "author": "Rezo Zero",
   "license": "MIT",
