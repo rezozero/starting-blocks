@@ -22,13 +22,29 @@
  * @file page.js
  * @author Ambroise Maupate
  */
+import log from "loglevel";
 import AbstractPage from "./../abstract-page";
 /**
  * Some example "page".
  *
  * @extends {AbstractPage}
+ * @private
  */
 export default class Page extends AbstractPage
 {
+    init() {
+        super.init();
+        this.$duplicate = this.$cont.find('a.duplicate-last');
+    }
 
+    initEvents() {
+        super.initEvents();
+        this.$duplicate.on('click', (e) => {
+            e.preventDefault();
+            let $new = this.$blocks.last().clone();
+            $new.attr('id', 'block-' + (this.$blocks.length + 1));
+            this.$cont.append($new);
+            return false;
+        })
+    }
 }

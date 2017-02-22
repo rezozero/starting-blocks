@@ -49,10 +49,26 @@ export default class AbstractBlock
     constructor(page, $cont, type) {
         type = type || 'block';
 
+        /**
+         * @type {AbstractPage}
+         */
         this.page = page;
+        /**
+         * jQuery DOM object for current block.
+         * @type {jQuery}
+         */
         this.$cont = $cont;
+        /**
+         * @type {String}
+         */
         this.id = $cont[0].id;
+        /**
+         * @type {String}
+         */
         this.type = type;
+        /**
+         * @type {String}
+         */
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 

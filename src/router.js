@@ -28,8 +28,6 @@ import log from "loglevel";
 import Utils from "./utils/utils";
 import State from "./state";
 import CacheProvider from "./cache-provider";
-import Home from "./pages/home";
-
 
 export default class Router {
     /**
@@ -97,6 +95,7 @@ export default class Router {
          * @type {AbstractNav}
          */
         this.nav = nav;
+        this.nav.router = this;
         /**
          * @type {State|null}
          */
@@ -124,6 +123,7 @@ export default class Router {
         this.window = this.$window;
         this.currentRequest = null;
         this.cacheProvider = new CacheProvider();
+
         /**
          * @type {Object}
          */
@@ -209,11 +209,7 @@ export default class Router {
 
         const nodeType = $cont.attr(this.options.objectTypeAttr);
 
-        if(isHome && this.options.homeHasClass){
-            this.page = new Home(this, $cont, context, nodeType, isHome);
-        } else {
-            this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
-        }
+        this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
 
         if(context == 'ajax') this.state.update(this.page);
     }
@@ -353,7 +349,7 @@ export default class Router {
      * @param {jQuery} $data
      */
     updatePageTitle($data){
-        if($data.length && $data.attr('data-meta-title') !== ''){
+        if ($data.length && $data.attr('data-meta-title') !== '') {
             let metaTitle = $data.attr('data-meta-title');
             if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
         }

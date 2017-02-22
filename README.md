@@ -50,6 +50,15 @@ const router = new Router(
         ajaxEnabled: false,
         useCache: true,
         lazyloadEnabled: true,
+        /*
+         * Do not use Arrow function
+         * these will be bind to the router before their use.
+         */
+        preBoot: function(){  },
+        postLoad: function(){  },
+        preLoad: function(){  },
+        onDestroy: function(){  },
+        prePushState: function(){  }
     },
     new ClassFactory(),
     location.origin,
@@ -82,10 +91,10 @@ data to your HTML tags.
      data-meta-title="Home page">
 </div>
 ```
-- `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website.
+- `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website. **Make sure that your ID is not equals to your `data-node-name`.**
 - `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in your `Router` options (`pageClass: "page-content"`).
 - `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: page.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the `Router` construction (`'page' : Page`).
-- `data-node-name`
+- `data-node-name` is used to name your page object **and to rename body ID after it.**
 - `data-is-home`
 - `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
 
@@ -103,6 +112,26 @@ A Router needs:
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.
 
 You can look at the `src/main.js` file to see an instantiation example with few parameters.
+
+### Pages events
+
+| Method | Description |
+| --- | --- |
+| `onLoad` | Called when all images and page are loaded. |
+| `showEnded` | After show animation ended. |
+| `onResize` | On viewport resize, this method is debounced. |
+| `beforeLazyload` | Called before init lazyload images. |
+| `onLazyImageSet` | After a lazyloaded image src switched. |
+| `onLazyImageLoad` | After a lazyloaded image loaded. |
+| `onLazyImageProcessed` | Before lazyload. |
+
+### Block events
+
+| Method | Description |
+| --- | --- |
+| `onLoad` | Called when all block images are loaded. |
+| `onResize` | On viewport resize, this method is debounced. |
+| `onPageReady` | Called once all page blocks have been created. |
 
 ### Caching responses
 

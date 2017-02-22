@@ -23,6 +23,11 @@
  * @author Ambroise Maupate
  */
 
+/**
+ * Cache provider class.
+ *
+ * This class stores Ajax response in memory.
+ */
 export default class CacheProvider {
 
     constructor() {

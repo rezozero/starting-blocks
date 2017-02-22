@@ -12,16 +12,29 @@ import tmpgaTrackErrors from './utils/gaTrackErrors';
 import tmpdebounce from './utils/debounce';
 import tmpBootstrapMedia from './utils/bootstrapMedia';
 
+/** @private */
 export const Router =           tmpRouter;
+/** @private */
 export const State =            tmpState;
+/** @private */
 export const CacheProvider =    tmpCacheProvider;
+/** @private */
 export const GraphicLoader =    tmpGraphicLoader;
+/** @private */
 export const AbstractPage =     tmpAbstractPage;
+/** @private */
 export const AbstractNav =      tmpAbstractNav;
+/** @private */
 export const AbstractBlock =    tmpAbstractBlock;
+/** @private */
 export const Utils =            tmpUtils;
+/** @private */
 export const Scroll =           tmpScroll;
+/** @private */
 export const polyfills =        tmppolyfills;
+/** @private */
 export const gaTrackErrors =    tmpgaTrackErrors;
+/** @private */
 export const debounce =         tmpdebounce;
+/** @private */
 export const BootstrapMedia =   tmpBootstrapMedia;
