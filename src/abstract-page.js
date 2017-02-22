@@ -108,30 +108,15 @@ export default class AbstractPage {
      * of extending page constructor.
      */
     init() {
-        this.$link = this.$cont.find('a').not('[target="_blank"]');
+        this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]');
         this.bindedLinkClick = this.router.onLinkClick.bind(this.router);
+        this.bindedUpdateBlocks = this.updateBlocks.bind(this);
 
         // Add target blank on external link
         if(this.$link.length){
             this.externalLinkTarget(this.$link, this.router.baseUrl);
-            this.$link = this.$cont.find('a').not('[target="_blank"]');
+            this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]');
         }
-
-        // --- Lazyload --- //
-        if (this.router.options.lazyloadEnabled) {
-            setTimeout(() => {
-                this.beforeLazyload();
-                this.lazyload = new Lazyload({
-                    elements_selector: '.'+this.router.options.lazyloadClass,
-                    data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
-                    data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
-                    callback_set: this.onLazyImageSet.bind(this),
-                    callback_load: this.onLazyImageLoad.bind(this),
-                    callback_processed: this.onLazyImageProcessed.bind(this)
-                });
-            }, 0);
-        }
-
         // --- Blocks --- //
         this.blocks = [];
         this.$blocks = this.$cont.find(this.router.options.pageBlockClass);
@@ -148,6 +133,18 @@ export default class AbstractPage {
                 this.router.pushFirstState(this.isHome, this.type, this.name);
             }
         }
+        // --- Lazyload --- //
+        if (this.router.options.lazyloadEnabled) {
+            this.beforeLazyload();
+            this.lazyload = new Lazyload({
+                elements_selector: '.'+this.router.options.lazyloadClass,
+                data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
+                data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
+                callback_set: this.onLazyImageSet.bind(this),
+                callback_load: this.onLazyImageLoad.bind(this),
+                callback_processed: this.onLazyImageProcessed.bind(this)
+            });
+        }
     }
 
     /**
@@ -157,6 +154,8 @@ export default class AbstractPage {
         log.debug('🗑 #' + this.id);
         this.$cont.remove();
         this.destroyEvents();
+        this.router.$body.removeClass(this.name)
+        this.router.$body.removeClass(this.type)
         // --- Blocks --- //
         if (this.blocks !== null) {
             for (var blockIndex in this.blocks) {
@@ -191,6 +190,7 @@ export default class AbstractPage {
         }
 
         this.router.$window.on('resize', this.onResizeDebounce);
+        this.$cont.on("DOMSubtreeModified", this.bindedUpdateBlocks);
     }
 
     /**
@@ -199,6 +199,7 @@ export default class AbstractPage {
     destroyEvents() {
         this.$link.off('click', this.bindedLinkClick);
         this.router.$window.off('resize', this.onResizeDebounce);
+        this.$cont.off("DOMSubtreeModified", this.bindedUpdateBlocks);
     }
 
     /**
@@ -214,8 +215,7 @@ export default class AbstractPage {
 
         // Hide loading
         setTimeout(() => {
-            const onShowEnded = this.showEnded.bind(this);
-
+            const onShowEnded = this.onShowEnded.bind(this);
             this.ready = true;
             this.router.loader.hide();
 
@@ -223,7 +223,11 @@ export default class AbstractPage {
                 this.show(onShowEnded);
             } else if(this.context == 'ajax'){
                 // Update body id
-                if(this.name !== '') document.body.id = this.name;
+                if(null !== this.name && this.name !== '') {
+                    document.body.id = this.name;
+                    this.router.$body.addClass(this.name)
+                }
+                this.router.$body.addClass(this.type)
                 // Hide formerPages - show
                 if (this.router.formerPages.length > 0) {
                     const formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];
@@ -256,9 +260,15 @@ export default class AbstractPage {
     }
 
     /**
-     *
+     * @deprecated Use onShowEnded
      */
     showEnded() {
+        this.onShowEnded();
+    }
+    /**
+     * After show animation has played.
+     */
+    onShowEnded() {
         this.router.transition = false;
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
@@ -278,14 +288,11 @@ export default class AbstractPage {
     }
 
     /**
-     * @private
+     * Initialize page blocks on page.
      */
     initBlocks() {
         for(let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-            let type = this.$blocks[blockIndex].getAttribute(this.router.options.objectTypeAttr),
-                id = this.$blocks[blockIndex].id;
-
-            let block = this.router.classFactory.getBlockInstance(type, this, this.$blocks.eq(blockIndex));
+            let block = this.initSingleBlock(this.$blocks.eq(blockIndex));
             /*
              * Prevent undefined blocks to be appended to block collection.
              */
@@ -299,6 +306,52 @@ export default class AbstractPage {
         for (let i = this.blocks.length - 1; i >= 0; i--) {
             if(typeof this.blocks[i].onPageReady == 'function') this.blocks[i].onPageReady();
         }
+    }
+
+    /**
+     * Append new blocks which were not present at init.
+     */
+    updateBlocks () {
+        log.debug('\t📯 Page DOM changed…');
+
+        /*
+         * Update Lazyload if init.
+         */
+        if (this.lazyload) {
+            this.lazyload.update();
+        }
+
+        /*
+         * Create new blocks
+         */
+        this.$blocks = this.$cont.find(this.router.options.pageBlockClass);
+        this.blockLength = this.$blocks.length;
+
+        this.$blocks.each((blockIndex, el) => {
+            let block = this.getBlockById($(el).attr('id'));
+            if (null === block) {
+                let block = this.initSingleBlock(this.$blocks.eq(blockIndex));
+                /*
+                 * Prevent undefined blocks to be appended to block collection.
+                 */
+                if (block) {
+                    this.blocks.push(block);
+                    block.onPageReady();
+                }
+            }
+        });
+    }
+
+
+    /**
+     * @param {jQuery} $singleBlock
+     * @return {AbstractBlock}
+     */
+    initSingleBlock($singleBlock) {
+        let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr);
+        let id = $singleBlock[0].id;
+
+        return this.router.classFactory.getBlockInstance(type, this, $singleBlock);
     }
 
     /**
@@ -417,8 +470,8 @@ export default class AbstractPage {
     /**
      * Add target blank to external links.
      *
-     * @param  {JQuery} $links
-     * @param  {String} baseUrl
+     * @param {JQuery} $links
+     * @param {String} baseUrl
      */
     externalLinkTarget($links, baseUrl) {
         const linksLength = $links.length;

@@ -43,6 +43,11 @@ export default class AbstractNav {
          * @type {jQuery}
          */
         this.$cont = null;
+
+        /**
+         * @type {Router}
+         */
+        this.router = null;
     }
 
     /**
