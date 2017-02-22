@@ -159,6 +159,8 @@ export default class AbstractPage {
         if (this.router.options.lazyloadEnabled) {
             this.beforeLazyload();
             this.lazyload = new Lazyload({
+                threshold: this.router.options.lazyloadThreshold,
+                throttle: this.router.options.lazyloadThrottle,
                 elements_selector: '.'+this.router.options.lazyloadClass,
                 data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
                 data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),

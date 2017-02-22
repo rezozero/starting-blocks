@@ -141,6 +141,8 @@ export default class Router {
             lazyloadSrcAttr: 'data-src',
             lazyloadClass: 'lazyload',
             lazyloadSrcSetAttr: 'data-src-set',
+            lazyloadThreshold: 300,
+            lazyloadThrottle: 150,
             $ajaxContainer: $("#ajax-container"),
             minLoadDuration: 0,
             preLoadPageDelay: 0,
