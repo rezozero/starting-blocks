@@ -55,12 +55,10 @@ export default class AbstractPage {
             throw "AbstractPage need a Router instance to be defined.";
         }
         /**
-         *
          * @type {Router}
          */
         this.router = router;
         /**
-         *
          * @type {jQuery}
          */
         this.$cont = $cont;
@@ -81,7 +79,7 @@ export default class AbstractPage {
          */
         this.isHome = isHome;
         /**
-         * @type {Lazyload}
+         * @type {Lazyload|null}
          */
         this.lazyload = null;
 
@@ -89,8 +87,21 @@ export default class AbstractPage {
             this.isHome = true;
         }
 
+        /**
+         * @type {Boolean}
+         */
         this.ready = false;
 
+        /**
+         * AbstractBlock collection.
+         *
+         * @type {AbstractBlock[]}
+         */
+        this.blocks = [];
+
+        /**
+         * @type {String}
+         */
         this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
@@ -108,6 +119,11 @@ export default class AbstractPage {
      * of extending page constructor.
      */
     init() {
+        /**
+         * All links which will be binded for Ajax requests.
+         *
+         * @type {jQuery}
+         */
         this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]');
         this.bindedLinkClick = this.router.onLinkClick.bind(this.router);
         this.bindedUpdateBlocks = this.updateBlocks.bind(this);
@@ -117,9 +133,15 @@ export default class AbstractPage {
             this.externalLinkTarget(this.$link, this.router.baseUrl);
             this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]');
         }
-        // --- Blocks --- //
-        this.blocks = [];
+        /**
+         * jQuery blocks collection.
+         *
+         * @type {jQuery}
+         */
         this.$blocks = this.$cont.find(this.router.options.pageBlockClass);
+        /**
+         * @type {Number}
+         */
         this.blockLength = this.$blocks.length;
         if(this.blockLength) {
             this.initBlocks();
@@ -207,7 +229,15 @@ export default class AbstractPage {
      * @private
      */
     onLoad(e) {
+        /**
+         * Date when onLoad was triggered.
+         * @type {Date}
+         */
         this.loadDate = new Date();
+        /**
+         * Duration between router loaded page and when onLoad was triggered.
+         * @type {Date}
+         */
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
         this.router.nav.update(this);
 

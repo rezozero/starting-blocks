@@ -45,9 +45,19 @@ export default class AbstractNav {
         this.$cont = null;
 
         /**
+         * Main router.
+         *
          * @type {Router}
          */
         this.router = null;
+
+        /**
+         * Current active page.
+         *
+         * **First page won’t be available**.
+         * @type {AbstractPage|null}
+         */
+        this.page = null;
     }
 
     /**
