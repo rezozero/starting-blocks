@@ -31,7 +31,7 @@ export default class State {
     /**
      *
      * @param {Router} router
-     * @param {String} link
+     * @param {HTMLElement} link
      * @param {Object} options Extends state options.
      */
     constructor(router, link, options) {
@@ -58,57 +58,66 @@ export default class State {
             this.options = $.extend(this.options, options);
         }
 
-        const context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
-        const dataHome = link.getAttribute('data-is-home');
-        const isHome = (dataHome == '1') ? (true) : (false);
-
-        let title = link.getAttribute('data-title');
-        if(title === '') title = link.innerHTML;
-
-        let nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr);
-        if(nodeType === null || nodeType === ''){
-            let objectTypeAttr = link.getAttribute(router.options.objectTypeAttr);
-            if(objectTypeAttr !== null && objectTypeAttr !== '') nodeType = objectTypeAttr;
-            else nodeType = "page";
-        }
-
         /**
          * @type {String}
          */
-        this.title = title;
+        this.title = window.document.title;
         /**
          * @type {String}
          */
-        this.href = link.href;
+        this.href = window.location.href;
         /**
          * @type {String}
          */
-        this.nodeType = nodeType;
-        /**
-         * @type {String}
-         */
-        this.nodeName = link.getAttribute('data-node-name');
+        this.nodeName = '';
         /**
          * @type {Number}
          */
-        this.index = Number(link.getAttribute('data-index'));
+        this.index = 0;
+
         /**
          * @type {String}
          */
-        this.transition = this.options.previousType+'_to_'+nodeType;
+        this.nodeType = 'page';
         /**
          * History change context:
          *
          * - `nav`
          * - `link`
+         * - `history`
          *
          * @type {String}
          */
-        this.context = context;
+        this.context = 'history';
         /**
          * @type {Boolean}
          */
-        this.isHome = isHome;
+        this.isHome = false;
+
+        if (null !== link) {
+            this.context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
+            const dataHome = link.getAttribute('data-is-home');
+            this.isHome = (dataHome == '1') ? (true) : (false);
+
+            this.title = link.getAttribute('data-title');
+            if(this.title === '') this.title = link.innerHTML;
+
+            this.nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr);
+            if (this.nodeType === null || this.nodeType === '') {
+                let objectTypeAttr = link.getAttribute(router.options.objectTypeAttr);
+                if (objectTypeAttr !== null && objectTypeAttr !== '') this.nodeType = objectTypeAttr;
+            }
+
+            this.nodeName = link.getAttribute('data-node-name');
+            this.index = Number(link.getAttribute('data-index'));
+            this.href = link.href;
+        }
+
+
+        /**
+         * @type {String}
+         */
+        this.transition = this.options.previousType + '_to_' + this.nodeType;
     }
 
     /**
@@ -116,14 +125,10 @@ export default class State {
      * @param  {AbstractPage} page
      * @return {this}
      */
-    update(page){
+    update(page) {
         this.transition = this.options.previousType+'_to_'+page.type;
         this.nodeName = page.name;
         this.isHome = page.isHome;
         this.nodeType = page.type;
-
-        if(history.replaceState){
-            history.replaceState(this, document.title, window.location.href);
-        }
     }
 }

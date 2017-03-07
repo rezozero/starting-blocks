@@ -1,6 +1,9 @@
 import $ from "jquery";
 import log from "loglevel";
-import {polyfills, Router, GraphicLoader, AbstractNav} from "../bundle.js";
+import polyfills from "./utils/polyfills";
+import Router from "./router";
+import GraphicLoader from "./graphicLoader";
+import AbstractNav from "./abstract-nav";
 import ClassFactory from "./class-factory";
 
 /*

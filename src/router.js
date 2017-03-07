@@ -146,7 +146,7 @@ export default class Router {
             lazyloadEnabled: false,
             lazyloadSrcAttr: 'data-src',
             lazyloadClass: 'lazyload',
-            lazyloadSrcSetAttr: 'data-src-set',
+            lazyloadSrcSetAttr: 'data-srcset',
             lazyloadThreshold: 300,
             lazyloadThrottle: 150,
             $ajaxContainer: $("#ajax-container"),
@@ -209,17 +209,27 @@ export default class Router {
      * @param  {Boolean} isHome
      */
     boot($cont, context, isHome) {
-        if(context == 'static') {
+        if (context == 'static') {
             this.loadBeginDate = new Date();
         }
         const preBootBinded = this.options.preBoot.bind(this);
         preBootBinded($cont, context, isHome);
 
-        const nodeType = $cont.attr(this.options.objectTypeAttr);
+        /*
+         * Replace current state
+         * for first request
+         */
+        if (null === this.state) {
+            this.state = new State(this, null);
+            window.history.replaceState(this.state, null, null);
+        }
 
+        const nodeType = $cont.attr(this.options.objectTypeAttr);
         this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
 
-        if(context == 'ajax') this.state.update(this.page);
+        if (context == 'ajax') {
+            this.state.update(this.page);
+        }
     }
 
     /**
@@ -228,9 +238,9 @@ export default class Router {
      */
     onLinkClick(e) {
         const linkClassName = e.currentTarget.className,
-            linkHref = e.currentTarget.href;
+              linkHref = e.currentTarget.href;
 
-        if(linkHref.indexOf('mailto:') == -1) {
+        if (linkHref.indexOf('mailto:') == -1) {
             e.preventDefault();
 
             // Check if link is not active
@@ -249,8 +259,8 @@ export default class Router {
                 const prePushStateBinded = this.options.prePushState.bind(this);
                 prePushStateBinded(this.state);
 
-                if (history.pushState) {
-                    history.pushState(this.state, this.state.title, this.state.href);
+                if (window.history.pushState) {
+                    window.history.pushState(this.state, this.state.title, this.state.href);
                 }
                 this.loadPage(e, this.state);
             }
@@ -360,23 +370,6 @@ export default class Router {
         if ($data.length && $data.attr('data-meta-title') !== '') {
             let metaTitle = $data.attr('data-meta-title');
             if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
-        }
-    }
-
-    /**
-     * @param {boolean} isHome
-     * @param {string} type
-     * @param {string} name
-     */
-    pushFirstState(isHome, type, name){
-        if (history.pushState) {
-            history.pushState({
-                'firstPage': true,
-                'href':  window.location.href,
-                'isHome':isHome,
-                'nodeType':type,
-                'nodeName':name
-            }, document.title, window.location.href);
         }
     }
 }
