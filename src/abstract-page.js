@@ -106,7 +106,7 @@ export default class AbstractPage {
 
         this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
 
-        log.debug('✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
+        log.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey');
 
         this.init();
         this.initEvents();
@@ -149,10 +149,8 @@ export default class AbstractPage {
 
         // --- Context --- //
         if (this.router.options.ajaxEnabled) {
-            if(this.context == 'ajax'){
+            if (this.context == 'ajax') {
                 this.initAjax();
-            } else {
-                this.router.pushFirstState(this.isHome, this.type, this.name);
             }
         }
         // --- Lazyload --- //
