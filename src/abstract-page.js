@@ -212,7 +212,13 @@ export default class AbstractPage {
         }
 
         this.router.$window.on('resize', this.onResizeDebounce);
-        this.$cont.on("DOMSubtreeModified", this.bindedUpdateBlocks);
+        this.domObserver = new MutationObserver(this.bindedUpdateBlocks)
+        this.domObserver.observe(this.$cont.get(0), {
+            childList: true,
+            attributes: false,
+            characterData: false,
+            subtree: true
+        })
     }
 
     /**
@@ -221,7 +227,7 @@ export default class AbstractPage {
     destroyEvents() {
         this.$link.off('click', this.bindedLinkClick);
         this.router.$window.off('resize', this.onResizeDebounce);
-        this.$cont.off("DOMSubtreeModified", this.bindedUpdateBlocks);
+        this.domObserver.disconnect()
     }
 
     /**
