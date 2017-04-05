@@ -240,13 +240,11 @@ export default class Router {
         const linkClassName = e.currentTarget.className,
               linkHref = e.currentTarget.href;
 
-        if (linkHref.indexOf('mailto:') == -1) {
+        if (linkHref.indexOf('mailto:') == -1 &&
+            linkClassName.indexOf(this.options.noAjaxLinkClass) == -1) {
             e.preventDefault();
-
             // Check if link is not active
-            if(linkClassName.indexOf(this.options.activeClass) == -1 &&
-               linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 &&
-               !this.transition) {
+            if(linkClassName.indexOf(this.options.activeClass) == -1 && !this.transition) {
                 this.transition = true;
 
                 this.state = new State(this, e.currentTarget, {
