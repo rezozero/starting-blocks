@@ -149,7 +149,7 @@ export default class AbstractPage {
 
         // --- Context --- //
         if (this.router.options.ajaxEnabled) {
-            if (this.context == 'ajax') {
+            if (this.context === 'ajax') {
                 this.initAjax();
             }
         }
@@ -176,11 +176,23 @@ export default class AbstractPage {
         log.debug('🗑 #' + this.id);
         this.$cont.remove();
         this.destroyEvents();
-        this.router.$body.removeClass(this.name)
-        this.router.$body.removeClass(this.type)
+
+        /*
+         * Do not remove name class on body if destroyed page is the same as current one.
+         */
+        if (this.router.page !== null && this.router.page.name !== this.name) {
+            this.router.$body.removeClass(this.name);
+        }
+        /*
+         * Do not remove type class on body if destroyed page is the same as current one.
+         */
+        if (this.router.page !== null && this.router.page.type !== this.type) {
+            this.router.$body.removeClass(this.type);
+        }
+
         // --- Blocks --- //
         if (this.blocks !== null) {
-            for (var blockIndex in this.blocks) {
+            for (let blockIndex in this.blocks) {
                 this.blocks[blockIndex].destroy();
             }
         }
@@ -255,9 +267,9 @@ export default class AbstractPage {
             this.ready = true;
             this.router.loader.hide();
 
-            if(this.context == 'static'){
+            if(this.context === 'static'){
                 this.show(onShowEnded);
-            } else if(this.context == 'ajax'){
+            } else if(this.context === 'ajax'){
                 // Update body id
                 if(null !== this.name && this.name !== '') {
                     document.body.id = this.name;
@@ -522,9 +534,9 @@ export default class AbstractPage {
              * get protocol and domain in string
              */
             const linkString = link.getAttribute('href');
-            if(linkString.indexOf(abstractBaseUrl) == -1 &&
-               linkString.indexOf('javascript') == -1 &&
-               linkString.indexOf('mailto:') == -1 &&
+            if(linkString.indexOf(abstractBaseUrl) === -1 &&
+               linkString.indexOf('javascript') === -1 &&
+               linkString.indexOf('mailto:') === -1 &&
                linkString.charAt(0) != '/' &&
                linkString.charAt(0) != '#')
             {

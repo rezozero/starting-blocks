@@ -209,7 +209,7 @@ export default class Router {
      * @param  {Boolean} isHome
      */
     boot($cont, context, isHome) {
-        if (context == 'static') {
+        if (context === 'static') {
             this.loadBeginDate = new Date();
         }
         const preBootBinded = this.options.preBoot.bind(this);
@@ -227,7 +227,7 @@ export default class Router {
         const nodeType = $cont.attr(this.options.objectTypeAttr);
         this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
 
-        if (context == 'ajax') {
+        if (context === 'ajax') {
             this.state.update(this.page);
         }
     }
@@ -240,11 +240,11 @@ export default class Router {
         const linkClassName = e.currentTarget.className,
               linkHref = e.currentTarget.href;
 
-        if (linkHref.indexOf('mailto:') == -1 &&
-            linkClassName.indexOf(this.options.noAjaxLinkClass) == -1) {
+        if (linkHref.indexOf('mailto:') === -1 &&
+            linkClassName.indexOf(this.options.noAjaxLinkClass) === -1) {
             e.preventDefault();
             // Check if link is not active
-            if(linkClassName.indexOf(this.options.activeClass) == -1 && !this.transition) {
+            if(this.isNotCurrentPageLink(e.currentTarget)) {
                 this.transition = true;
 
                 this.state = new State(this, e.currentTarget, {
@@ -261,8 +261,22 @@ export default class Router {
                     window.history.pushState(this.state, this.state.title, this.state.href);
                 }
                 this.loadPage(e, this.state);
+            } else {
+                log.debug('⛔️ Same page requested… do nothing.');
             }
         }
+    }
+
+    /**
+     * Check if current target link is pointing to the same page resource.
+     *
+     * @param currentTarget
+     * @return {boolean}
+     */
+    isNotCurrentPageLink(currentTarget) {
+        const linkClassName = currentTarget.className;
+
+        return linkClassName.indexOf(this.options.activeClass) === -1 && !this.transition;
     }
 
     /**
@@ -273,7 +287,7 @@ export default class Router {
      * @private
      */
     loadPage(e, state) {
-        if(this.currentRequest && this.currentRequest.readyState != 4) {
+        if(this.currentRequest && this.currentRequest.readyState !== 4) {
             this.currentRequest.abort();
         }
         this.loader.show();

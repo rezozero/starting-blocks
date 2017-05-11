@@ -12,6 +12,7 @@ import ClassFactory from "./class-factory";
 polyfills();
 
 log.setLevel(0);
+
 /*
  * Begin main app ---
  */
@@ -32,11 +33,11 @@ const router = new Router(
          * Do not use Arrow function
          * these will be bind to the router before their use.
          */
-        /*preBoot: function(){ log.debug('ℹ️ preboot'); },
+        preBoot: function(){ log.debug('ℹ️ preboot'); },
         postLoad: function(){ log.debug('ℹ️ postLoad'); },
         preLoad: function(){ log.debug('ℹ️ preLoad'); },
         onDestroy: function(){ log.debug('ℹ️ onDestroy'); },
-        prePushState: function(){ log.debug('ℹ️ prePushState'); }*/
+        prePushState: function(){ log.debug('ℹ️ prePushState'); }
     },
     new ClassFactory(),
     // temp namespace is defined in your index.html
