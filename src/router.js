@@ -28,6 +28,13 @@ import log from "loglevel";
 import Utils from "./utils/utils";
 import State from "./state";
 import CacheProvider from "./cache-provider";
+import Events from "./events";
+import {
+    BEFORE_PAGE_LOAD,
+    AFTER_PAGE_LOAD,
+    AFTER_DOM_APPENDED,
+    AFTER_PAGE_BOOT
+} from "./event-types";
 /**
  * Application main page router.
  */
@@ -230,6 +237,8 @@ export default class Router {
         if (context === 'ajax') {
             this.state.update(this.page);
         }
+
+        Events.commit(AFTER_PAGE_BOOT, this.page);
     }
 
     /**
@@ -296,6 +305,8 @@ export default class Router {
         const preLoadBinded = this.options.preLoad.bind(this);
         preLoadBinded(state);
 
+        Events.commit(BEFORE_PAGE_LOAD, state);
+
         setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
     }
     /**
@@ -348,10 +359,14 @@ export default class Router {
             $data = $response.find('.' + this.options.pageClass);
         }
 
+        Events.commit(AFTER_PAGE_LOAD, $data);
+
         /*
          * Display data to DOM
          */
         this.options.$ajaxContainer.append($data);
+
+        Events.commit(AFTER_DOM_APPENDED, $data);
 
         /*
          * Push a copy object not to set it as null.
@@ -364,6 +379,7 @@ export default class Router {
 
         const postLoadBinded = this.options.postLoad.bind(this);
         postLoadBinded(state, $data);
+
 
         // Analytics
         if(typeof ga !== "undefined") {

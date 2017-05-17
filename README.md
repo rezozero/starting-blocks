@@ -14,6 +14,7 @@
 - *ismobilejs*
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
+- Native *window.CustomEvent*. Make sure to use a polyfill for [Internet Explorer 9 - 11](http://caniuse.com/#search=CustomEvent)
 
 ## Usage with NPM
 
@@ -113,7 +114,7 @@ A Router needs:
 
 You can look at the `src/main.js` file to see an instantiation example with few parameters.
 
-### Pages events
+### Pages overridable methods
 
 | Method | Description |
 | --- | --- |
@@ -125,7 +126,7 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 | `onLazyImageLoad` | After a lazyloaded image loaded. |
 | `onLazyImageProcessed` | Before lazyload. |
 
-### Block events
+### Block overridable methods
 
 | Method | Description |
 | --- | --- |
@@ -133,10 +134,25 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 | `onResize` | On viewport resize, this method is debounced. |
 | `onPageReady` | Called once all page blocks have been created. |
 
+### Events
+
+| Event name | Description |
+| --- | --- |
+| `BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
+| `AFTER_PAGE_LOAD` | After Router XHR request succeded. |
+| `AFTER_DOM_APPENDED` | After Router appended new page DOM to page-container. |
+| `AFTER_PAGE_BOOT` | After Router create new page instance. |
+| `BEFORE_PAGE_SHOW` | Before page begins to show, right after assets are loaded (images). |
+| `AFTER_PAGE_SHOW` | After page showed. |
+| `BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
+| `AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
+
 ### Caching responses
 
 By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
 successful. You can disable this feature with `useCache` router option.
+
+**Be careful, this cache is global and cannot be disabled for special pages.**
 
 ## Docs
 
