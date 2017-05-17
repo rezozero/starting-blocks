@@ -27,6 +27,13 @@ import waitForImages from "jquery.waitforimages";
 import $ from "jquery";
 import Lazyload from 'vanilla-lazyload';
 import debounce from "./utils/debounce";
+import Events from "./events";
+import {
+    BEFORE_PAGE_SHOW,
+    AFTER_PAGE_SHOW,
+    BEFORE_PAGE_HIDE,
+    AFTER_PAGE_HIDE
+} from "./event-types";
 
 /**
  * Base class for creating page implementations.
@@ -267,6 +274,8 @@ export default class AbstractPage {
             this.ready = true;
             this.router.loader.hide();
 
+            Events.commit(BEFORE_PAGE_SHOW, this);
+
             if(this.context === 'static'){
                 this.show(onShowEnded);
             } else if(this.context === 'ajax'){
@@ -320,15 +329,20 @@ export default class AbstractPage {
         this.router.transition = false;
         this.$cont.removeClass(this.router.options.pageClass + '-ajax');
         this.$cont.removeClass(this.router.options.pageClass + '-transitioning');
+
+        Events.commit(AFTER_PAGE_SHOW, this);
     }
 
     /**
      * @param {Function} onHidden
      */
     hide(onHidden) {
+        Events.commit(BEFORE_PAGE_HIDE, this);
         log.debug('◀️ #' + this.id);
         this.$cont[0].style.opacity = '0';
         if (typeof onHidden !== 'undefined') onHidden();
+
+        Events.commit(AFTER_PAGE_HIDE, this);
     }
 
     initAjax() {
