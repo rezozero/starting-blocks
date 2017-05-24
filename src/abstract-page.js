@@ -411,7 +411,6 @@ export default class AbstractPage {
      */
     initSingleBlock($singleBlock) {
         let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr);
-        let id = $singleBlock[0].id;
 
         return this.router.classFactory.getBlockInstance(type, this, $singleBlock);
     }
@@ -423,12 +422,9 @@ export default class AbstractPage {
      * @return {AbstractBlock|null}
      */
     getBlockById(id) {
-        for (let i in this.blocks) {
-            if (this.blocks[i] &&
-                this.blocks[i].id &&
-                this.blocks[i].id == id) {
-                return this.blocks[i];
-            }
+        const index = this.getBlockIndexById(id);
+        if (this.blocks[index]) {
+            return this.blocks[index];
         }
         return null;
     }
@@ -437,13 +433,13 @@ export default class AbstractPage {
      * Get a page block index from its `id`.
      *
      * @param  {String} id
-     * @return {AbstractBlock|null}
+     * @return {*|null}
      */
     getBlockIndexById(id) {
         for (let i in this.blocks) {
             if (this.blocks[i] &&
                 this.blocks[i].id &&
-                this.blocks[i].id == id) {
+                this.blocks[i].id === id) {
                 return i;
             }
         }
@@ -457,12 +453,9 @@ export default class AbstractPage {
      * @return {AbstractBlock|null}
      */
     getFirstBlockByType(type){
-        for (let i in this.blocks) {
-            if (this.blocks[i] &&
-                this.blocks[i].type &&
-                this.blocks[i].type == type) {
-                return this.blocks[i];
-            }
+        const index = this.getFirstBlockIndexByType(type);
+        if (this.blocks[index]) {
+            return this.blocks[index];
         }
         return null;
     }
@@ -471,13 +464,13 @@ export default class AbstractPage {
      * Get the first page block index from its `type`.
      *
      * @param  {String} type
-     * @return {AbstractBlock|null}
+     * @return {*|null}
      */
     getFirstBlockIndexByType(type){
         for (let i in this.blocks) {
             if (this.blocks[i] &&
                 this.blocks[i].type &&
-                this.blocks[i].type == type) {
+                this.blocks[i].type === type) {
                 return i;
             }
         }
@@ -551,8 +544,8 @@ export default class AbstractPage {
             if(linkString.indexOf(abstractBaseUrl) === -1 &&
                linkString.indexOf('javascript') === -1 &&
                linkString.indexOf('mailto:') === -1 &&
-               linkString.charAt(0) != '/' &&
-               linkString.charAt(0) != '#')
+               linkString.charAt(0) !== '/' &&
+               linkString.charAt(0) !== '#')
             {
                 $links[linkIndex].target = '_blank';
             }

@@ -182,11 +182,11 @@ export default class Router {
 
     /**
      * Initialize Router events.
-     *
      */
     initEvents() {
         if (this.options.ajaxEnabled) {
             window.addEventListener("popstate", this.onPopState.bind(this), false);
+            window.addEventListener(AFTER_PAGE_BOOT, this.trackGoogleAnalytics.bind(this), false);
         }
         /*
          * Init nav events
@@ -283,18 +283,17 @@ export default class Router {
      */
     isNotCurrentPageLink(currentTarget) {
         const linkClassName = currentTarget.className;
-
         return linkClassName.indexOf(this.options.activeClass) === -1 && !this.transition;
     }
 
     /**
      * Perform a AJAX load for an History event.
      *
-     * @param e
+     * @param event
      * @param state
      * @private
      */
-    loadPage(e, state) {
+    loadPage(event, state) {
         if(this.currentRequest && this.currentRequest.readyState !== 4) {
             this.currentRequest.abort();
         }
@@ -312,6 +311,7 @@ export default class Router {
      * Actually load the state url resource.
      *
      * @param  {State} state
+     * @private
      */
     doPageLoad(state) {
         if (this.options.useCache && this.cacheProvider.exists(state.href)) {
@@ -343,6 +343,22 @@ export default class Router {
     }
 
     /**
+     * Extract new page content from a complete HTML
+     * page or a partial HTML response.
+     *
+     * @param data
+     * @return {*}
+     */
+    extractPageContainer(data) {
+        const $response = $($.parseHTML(data.trim()));
+        if ($response.hasClass(this.options.pageClass)) {
+            return $response;
+        } else {
+            return $response.find('.' + this.options.pageClass);
+        }
+    }
+
+    /**
      * @private
      * @param {Object} data jQuery AJAX response
      * @param {State} state
@@ -350,13 +366,7 @@ export default class Router {
     _onDataLoaded(data, state) {
         // Extract only to new page content
         // if the whole HTML is queried
-        let $data = null;
-        const $response = $($.parseHTML(data.trim()));
-        if ($response.hasClass(this.options.pageClass)) {
-            $data = $response;
-        } else {
-            $data = $response.find('.' + this.options.pageClass);
-        }
+        let $data = this.extractPageContainer(data);
 
         Events.commit(AFTER_PAGE_LOAD, $data);
 
@@ -378,13 +388,6 @@ export default class Router {
 
         const postLoadBinded = this.options.postLoad.bind(this);
         postLoadBinded(state, $data);
-
-
-        // Analytics
-        if(typeof ga !== "undefined") {
-            log.debug('🚩 Push Analytics for: ' + window.location.pathname);
-            ga('send', 'pageview', {'page': window.location.pathname, 'title':document.title});
-        }
     }
 
     /**
@@ -397,6 +400,18 @@ export default class Router {
         if ($data.length && $data.attr('data-meta-title') !== '') {
             let metaTitle = $data.attr('data-meta-title');
             if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
+        }
+    }
+
+    /**
+     * Send a GA page view event when context is AJAX.
+     */
+    trackGoogleAnalytics(event) {
+        if (event && event.detail.context === 'ajax') {
+            if(typeof ga !== "undefined") {
+                log.debug('🚩 Push Analytics for: ' + window.location.pathname);
+                ga('send', 'pageview', {'page': window.location.pathname, 'title':document.title});
+            }
         }
     }
 }
