@@ -84,5 +84,6 @@ export default class AbstractNav {
         if (!router) {
             throw "Nav initEvents method needs a Router object.";
         }
+        this.router = router;
     }
 }

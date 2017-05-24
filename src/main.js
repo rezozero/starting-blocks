@@ -3,8 +3,8 @@ import log from "loglevel";
 import polyfills from "./utils/polyfills";
 import Router from "./router";
 import GraphicLoader from "./graphicLoader";
-import AbstractNav from "./abstract-nav";
 import ClassFactory from "./class-factory";
+import ExampleNav from "./example-nav";
 
 /*
  * Declare polyfills
@@ -34,7 +34,7 @@ const router = new Router(
     // temp namespace is defined in your index.html
     location.origin,
     new GraphicLoader(),
-    new AbstractNav()
+    new ExampleNav()
 );
 router.initEvents();
 router.boot($('.page-content').eq(0), 'static', isHome);

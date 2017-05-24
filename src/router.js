@@ -242,7 +242,6 @@ export default class Router {
     }
 
     /**
-     * @private
      * @param e Event
      */
     onLinkClick(e) {
