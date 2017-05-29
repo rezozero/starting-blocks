@@ -34,7 +34,7 @@ export default class State {
      * @param {HTMLElement} link
      * @param {Object} options Extends state options.
      */
-    constructor(router, link, options) {
+    constructor(router, link = null, options = null) {
         /**
          * Keep custom informations such as:
          *

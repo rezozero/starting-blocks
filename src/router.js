@@ -29,6 +29,7 @@ import Utils from "./utils/utils";
 import State from "./state";
 import CacheProvider from "./cache-provider";
 import Events from "./events";
+import History from './history'
 import {
     BEFORE_PAGE_LOAD,
     AFTER_PAGE_LOAD,
@@ -77,6 +78,7 @@ export default class Router {
      * @param {String} baseUrl
      * @param {GraphicLoader} loader
      * @param {AbstractNav} nav
+     * @param {TransitionFactory} transitionFactory
      */
     constructor(options, classFactory, baseUrl, loader, nav, transitionFactory) {
         if (!baseUrl) {
@@ -115,7 +117,7 @@ export default class Router {
         /**
          * @type {TransitionFactory}
          */
-        this.transitionFactory = transitionFactory
+        this.transitionFactory = transitionFactory;
         /**
          * @type {State|null}
          */
@@ -128,11 +130,9 @@ export default class Router {
          * @type {null}
          */
         this.page = null;
-        this.stateBlock = true;
         this.transition = false;
         this.loading = false;
-        this.historyIndex = 0
-        this.history = []
+        this.history = new History();
         this.$window = $(window);
         this.$body = $('body');
 
@@ -204,24 +204,15 @@ export default class Router {
     }
     /**
      * @private
-     * @param  {Event} event
+     * @param  {Object} event
      * @return
      */
     onPopState(event) {
         if (typeof event.state !== "undefined" && event.state !== null) {
-            this.previousState = this.state
-
-            let newHistoryIndex = this.history.findIndex(history => history.uid === event.state.uid)
-
-            if (newHistoryIndex - this.historyIndex < 0) {
-                this.direction = 'back'
-            } else {
-                this.direction = 'forward'
-            }
-
-            this.historyIndex = newHistoryIndex
+            this.previousState = this.state;
+            this.direction = this.history.getDirection(event.state);
             this.transition = true;
-            this.loadPage(event, event.state);
+            this.loadPage(event.state);
         }
     }
 
@@ -250,10 +241,9 @@ export default class Router {
          * for first request
          */
         if (null === this.state) {
-            this.state = new State(this, null);
-            this.history.push(this.state)
-            this.historyIndex = this.history.length - 1
-            window.history.replaceState(this.state, null, null);
+            this.state = new State(this);
+            this.history.pushState(this.state);
+            window.history.replaceState(this.state, '', '');
 
             // Init first page
             this.pageLoaded()
@@ -266,25 +256,25 @@ export default class Router {
         Events.commit(AFTER_PAGE_BOOT, this.page);
     }
 
-    pageLoaded () {
+    pageLoaded() {
         const onShowEnded = this.page.onShowEnded.bind(this.page);
         this.loader.hide();
 
-        if (this.page.context === 'static'){
+        if (this.page.context === 'static') {
             this.page.show(onShowEnded);
-        } else if (this.page.context === 'ajax'){
+        } else if (this.page.context === 'ajax') {
             // Update body id
             if(null !== this.page.name && this.page.name !== '') {
                 document.body.id = this.page.name;
                 this.$body.addClass(this.page.name)
             }
 
-            this.$body.addClass(this.page.type)
+            this.$body.addClass(this.page.type);
             this.page.show(onShowEnded);
         }
     }
 
-    destroyPreviousPage () {
+    destroyPreviousPage() {
         // Hide formerPages - show
         if (this.page.context === 'ajax' && this.formerPages.length > 0) {
             const formerPage = this.formerPages[(this.formerPages.length - 1)];
@@ -319,7 +309,7 @@ export default class Router {
             if(this.isNotCurrentPageLink(e.currentTarget)) {
                 this.transition = true;
 
-                this.previousState = Object.assign({}, this.state)
+                this.previousState = Object.assign({}, this.state);
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     previousName: this.page.name,
@@ -327,8 +317,7 @@ export default class Router {
                     previousHref: window.location.href,
                     transitionName: $(e.currentTarget).data('transition')
                 });
-                this.history.push(this.state)
-                this.historyIndex = this.history.length - 1
+                this.history.pushState(this.state);
 
                 const prePushStateBinded = this.options.prePushState.bind(this);
                 prePushStateBinded(this.state);
@@ -336,7 +325,7 @@ export default class Router {
                 if (window.history.pushState) {
                     window.history.pushState(this.state, this.state.title, this.state.href);
                 }
-                this.loadPage(e, this.state);
+                this.loadPage(this.state);
             } else {
                 log.debug('⛔️ Same page requested… do nothing.');
             }
@@ -357,11 +346,10 @@ export default class Router {
     /**
      * Perform a AJAX load for an History event.
      *
-     * @param event
      * @param state
      * @private
      */
-    loadPage(event, state) {
+    loadPage(state) {
         if(this.currentRequest && this.currentRequest.readyState !== 4) {
             this.currentRequest.abort();
         }
@@ -376,8 +364,8 @@ export default class Router {
         this.transitionFactory.getTransition(this.previousState, state, this.direction)
             .init(this.page.$cont, this.doPageLoad(state))
             .then(() => {
-                this.pageLoaded()
-                this.destroyPreviousPage()
+                this.pageLoaded();
+                this.destroyPreviousPage();
             })
     }
 
@@ -475,7 +463,7 @@ export default class Router {
      *
      * @param {jQuery} $data
      */
-    updatePageTitle($data){
+    updatePageTitle($data) {
         if ($data.length && $data.attr('data-meta-title') !== '') {
             let metaTitle = $data.attr('data-meta-title');
             if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
@@ -489,7 +477,7 @@ export default class Router {
         if (event && event.detail.context === 'ajax') {
             if(typeof ga !== "undefined") {
                 log.debug('🚩 Push Analytics for: ' + window.location.pathname);
-                ga('send', 'pageview', {'page': window.location.pathname, 'title':document.title});
+                ga('send', 'pageview', {'page': window.location.pathname, 'title': document.title});
             }
         }
     }
