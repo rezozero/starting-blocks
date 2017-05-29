@@ -138,16 +138,16 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 
 ### Events
 
-| Event name | Description |
-| --- | --- |
-| `BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
-| `AFTER_PAGE_LOAD` | After Router XHR request succeded. |
-| `AFTER_DOM_APPENDED` | After Router appended new page DOM to page-container. |
-| `AFTER_PAGE_BOOT` | After Router create new page instance. |
-| `BEFORE_PAGE_SHOW` | Before page begins to show, right after assets are loaded (images). |
-| `AFTER_PAGE_SHOW` | After page showed. |
-| `BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
-| `AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
+| Const name | Event name | Description |
+| --- | --- | --- |
+| `BEFORE_PAGE_LOAD` | `SB_BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
+| `AFTER_PAGE_LOAD` | `SB_AFTER_PAGE_LOAD` | After Router XHR request succeded. |
+| `AFTER_DOM_APPENDED` | `SB_AFTER_DOM_APPENDED` | After Router appended new page DOM to page-container. |
+| `AFTER_PAGE_BOOT` | `SB_AFTER_PAGE_BOOT` | After Router create new page instance. |
+| `BEFORE_PAGE_SHOW` | `SB_BEFORE_PAGE_SHOW` | Before page begins to show, right after assets are loaded (images). |
+| `AFTER_PAGE_SHOW` | `SB_AFTER_PAGE_SHOW` | After page showed. |
+| `BEFORE_PAGE_HIDE` | `SB_BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
+| `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
 
 ### Caching responses
 
