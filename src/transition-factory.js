@@ -9,12 +9,20 @@ export default class TransitionFactory {
      * @param {Object} previousState
      * @param {Object} state
      * @param {String} direction ('back' or 'forward')
-     * @returns {FadeTransition}
+     * @returns {AbstractTransition}
      */
     getTransition (previousState, state, direction = null) {
-        if (previousState && previousState.context === 'history') {
-            if (previousState.transitionName === 'fade') {
-                return new FadeTransition()
+
+        /**
+         * You can customise transition logic with the previousState, the new state
+         * and the direction (back or forward)
+         *
+         * Ex: when back button its pressed and the previous animation was a FadeTransition
+         * we use the DefaultTransition
+         */
+        if (previousState && previousState.context === 'history' && direction) {
+            if (previousState.transitionName === 'fade' && direction === 'back') {
+                return new DefaultTransition()
             }
         }
 
@@ -23,7 +31,7 @@ export default class TransitionFactory {
                 return new FadeTransition()
                 break
             default:
-                return new FadeTransition()
+                return new DefaultTransition()
                 break
         }
     }
