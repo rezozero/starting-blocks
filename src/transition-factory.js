@@ -3,7 +3,7 @@ import FadeTransition from './fade-transition'
 
 export default class TransitionFactory {
     getTransition (previousState, state) {
-        console.log(previousState, state)
+        // console.log(previousState, state)
         if (previousState && previousState.context === 'history') {
             if (previousState.transitionName === 'fade') {
                 return new FadeTransition()

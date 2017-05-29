@@ -131,6 +131,8 @@ export default class Router {
         this.stateBlock = true;
         this.transition = false;
         this.loading = false;
+        this.historyIndex = 0
+        this.history = []
         this.$window = $(window);
         this.$body = $('body');
 
@@ -209,7 +211,19 @@ export default class Router {
         if (typeof event.state !== "undefined" && event.state !== null) {
             this.previousState = this.state
 
-            console.log(this.previousState.uid, event.state.uid)
+            console.log(this.history)
+            console.log(event.state)
+
+            let newHistoryIndex = this.history.findIndex(history => history.uid === event.state.uid)
+
+            console.log(newHistoryIndex)
+            console.log(newHistoryIndex - this.historyIndex)
+
+            this.historyIndex = newHistoryIndex
+
+            // console.log(this.history.findIndex(history => history.uid === event.state.uid))
+
+            // console.log(this.previousState.uid, event.state.uid)
 
             this.transition = true;
             this.loadPage(event, event.state);
@@ -239,6 +253,8 @@ export default class Router {
          */
         if (null === this.state) {
             this.state = new State(this, null);
+            this.history.push(this.state)
+            this.historyIndex = this.history.length - 1
             window.history.replaceState(this.state, null, null);
         }
 
@@ -267,7 +283,6 @@ export default class Router {
                 this.transition = true;
 
                 this.previousState = Object.assign({}, this.state)
-
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     previousName: this.page.name,
@@ -275,6 +290,8 @@ export default class Router {
                     previousHref: window.location.href,
                     transitionName: $(e.currentTarget).data('transition')
                 });
+                this.history.push(this.state)
+                this.historyIndex = this.history.length - 1
 
                 const prePushStateBinded = this.options.prePushState.bind(this);
                 prePushStateBinded(this.state);
