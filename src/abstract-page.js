@@ -254,6 +254,7 @@ export default class AbstractPage {
      * @private
      */
     onLoad(e) {
+        console.log('onload nouvelle page')
         /**
          * Date when onLoad was triggered.
          * @type {Date}

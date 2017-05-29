@@ -5,6 +5,7 @@ import Router from "./router";
 import GraphicLoader from "./graphicLoader";
 import ClassFactory from "./class-factory";
 import ExampleNav from "./example-nav";
+import TransitionFactory from './transition-factory'
 
 /*
  * Declare polyfills
@@ -34,7 +35,8 @@ const router = new Router(
     // temp namespace is defined in your index.html
     location.origin,
     new GraphicLoader(),
-    new ExampleNav()
+    new ExampleNav(),
+    new TransitionFactory()
 );
 router.initEvents();
 router.boot($('.page-content').eq(0), 'static', isHome);

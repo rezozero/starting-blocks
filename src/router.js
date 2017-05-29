@@ -78,7 +78,7 @@ export default class Router {
      * @param {GraphicLoader} loader
      * @param {AbstractNav} nav
      */
-    constructor(options, classFactory, baseUrl, loader, nav) {
+    constructor(options, classFactory, baseUrl, loader, nav, transitionFactory) {
         if (!baseUrl) {
             throw "Router needs baseUrl to be defined.";
         }
@@ -90,6 +90,9 @@ export default class Router {
         }
         if (!nav) {
             throw "Router needs a Nav instance to be defined.";
+        }
+        if (!transitionFactory) {
+            throw "Router needs a Transition Factory instance to be defined.";
         }
 
         /**
@@ -109,6 +112,10 @@ export default class Router {
          */
         this.nav = nav;
         this.nav.router = this;
+        /**
+         * @type {TransitionFactory}
+         */
+        this.transitionFactory = transitionFactory
         /**
          * @type {State|null}
          */
@@ -200,6 +207,10 @@ export default class Router {
      */
     onPopState(event) {
         if (typeof event.state !== "undefined" && event.state !== null) {
+            this.previousState = this.state
+
+            console.log(this.previousState.uid, event.state.uid)
+
             this.transition = true;
             this.loadPage(event, event.state);
         }
@@ -255,11 +266,14 @@ export default class Router {
             if(this.isNotCurrentPageLink(e.currentTarget)) {
                 this.transition = true;
 
+                this.previousState = Object.assign({}, this.state)
+
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     previousName: this.page.name,
                     navLinkClass: this.options.navLinkClass,
-                    previousHref: window.location.href
+                    previousHref: window.location.href,
+                    transitionName: $(e.currentTarget).data('transition')
                 });
 
                 const prePushStateBinded = this.options.prePushState.bind(this);
@@ -305,7 +319,13 @@ export default class Router {
 
         Events.commit(BEFORE_PAGE_LOAD, state);
 
-        setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
+        this.transitionFactory.getTransition(this.previousState, state)
+            .init(this.page.$cont, this.doPageLoad(state))
+            .then(() => {
+                // console.log('fin de transition')
+            })
+
+        // setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
     }
     /**
      * Actually load the state url resource.
@@ -314,32 +334,34 @@ export default class Router {
      * @private
      */
     doPageLoad(state) {
-        if (this.options.useCache && this.cacheProvider.exists(state.href)) {
-            log.debug('📎 Use cache-provider for: ' + state.href);
-            this._onDataLoaded(this.cacheProvider.fetch(state.href), state);
-        } else {
-            this.currentRequest = $.ajax({
-                url: state.href,
-                dataType: "html",
-                headers: {
-                    // Send header to allow backends to
-                    // send partial response for saving
-                    // bandwidth and process time
-                    'X-Allow-Partial' : 1
-                },
-                // Need to disable cache to prevent
-                // browser to serve partial when no
-                // ajax context is defined.
-                cache: false,
-                type: 'get',
-                success: (data) => {
-                    if (this.options.useCache) {
-                        this.cacheProvider.save(state.href, data);
+        return new Promise((resolve) => {
+            if (this.options.useCache && this.cacheProvider.exists(state.href)) {
+                log.debug('📎 Use cache-provider for: ' + state.href);
+                resolve(this._onDataLoaded(this.cacheProvider.fetch(state.href), state));
+            } else {
+                this.currentRequest = $.ajax({
+                    url: state.href,
+                    dataType: "html",
+                    headers: {
+                        // Send header to allow backends to
+                        // send partial response for saving
+                        // bandwidth and process time
+                        'X-Allow-Partial' : 1
+                    },
+                    // Need to disable cache to prevent
+                    // browser to serve partial when no
+                    // ajax context is defined.
+                    cache: false,
+                    type: 'get',
+                    success: (data) => {
+                        if (this.options.useCache) {
+                            this.cacheProvider.save(state.href, data);
+                        }
+                        resolve(this._onDataLoaded(data, state));
                     }
-                    this._onDataLoaded(data, state);
-                }
-            });
-        }
+                });
+            }
+        })
     }
 
     /**
@@ -373,6 +395,7 @@ export default class Router {
         /*
          * Display data to DOM
          */
+        $data.css('visibility', 'hidden');
         this.options.$ajaxContainer.append($data);
 
         Events.commit(AFTER_DOM_APPENDED, $data);
@@ -388,6 +411,8 @@ export default class Router {
 
         const postLoadBinded = this.options.postLoad.bind(this);
         postLoadBinded(state, $data);
+
+        return $data;
     }
 
     /**

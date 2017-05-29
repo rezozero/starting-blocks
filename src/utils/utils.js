@@ -219,4 +219,16 @@ export default class Utils {
 
         return val === max ? 1 : (val - min) / (max - min);
     }
+
+    static deferred() {
+        return new function() {
+            this.resolve = null;
+            this.reject = null;
+
+            this.promise = new Promise((resolve, reject) => {
+                this.resolve = resolve;
+                this.reject = reject;
+            });
+        };
+    }
 }

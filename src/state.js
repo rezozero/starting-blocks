@@ -75,6 +75,8 @@ export default class State {
          */
         this.index = 0;
 
+        this.uid = new Date().getTime()
+
         /**
          * @type {String}
          */
@@ -93,6 +95,10 @@ export default class State {
          * @type {Boolean}
          */
         this.isHome = false;
+        /**
+         * @type {String}
+         */
+        this.transitionName = null
 
         if (null !== link) {
             this.context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
@@ -111,6 +117,8 @@ export default class State {
             this.nodeName = link.getAttribute('data-node-name');
             this.index = Number(link.getAttribute('data-index'));
             this.href = link.href;
+
+            this.transitionName = link.getAttribute('data-transition');
         }
 
 
