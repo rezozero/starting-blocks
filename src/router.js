@@ -211,20 +211,15 @@ export default class Router {
         if (typeof event.state !== "undefined" && event.state !== null) {
             this.previousState = this.state
 
-            console.log(this.history)
-            console.log(event.state)
-
             let newHistoryIndex = this.history.findIndex(history => history.uid === event.state.uid)
 
-            console.log(newHistoryIndex)
-            console.log(newHistoryIndex - this.historyIndex)
+            if (newHistoryIndex - this.historyIndex < 0) {
+                this.direction = 'back'
+            } else {
+                this.direction = 'forward'
+            }
 
             this.historyIndex = newHistoryIndex
-
-            // console.log(this.history.findIndex(history => history.uid === event.state.uid))
-
-            // console.log(this.previousState.uid, event.state.uid)
-
             this.transition = true;
             this.loadPage(event, event.state);
         }
@@ -247,6 +242,9 @@ export default class Router {
         const preBootBinded = this.options.preBoot.bind(this);
         preBootBinded($cont, context, isHome);
 
+        const nodeType = $cont.attr(this.options.objectTypeAttr);
+        this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
+
         /*
          * Replace current state
          * for first request
@@ -256,16 +254,55 @@ export default class Router {
             this.history.push(this.state)
             this.historyIndex = this.history.length - 1
             window.history.replaceState(this.state, null, null);
-        }
 
-        const nodeType = $cont.attr(this.options.objectTypeAttr);
-        this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
+            // Init first page
+            this.pageLoaded()
+        }
 
         if (context === 'ajax') {
             this.state.update(this.page);
         }
 
         Events.commit(AFTER_PAGE_BOOT, this.page);
+    }
+
+    pageLoaded () {
+        const onShowEnded = this.page.onShowEnded.bind(this.page);
+        this.loader.hide();
+
+        if (this.page.context === 'static'){
+            this.page.show(onShowEnded);
+        } else if (this.page.context === 'ajax'){
+            // Update body id
+            if(null !== this.page.name && this.page.name !== '') {
+                document.body.id = this.page.name;
+                this.$body.addClass(this.page.name)
+            }
+
+            this.$body.addClass(this.page.type)
+            this.page.show(onShowEnded);
+        }
+    }
+
+    destroyPreviousPage () {
+        // Hide formerPages - show
+        if (this.page.context === 'ajax' && this.formerPages.length > 0) {
+            const formerPage = this.formerPages[(this.formerPages.length - 1)];
+            const formerPageDestroy = formerPage.destroy.bind(formerPage);
+            /*
+             * Very important,
+             * DO NOT animate if there are more than 1 page
+             * in destroy queue!
+             */
+            if (this.formerPages.length > 1) {
+                formerPageDestroy();
+            } else {
+                formerPage.hide(formerPageDestroy);
+            }
+            this.formerPages.pop();
+        }
+
+        this.page.updateLazyload()
     }
 
     /**
@@ -336,14 +373,14 @@ export default class Router {
 
         Events.commit(BEFORE_PAGE_LOAD, state);
 
-        this.transitionFactory.getTransition(this.previousState, state)
+        this.transitionFactory.getTransition(this.previousState, state, this.direction)
             .init(this.page.$cont, this.doPageLoad(state))
             .then(() => {
-                // console.log('fin de transition')
+                this.pageLoaded()
+                this.destroyPreviousPage()
             })
-
-        // setTimeout(this.doPageLoad.bind(this, state), this.options.preLoadPageDelay);
     }
+
     /**
      * Actually load the state url resource.
      *

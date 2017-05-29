@@ -254,7 +254,7 @@ export default class AbstractPage {
      * @private
      */
     onLoad(e) {
-        console.log('onload nouvelle page')
+        this.ready = true;
         /**
          * Date when onLoad was triggered.
          * @type {Date}
@@ -267,45 +267,13 @@ export default class AbstractPage {
         this.loadDuration = this.loadDate - this.router.loadBeginDate;
         this.router.nav.update(this);
 
-        const delay = (this.loadDuration > this.router.options.minLoadDuration) ? 0 : this.router.options.minLoadDuration - this.loadDuration;
+        Events.commit(BEFORE_PAGE_SHOW, this);
+    }
 
-        // Hide loading
-        setTimeout(() => {
-            const onShowEnded = this.onShowEnded.bind(this);
-            this.ready = true;
-            this.router.loader.hide();
-
-            Events.commit(BEFORE_PAGE_SHOW, this);
-
-            if(this.context === 'static'){
-                this.show(onShowEnded);
-            } else if(this.context === 'ajax'){
-                // Update body id
-                if(null !== this.name && this.name !== '') {
-                    document.body.id = this.name;
-                    this.router.$body.addClass(this.name)
-                }
-                this.router.$body.addClass(this.type)
-                // Hide formerPages - show
-                if (this.router.formerPages.length > 0) {
-                    const formerPage = this.router.formerPages[(this.router.formerPages.length - 1)];
-                    const formerPageDestroy = formerPage.destroy.bind(formerPage);
-                    /*
-                     * Very important,
-                     * DO NOT animate if there are more than 1 page
-                     * in destroy queue!
-                     */
-                    if (this.router.formerPages.length > 1) {
-                        formerPageDestroy();
-                    } else {
-                        formerPage.hide(formerPageDestroy);
-                    }
-                    this.router.formerPages.pop();
-                }
-
-                this.show(onShowEnded);
-            }
-        }, delay);
+    updateLazyload () {
+        if (this.lazyload) {
+            this.lazyload.update();
+        }
     }
 
     /**

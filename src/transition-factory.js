@@ -2,8 +2,16 @@ import DefaultTransition from './default-transition'
 import FadeTransition from './fade-transition'
 
 export default class TransitionFactory {
-    getTransition (previousState, state) {
-        // console.log(previousState, state)
+
+    /**
+     * Get Transition
+     *
+     * @param {Object} previousState
+     * @param {Object} state
+     * @param {String} direction ('back' or 'forward')
+     * @returns {FadeTransition}
+     */
+    getTransition (previousState, state, direction = null) {
         if (previousState && previousState.context === 'history') {
             if (previousState.transitionName === 'fade') {
                 return new FadeTransition()
