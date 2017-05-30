@@ -29,7 +29,7 @@ import Utils from './utils/Utils'
 import State from './State'
 import CacheProvider from './CacheProvider'
 import Events from './Events'
-import History from './History'
+import StatesStack from './StatesStack'
 import {
     BEFORE_PAGE_LOAD,
     AFTER_PAGE_LOAD,
@@ -133,7 +133,7 @@ export default class Router {
         this.page = null
         this.transition = false
         this.loading = false
-        this.history = new History()
+        this.statesStack = new StatesStack()
         this.$window = $(window)
         this.$body = $('body')
 
@@ -211,7 +211,7 @@ export default class Router {
     onPopState (event) {
         if (typeof event.state !== 'undefined' && event.state !== null) {
             this.previousState = this.state
-            this.direction = this.history.getDirection(event.state)
+            this.direction = this.statesStack.getDirection(event.state)
             this.transition = true
             this.loadPage(event.state)
         }
@@ -243,7 +243,7 @@ export default class Router {
          */
         if (this.state === null) {
             this.state = new State(this)
-            this.history.pushState(this.state)
+            this.statesStack.push(this.state)
             window.history.replaceState(this.state, '', '')
 
             // Init first page
@@ -260,6 +260,8 @@ export default class Router {
     pageLoaded () {
         const onShowEnded = this.page.onShowEnded.bind(this.page)
         this.loader.hide()
+
+        Events.commit(AFTER_PAGE_LOAD, this.page.$cont)
 
         if (this.page.context === 'static') {
             this.page.show(onShowEnded)
@@ -318,7 +320,7 @@ export default class Router {
                     previousHref: window.location.href,
                     transitionName: $(e.currentTarget).data('transition')
                 })
-                this.history.pushState(this.state)
+                this.statesStack.push(this.state)
 
                 const prePushStateBinded = this.options.prePushState.bind(this)
                 prePushStateBinded(this.state)
@@ -432,8 +434,6 @@ export default class Router {
         // Extract only to new page content
         // if the whole HTML is queried
         let $data = this.extractPageContainer(data)
-
-        Events.commit(AFTER_PAGE_LOAD, $data)
 
         /*
          * Display data to DOM

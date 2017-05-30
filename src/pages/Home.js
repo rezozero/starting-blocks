@@ -28,7 +28,7 @@ import AbstractPage from './../AbstractPage'
  * Some example "home" page.
  *
  * @extends {AbstractPage}
- * @private
+ * @class
  */
 export default class Home extends AbstractPage {
 

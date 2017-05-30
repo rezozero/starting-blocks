@@ -19,17 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file History.js
+ * @file StatesStack.js
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
 
 /**
- * History manager.
+ * StatesStack manager.
  */
-export default class History {
+export default class StatesStack {
     /**
-     * Create a new history manager
+     * Create a new StatesStack manager
      */
     constructor () {
         this.statesStack = []
@@ -40,7 +40,7 @@ export default class History {
      * push the new state to the history
      * @param {State} state
      */
-    pushState (state) {
+    push (state) {
         this.statesStack.push(state)
         this.currentHistoryIndex = this.statesStack.length - 1
     }

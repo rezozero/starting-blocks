@@ -32,6 +32,7 @@ export default class AbstractTransition {
     /**
      * Constructor.
      * Do not override this method.
+     * @constructor
      */
     constructor () {
         /**
@@ -52,8 +53,8 @@ export default class AbstractTransition {
      * Initialize transition.
      * Do not override this method.
      *
-     * @param oldContainer
-     * @param newContainer
+     * @param {jQuery} oldContainer
+     * @param {Promise} newContainer
      * @returns {Promise}
      */
     init (oldContainer, newContainer) {
@@ -84,6 +85,7 @@ export default class AbstractTransition {
 
     /**
      * Entry point to create a custom Transition.
+     * @abstract
      */
     start () {}
 };

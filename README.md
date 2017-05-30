@@ -152,6 +152,8 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 | `BEFORE_PAGE_HIDE` | `SB_BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
 | `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
 
+⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
+
 ### Caching responses
 
 By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
@@ -161,14 +163,16 @@ successful. You can disable this feature with `useCache` router option.
 
 ### Transitions
 
-To manage transitions, you can set `data-transition` attribute to an animation name on links.
+When AJAX navigation is enabled, transitions are used to manage animations between pages.
+
+To manage transitions, you can set `data-transition` attribute with a name on each link.
 
 ```html
 <a href="/contact" data-transition="fade">Contact</a>
 ```
 
 Then, create a **TransitionFactory** class and pass it to the **Router** instance.  
-In this class, implement `getTransition (previousState, state, direction = null)`. 
+In this class, implement `getTransition (previousState, state, direction = null)` method. 
 This method is called on each transition and give you access to state informations :  
 
 - `previousState` and `state`
@@ -198,6 +202,7 @@ export default class TransitionFactory {
 ```
 
 To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.  
+⚠️ You have to wait for `this.newContainerLoading` promise resolution to make sure the new content is accessible.
 
 Example with fade animation:
 
@@ -238,7 +243,7 @@ export default class FadeTransition extends AbstractTransition {
      * Fade in the new content
      */
     fadeIn () {
-        // Remove old content from the DOM
+        // Add display: none on the old container
         this.oldContainer.hide()
 
         // Prepare new content css properties for the fade animation
