@@ -220,6 +220,12 @@ export default class Utils {
         return val === max ? 1 : (val - min) / (max - min);
     }
 
+    /**
+     * Return a new "Deferred" object
+     * https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Deferred
+     *
+     * @return {Deferred}
+     */
     static deferred() {
         return new function() {
             this.resolve = null;
