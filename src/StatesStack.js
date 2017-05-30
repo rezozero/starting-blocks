@@ -32,33 +32,33 @@ export default class StatesStack {
      * Create a new StatesStack manager
      */
     constructor () {
-        this.statesStack = []
-        this.currentHistoryIndex = 0
+        this.stack = []
+        this.currentStackIndex = 0
     }
 
     /**
-     * push the new state to the history
+     * push the new state to the stack
      * @param {State} state
      */
     push (state) {
-        this.statesStack.push(state)
-        this.currentHistoryIndex = this.statesStack.length - 1
+        this.stack.push(state)
+        this.currentStackIndex = this.stack.length - 1
     }
 
     /**
-     * Get history direction on pop state events
+     * Get navigation direction on pop state events
      * @param {State} currentState
      * @returns {string}
      */
     getDirection (currentState) {
-        const newHistoryIndex = this.statesStack.findIndex(state => state.uid === currentState.uid)
+        const newStackIndex = this.stack.findIndex(state => state.uid === currentState.uid)
         let direction = 'forward'
 
-        if (newHistoryIndex - this.currentHistoryIndex < 0) {
+        if (newStackIndex - this.currentStackIndex < 0) {
             direction = 'back'
         }
 
-        this.currentHistoryIndex = newHistoryIndex
+        this.currentStackIndex = newStackIndex
         return direction
     }
 }
