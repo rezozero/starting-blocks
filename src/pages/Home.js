@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file home.js
+ * @file Home.js
  * @author Ambroise Maupate
  */
 import AbstractPage from "./../abstract-page";
