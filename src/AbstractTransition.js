@@ -23,7 +23,7 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import Utils from './utils/utils'
+import Utils from './utils/Utils'
 
 /**
  * Base class for creating transition.

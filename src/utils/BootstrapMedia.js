@@ -7,7 +7,7 @@
  * @copyright REZO ZERO 2016
  * @author Ambroise Maupate
  */
-import Utils from './utils'
+import Utils from './Utils'
 
 /**
  * Static class to get bootstrap breakpoints.

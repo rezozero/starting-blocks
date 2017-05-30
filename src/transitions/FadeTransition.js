@@ -23,7 +23,7 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../abstract-transition'
+import AbstractTransition from '../AbstractTransition'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.
@@ -49,7 +49,7 @@ export default class FadeTransition extends AbstractTransition {
         return new Promise((resolve) => {
             this.oldContainer.animate({
                 opacity: 0
-            }, 400, 'swing', resolve);
+            }, 400, 'swing', resolve)
         })
     }
 
@@ -62,15 +62,15 @@ export default class FadeTransition extends AbstractTransition {
 
         // Prepare new content css properties for the fade animation
         this.newContainer.css({
-            visibility : 'visible',
-            opacity : 0
-        });
+            visibility: 'visible',
+            opacity: 0
+        })
 
         // fadeIn the new content container
         this.newContainer.animate({ opacity: 1 }, 400, () => {
             document.body.scrollTop = 0
             // IMPORTANT: Call this method at the end
             this.done()
-        });
+        })
     }
 }

@@ -23,16 +23,12 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../abstract-transition'
+import AbstractTransition from '../AbstractTransition'
 
 /**
  * Default Transition. Show / Hide content.
  */
 export default class DefaultTransition extends AbstractTransition {
-    constructor () {
-        super()
-    }
-
     start () {
         Promise.all([this.newContainerLoading])
             .then(this.finish.bind(this))

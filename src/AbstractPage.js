@@ -23,17 +23,17 @@
  * @author Ambroise Maupate
  */
 import log from 'loglevel'
-import waitForImages from 'jquery.waitforimages'
 import $ from 'jquery'
 import Lazyload from 'vanilla-lazyload'
 import debounce from './utils/debounce'
-import Events from './events'
+import Events from './Events'
+import 'jquery.waitforimages'
 import {
     BEFORE_PAGE_SHOW,
     AFTER_PAGE_SHOW,
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
-} from './event-types'
+} from './EventTypes'
 
 /**
  * Base class for creating page implementations.
@@ -458,7 +458,7 @@ export default class AbstractPage {
      * After image src switched.
      *
      * @abstract
-     * @param {HTMLImage} element
+     * @param {HTMLImageElement} element
      */
     onLazyImageSet (element) {
         log.debug('\t🖼 «' + element.id + '» set')
@@ -468,7 +468,7 @@ export default class AbstractPage {
      * After lazyload image loaded.
      *
      * @abstract
-     * @param {HTMLImage} element
+     * @param {HTMLImageElement} element
      */
     onLazyImageLoad (element) {
         log.debug('\t🖼 «' + element.id + '» load')
@@ -486,7 +486,7 @@ export default class AbstractPage {
     /**
      * Add target blank to external links.
      *
-     * @param {JQuery} $links
+     * @param {jQuery} $links
      * @param {String} baseUrl
      */
     externalLinkTarget ($links, baseUrl) {

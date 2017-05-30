@@ -22,7 +22,7 @@
  * @file Home.js
  * @author Ambroise Maupate
  */
-import AbstractPage from "./../abstract-page";
+import AbstractPage from './../AbstractPage'
 
 /**
  * Some example "home" page.
@@ -30,7 +30,6 @@ import AbstractPage from "./../abstract-page";
  * @extends {AbstractPage}
  * @private
  */
-export default class Home extends AbstractPage
-{
+export default class Home extends AbstractPage {
 
 }

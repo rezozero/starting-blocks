@@ -23,8 +23,8 @@
  * @author Ambroise Maupate
  */
 import log from 'loglevel'
-import waitForImages from 'jquery.waitforimages'
 import debounce from './utils/debounce'
+import 'jquery.waitforimages'
 
 /**
  * Base class for creating block implementations.

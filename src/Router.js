@@ -25,11 +25,11 @@
 import $ from 'jquery'
 import isMobile from 'ismobilejs'
 import log from 'loglevel'
-import Utils from './utils/utils'
-import State from './state'
+import Utils from './utils/Utils'
+import State from './State'
 import CacheProvider from './CacheProvider'
-import Events from './events'
-import History from './history'
+import Events from './Events'
+import History from './History'
 import {
     BEFORE_PAGE_LOAD,
     AFTER_PAGE_LOAD,
