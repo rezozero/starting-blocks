@@ -25,6 +25,11 @@
 
 import log from 'loglevel'
 
+/**
+ * Event dispatcher singleton.
+ *
+ * @abstract
+ */
 class Events {
     commit (eventType, detail) {
         const event = new window.CustomEvent(eventType, {detail})
