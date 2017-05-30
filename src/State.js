@@ -103,7 +103,7 @@ export default class State {
         if (link !== null) {
             this.context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link'
             const dataHome = link.getAttribute('data-is-home')
-            this.isHome = (dataHome == '1')
+            this.isHome = (dataHome === '1')
 
             this.title = link.getAttribute('data-title')
             if (this.title === '') this.title = link.innerHTML
