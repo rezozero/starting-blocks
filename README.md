@@ -113,6 +113,7 @@ A Router needs:
 - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
 - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.
+- a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes. 
 
 You can look at the `src/main.js` file to see an instantiation example with few parameters.
 
@@ -155,6 +156,104 @@ By default, the router will use a JS object cache to store and fetch AJAX respo
 successful. You can disable this feature with `useCache` router option.
 
 **Be careful, this cache is global and cannot be disabled for special pages.**
+
+### Transitions
+
+To manage transitions, you can set `data-transition` attribute to an animation name on links.
+
+```html
+<a href="/contact" data-transition="fade">Contact</a>
+```
+
+Then, create a **TransitionFactory** class and pass it to the **Router** instance.  
+In this class, implement `getTransition (previousState, state, direction = null)`. 
+This method is called on each transition and give you access to state informations :  
+
+- `previousState` and `state`
+	- **transitionName** : `data-transition` attributes of the clicked link
+	- **context** : equal to `"history"`, `"link"` or `"nav"` 
+- `direction` : equal to `"back"` or `"forward"` on navigator buttons click (only when `context` equals to `"history"`)
+
+Example: 
+```javascript
+// src/transition-factory.js
+
+import DefaultTransition from './transitions/default-transition';
+import FadeTransition from './transitions/fade-transition';
+  
+export default class TransitionFactory {
+    getTransition(previousState, state, direction = null) {
+        switch (state.transitionName) {
+            case 'fade':
+                return new FadeTransition();
+                break;
+            default:
+                return new DefaultTransition();
+                break;
+        }
+    }
+}
+```
+
+To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.  
+
+Example with fade animation:
+
+```javascript
+// src/transitions/fade-transition.js
+
+import AbstractTransition from '../abstract-transition'
+
+/**
+ * Fade Transition class example. Fade Out / Fade In content.
+ */
+export default class FadeTransition extends AbstractTransition {
+    /**
+     * Entry point of the animation
+     * Automatically called on init()
+     */
+    start () {
+        // Wait new content and the end of fadeOut animation
+        // this.newContainerLoading is a Promise which is resolved when the new content is loaded
+        Promise.all([this.newContainerLoading, this.fadeOut()])
+            // then fadeIn the new content
+            .then(this.fadeIn.bind(this))
+    }
+
+    /**
+     * Fade out the old content.
+     * @returns {Promise}
+     */
+    fadeOut () {
+        return new Promise((resolve) => {
+            this.oldContainer.animate({
+                opacity: 0
+            }, 400, 'swing', resolve);
+        })
+    }
+
+    /**
+     * Fade in the new content
+     */
+    fadeIn () {
+        // Remove old content from the DOM
+        this.oldContainer.hide()
+
+        // Prepare new content css properties for the fade animation
+        this.newContainer.css({
+            visibility : 'visible',
+            opacity : 0
+        });
+
+        // fadeIn the new content container
+        this.newContainer.animate({ opacity: 1 }, 400, () => {
+            document.body.scrollTop = 0
+            // IMPORTANT: Call this method at the end
+            this.done()
+        });
+    }
+}
+```
 
 ## Docs
 
