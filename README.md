@@ -1,20 +1,22 @@
 # Starting blocks
 ## A page transition and blocks ES6 framework by REZO ZERO
 
-- Maxime Bérard
-- Ambroise Maupate
+- [Maxime Bérard](https://github.com/maximeberard)
+- [Ambroise Maupate](https://github.com/ambroisemaupate)
+- [Quentin Neyraud](https://github.com/quentinneyraud)
+- [Adrien Scholaert](https://github.com/Gouterman)
 
 ## Spec
 
 - *Gulp* (for development)
-- *CommonJS 2* module syntax
 - *jQuery* 2.2.4
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
 - *ismobilejs*
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
-- Native *window.CustomEvent*. Make sure to use a polyfill for [Internet Explorer 9 - 11](http://caniuse.com/#search=CustomEvent)
+- Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 9 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js)
+- Native *window.MutationObserver*. Make sure to use a polyfill for [Internet Explorer 10](https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js)
 
 ## Usage with NPM
 
