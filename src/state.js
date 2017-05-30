@@ -75,7 +75,7 @@ export default class State {
          */
         this.index = 0;
 
-        this.uid = Math.round(Math.random() * 1000)
+        this.uid = Math.round(Math.random() * 1000) + new Date().getTime()
 
         /**
          * @type {String}
