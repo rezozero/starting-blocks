@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file fade-transition.js
+ * @file FadeTransition.js
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */

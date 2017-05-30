@@ -19,10 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file page.js
+ * @file Page.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
 import AbstractPage from "./../abstract-page";
 /**
  * Some example "page".
