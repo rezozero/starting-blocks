@@ -29,33 +29,48 @@ import AbstractTransition from '../abstract-transition'
  * Fade Transition class example. Fade Out / Fade In content.
  */
 export default class FadeTransition extends AbstractTransition {
-    constructor () {
-        super()
-    }
-
+    /**
+     * Entry point of the animation
+     * Automatically called on init()
+     */
     start () {
+        // Wait new content and the end of fadeOut animation
+        // this.newContainerLoading is a Promise which is resolved when the new content is loaded
         Promise.all([this.newContainerLoading, this.fadeOut()])
+            // then fadeIn the new content
             .then(this.fadeIn.bind(this))
     }
 
-    fadeIn () {
-        this.oldContainer.hide()
-        this.newContainer.css({
-            visibility : 'visible',
-            opacity : 0
-        });
-
-        this.newContainer.animate({ opacity: 1 }, 400, () => {
-            document.body.scrollTop = 0
-            this.done()
-        });
-    }
-
+    /**
+     * Fade out the old content.
+     * @returns {Promise}
+     */
     fadeOut () {
         return new Promise((resolve) => {
             this.oldContainer.animate({
                 opacity: 0
             }, 400, 'swing', resolve);
         })
+    }
+
+    /**
+     * Fade in the new content
+     */
+    fadeIn () {
+        // Remove old content from the DOM
+        this.oldContainer.hide()
+
+        // Prepare new content css properties for the fade animation
+        this.newContainer.css({
+            visibility : 'visible',
+            opacity : 0
+        });
+
+        // fadeIn the new content container
+        this.newContainer.animate({ opacity: 1 }, 400, () => {
+            document.body.scrollTop = 0
+            // IMPORTANT: Call this method at the end
+            this.done()
+        });
     }
 }

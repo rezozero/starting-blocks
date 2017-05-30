@@ -23,8 +23,8 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import DefaultTransition from './transitions/default-transition'
-import FadeTransition from './transitions/fade-transition'
+import DefaultTransition from './transitions/default-transition';
+import FadeTransition from './transitions/fade-transition';
 
 /**
  * Transition mapper class.
@@ -54,17 +54,17 @@ export default class TransitionFactory {
          */
         if (previousState && previousState.context === 'history' && direction) {
             if (previousState.transitionName === 'fade' && direction === 'back') {
-                return new DefaultTransition()
+                return new DefaultTransition();
             }
         }
 
         switch (state.transitionName) {
             case 'fade':
-                return new FadeTransition()
-                break
+                return new FadeTransition();
+                break;
             default:
-                return new DefaultTransition()
-                break
+                return new DefaultTransition();
+                break;
         }
     }
 }
