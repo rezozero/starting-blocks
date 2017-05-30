@@ -19,23 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file router.js
+ * @file Router.js
  * @author Ambroise Maupate
  */
-import $ from "jquery";
-import isMobile from "ismobilejs";
-import log from "loglevel";
-import Utils from "./utils/utils";
-import State from "./state";
-import CacheProvider from "./cache-provider";
-import Events from "./events";
+import $ from 'jquery'
+import isMobile from 'ismobilejs'
+import log from 'loglevel'
+import Utils from './utils/utils'
+import State from './state'
+import CacheProvider from './CacheProvider'
+import Events from './events'
 import History from './history'
 import {
     BEFORE_PAGE_LOAD,
     AFTER_PAGE_LOAD,
     AFTER_DOM_APPENDED,
     AFTER_PAGE_BOOT
-} from "./event-types";
+} from './EventTypes'
+
 /**
  * Application main page router.
  */
@@ -80,71 +81,71 @@ export default class Router {
      * @param {AbstractNav} nav
      * @param {TransitionFactory} transitionFactory
      */
-    constructor(options, classFactory, baseUrl, loader, nav, transitionFactory) {
+    constructor (options, classFactory, baseUrl, loader, nav, transitionFactory) {
         if (!baseUrl) {
-            throw "Router needs baseUrl to be defined.";
+            throw new Error('Router needs baseUrl to be defined.')
         }
         if (!loader) {
-            throw "Router needs a GraphicLoader instance to be defined.";
+            throw new Error('Router needs a GraphicLoader instance to be defined.')
         }
         if (!classFactory) {
-            throw "Router needs a ClassFactory instance to be defined.";
+            throw new Error('Router needs a ClassFactory instance to be defined.')
         }
         if (!nav) {
-            throw "Router needs a Nav instance to be defined.";
+            throw new Error('Router needs a Nav instance to be defined.')
         }
         if (!transitionFactory) {
-            throw "Router needs a Transition Factory instance to be defined.";
+            throw new Error('Router needs a Transition Factory instance to be defined.')
         }
 
         /**
          * @type {ClassFactory}
          */
-        this.classFactory = classFactory;
+        this.classFactory = classFactory
         /**
          * @type {String}
          */
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl
         /**
          * @type {GraphicLoader}
          */
-        this.loader = loader;
+        this.loader = loader
         /**
          * @type {AbstractNav}
          */
-        this.nav = nav;
-        this.nav.router = this;
+        this.nav = nav
+        this.nav.router = this
         /**
          * @type {TransitionFactory}
          */
-        this.transitionFactory = transitionFactory;
+        this.transitionFactory = transitionFactory
         /**
          * @type {State|null}
          */
-        this.state = null;
+        this.state = null
         /**
          * @type {Array}
          */
-        this.formerPages = [];
+        this.formerPages = []
         /**
          * @type {null}
          */
-        this.page = null;
-        this.transition = false;
-        this.loading = false;
-        this.history = new History();
-        this.$window = $(window);
-        this.$body = $('body');
+        this.page = null
+        this.transition = false
+        this.loading = false
+        this.history = new History()
+        this.$window = $(window)
+        this.$body = $('body')
 
-        this.deviceType = (isMobile.any === false) ? 'desktop' : 'mobile';
-        Utils.addClass(this.$body[0],'is-'+this.deviceType);
+        this.deviceType = (isMobile.any === false) ? 'desktop' : 'mobile'
+        Utils.addClass(this.$body[0], 'is-' + this.deviceType)
 
         /**
          * @deprecated use this.$window instead
          */
-        this.window = this.$window;
-        this.currentRequest = null;
-        this.cacheProvider = new CacheProvider();
+        this.window = this.$window
+        this.currentRequest = null
+        this.cacheProvider = new CacheProvider()
 
         /**
          * @type {Object}
@@ -152,20 +153,20 @@ export default class Router {
         this.options = {
             homeHasClass: false,
             ajaxEnabled: true,
-            pageClass: "page-content",
-            objectTypeAttr: "data-node-type",
-            ajaxLinkTypeAttr: "data-node-type",
-            noAjaxLinkClass: "no-ajax-link",
-            navLinkClass: "nav-link",
-            activeClass: "active",
-            pageBlockClass: ".page-block",
+            pageClass: 'page-content',
+            objectTypeAttr: 'data-node-type',
+            ajaxLinkTypeAttr: 'data-node-type',
+            noAjaxLinkClass: 'no-ajax-link',
+            navLinkClass: 'nav-link',
+            activeClass: 'active',
+            pageBlockClass: '.page-block',
             lazyloadEnabled: false,
             lazyloadSrcAttr: 'data-src',
             lazyloadClass: 'lazyload',
             lazyloadSrcSetAttr: 'data-srcset',
             lazyloadThreshold: 300,
             lazyloadThrottle: 150,
-            $ajaxContainer: $("#ajax-container"),
+            $ajaxContainer: $('#ajax-container'),
             minLoadDuration: 0,
             preLoadPageDelay: 0,
             useCache: true,
@@ -174,45 +175,45 @@ export default class Router {
             prePushState: (state) => {},
             onDestroy: () => {},
             preBoot: ($cont, context, isHome) => {}
-        };
+        }
 
         if (options !== null) {
-            this.options = $.extend(this.options, options);
+            this.options = $.extend(this.options, options)
         }
     }
 
-    destroy() {
+    destroy () {
         if (this.options.ajaxEnabled) {
-            window.removeEventListener("popstate", this.onPopState.bind(this), false);
+            window.removeEventListener('popstate', this.onPopState.bind(this), false)
         }
-        const onDestroyBinded = this.options.onDestroy.bind(this);
-        onDestroyBinded();
+        const onDestroyBinded = this.options.onDestroy.bind(this)
+        onDestroyBinded()
     }
 
     /**
      * Initialize Router events.
      */
-    initEvents() {
+    initEvents () {
         if (this.options.ajaxEnabled) {
-            window.addEventListener("popstate", this.onPopState.bind(this), false);
-            window.addEventListener(AFTER_PAGE_BOOT, this.trackGoogleAnalytics.bind(this), false);
+            window.addEventListener('popstate', this.onPopState.bind(this), false)
+            window.addEventListener(AFTER_PAGE_BOOT, this.trackGoogleAnalytics.bind(this), false)
         }
         /*
          * Init nav events
          */
-        this.nav.initEvents(this);
+        this.nav.initEvents(this)
     }
     /**
      * @private
      * @param  {Object} event
      * @return
      */
-    onPopState(event) {
-        if (typeof event.state !== "undefined" && event.state !== null) {
-            this.previousState = this.state;
-            this.direction = this.history.getDirection(event.state);
-            this.transition = true;
-            this.loadPage(event.state);
+    onPopState (event) {
+        if (typeof event.state !== 'undefined' && event.state !== null) {
+            this.previousState = this.state
+            this.direction = this.history.getDirection(event.state)
+            this.transition = true
+            this.loadPage(event.state)
         }
     }
 
@@ -226,70 +227,70 @@ export default class Router {
      * @param  {String}  context ["static" or custom string]
      * @param  {Boolean} isHome
      */
-    boot($cont, context, isHome) {
+    boot ($cont, context, isHome) {
         if (context === 'static') {
-            this.loadBeginDate = new Date();
+            this.loadBeginDate = new Date()
         }
-        const preBootBinded = this.options.preBoot.bind(this);
-        preBootBinded($cont, context, isHome);
+        const preBootBinded = this.options.preBoot.bind(this)
+        preBootBinded($cont, context, isHome)
 
-        const nodeType = $cont.attr(this.options.objectTypeAttr);
-        this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome);
+        const nodeType = $cont.attr(this.options.objectTypeAttr)
+        this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome)
 
         /*
          * Replace current state
          * for first request
          */
-        if (null === this.state) {
-            this.state = new State(this);
-            this.history.pushState(this.state);
-            window.history.replaceState(this.state, '', '');
+        if (this.state === null) {
+            this.state = new State(this)
+            this.history.pushState(this.state)
+            window.history.replaceState(this.state, '', '')
 
             // Init first page
             this.pageLoaded()
         }
 
         if (context === 'ajax') {
-            this.state.update(this.page);
+            this.state.update(this.page)
         }
 
-        Events.commit(AFTER_PAGE_BOOT, this.page);
+        Events.commit(AFTER_PAGE_BOOT, this.page)
     }
 
-    pageLoaded() {
-        const onShowEnded = this.page.onShowEnded.bind(this.page);
-        this.loader.hide();
+    pageLoaded () {
+        const onShowEnded = this.page.onShowEnded.bind(this.page)
+        this.loader.hide()
 
         if (this.page.context === 'static') {
-            this.page.show(onShowEnded);
+            this.page.show(onShowEnded)
         } else if (this.page.context === 'ajax') {
             // Update body id
-            if(null !== this.page.name && this.page.name !== '') {
-                document.body.id = this.page.name;
+            if (this.page.name !== null && this.page.name !== '') {
+                document.body.id = this.page.name
                 this.$body.addClass(this.page.name)
             }
 
-            this.$body.addClass(this.page.type);
-            this.page.show(onShowEnded);
+            this.$body.addClass(this.page.type)
+            this.page.show(onShowEnded)
         }
     }
 
-    destroyPreviousPage() {
+    destroyPreviousPage () {
         // Hide formerPages - show
         if (this.page.context === 'ajax' && this.formerPages.length > 0) {
-            const formerPage = this.formerPages[(this.formerPages.length - 1)];
-            const formerPageDestroy = formerPage.destroy.bind(formerPage);
+            const formerPage = this.formerPages[(this.formerPages.length - 1)]
+            const formerPageDestroy = formerPage.destroy.bind(formerPage)
             /*
              * Very important,
              * DO NOT animate if there are more than 1 page
              * in destroy queue!
              */
             if (this.formerPages.length > 1) {
-                formerPageDestroy();
+                formerPageDestroy()
             } else {
-                formerPage.hide(formerPageDestroy);
+                formerPage.hide(formerPageDestroy)
             }
-            this.formerPages.pop();
+            this.formerPages.pop()
         }
 
         this.page.updateLazyload()
@@ -298,36 +299,36 @@ export default class Router {
     /**
      * @param e Event
      */
-    onLinkClick(e) {
-        const linkClassName = e.currentTarget.className,
-              linkHref = e.currentTarget.href;
+    onLinkClick (e) {
+        const linkClassName = e.currentTarget.className
+        const linkHref = e.currentTarget.href
 
         if (linkHref.indexOf('mailto:') === -1 &&
             linkClassName.indexOf(this.options.noAjaxLinkClass) === -1) {
-            e.preventDefault();
+            e.preventDefault()
             // Check if link is not active
-            if(this.isNotCurrentPageLink(e.currentTarget)) {
-                this.transition = true;
+            if (this.isNotCurrentPageLink(e.currentTarget)) {
+                this.transition = true
 
-                this.previousState = Object.assign({}, this.state);
+                this.previousState = Object.assign({}, this.state)
                 this.state = new State(this, e.currentTarget, {
                     previousType: this.page.type,
                     previousName: this.page.name,
                     navLinkClass: this.options.navLinkClass,
                     previousHref: window.location.href,
                     transitionName: $(e.currentTarget).data('transition')
-                });
-                this.history.pushState(this.state);
+                })
+                this.history.pushState(this.state)
 
-                const prePushStateBinded = this.options.prePushState.bind(this);
-                prePushStateBinded(this.state);
+                const prePushStateBinded = this.options.prePushState.bind(this)
+                prePushStateBinded(this.state)
 
                 if (window.history.pushState) {
-                    window.history.pushState(this.state, this.state.title, this.state.href);
+                    window.history.pushState(this.state, this.state.title, this.state.href)
                 }
-                this.loadPage(this.state);
+                this.loadPage(this.state)
             } else {
-                log.debug('⛔️ Same page requested… do nothing.');
+                log.debug('⛔️ Same page requested… do nothing.')
             }
         }
     }
@@ -338,9 +339,9 @@ export default class Router {
      * @param currentTarget
      * @return {boolean}
      */
-    isNotCurrentPageLink(currentTarget) {
-        const linkClassName = currentTarget.className;
-        return linkClassName.indexOf(this.options.activeClass) === -1 && !this.transition;
+    isNotCurrentPageLink (currentTarget) {
+        const linkClassName = currentTarget.className
+        return linkClassName.indexOf(this.options.activeClass) === -1 && !this.transition
     }
 
     /**
@@ -349,23 +350,23 @@ export default class Router {
      * @param state
      * @private
      */
-    loadPage(state) {
-        if(this.currentRequest && this.currentRequest.readyState !== 4) {
-            this.currentRequest.abort();
+    loadPage (state) {
+        if (this.currentRequest && this.currentRequest.readyState !== 4) {
+            this.currentRequest.abort()
         }
-        this.loader.show();
-        this.loadBeginDate = new Date();
+        this.loader.show()
+        this.loadBeginDate = new Date()
 
-        const preLoadBinded = this.options.preLoad.bind(this);
-        preLoadBinded(state);
+        const preLoadBinded = this.options.preLoad.bind(this)
+        preLoadBinded(state)
 
-        Events.commit(BEFORE_PAGE_LOAD, state);
+        Events.commit(BEFORE_PAGE_LOAD, state)
 
         this.transitionFactory.getTransition(this.previousState, state, this.direction)
             .init(this.page.$cont, this.doPageLoad(state))
             .then(() => {
-                this.pageLoaded();
-                this.destroyPreviousPage();
+                this.pageLoaded()
+                this.destroyPreviousPage()
             })
     }
 
@@ -375,20 +376,20 @@ export default class Router {
      * @param  {State} state
      * @private
      */
-    doPageLoad(state) {
+    doPageLoad (state) {
         return new Promise((resolve) => {
             if (this.options.useCache && this.cacheProvider.exists(state.href)) {
-                log.debug('📎 Use cache-provider for: ' + state.href);
-                resolve(this._onDataLoaded(this.cacheProvider.fetch(state.href), state));
+                log.debug('📎 Use cache-provider for: ' + state.href)
+                resolve(this._onDataLoaded(this.cacheProvider.fetch(state.href), state))
             } else {
                 this.currentRequest = $.ajax({
                     url: state.href,
-                    dataType: "html",
+                    dataType: 'html',
                     headers: {
                         // Send header to allow backends to
                         // send partial response for saving
                         // bandwidth and process time
-                        'X-Allow-Partial' : 1
+                        'X-Allow-Partial': 1
                     },
                     // Need to disable cache to prevent
                     // browser to serve partial when no
@@ -397,11 +398,11 @@ export default class Router {
                     type: 'get',
                     success: (data) => {
                         if (this.options.useCache) {
-                            this.cacheProvider.save(state.href, data);
+                            this.cacheProvider.save(state.href, data)
                         }
-                        resolve(this._onDataLoaded(data, state));
+                        resolve(this._onDataLoaded(data, state))
                     }
-                });
+                })
             }
         })
     }
@@ -413,12 +414,12 @@ export default class Router {
      * @param data
      * @return {*}
      */
-    extractPageContainer(data) {
-        const $response = $($.parseHTML(data.trim()));
+    extractPageContainer (data) {
+        const $response = $($.parseHTML(data.trim()))
         if ($response.hasClass(this.options.pageClass)) {
-            return $response;
+            return $response
         } else {
-            return $response.find('.' + this.options.pageClass);
+            return $response.find('.' + this.options.pageClass)
         }
     }
 
@@ -427,34 +428,34 @@ export default class Router {
      * @param {Object} data jQuery AJAX response
      * @param {State} state
      */
-    _onDataLoaded(data, state) {
+    _onDataLoaded (data, state) {
         // Extract only to new page content
         // if the whole HTML is queried
-        let $data = this.extractPageContainer(data);
+        let $data = this.extractPageContainer(data)
 
-        Events.commit(AFTER_PAGE_LOAD, $data);
+        Events.commit(AFTER_PAGE_LOAD, $data)
 
         /*
          * Display data to DOM
          */
-        $data.css('visibility', 'hidden');
-        this.options.$ajaxContainer.append($data);
+        $data.css('visibility', 'hidden')
+        this.options.$ajaxContainer.append($data)
 
-        Events.commit(AFTER_DOM_APPENDED, $data);
+        Events.commit(AFTER_DOM_APPENDED, $data)
 
         /*
          * Push a copy object not to set it as null.
          */
-        this.formerPages.push(this.page);
+        this.formerPages.push(this.page)
 
         // Init new page
-        this.updatePageTitle($data);
-        this.boot($data, 'ajax', state.isHome);
+        this.updatePageTitle($data)
+        this.boot($data, 'ajax', state.isHome)
 
-        const postLoadBinded = this.options.postLoad.bind(this);
-        postLoadBinded(state, $data);
+        const postLoadBinded = this.options.postLoad.bind(this)
+        postLoadBinded(state, $data)
 
-        return $data;
+        return $data
     }
 
     /**
@@ -463,21 +464,21 @@ export default class Router {
      *
      * @param {jQuery} $data
      */
-    updatePageTitle($data) {
+    updatePageTitle ($data) {
         if ($data.length && $data.attr('data-meta-title') !== '') {
-            let metaTitle = $data.attr('data-meta-title');
-            if(metaTitle !== null && metaTitle !== '') document.title = metaTitle;
+            let metaTitle = $data.attr('data-meta-title')
+            if (metaTitle !== null && metaTitle !== '') document.title = metaTitle
         }
     }
 
     /**
      * Send a GA page view event when context is AJAX.
      */
-    trackGoogleAnalytics(event) {
+    trackGoogleAnalytics (event) {
         if (event && event.detail.context === 'ajax') {
-            if(typeof ga !== "undefined") {
-                log.debug('🚩 Push Analytics for: ' + window.location.pathname);
-                ga('send', 'pageview', {'page': window.location.pathname, 'title': document.title});
+            if (typeof ga !== 'undefined') {
+                log.debug('🚩 Push Analytics for: ' + window.location.pathname)
+                window.ga('send', 'pageview', {'page': window.location.pathname, 'title': document.title})
             }
         }
     }

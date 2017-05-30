@@ -19,47 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file cache-provider.js
- * @author Ambroise Maupate
+ * @file History.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
  */
 
 /**
- * Cache provider class.
- *
- * This class stores Ajax response in memory.
+ * History manager.
  */
-export default class CacheProvider {
-
-    constructor() {
-        this.hash = {};
+export default class History {
+    /**
+     * Create a new history manager
+     */
+    constructor () {
+        this.statesStack = []
+        this.currentHistoryIndex = 0
     }
 
     /**
-     * @param  {String} href
-     * @return {Boolean}
+     * push the new state to the history
+     * @param {State} state
      */
-    exists(href) {
-        if (href in this.hash) {
-            return true;
+    pushState (state) {
+        this.statesStack.push(state)
+        this.currentHistoryIndex = this.statesStack.length - 1
+    }
+
+    /**
+     * Get history direction on pop state events
+     * @param {State} currentState
+     * @returns {string}
+     */
+    getDirection (currentState) {
+        const newHistoryIndex = this.statesStack.findIndex(state => state.uid === currentState.uid)
+        let direction = 'forward'
+
+        if (newHistoryIndex - this.currentHistoryIndex < 0) {
+            direction = 'back'
         }
-        return false;
-    }
 
-    /**
-     * @param  {String} href
-     * @return {Object}
-     */
-    fetch(href) {
-        return this.hash[href];
-    }
-
-    /**
-     * @param  {String} href
-     * @param  {Object} data
-     * @return {CacheProvider}  this
-     */
-    save(href, data) {
-        this.hash[href] = data;
-        return this;
+        this.currentHistoryIndex = newHistoryIndex
+        return direction
     }
 }

@@ -19,45 +19,70 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file graphicLoader.js
+ * @file AbstractNav.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
 
 /**
- * Handle your application main loader animation.
+ * Base class for handling your website main navigation.
  *
  * **Do not instanciate this class directly, create a sub-class**.
  */
-export default class GraphicLoader {
-
+export default class AbstractNav {
     /**
-     * Interface for a graphic loader element.
+     * Interface for a navigation element.
      *
      * Any child implementations must implements
-     * show and hide methods.
-     *
-     * @abstract
+     * update method.
      */
-    constructor() {
+    constructor () {
+        /**
+         * Page DOM section.
+         *
+         * @type {jQuery}
+         */
+        this.$cont = null
 
+        /**
+         * Main router.
+         *
+         * @type {Router}
+         */
+        this.router = null
+
+        /**
+         * Current active page.
+         *
+         * **First page won’t be available**.
+         * @type {AbstractPage|null}
+         */
+        this.page = null
     }
 
     /**
-     * Show loader.
+     * Update navigation state against a DOM container.
      *
      * @abstract
+     * @param {AbstractPage} page
      */
-    show() {
-        log.debug('🌀 Show loader');
+    update (page) {
+        if (!page) {
+            throw new Error('Nav update method needs a Page object.')
+        }
+
+        this.page = page
     }
 
     /**
-     * Hide loader.
+     * Bind navigation against router.
      *
+     * @param {Router} router
      * @abstract
      */
-    hide() {
-        log.debug('🌀 Hide loader');
+    initEvents (router) {
+        if (!router) {
+            throw new Error('Nav initEvents method needs a Router object.')
+        }
+        this.router = router
     }
 }

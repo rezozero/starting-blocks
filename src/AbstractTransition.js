@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file abstract-transition.js
+ * @file AbstractTransition.js
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import Utils from './utils/utils';
+import Utils from './utils/utils'
 
 /**
  * Base class for creating transition.
@@ -33,19 +33,19 @@ export default class AbstractTransition {
      * Constructor.
      * Do not override this method.
      */
-    constructor() {
+    constructor () {
         /**
          * @type {Object} Dom element
          */
-        this.oldContainer = undefined;
+        this.oldContainer = undefined
         /**
          * @type {Promise}
          */
-        this.newContainer = undefined;
+        this.newContainer = undefined
         /**
          * @type {Promise}
          */
-        this.newContainerLoading = undefined;
+        this.newContainerLoading = undefined
     }
 
     /**
@@ -56,34 +56,34 @@ export default class AbstractTransition {
      * @param newContainer
      * @returns {Promise}
      */
-    init(oldContainer, newContainer) {
-        this.oldContainer = oldContainer;
-        this._newContainerPromise = newContainer;
+    init (oldContainer, newContainer) {
+        this.oldContainer = oldContainer
+        this._newContainerPromise = newContainer
 
-        this.deferred = Utils.deferred();
-        this.newContainerReady = Utils.deferred();
-        this.newContainerLoading = this.newContainerReady.promise;
+        this.deferred = Utils.deferred()
+        this.newContainerReady = Utils.deferred()
+        this.newContainerLoading = this.newContainerReady.promise
 
-        this.start();
+        this.start()
 
         this._newContainerPromise.then(newContainer => {
-            this.newContainer = newContainer;
-            this.newContainerReady.resolve();
-        });
+            this.newContainer = newContainer
+            this.newContainerReady.resolve()
+        })
 
-        return this.deferred.promise;
+        return this.deferred.promise
     }
 
     /**
      * Call this function when the Transition is finished.
      */
-    done() {
-        this.newContainer.css('visibility', 'visible');
-        this.deferred.resolve();
+    done () {
+        this.newContainer.css('visibility', 'visible')
+        this.deferred.resolve()
     }
 
     /**
      * Entry point to create a custom Transition.
      */
-    start() {}
+    start () {}
 };

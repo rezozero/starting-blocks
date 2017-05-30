@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file state.js
+ * @file State.js
  * @author Ambroise Maupate
  */
-import $ from "jquery";
+import $ from 'jquery'
 
 /**
  * State object is meant to carry informations during HTML5 History changes.
@@ -34,7 +34,7 @@ export default class State {
      * @param {HTMLElement} link
      * @param {Object} options Extends state options.
      */
-    constructor(router, link = null, options = null) {
+    constructor (router, link = null, options = null) {
         /**
          * Keep custom informations such as:
          *
@@ -48,39 +48,39 @@ export default class State {
          * @type {Object}
          */
         this.options = {
-            previousType: "page",
-            previousName: "home",
-            navLinkClass: "nav-link",
+            previousType: 'page',
+            previousName: 'home',
+            navLinkClass: 'nav-link',
             previousHref: window.location.href
-        };
+        }
 
         if (options !== null) {
-            this.options = $.extend(this.options, options);
+            this.options = $.extend(this.options, options)
         }
 
         /**
          * @type {String}
          */
-        this.title = window.document.title;
+        this.title = window.document.title
         /**
          * @type {String}
          */
-        this.href = window.location.href;
+        this.href = window.location.href
         /**
          * @type {String}
          */
-        this.nodeName = '';
+        this.nodeName = ''
         /**
          * @type {Number}
          */
-        this.index = 0;
+        this.index = 0
 
         this.uid = Math.round(Math.random() * 1000) + new Date().getTime()
 
         /**
          * @type {String}
          */
-        this.nodeType = 'page';
+        this.nodeType = 'page'
         /**
          * History change context:
          *
@@ -90,42 +90,41 @@ export default class State {
          *
          * @type {String}
          */
-        this.context = 'history';
+        this.context = 'history'
         /**
          * @type {Boolean}
          */
-        this.isHome = false;
+        this.isHome = false
         /**
          * @type {String}
          */
         this.transitionName = null
 
-        if (null !== link) {
-            this.context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link';
-            const dataHome = link.getAttribute('data-is-home');
-            this.isHome = (dataHome == '1') ? (true) : (false);
+        if (link !== null) {
+            this.context = (link.className.indexOf(this.options.navLinkClass) >= 0) ? 'nav' : 'link'
+            const dataHome = link.getAttribute('data-is-home')
+            this.isHome = (dataHome == '1')
 
-            this.title = link.getAttribute('data-title');
-            if(this.title === '') this.title = link.innerHTML;
+            this.title = link.getAttribute('data-title')
+            if (this.title === '') this.title = link.innerHTML
 
-            this.nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr);
+            this.nodeType = link.getAttribute(router.options.ajaxLinkTypeAttr)
             if (this.nodeType === null || this.nodeType === '') {
-                let objectTypeAttr = link.getAttribute(router.options.objectTypeAttr);
-                if (objectTypeAttr !== null && objectTypeAttr !== '') this.nodeType = objectTypeAttr;
+                let objectTypeAttr = link.getAttribute(router.options.objectTypeAttr)
+                if (objectTypeAttr !== null && objectTypeAttr !== '') this.nodeType = objectTypeAttr
             }
 
-            this.nodeName = link.getAttribute('data-node-name');
-            this.index = Number(link.getAttribute('data-index'));
-            this.href = link.href;
+            this.nodeName = link.getAttribute('data-node-name')
+            this.index = Number(link.getAttribute('data-index'))
+            this.href = link.href
 
-            this.transitionName = link.getAttribute('data-transition');
+            this.transitionName = link.getAttribute('data-transition')
         }
-
 
         /**
          * @type {String}
          */
-        this.transition = this.options.previousType + '_to_' + this.nodeType;
+        this.transition = this.options.previousType + '_to_' + this.nodeType
     }
 
     /**
@@ -133,10 +132,10 @@ export default class State {
      * @param  {AbstractPage} page
      * @return {this}
      */
-    update(page) {
-        this.transition = this.options.previousType+'_to_'+page.type;
-        this.nodeName = page.name;
-        this.isHome = page.isHome;
-        this.nodeType = page.type;
+    update (page) {
+        this.transition = this.options.previousType + '_to_' + page.type
+        this.nodeName = page.name
+        this.isHome = page.isHome
+        this.nodeType = page.type
     }
 }

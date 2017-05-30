@@ -19,18 +19,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file events.js
+ * @file CacheProvider.js
  * @author Ambroise Maupate
  */
 
-import log from "loglevel";
+/**
+ * Cache provider class.
+ *
+ * This class stores Ajax response in memory.
+ */
+export default class CacheProvider {
+    constructor () {
+        this.hash = {}
+    }
 
-class Events {
-    commit (eventType, detail) {
-        const event = new CustomEvent(eventType, {detail});
-        log.debug("🚩 Dispatched " + eventType);
-        window.dispatchEvent(event);
+    /**
+     * @param  {String} href
+     * @return {Boolean}
+     */
+    exists (href) {
+        return href in this.hash
+    }
+
+    /**
+     * @param  {String} href
+     * @return {Object}
+     */
+    fetch (href) {
+        return this.hash[href]
+    }
+
+    /**
+     * @param  {String} href
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    save (href, data) {
+        this.hash[href] = data
+        return this
     }
 }
-
-export default new Events;

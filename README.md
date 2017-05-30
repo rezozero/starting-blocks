@@ -33,7 +33,7 @@ npm install starting-blocks --save
 ```
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
-and your `class-factory.js` according to your website pages and blocks. Any other router dependencies can be
+and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
 customize such as `AbstractNav` to fit your own navigation needs.
 
 *Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
@@ -178,7 +178,7 @@ This method is called on each transition and give you access to state informatio
 
 Example: 
 ```javascript
-// src/transition-factory.js
+// src/TransitionFactory.js
 
 import DefaultTransition from './transitions/default-transition';
 import FadeTransition from './transitions/fade-transition';

@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file transition-factory.js
+ * @file TransitionFactory.js
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import DefaultTransition from './transitions/default-transition';
-import FadeTransition from './transitions/fade-transition';
+import DefaultTransition from './transitions/default-transition'
+import FadeTransition from './transitions/fade-transition'
 
 /**
  * Transition mapper class.
@@ -34,7 +34,6 @@ import FadeTransition from './transitions/fade-transition';
  * **You must define your own ClassFactory for each of your projects.**.
  */
 export default class TransitionFactory {
-
     /**
      * Get Transition
      *
@@ -44,7 +43,6 @@ export default class TransitionFactory {
      * @returns {AbstractTransition}
      */
     getTransition (previousState, state, direction = null) {
-
         /**
          * You can customise transition logic with the previousState, the new state
          * and the direction (back or forward)
@@ -54,17 +52,21 @@ export default class TransitionFactory {
          */
         if (previousState && previousState.context === 'history' && direction) {
             if (previousState.transitionName === 'fade' && direction === 'back') {
-                return new DefaultTransition();
+                return new DefaultTransition()
             }
         }
 
+        let transition
+
         switch (state.transitionName) {
-            case 'fade':
-                return new FadeTransition();
-                break;
-            default:
-                return new DefaultTransition();
-                break;
+        case 'fade':
+            transition = new FadeTransition()
+            break
+        default:
+            transition = new DefaultTransition()
+            break
         }
+
+        return transition
     }
 }

@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file scroll.js
+ * @file Scroll.js
  * @author Ambroise Maupate
  */
 
@@ -32,11 +32,10 @@ export default class Scroll {
      * @param e
      * @private
      */
-    static _preventDefault(e) {
-        e = e || window.event;
-        if (e.preventDefault)
-            e.preventDefault();
-        e.returnValue = false;
+    static _preventDefault (e) {
+        e = e || window.event
+        if (e.preventDefault) { e.preventDefault() }
+        e.returnValue = false
     }
 
     /**
@@ -44,13 +43,13 @@ export default class Scroll {
      * @param e
      * @private
      */
-    static _keydown(e) {
+    static _keydown (e) {
         // left: 37, up: 38, right: 39, down: 40, spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-        let keys = [37, 38, 39, 40, 33, 34, 35];
+        let keys = [37, 38, 39, 40, 33, 34, 35]
         for (let i = keys.length; i--;) {
             if (e.keyCode === keys[i]) {
-                Scroll._preventDefault(e);
-                return;
+                Scroll._preventDefault(e)
+                return
             }
         }
     }
@@ -60,8 +59,8 @@ export default class Scroll {
      * @param e
      * @private
      */
-    static _wheel(e) {
-        Scroll._preventDefault(e);
+    static _wheel (e) {
+        Scroll._preventDefault(e)
     }
 
     /**
@@ -69,12 +68,12 @@ export default class Scroll {
      *
      * @return {void}
      */
-    static disable() {
+    static disable () {
         if (window.addEventListener) {
-            window.addEventListener('DOMMouseScroll', Scroll._wheel, false);
+            window.addEventListener('DOMMouseScroll', Scroll._wheel, false)
         }
-        window.onmousewheel = document.onmousewheel = Scroll._wheel;
-        document.onkeydown = Scroll._keydown;
+        window.onmousewheel = document.onmousewheel = Scroll._wheel
+        document.onkeydown = Scroll._keydown
     }
 
     /**
@@ -82,10 +81,10 @@ export default class Scroll {
      *
      * @return {void}
      */
-    static enable() {
+    static enable () {
         if (window.removeEventListener) {
-            window.removeEventListener('DOMMouseScroll', Scroll._wheel, false);
+            window.removeEventListener('DOMMouseScroll', Scroll._wheel, false)
         }
-        window.onmousewheel = document.onmousewheel = document.onkeydown = null;
+        window.onmousewheel = document.onmousewheel = document.onkeydown = null
     }
 }

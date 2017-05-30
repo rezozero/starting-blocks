@@ -19,45 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file history.js
+ * @file GraphicLoader.js
  * @author Ambroise Maupate
  */
+import log from 'loglevel'
 
 /**
- * History manager.
+ * Handle your application main loader animation.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
  */
-export default class History {
+export default class GraphicLoader {
     /**
-     * Create a new history manager
+     * Interface for a graphic loader element.
+     *
+     * Any child implementations must implements
+     * show and hide methods.
+     *
+     * @abstract
      */
     constructor () {
-        this.statesStack = []
-        this.currentHistoryIndex = 0
+        log.debug('🌀 Construct loader')
     }
 
     /**
-     * push the new state to the history
-     * @param {State} state
+     * Show loader.
+     *
+     * @abstract
      */
-    pushState (state) {
-        this.statesStack.push(state)
-        this.currentHistoryIndex = this.statesStack.length - 1
+    show () {
+        log.debug('🌀 Show loader')
     }
 
     /**
-     * Get history direction on pop state events
-     * @param {State} currentState
-     * @returns {string}
+     * Hide loader.
+     *
+     * @abstract
      */
-    getDirection (currentState) {
-        const newHistoryIndex = this.statesStack.findIndex(state => state.uid === currentState.uid)
-        let direction = 'forward'
-
-        if (newHistoryIndex - this.currentHistoryIndex < 0) {
-            direction = 'back'
-        }
-
-        this.currentHistoryIndex = newHistoryIndex
-        return direction
+    hide () {
+        log.debug('🌀 Hide loader')
     }
 }

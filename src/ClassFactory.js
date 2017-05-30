@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file class-factory.js
+ * @file ClassFactory.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import Page from "./pages/page";
-import Home from "./pages/home";
-import AbstractBlock from "./abstract-block";
+import log from 'loglevel'
+import Page from './pages/page'
+import Home from './pages/home'
+import AbstractBlock from './AbstractBlock'
 
 /**
  * Router mapper class.
@@ -34,8 +34,7 @@ import AbstractBlock from "./abstract-block";
  *
  * **You must define your own ClassFactory for each of your projects.**.
  */
-export default class ClassFactory
-{
+export default class ClassFactory {
     /**
      * Returns an `AbstractPage` child class instance
      * according to the `nodeTypeName` or an `AbstractPage` as default.
@@ -49,14 +48,14 @@ export default class ClassFactory
      *
      * @return {AbstractPage}
      */
-    getPageInstance(nodeTypeName, router, $cont, context, nodeType, isHome) {
-        switch(nodeTypeName){
-            case 'home':
-                log.debug('Create new home');
-                return new Home(router, $cont, context, nodeType, isHome);
-            default:
-                log.info('"' + nodeTypeName + '" has no defined route, using Page.');
-                return new Page(router, $cont, context, nodeType, isHome);
+    getPageInstance (nodeTypeName, router, $cont, context, nodeType, isHome) {
+        switch (nodeTypeName) {
+        case 'home':
+            log.debug('Create new home')
+            return new Home(router, $cont, context, nodeType, isHome)
+        default:
+            log.info('"' + nodeTypeName + '" has no defined route, using Page.')
+            return new Page(router, $cont, context, nodeType, isHome)
         }
     }
 
@@ -72,13 +71,10 @@ export default class ClassFactory
      * @param  {jQuery}  $cont
      * @return {AbstractBlock}
      */
-    getBlockInstance(nodeTypeName, page, $cont) {
-        switch(nodeTypeName){
-            case 'map-block':
-                return new MapBlock(page, $cont, nodeTypeName);
-            case 'block':
-                //log.info('\t"' + nodeTypeName + '" has no defined route, using AbstractBlock.');
-                return new AbstractBlock(page, $cont, nodeTypeName);
+    getBlockInstance (nodeTypeName, page, $cont) {
+        switch (nodeTypeName) {
+        case 'block':
+            return new AbstractBlock(page, $cont, nodeTypeName)
         }
     }
 }
