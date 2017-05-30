@@ -41,8 +41,10 @@ export default class AbstractBlock {
      * of extending `constructor`.
      *
      * @param  {AbstractPage} page
-     * @param  {String} id
+     * @param  {jQuery} $cont
      * @param  {String} type
+     *
+     * @constructor
      */
     constructor (page, $cont, type) {
         type = type || 'block'

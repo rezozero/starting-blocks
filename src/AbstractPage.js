@@ -39,6 +39,8 @@ import {
  * Base class for creating page implementations.
  *
  * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
  */
 export default class AbstractPage {
     /**
@@ -51,6 +53,8 @@ export default class AbstractPage {
      * @param  {String}  context
      * @param  {String}  type
      * @param  {Boolean} isHome
+     *
+     * @constructor
      */
     constructor (router, $cont, context, type, isHome) {
         type = type || 'page'

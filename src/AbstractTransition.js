@@ -27,11 +27,15 @@ import Utils from './utils/Utils'
 
 /**
  * Base class for creating transition.
+ *
+ * @abstract
  */
 export default class AbstractTransition {
     /**
      * Constructor.
      * Do not override this method.
+     *
+     * @constructor
      */
     constructor () {
         /**
@@ -84,6 +88,7 @@ export default class AbstractTransition {
 
     /**
      * Entry point to create a custom Transition.
+     * @abstract
      */
     start () {}
 };

@@ -27,6 +27,8 @@ import AbstractTransition from '../AbstractTransition'
 
 /**
  * Default Transition. Show / Hide content.
+ *
+ * @extends {AbstractTransition}
  */
 export default class DefaultTransition extends AbstractTransition {
     start () {

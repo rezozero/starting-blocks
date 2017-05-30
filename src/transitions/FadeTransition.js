@@ -27,6 +27,8 @@ import AbstractTransition from '../AbstractTransition'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.
+ *
+ * @extends {AbstractTransition}
  */
 export default class FadeTransition extends AbstractTransition {
     /**

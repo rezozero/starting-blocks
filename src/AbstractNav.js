@@ -27,6 +27,8 @@
  * Base class for handling your website main navigation.
  *
  * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
  */
 export default class AbstractNav {
     /**
@@ -34,6 +36,8 @@ export default class AbstractNav {
      *
      * Any child implementations must implements
      * update method.
+     *
+     * @constructor
      */
     constructor () {
         /**
