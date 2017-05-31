@@ -19,45 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file graphicLoader.js
- * @author Ambroise Maupate
+ * @file StatesStack.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
  */
-import log from "loglevel";
 
 /**
- * Handle your application main loader animation.
- *
- * **Do not instanciate this class directly, create a sub-class**.
+ * StatesStack manager.
  */
-export default class GraphicLoader {
-
+export default class StatesStack {
     /**
-     * Interface for a graphic loader element.
-     *
-     * Any child implementations must implements
-     * show and hide methods.
-     *
-     * @abstract
+     * Create a new StatesStack manager
      */
-    constructor() {
-
+    constructor () {
+        this.stack = []
+        this.currentStackIndex = 0
     }
 
     /**
-     * Show loader.
-     *
-     * @abstract
+     * push the new state to the stack
+     * @param {State} state
      */
-    show() {
-        log.debug('🌀 Show loader');
+    push (state) {
+        this.stack.push(state)
+        this.currentStackIndex = this.stack.length - 1
     }
 
     /**
-     * Hide loader.
-     *
-     * @abstract
+     * Get navigation direction on pop state events
+     * @param {State} currentState
+     * @returns {string}
      */
-    hide() {
-        log.debug('🌀 Hide loader');
+    getDirection (currentState) {
+        const newStackIndex = this.stack.findIndex(state => state.uid === currentState.uid)
+        let direction = 'forward'
+
+        if (newStackIndex - this.currentStackIndex < 0) {
+            direction = 'back'
+        }
+
+        this.currentStackIndex = newStackIndex
+        return direction
     }
 }

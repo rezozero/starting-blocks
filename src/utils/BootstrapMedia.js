@@ -7,8 +7,7 @@
  * @copyright REZO ZERO 2016
  * @author Ambroise Maupate
  */
-import Utils from "./utils";
-
+import Utils from './Utils'
 
 /**
  * Static class to get bootstrap breakpoints.
@@ -19,13 +18,9 @@ export default class BootstrapMedia {
      *
      * @return {Boolean}
      */
-    static isMinXS() {
-        const size = Utils.getViewportSize();
-        if (size.width >= 480) {
-            return true;
-        } else {
-            return false;
-        }
+    static isMinXS () {
+        const size = Utils.getViewportSize()
+        return size.width >= 480
     }
 
     /**
@@ -33,13 +28,9 @@ export default class BootstrapMedia {
      *
      * @return {Boolean}
      */
-    static isMinSM() {
-        const size = Utils.getViewportSize();
-        if (size.width >= 768) {
-            return true;
-        } else {
-            return false;
-        }
+    static isMinSM () {
+        const size = Utils.getViewportSize()
+        return size.width >= 768
     }
 
     /**
@@ -47,14 +38,9 @@ export default class BootstrapMedia {
      *
      * @return {Boolean}
      */
-    static isMinMD() {
-        const size = Utils.getViewportSize();
-
-        if (size.width >= 992) {
-            return true;
-        } else {
-            return false;
-        }
+    static isMinMD () {
+        const size = Utils.getViewportSize()
+        return size.width >= 992
     }
 
     /**
@@ -62,14 +48,9 @@ export default class BootstrapMedia {
      *
      * @return {Boolean}
      */
-    static isMinLG() {
-        const size = Utils.getViewportSize();
-
-        if (size.width >= 1200) {
-            return true;
-        } else {
-            return false;
-        }
+    static isMinLG () {
+        const size = Utils.getViewportSize()
+        return size.width >= 1200
     }
 
     /**
@@ -77,13 +58,8 @@ export default class BootstrapMedia {
      *
      * @return {Boolean}
      */
-    static isMinXL() {
-        const size = Utils.getViewportSize();
-
-        if (size.width >= 1920) {
-            return true;
-        } else {
-            return false;
-        }
+    static isMinXL () {
+        const size = Utils.getViewportSize()
+        return size.width >= 1920
     }
 }

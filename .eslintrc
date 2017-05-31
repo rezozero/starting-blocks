@@ -1,0 +1,10 @@
+{
+    "extends": ["standard"],
+    "rules": {
+        // enable additional rules
+        "indent": [
+            "warn",
+            4
+        ]
+    }
+}

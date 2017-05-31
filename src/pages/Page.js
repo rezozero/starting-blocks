@@ -19,32 +19,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file page.js
+ * @file Page.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import AbstractPage from "./../abstract-page";
+import AbstractPage from './../AbstractPage'
 /**
  * Some example "page".
  *
  * @extends {AbstractPage}
  * @private
  */
-export default class Page extends AbstractPage
-{
-    init() {
-        super.init();
-        this.$duplicate = this.$cont.find('a.duplicate-last');
+export default class Page extends AbstractPage {
+    init () {
+        super.init()
+        this.$duplicate = this.$cont.find('a.duplicate-last')
     }
 
-    initEvents() {
-        super.initEvents();
+    initEvents () {
+        super.initEvents()
         this.$duplicate.on('click', (e) => {
-            e.preventDefault();
-            let $new = this.$blocks.last().clone();
-            $new.attr('id', 'block-' + (this.$blocks.length + 1));
-            this.$cont.append($new);
-            return false;
+            e.preventDefault()
+            let $new = this.$blocks.last().clone()
+            $new.attr('id', 'block-' + (this.$blocks.length + 1))
+            this.$cont.append($new)
+            return false
         })
     }
 }

@@ -19,47 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file cache-provider.js
+ * @file Home.js
  * @author Ambroise Maupate
  */
+import AbstractPage from './../AbstractPage'
 
 /**
- * Cache provider class.
+ * Some example "home" page.
  *
- * This class stores Ajax response in memory.
+ * @extends {AbstractPage}
+ * @class
  */
-export default class CacheProvider {
+export default class Home extends AbstractPage {
 
-    constructor() {
-        this.hash = {};
-    }
-
-    /**
-     * @param  {String} href
-     * @return {Boolean}
-     */
-    exists(href) {
-        if (href in this.hash) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param  {String} href
-     * @return {Object}
-     */
-    fetch(href) {
-        return this.hash[href];
-    }
-
-    /**
-     * @param  {String} href
-     * @param  {Object} data
-     * @return {CacheProvider}  this
-     */
-    save(href, data) {
-        this.hash[href] = data;
-        return this;
-    }
 }

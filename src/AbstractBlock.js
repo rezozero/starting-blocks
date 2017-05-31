@@ -19,13 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file abstract-block.js
+ * @file AbstractBlock.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import waitForImages from "jquery.waitforimages";
-import $ from "jquery";
-import debounce from "./utils/debounce";
+import log from 'loglevel'
+import debounce from './utils/debounce'
+import 'jquery.waitforimages'
 
 /**
  * Base class for creating block implementations.
@@ -34,8 +33,7 @@ import debounce from "./utils/debounce";
  *
  * @abstract
  */
-export default class AbstractBlock
-{
+export default class AbstractBlock {
     /**
      * Abstract block constructor.
      *
@@ -43,39 +41,41 @@ export default class AbstractBlock
      * of extending `constructor`.
      *
      * @param  {AbstractPage} page
-     * @param  {String} id
+     * @param  {jQuery} $cont
      * @param  {String} type
+     *
+     * @constructor
      */
-    constructor(page, $cont, type) {
-        type = type || 'block';
+    constructor (page, $cont, type) {
+        type = type || 'block'
 
         /**
          * @type {AbstractPage}
          */
-        this.page = page;
+        this.page = page
         /**
          * jQuery DOM object for current block.
          * @type {jQuery}
          */
-        this.$cont = $cont;
+        this.$cont = $cont
         /**
          * @type {String}
          */
-        this.id = $cont[0].id;
+        this.id = $cont[0].id
         /**
          * @type {String}
          */
-        this.type = type;
+        this.type = type
         /**
          * @type {String}
          */
-        this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : '';
-        this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false);
+        this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : ''
+        this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false)
 
-        log.debug('\t✳️ #'+this.id + ' %c[' + type + ']', 'color:grey');
+        log.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
 
-        this.init();
-        this.initEvents();
+        this.init()
+        this.initEvents()
     }
 
     /**
@@ -84,7 +84,7 @@ export default class AbstractBlock
      *
      * @abstract
      */
-    init() {
+    init () {
 
     }
 
@@ -95,17 +95,17 @@ export default class AbstractBlock
      *
      * @abstract
      */
-    initEvents(){
+    initEvents () {
         if (this.$cont.find('img').length) {
             this.$cont.waitForImages({
                 finished: this.onLoad.bind(this),
                 waitForAll: true
-            });
+            })
         } else {
-            this.onLoad();
+            this.onLoad()
         }
 
-        this.page.router.$window.on('resize', this.onResizeDebounce);
+        this.page.router.$window.on('resize', this.onResizeDebounce)
     }
 
     /*
@@ -113,9 +113,9 @@ export default class AbstractBlock
      *
      * Do not forget to call `super.destroy();` while extending this method.
      */
-    destroy() {
-        log.debug('\t🗑 #'+this.id);
-        this.destroyEvents();
+    destroy () {
+        log.debug('\t🗑 #' + this.id)
+        this.destroyEvents()
     }
 
     /*
@@ -128,21 +128,21 @@ export default class AbstractBlock
      *
      * @abstract
      */
-    destroyEvents(){
-        this.page.router.$window.off('resize', this.onResizeDebounce);
+    destroyEvents () {
+        this.page.router.$window.off('resize', this.onResizeDebounce)
     }
 
     /**
      * @abstract
      */
-    onResize() {
+    onResize () {
 
     }
 
     /**
      * @abstract
      */
-    onLoad() {
+    onLoad () {
 
     }
 
@@ -151,7 +151,7 @@ export default class AbstractBlock
      *
      * @abstract
      */
-    onPageReady() {
+    onPageReady () {
 
     }
 }
