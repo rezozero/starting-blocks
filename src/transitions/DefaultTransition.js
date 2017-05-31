@@ -19,45 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file graphicLoader.js
- * @author Ambroise Maupate
+ * @file DefaultTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
  */
-import log from "loglevel";
+import AbstractTransition from '../AbstractTransition'
 
 /**
- * Handle your application main loader animation.
+ * Default Transition. Show / Hide content.
  *
- * **Do not instanciate this class directly, create a sub-class**.
+ * @extends {AbstractTransition}
  */
-export default class GraphicLoader {
-
-    /**
-     * Interface for a graphic loader element.
-     *
-     * Any child implementations must implements
-     * show and hide methods.
-     *
-     * @abstract
-     */
-    constructor() {
-
+export default class DefaultTransition extends AbstractTransition {
+    start () {
+        Promise.all([this.newContainerLoading])
+            .then(this.finish.bind(this))
     }
 
-    /**
-     * Show loader.
-     *
-     * @abstract
-     */
-    show() {
-        log.debug('🌀 Show loader');
-    }
-
-    /**
-     * Hide loader.
-     *
-     * @abstract
-     */
-    hide() {
-        log.debug('🌀 Hide loader');
+    finish () {
+        document.body.scrollTop = 0
+        this.done()
     }
 }

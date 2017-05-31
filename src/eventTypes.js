@@ -28,43 +28,42 @@
  *
  * @type {String}
  */
-export const BEFORE_PAGE_LOAD = 'BEFORE_PAGE_LOAD';
+export const BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD'
 
 /**
  * After Router XHR request succeded.
  *
  * @type {String}
  */
-export const AFTER_PAGE_LOAD = 'AFTER_PAGE_LOAD';
-
+export const AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD'
 
 /**
  * After Router appended new page DOM to page-container.
  *
  * @type {String}
  */
-export const AFTER_DOM_APPENDED = 'AFTER_DOM_APPENDED';
+export const AFTER_DOM_APPENDED = 'SB_AFTER_DOM_APPENDED'
 
 /**
  * After Router create new page instance.
  *
  * @type {String}
  */
-export const AFTER_PAGE_BOOT = 'AFTER_PAGE_BOOT';
+export const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT'
 
 /**
  * Before page begins to show, right after assets are loaded (images).
  *
  * @type {String}
  */
-export const BEFORE_PAGE_SHOW = 'BEFORE_PAGE_SHOW';
+export const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW'
 
 /**
  * After page showed.
  *
  * @type {String}
  */
-export const AFTER_PAGE_SHOW = 'AFTER_PAGE_SHOW';
+export const AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW'
 
 /**
  * Before page begins to hide.
@@ -72,7 +71,7 @@ export const AFTER_PAGE_SHOW = 'AFTER_PAGE_SHOW';
  *
  * @type {String}
  */
-export const BEFORE_PAGE_HIDE = 'BEFORE_PAGE_HIDE';
+export const BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE'
 
 /**
  * After page hidind animation.
@@ -80,5 +79,4 @@ export const BEFORE_PAGE_HIDE = 'BEFORE_PAGE_HIDE';
  *
  * @type {String}
  */
-export const AFTER_PAGE_HIDE = 'AFTER_PAGE_HIDE';
-
+export const AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE'

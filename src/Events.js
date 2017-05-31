@@ -19,32 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file page.js
+ * @file Events.js
  * @author Ambroise Maupate
  */
-import log from "loglevel";
-import AbstractPage from "./../abstract-page";
-/**
- * Some example "page".
- *
- * @extends {AbstractPage}
- * @private
- */
-export default class Page extends AbstractPage
-{
-    init() {
-        super.init();
-        this.$duplicate = this.$cont.find('a.duplicate-last');
-    }
 
-    initEvents() {
-        super.initEvents();
-        this.$duplicate.on('click', (e) => {
-            e.preventDefault();
-            let $new = this.$blocks.last().clone();
-            $new.attr('id', 'block-' + (this.$blocks.length + 1));
-            this.$cont.append($new);
-            return false;
-        })
+import log from 'loglevel'
+
+/**
+ * Event dispatcher singleton.
+ *
+ * @abstract
+ */
+class Events {
+    commit (eventType, detail) {
+        const event = new window.CustomEvent(eventType, {detail})
+        log.debug('🚩 Dispatched ' + eventType)
+        window.dispatchEvent(event)
     }
 }
+
+export default new Events()

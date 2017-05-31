@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017, Ambroise Maupate
+ * Copyright © 2016, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,34 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file example-nav.js
- * @author Ambroise Maupate
+ * @file StatesStack.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
  */
-import $ from "jquery";
-import AbstractNav from "./abstract-nav";
 
 /**
- * An example nav which binds links for AJAX use.
+ * StatesStack manager.
  */
-export default class ExampleNav extends AbstractNav {
-
-    constructor() {
-        super();
-
-        this.$cont = $('#main-nav').eq(0);
-        /*
-         * Bind only internal links
-         */
-        this.$links = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]');
+export default class StatesStack {
+    /**
+     * Create a new StatesStack manager
+     */
+    constructor () {
+        this.stack = []
+        this.currentStackIndex = 0
     }
 
-    initEvents(router) {
-        super.initEvents(router);
+    /**
+     * push the new state to the stack
+     * @param {State} state
+     */
+    push (state) {
+        this.stack.push(state)
+        this.currentStackIndex = this.stack.length - 1
+    }
 
-        const bindedLinkClick = this.router.onLinkClick.bind(router);
+    /**
+     * Get navigation direction on pop state events
+     * @param {State} currentState
+     * @returns {string}
+     */
+    getDirection (currentState) {
+        const newStackIndex = this.stack.findIndex(state => state.uid === currentState.uid)
+        let direction = 'forward'
 
-        if(this.$links && this.$links.length && this.router.options.ajaxEnabled) {
-            this.$links.on('click', bindedLinkClick);
+        if (newStackIndex - this.currentStackIndex < 0) {
+            direction = 'back'
         }
+
+        this.currentStackIndex = newStackIndex
+        return direction
     }
 }

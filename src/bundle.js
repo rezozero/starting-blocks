@@ -1,40 +1,43 @@
-import tmpRouter from './router';
-import tmpState from './state';
-import tmpCacheProvider from './cache-provider';
-import tmpGraphicLoader from './graphicLoader';
-import tmpAbstractPage from './abstract-page';
-import tmpAbstractNav from './abstract-nav';
-import tmpAbstractBlock from './abstract-block';
-import tmpUtils from './utils/utils';
-import tmpScroll from './utils/scroll';
-import tmppolyfills from './utils/polyfills';
-import tmpgaTrackErrors from './utils/gaTrackErrors';
-import tmpdebounce from './utils/debounce';
-import tmpBootstrapMedia from './utils/bootstrapMedia';
+import tmpRouter from './Router'
+import tmpState from './State'
+import tmpCacheProvider from './CacheProvider'
+import tmpGraphicLoader from './GraphicLoader'
+import tmpAbstractPage from './AbstractPage'
+import tmpAbstractNav from './AbstractNav'
+import tmpAbstractBlock from './AbstractBlock'
+import tmpAbstractTransition from './AbstractTransition'
+import tmpUtils from './utils/Utils'
+import tmpScroll from './utils/Scroll'
+import tmppolyfills from './utils/polyfills'
+import tmpgaTrackErrors from './utils/gaTrackErrors'
+import tmpdebounce from './utils/debounce'
+import tmpBootstrapMedia from './utils/BootstrapMedia'
 
 /** @private */
-export const Router =           tmpRouter;
+export const Router = tmpRouter
 /** @private */
-export const State =            tmpState;
+export const State = tmpState
 /** @private */
-export const CacheProvider =    tmpCacheProvider;
+export const CacheProvider = tmpCacheProvider
 /** @private */
-export const GraphicLoader =    tmpGraphicLoader;
+export const GraphicLoader = tmpGraphicLoader
 /** @private */
-export const AbstractPage =     tmpAbstractPage;
+export const AbstractPage = tmpAbstractPage
 /** @private */
-export const AbstractNav =      tmpAbstractNav;
+export const AbstractNav = tmpAbstractNav
 /** @private */
-export const AbstractBlock =    tmpAbstractBlock;
+export const AbstractBlock = tmpAbstractBlock
 /** @private */
-export const Utils =            tmpUtils;
+export const AbstractTransition = tmpAbstractTransition
 /** @private */
-export const Scroll =           tmpScroll;
+export const Utils = tmpUtils
 /** @private */
-export const polyfills =        tmppolyfills;
+export const Scroll = tmpScroll
 /** @private */
-export const gaTrackErrors =    tmpgaTrackErrors;
+export const polyfills = tmppolyfills
 /** @private */
-export const debounce =         tmpdebounce;
+export const gaTrackErrors = tmpgaTrackErrors
 /** @private */
-export const BootstrapMedia =   tmpBootstrapMedia;
+export const debounce = tmpdebounce
+/** @private */
+export const BootstrapMedia = tmpBootstrapMedia

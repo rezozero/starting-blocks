@@ -16,11 +16,11 @@
     <body id="page1">
         <nav id="main-nav" class="navbar navbar-default">
             <ul class="nav navbar-nav">
-                <li><a href="/page1.html">Link to page 1</a></li>
-                <li><a href="/page1.html#block-2">Link to page 1 with hash</a></li>
-                <li><a href="/partial.html">Link to partial page</a></li>
-                <li><a href="/">Link to home page</a></li>
-                <li><a href="/" class="no-ajax-link">Link to home page (no-ajax)</a></li>
+                <li><a href="/page1.html" data-transition="fade">Link to page 1</a></li>
+                <li><a href="/page1.html#block-2" data-transition="fade">Link to page 1 with hash</a></li>
+                <li><a href="/partial.html" data-transition="fade">Link to partial page</a></li>
+                <li><a href="/" data-transition="fade">Link to home page</a></li>
+                <li><a href="/" class="no-ajax-link" data-transition="fade">Link to home page (no-ajax)</a></li>
             </ul>
         </nav>
         <div id="main-container">
@@ -71,10 +71,11 @@
             <div id="ajax-container"></div>
         </div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js"></script>
+
         <!-- inject:js -->
-
-        <script src="/build/app-b0edf68543.js"></script>
-
+        <script src="/build/app-255f858542.js"></script>
         <!-- endinject -->
     </body>
 </html>

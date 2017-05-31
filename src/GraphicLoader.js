@@ -19,18 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file home.js
+ * @file GraphicLoader.js
  * @author Ambroise Maupate
  */
-import AbstractPage from "./../abstract-page";
+import log from 'loglevel'
 
 /**
- * Some example "home" page.
+ * Handle your application main loader animation.
  *
- * @extends {AbstractPage}
- * @private
+ * **Do not instanciate this class directly, create a sub-class**.
  */
-export default class Home extends AbstractPage
-{
+export default class GraphicLoader {
+    /**
+     * Interface for a graphic loader element.
+     *
+     * Any child implementations must implements
+     * show and hide methods.
+     *
+     * @abstract
+     */
+    constructor () {
+        log.debug('🌀 Construct loader')
+    }
 
+    /**
+     * Show loader.
+     *
+     * @abstract
+     */
+    show () {
+        log.debug('🌀 Show loader')
+    }
+
+    /**
+     * Hide loader.
+     *
+     * @abstract
+     */
+    hide () {
+        log.debug('🌀 Hide loader')
+    }
 }

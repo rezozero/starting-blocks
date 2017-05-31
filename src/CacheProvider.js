@@ -19,71 +19,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file abstract-nav.js
+ * @file CacheProvider.js
  * @author Ambroise Maupate
  */
 
 /**
- * Base class for handling your website main navigation.
+ * Cache provider class.
  *
- * **Do not instanciate this class directly, create a sub-class**.
+ * This class stores Ajax response in memory.
  */
-export default class AbstractNav {
-
-    /**
-     * Interface for a navigation element.
-     *
-     * Any child implementations must implements
-     * update method.
-     */
-    constructor() {
-        /**
-         * Page DOM section.
-         *
-         * @type {jQuery}
-         */
-        this.$cont = null;
-
-        /**
-         * Main router.
-         *
-         * @type {Router}
-         */
-        this.router = null;
-
-        /**
-         * Current active page.
-         *
-         * **First page won’t be available**.
-         * @type {AbstractPage|null}
-         */
-        this.page = null;
+export default class CacheProvider {
+    constructor () {
+        this.hash = {}
     }
 
     /**
-     * Update navigation state against a DOM container.
-     *
-     * @abstract
-     * @param {AbstractPage} page
+     * @param  {String} href
+     * @return {Boolean}
      */
-    update(page) {
-        if (!page) {
-            throw "Nav update method needs a Page object.";
-        }
-
-        this.page = page;
+    exists (href) {
+        return href in this.hash
     }
 
     /**
-     * Bind navigation against router.
-     *
-     * @param {Router} router
-     * @abstract
+     * @param  {String} href
+     * @return {Object}
      */
-    initEvents(router) {
-        if (!router) {
-            throw "Nav initEvents method needs a Router object.";
-        }
-        this.router = router;
+    fetch (href) {
+        return this.hash[href]
+    }
+
+    /**
+     * @param  {String} href
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    save (href, data) {
+        this.hash[href] = data
+        return this
     }
 }
