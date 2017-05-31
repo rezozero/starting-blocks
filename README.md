@@ -45,7 +45,7 @@ You won’t need to know where each class is stored, just use the *curly brace* 
 This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
 ```js
-import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks";
+import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks"
 
 const router = new Router(
     {
@@ -57,19 +57,20 @@ const router = new Router(
          * Do not use Arrow function
          * these will be bind to the router before their use.
          */
-        preBoot: function(){  },
-        postLoad: function(){  },
-        preLoad: function(){  },
-        onDestroy: function(){  },
-        prePushState: function(){  }
+        preBoot: () => {},
+        postLoad: () => {},
+        preLoad: () => {},
+        onDestroy: () => {},
+        prePushState: () => {}
     },
     new ClassFactory(),
     location.origin,
     new GraphicLoader(),
-    new AbstractNav()
-);
-router.initEvents();
-router.boot($('.page-content').eq(0), 'static', isHome);
+    new AbstractNav(),
+    new TransitionFactory()
+)
+router.initEvents()
+router.boot($('.page-content').eq(0), 'static', isHome)
 ```
 
 
@@ -184,19 +185,23 @@ Example:
 ```javascript
 // src/TransitionFactory.js
 
-import DefaultTransition from './transitions/default-transition';
-import FadeTransition from './transitions/fade-transition';
+import DefaultTransition from './transitions/DefaultTransition';
+import FadeTransition from './transitions/FadeTransition';
   
 export default class TransitionFactory {
-    getTransition(previousState, state, direction = null) {
+    getTransition (previousState, state, direction = null) {
+        let transition = null
+      
         switch (state.transitionName) {
             case 'fade':
-                return new FadeTransition();
-                break;
+                transition = new FadeTransition()
+                break
             default:
-                return new DefaultTransition();
-                break;
+                transition = new DefaultTransition()
+                break
         }
+        
+        return transition
     }
 }
 ```
@@ -207,9 +212,9 @@ To create a new transition you need to create a new class extending `AbstractTra
 Example with fade animation:
 
 ```javascript
-// src/transitions/fade-transition.js
+// src/transitions/FadeTransition.js
 
-import AbstractTransition from '../abstract-transition'
+import AbstractTransition from '../AbstractTransition'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.
@@ -235,7 +240,7 @@ export default class FadeTransition extends AbstractTransition {
         return new Promise((resolve) => {
             this.oldContainer.animate({
                 opacity: 0
-            }, 400, 'swing', resolve);
+            }, 400, 'swing', resolve)
         })
     }
 
@@ -250,14 +255,14 @@ export default class FadeTransition extends AbstractTransition {
         this.newContainer.css({
             visibility : 'visible',
             opacity : 0
-        });
+        })
 
         // fadeIn the new content container
-        this.newContainer.animate({ opacity: 1 }, 400, () => {
+        this.newContainer.animate({opacity: 1}, 400, () => {
             document.body.scrollTop = 0
             // IMPORTANT: Call this method at the end
             this.done()
-        });
+        })
     }
 }
 ```
