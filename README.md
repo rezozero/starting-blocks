@@ -45,7 +45,7 @@ You won’t need to know where each class is stored, just use the *curly brace* 
 This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
 ```js
-import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks"
+import {AbstractNav, ClassFactory, Router, GraphicLoader, TransitionFactory} from "starting-blocks"
 
 const router = new Router(
     {
