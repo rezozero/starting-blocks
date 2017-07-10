@@ -30,12 +30,35 @@ import State from './State'
 import CacheProvider from './CacheProvider'
 import Events from './Events'
 import StatesStack from './StatesStack'
+import TransitionFactory from './TransitionFactory'
 import {
     BEFORE_PAGE_LOAD,
     AFTER_PAGE_LOAD,
     AFTER_DOM_APPENDED,
     AFTER_PAGE_BOOT
 } from './EventTypes'
+
+const DEFAULT_OPTIONS = {
+    homeHasClass: false,
+    ajaxEnabled: true,
+    pageClass: 'page-content',
+    objectTypeAttr: 'data-node-type',
+    ajaxLinkTypeAttr: 'data-node-type',
+    noAjaxLinkClass: 'no-ajax-link',
+    navLinkClass: 'nav-link',
+    activeClass: 'active',
+    pageBlockClass: '.page-block',
+    lazyloadEnabled: false,
+    lazyloadSrcAttr: 'data-src',
+    lazyloadClass: 'lazyload',
+    lazyloadSrcSetAttr: 'data-srcset',
+    lazyloadThreshold: 300,
+    lazyloadThrottle: 150,
+    $ajaxContainer: $('#ajax-container'),
+    minLoadDuration: 0,
+    preLoadPageDelay: 0,
+    useCache: true
+}
 
 /**
  * Application main page router.
@@ -66,12 +89,7 @@ export default class Router {
      * | `lazyloadThreshold` | `300` |
      * | `lazyloadThrottle` | `150` |
      * | `minLoadDuration` | `0` |
-     * | `postLoad` | `(state, data) => {}` |
-     * | `preLoad` | `(state) => {}` |
      * | `preLoadPageDelay` |  |
-     * | `prePushState` | `(state) => {}` |
-     * | `onDestroy` | `() => {}` |
-     * | `preBoot` | `($cont, context, isHome) => {}` |
      *
      *
      * @param {Object} options
@@ -81,7 +99,20 @@ export default class Router {
      * @param {AbstractNav} nav
      * @param {TransitionFactory} transitionFactory
      */
-    constructor (options, classFactory, baseUrl, loader, nav, transitionFactory) {
+    constructor (options = {}, classFactory, baseUrl, loader, nav, transitionFactory = null) {
+        /**
+         * @type {Object}
+         */
+        this.options = {
+            ...DEFAULT_OPTIONS,
+            ...options
+        }
+
+        /**
+         * @type {TransitionFactory}
+         */
+        this.transitionFactory = null
+
         if (!baseUrl) {
             throw new Error('Router needs baseUrl to be defined.')
         }
@@ -94,8 +125,8 @@ export default class Router {
         if (!nav) {
             throw new Error('Router needs a Nav instance to be defined.')
         }
-        if (!transitionFactory) {
-            throw new Error('Router needs a Transition Factory instance to be defined.')
+        if (this.options.ajaxEnabled) {
+            this.transitionFactory = transitionFactory || new TransitionFactory()
         }
 
         /**
@@ -115,10 +146,6 @@ export default class Router {
          */
         this.nav = nav
         this.nav.router = this
-        /**
-         * @type {TransitionFactory}
-         */
-        this.transitionFactory = transitionFactory
         /**
          * @type {State|null}
          */
@@ -146,48 +173,12 @@ export default class Router {
         this.window = this.$window
         this.currentRequest = null
         this.cacheProvider = new CacheProvider()
-
-        /**
-         * @type {Object}
-         */
-        this.options = {
-            homeHasClass: false,
-            ajaxEnabled: true,
-            pageClass: 'page-content',
-            objectTypeAttr: 'data-node-type',
-            ajaxLinkTypeAttr: 'data-node-type',
-            noAjaxLinkClass: 'no-ajax-link',
-            navLinkClass: 'nav-link',
-            activeClass: 'active',
-            pageBlockClass: '.page-block',
-            lazyloadEnabled: false,
-            lazyloadSrcAttr: 'data-src',
-            lazyloadClass: 'lazyload',
-            lazyloadSrcSetAttr: 'data-srcset',
-            lazyloadThreshold: 300,
-            lazyloadThrottle: 150,
-            $ajaxContainer: $('#ajax-container'),
-            minLoadDuration: 0,
-            preLoadPageDelay: 0,
-            useCache: true,
-            postLoad: (state, data) => {},
-            preLoad: (state) => {},
-            prePushState: (state) => {},
-            onDestroy: () => {},
-            preBoot: ($cont, context, isHome) => {}
-        }
-
-        if (options !== null) {
-            this.options = $.extend(this.options, options)
-        }
     }
 
     destroy () {
         if (this.options.ajaxEnabled) {
             window.removeEventListener('popstate', this.onPopState.bind(this), false)
         }
-        const onDestroyBinded = this.options.onDestroy.bind(this)
-        onDestroyBinded()
     }
 
     /**
@@ -231,8 +222,6 @@ export default class Router {
         if (context === 'static') {
             this.loadBeginDate = new Date()
         }
-        const preBootBinded = this.options.preBoot.bind(this)
-        preBootBinded($cont, context, isHome)
 
         const nodeType = $cont.attr(this.options.objectTypeAttr)
         this.page = this.classFactory.getPageInstance(nodeType, this, $cont, context, nodeType, isHome)
@@ -322,9 +311,6 @@ export default class Router {
                 })
                 this.statesStack.push(this.state)
 
-                const prePushStateBinded = this.options.prePushState.bind(this)
-                prePushStateBinded(this.state)
-
                 if (window.history.pushState) {
                     window.history.pushState(this.state, this.state.title, this.state.href)
                 }
@@ -358,9 +344,6 @@ export default class Router {
         }
         this.loader.show()
         this.loadBeginDate = new Date()
-
-        const preLoadBinded = this.options.preLoad.bind(this)
-        preLoadBinded(state)
 
         Events.commit(BEFORE_PAGE_LOAD, state)
 
@@ -451,9 +434,6 @@ export default class Router {
         // Init new page
         this.updatePageTitle($data)
         this.boot($data, 'ajax', state.isHome)
-
-        const postLoadBinded = this.options.postLoad.bind(this)
-        postLoadBinded(state, $data)
 
         return $data
     }
