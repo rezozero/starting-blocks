@@ -506,11 +506,14 @@ export default class AbstractPage {
              * get protocol and domain in string
              */
             const linkString = link.getAttribute('href')
-            if (linkString.indexOf(abstractBaseUrl) === -1 &&
-               linkString.indexOf('javascript') === -1 &&
-               linkString.indexOf('mailto:') === -1 &&
-               linkString.charAt(0) !== '/' &&
-               linkString.charAt(0) !== '#') {
+
+            if (!linkString) {
+                console.warn('⚠️ This link does not contain href attribute', link)
+            } else if (linkString.indexOf(abstractBaseUrl) === -1 &&
+                linkString.indexOf('javascript') === -1 &&
+                linkString.indexOf('mailto:') === -1 &&
+                linkString.charAt(0) !== '/' &&
+                linkString.charAt(0) !== '#') {
                 $links[linkIndex].target = '_blank'
             }
         }
