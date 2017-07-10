@@ -52,16 +52,7 @@ const router = new Router(
         homeHasClass: false,
         ajaxEnabled: false,
         useCache: true,
-        lazyloadEnabled: true,
-        /*
-         * Do not use Arrow function
-         * these will be bind to the router before their use.
-         */
-        preBoot: () => {},
-        postLoad: () => {},
-        preLoad: () => {},
-        onDestroy: () => {},
-        prePushState: () => {}
+        lazyloadEnabled: true
     },
     new ClassFactory(),
     location.origin,
