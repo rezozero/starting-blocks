@@ -13,7 +13,7 @@
   },
   "homepage": "http://startingblocks.rezo-zero.com",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No test specified\"",
     "dev": "gulp watch",
     "build": "NODE_ENV=production gulp",
     "doc": "esdoc -c esdoc.json"
