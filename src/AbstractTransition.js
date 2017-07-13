@@ -57,12 +57,12 @@ export default class AbstractTransition {
      * Do not override this method.
      *
      * @returns {Promise}
-     * @param oldPage
-     * @param newPage
+     * @param {Page} oldPage
+     * @param {Promise} newPagePromise
      */
-    init (oldPage, newPage) {
+    init (oldPage, newPagePromise) {
         this.oldPage = oldPage
-        this._newPagePromise = newPage
+        this._newPagePromise = newPagePromise
 
         this.deferred = Utils.deferred()
         this.newPageReady = Utils.deferred()
