@@ -82,7 +82,7 @@ export default class AbstractTransition {
      * Call this function when the Transition is finished.
      */
     done () {
-        this.newContainer.css('visibility', 'visible')
+        this.newContainer.$cont.css('visibility', 'visible')
         this.deferred.resolve()
     }
 

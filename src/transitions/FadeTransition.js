@@ -49,7 +49,7 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeOut () {
         return new Promise((resolve) => {
-            this.oldContainer.animate({
+            this.oldContainer.$cont.animate({
                 opacity: 0
             }, 400, 'swing', resolve)
         })
@@ -60,16 +60,16 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeIn () {
         // Remove old content from the DOM
-        this.oldContainer.hide()
+        this.oldContainer.$cont.hide()
 
         // Prepare new content css properties for the fade animation
-        this.newContainer.css({
+        this.newContainer.$cont.css({
             visibility: 'visible',
             opacity: 0
         })
 
         // fadeIn the new content container
-        this.newContainer.animate({ opacity: 1 }, 400, () => {
+        this.newContainer.$cont.animate({ opacity: 1 }, 400, () => {
             document.body.scrollTop = 0
             // IMPORTANT: Call this method at the end
             this.done()

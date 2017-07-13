@@ -348,7 +348,7 @@ export default class Router {
         Events.commit(BEFORE_PAGE_LOAD, state)
 
         this.transitionFactory.getTransition(this.previousState, state, this.direction)
-            .init(this.page.$cont, this.doPageLoad(state))
+            .init(this.page, this.doPageLoad(state))
             .then(() => {
                 this.pageLoaded()
                 this.destroyPreviousPage()
@@ -435,7 +435,7 @@ export default class Router {
         this.updatePageTitle($data)
         this.boot($data, 'ajax', state.isHome)
 
-        return $data
+        return this.page
     }
 
     /**
