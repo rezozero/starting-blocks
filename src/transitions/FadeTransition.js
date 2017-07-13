@@ -37,7 +37,7 @@ export default class FadeTransition extends AbstractTransition {
      */
     start () {
         // Wait new content and the end of fadeOut animation
-        // this.newContainerLoading is a Promise which is resolved when the new content is loaded
+        // this.newPageLoading is a Promise which is resolved when the new content is loaded
         Promise.all([this.newPageLoading, this.fadeOut()])
             // then fadeIn the new content
             .then(this.fadeIn.bind(this))
@@ -59,7 +59,7 @@ export default class FadeTransition extends AbstractTransition {
      * Fade in the new content
      */
     fadeIn () {
-        // Remove old content from the DOM
+        // Add display: none on the old container
         this.oldPage.$cont.hide()
 
         // Prepare new content css properties for the fade animation
