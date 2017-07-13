@@ -39,40 +39,40 @@ export default class AbstractTransition {
      */
     constructor () {
         /**
-         * @type {Object} Dom element
+         * @type {Page} old Page instance
          */
-        this.oldContainer = undefined
+        this.oldPage = undefined
+        /**
+         * @type {Page}
+         */
+        this.newPage = undefined
         /**
          * @type {Promise}
          */
-        this.newContainer = undefined
-        /**
-         * @type {Promise}
-         */
-        this.newContainerLoading = undefined
+        this.newPageLoading = undefined
     }
 
     /**
      * Initialize transition.
      * Do not override this method.
      *
-     * @param {jQuery} oldContainer
-     * @param {Promise} newContainer
      * @returns {Promise}
+     * @param oldPage
+     * @param newPage
      */
-    init (oldContainer, newContainer) {
-        this.oldContainer = oldContainer
-        this._newContainerPromise = newContainer
+    init (oldPage, newPage) {
+        this.oldPage = oldPage
+        this._newPagePromise = newPage
 
         this.deferred = Utils.deferred()
-        this.newContainerReady = Utils.deferred()
-        this.newContainerLoading = this.newContainerReady.promise
+        this.newPageReady = Utils.deferred()
+        this.newPageLoading = this.newPageReady.promise
 
         this.start()
 
-        this._newContainerPromise.then(newContainer => {
-            this.newContainer = newContainer
-            this.newContainerReady.resolve()
+        this._newPagePromise.then(newPage => {
+            this.newPage = newPage
+            this.newPageReady.resolve()
         })
 
         return this.deferred.promise
@@ -82,7 +82,7 @@ export default class AbstractTransition {
      * Call this function when the Transition is finished.
      */
     done () {
-        this.newContainer.$cont.css('visibility', 'visible')
+        this.newPage.$cont.css('visibility', 'visible')
         this.deferred.resolve()
     }
 
