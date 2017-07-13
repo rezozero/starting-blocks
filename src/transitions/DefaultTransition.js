@@ -32,7 +32,7 @@ import AbstractTransition from '../AbstractTransition'
  */
 export default class DefaultTransition extends AbstractTransition {
     start () {
-        Promise.all([this.newContainerLoading])
+        Promise.all([this.newPageLoading])
             .then(this.finish.bind(this))
     }
 
