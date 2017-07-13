@@ -198,7 +198,8 @@ export default class TransitionFactory {
 ```
 
 To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.  
-⚠️ You have to wait for `this.newContainerLoading` promise resolution to make sure the new content is accessible.
+⚠️ You have to wait for `this.newPageLoading` promise resolution to make sure the new page is accessible.  
+Then, you have access to old and new Page instances.
 
 Example with fade animation:
 
@@ -217,8 +218,8 @@ export default class FadeTransition extends AbstractTransition {
      */
     start () {
         // Wait new content and the end of fadeOut animation
-        // this.newContainerLoading is a Promise which is resolved when the new content is loaded
-        Promise.all([this.newContainerLoading, this.fadeOut()])
+        // this.newPageLoading is a Promise which is resolved when the new content is loaded
+        Promise.all([this.newPageLoading, this.fadeOut()])
             // then fadeIn the new content
             .then(this.fadeIn.bind(this))
     }
@@ -229,7 +230,7 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeOut () {
         return new Promise((resolve) => {
-            this.oldContainer.animate({
+            this.oldPage.$cont.animate({
                 opacity: 0
             }, 400, 'swing', resolve)
         })
@@ -240,16 +241,16 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeIn () {
         // Add display: none on the old container
-        this.oldContainer.hide()
+        this.oldPage.$cont.hide()
 
         // Prepare new content css properties for the fade animation
-        this.newContainer.css({
-            visibility : 'visible',
-            opacity : 0
+        this.newPage.$cont.css({
+            visibility: 'visible',
+            opacity: 0
         })
 
         // fadeIn the new content container
-        this.newContainer.animate({opacity: 1}, 400, () => {
+        this.newPage.$cont.animate({ opacity: 1 }, 400, () => {
             document.body.scrollTop = 0
             // IMPORTANT: Call this method at the end
             this.done()
