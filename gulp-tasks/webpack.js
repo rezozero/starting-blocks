@@ -97,6 +97,7 @@ gulp.task('webpack-bundle', function(cb) {
     };
 
     if (process.env.NODE_ENV === 'production') {
+        var d = new Date(Date.now());
         config.plugins.push(new webpack.optimize.UglifyJsPlugin({
             compress: true,
             comments: false,
@@ -107,6 +108,7 @@ gulp.task('webpack-bundle', function(cb) {
                 NODE_ENV: JSON.stringify('production')
             }
         }));
+        config.plugins.push(new webpack.BannerPlugin("starting-blocks | Rezo Zero | Built on " + d.toISOString()));
         console.log('Uglified scripts.');
     } else {
         config.devtool = "eval-source-map";
