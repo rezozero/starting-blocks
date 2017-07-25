@@ -1,14 +1,17 @@
 language: node_js
 node_js:
+  - "8"
   - "7"
   - "6"
-  - "5"
 script:
   - npm run build
 skip_cleanup: true
 jobs:
   include:
     - stage: npm release
+      branches:
+        only:
+          - master
       node_js: "6"
       skip_cleanup: true
       script:
@@ -16,7 +19,6 @@ jobs:
         - npm run build
         - echo "Deploying to npm…"
       deploy:
-        on: deploy-npm-release
         email: ambroise@rezo-zero.com
         provider: npm
         api_key:
