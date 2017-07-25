@@ -98,11 +98,9 @@ gulp.task('webpack-bundle', function(cb) {
 
     if (process.env.NODE_ENV === 'production') {
         config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-            //compress: false,
+            compress: true,
             comments: false,
-            sourceMap: false,
-            //beautify: true,
-            //mangle: false
+            sourceMap: false
         }));
         config.plugins.push(new webpack.DefinePlugin({
             'process.env': {
@@ -115,12 +113,12 @@ gulp.task('webpack-bundle', function(cb) {
         console.log('With eval source maps.');
     }
 
+    /**
+     * DO NOT use plumber !
+     * to fail the build if any error occur
+     * for Travis-CI
+     */
     return gulp.src(paths.bundleEntry)
-        .pipe(plumber({
-            handleError: function (err) {
-                cb(err);
-            }
-        }))
         .pipe(webpackStream(config))
         .pipe(gulp.dest(paths.bundleOut));
 });

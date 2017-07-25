@@ -1,13 +1,23 @@
 language: node_js
 node_js:
+  - "7"
   - "6"
-cache:
-  directories:
-    - "node_modules"
+  - "5"
 script:
   - npm run build
-deploy:
-  email: ambroise@rezo-zero.com
-  provider: npm
-  api_key:
-    secure: qUF3vsQehzYm3LYa1ocNKzMEGxswnzMVP8zm4JRLt5MKEtOml9SzvFOnOjUDfWuBl64bi9HnY/3x8KKJDoeU4ls9ONBNyYaHNRAe9RyCZzhnxLtV2SbPaTx1RxhCbm0EQKzEGedqghYK6FGx/bvsqRWLh4GtWpgd+t4n7fVeCN6SyxGzdSUjlqRcNIpXBPMP7XX93PN2Fbv7k5OkbOc7ZRDW4c+OzSpYOvPCbtRqQYZmMVnbdoqKTZMwlbGfcpuHM5Jj61Yqq2J7bDx7F+3WdKcFeRJUm47FXdK8EBJWleaXvLCjrNdPFt6/UobMOtOSsXGpDgwl1tCNT4QE8OXjxTwfGTEoQi9zGBvhiY1Piczldd9xLAooXAJcvzsoYXYPFSqyXuiCdN9y2eQ6yPS3h552FMJIAhk1ncX2UA2kiiMYg1wdkZbq3sNHxTvSOSSzd65k9kL/F7jTHs6Vgn5k2vOMUBsNvMdmOgf/SUXynDasxnzWje2oWIohy9cMIbr3vfmemNHGHJUalgeQEY3gHGxygHqRWdaF0xwwpSpA1czYuIpFhSWbCz3/oUFv6hJsNYs8kWyiqL6mH7BtPvFm/2+TbiYA2n5fm7ApkDj6HrsM2lEZxS40lAUgLdQ8nwFzJQ3/mIelSrpXu+H96E8cAoRXw9loaIyvW7l96I958og=
+skip_cleanup: true
+jobs:
+  include:
+    - stage: npm release
+      node_js: "6"
+      skip_cleanup: true
+      script:
+        - echo "Generating bundle.js…"
+        - npm run build
+        - echo "Deploying to npm…"
+      deploy:
+        on: deploy-npm-release
+        email: ambroise@rezo-zero.com
+        provider: npm
+        api_key:
+          secure: qUF3vsQehzYm3LYa1ocNKzMEGxswnzMVP8zm4JRLt5MKEtOml9SzvFOnOjUDfWuBl64bi9HnY/3x8KKJDoeU4ls9ONBNyYaHNRAe9RyCZzhnxLtV2SbPaTx1RxhCbm0EQKzEGedqghYK6FGx/bvsqRWLh4GtWpgd+t4n7fVeCN6SyxGzdSUjlqRcNIpXBPMP7XX93PN2Fbv7k5OkbOc7ZRDW4c+OzSpYOvPCbtRqQYZmMVnbdoqKTZMwlbGfcpuHM5Jj61Yqq2J7bDx7F+3WdKcFeRJUm47FXdK8EBJWleaXvLCjrNdPFt6/UobMOtOSsXGpDgwl1tCNT4QE8OXjxTwfGTEoQi9zGBvhiY1Piczldd9xLAooXAJcvzsoYXYPFSqyXuiCdN9y2eQ6yPS3h552FMJIAhk1ncX2UA2kiiMYg1wdkZbq3sNHxTvSOSSzd65k9kL/F7jTHs6Vgn5k2vOMUBsNvMdmOgf/SUXynDasxnzWje2oWIohy9cMIbr3vfmemNHGHJUalgeQEY3gHGxygHqRWdaF0xwwpSpA1czYuIpFhSWbCz3/oUFv6hJsNYs8kWyiqL6mH7BtPvFm/2+TbiYA2n5fm7ApkDj6HrsM2lEZxS40lAUgLdQ8nwFzJQ3/mIelSrpXu+H96E8cAoRXw9loaIyvW7l96I958og=
