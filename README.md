@@ -1,6 +1,8 @@
 # Starting blocks
 ## A page transition and blocks ES6 framework by REZO ZERO
 
+[![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
+
 - [Maxime Bérard](https://github.com/maximeberard)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
 - [Quentin Neyraud](https://github.com/quentinneyraud)
@@ -107,7 +109,7 @@ A Router needs:
 - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
 - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
 - a `Nav` or extending class instance to update your website navigation after AJAX requests.
-- a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes. 
+- a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
 
 You can look at the `src/main.js` file to see an instantiation example with few parameters.
 
@@ -163,26 +165,26 @@ To manage transitions, you can set `data-transition` attribute with a name on ea
 <a href="/contact" data-transition="fade">Contact</a>
 ```
 
-Then, create a **TransitionFactory** class and pass it to the **Router** instance.  
-In this class, implement `getTransition (previousState, state, direction = null)` method. 
-This method is called on each transition and give you access to state informations :  
+Then, create a **TransitionFactory** class and pass it to the **Router** instance.
+In this class, implement `getTransition (previousState, state, direction = null)` method.
+This method is called on each transition and give you access to state informations :
 
 - `previousState` and `state`
 	- **transitionName** : `data-transition` attributes of the clicked link
-	- **context** : equal to `"history"`, `"link"` or `"nav"` 
+	- **context** : equal to `"history"`, `"link"` or `"nav"`
 - `direction` : equal to `"back"` or `"forward"` on navigator buttons click (only when `context` equals to `"history"`)
 
-Example: 
+Example:
 ```javascript
 // src/TransitionFactory.js
 
 import DefaultTransition from './transitions/DefaultTransition';
 import FadeTransition from './transitions/FadeTransition';
-  
+
 export default class TransitionFactory {
     getTransition (previousState, state, direction = null) {
         let transition = null
-      
+
         switch (state.transitionName) {
             case 'fade':
                 transition = new FadeTransition()
@@ -191,14 +193,14 @@ export default class TransitionFactory {
                 transition = new DefaultTransition()
                 break
         }
-        
+
         return transition
     }
 }
 ```
 
-To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.  
-⚠️ You have to wait for `this.newPageLoading` promise resolution to make sure the new page is accessible.  
+To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.
+⚠️ You have to wait for `this.newPageLoading` promise resolution to make sure the new page is accessible.
 Then, you have access to old and new Page instances.
 
 Example with fade animation:
