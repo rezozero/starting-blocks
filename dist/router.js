@@ -226,14 +226,14 @@ define(["exports", "jquery", "isMobile", "loglevel", "utils/utils", "state", "ca
 
 
         Router.prototype.onLinkClick = function onLinkClick(e) {
-            var linkClassName = e.currentTarget.className,
-                linkHref = e.currentTarget.href;
+            var linkClassName = e.currentTarget.className;
+            var linkHref = e.currentTarget.href;
 
-            if (linkHref.indexOf('mailto:') == -1) {
+            if (linkHref.indexOf('mailto:') == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) === -1) {
                 e.preventDefault();
 
                 // Check if link is not active
-                if (linkClassName.indexOf(this.options.activeClass) == -1 && linkClassName.indexOf(this.options.noAjaxLinkClass) == -1 && !this.transition) {
+                if (linkClassName.indexOf(this.options.activeClass) == -1 && !this.transition) {
                     this.transition = true;
 
                     this.state = new _state.State(this, e.currentTarget, {
