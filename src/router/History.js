@@ -19,25 +19,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
+ * @file History.js
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
 
 /**
- * Default Transition. Show / Hide content.
+ * HistoryManager helps to keep track of the navigation
  *
- * @extends {AbstractTransition}
+ * @type {Object}
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
+export default class History {
+    constructor () {
+        /**
+         * Keep track of the status in historic order
+         *
+         * @readOnly
+         * @type {Array}
+         */
+        this.history = []
     }
 
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
+    /**
+     * Add a new set of url and namespace
+     *
+     * @param {String} url
+     * @param {String} namespace
+     * @private
+     */
+    add (url, namespace = undefined) {
+        this.history.push({ url, namespace })
+    }
+
+    /**
+     * Return information about the current status
+     *
+     * @return {Object}
+     */
+    currentStatus () {
+        return this.history[this.history.length - 1]
+    }
+
+    /**
+     * Return information about the previous status
+     *
+     * @return {Object}
+     */
+    prevStatus () {
+        const history = this.history
+
+        if (history.length < 2) { return null }
+
+        return history[history.length - 2]
     }
 }

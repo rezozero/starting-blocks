@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016, Ambroise Maupate
+ * Copyright © 2017, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,43 +19,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file CacheProvider.js
+ * @file ExampleNav.js
  * @author Ambroise Maupate
  */
+import $ from 'jquery'
+import AbstractNav from '../abstracts/AbstractNav'
 
 /**
- * Cache provider class.
- *
- * This class stores Ajax response in memory.
+ * An example nav which binds links for AJAX use.
  */
-export default class CacheProvider {
+export default class ExampleNav extends AbstractNav {
     constructor () {
-        this.hash = {}
+        super()
+
+        this.$cont = $('#main-nav').eq(0)
+    /*
+     * Bind only internal links
+     */
+        this.$links = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
     }
 
-    /**
-     * @param  {String} href
-     * @return {Boolean}
-     */
-    exists (href) {
-        return href in this.hash
-    }
+    initEvents (router) {
+        super.initEvents(router)
 
-    /**
-     * @param  {String} href
-     * @return {Object}
-     */
-    fetch (href) {
-        return this.hash[href]
-    }
-
-    /**
-     * @param  {String} href
-     * @param  {Object} data
-     * @return {CacheProvider}  this
-     */
-    save (href, data) {
-        this.hash[href] = data
-        return this
+        // const bindedLinkClick = this.router.onLinkClick.bind(router)
+        // const bindedMouseOver = this.router.onLinkEnter.bind(router)
+        // const bindedTouchStart = this.router.onLinkEnter.bind(router)
+        //
+        // if (this.$links && this.$links.length && this.router.options.ajaxEnabled) {
+        //     this.$links.on('click', bindedLinkClick)
+        //     this.$links.on('mouseover', bindedMouseOver)
+        //     this.$links.on('touchstart', bindedTouchStart)
+        // }
     }
 }

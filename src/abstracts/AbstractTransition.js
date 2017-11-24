@@ -23,7 +23,7 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import Utils from './utils/Utils'
+import Utils from '../utils/Utils'
 
 /**
  * Base class for creating transition.
@@ -82,7 +82,8 @@ export default class AbstractTransition {
      * Call this function when the Transition is finished.
      */
     done () {
-        this.newPage.$cont.css('visibility', 'visible')
+        this.oldPage.parentNode.removeChild(this.oldPage)
+        this.newPage.style.visibility = 'visible'
         this.deferred.resolve()
     }
 
@@ -91,4 +92,4 @@ export default class AbstractTransition {
      * @abstract
      */
     start () {}
-};
+}

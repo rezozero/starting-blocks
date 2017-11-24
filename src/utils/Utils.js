@@ -21,6 +21,68 @@ export default class Utils {
         return str
     }
 
+    static getPort (p) {
+        const port = typeof p !== 'undefined' ? p : window.location.port
+        const protocol = window.location.protocol
+
+        if (port !== '') { return parseInt(port) }
+        if (protocol === 'http:') { return 80 }
+        if (protocol === 'https:') { return 443 }
+    }
+
+    static cleanLink (url) {
+        return url.replace(/#.*/, '')
+    }
+
+    static getCurrentUrl () {
+        return window.location.protocol + '//' +
+            window.location.host +
+            window.location.pathname +
+            window.location.search
+    }
+
+    static requestTimeout () {
+        return 5000
+    }
+
+    /**
+     * Start a fetch request
+     *
+     * @param  {String} url
+     * @return {Promise}
+     */
+    static request (url) {
+        // TODO implement timeout!
+        const dfd = Utils.deferred()
+
+        const timeout = window.setTimeout(() => {
+            dfd.reject(new Error('timeout!'))
+        }, Utils.requestTimeout())
+
+        const headers = new window.Headers()
+        headers.append('x-starting-block', 'yes')
+
+        window.fetch(url, {
+            method: 'GET',
+            headers,
+            cache: 'default'
+        }).then(res => {
+            window.clearTimeout(timeout)
+
+            if (res.status >= 200 && res.status < 300) {
+                return dfd.resolve(res.text())
+            }
+
+            const err = new Error(res.statusText || res.status)
+            return dfd.reject(err)
+        }).catch(err => {
+            window.clearTimeout(timeout)
+            dfd.reject(err)
+        })
+
+        return dfd.promise
+    }
+
     /**
      * Log credits to console for code lovers.
      *

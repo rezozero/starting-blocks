@@ -22,7 +22,7 @@
  * @file Page.js
  * @author Ambroise Maupate
  */
-import AbstractPage from './../AbstractPage'
+import AbstractPage from '../abstracts/AbstractPage'
 /**
  * Some example "page".
  *

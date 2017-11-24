@@ -23,8 +23,8 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import DefaultTransition from './transitions/DefaultTransition'
-import FadeTransition from './transitions/FadeTransition'
+import DefaultTransition from '../transitions/DefaultTransition'
+import FadeTransition from '../transitions/FadeTransition'
 
 /**
  * Transition mapper class.

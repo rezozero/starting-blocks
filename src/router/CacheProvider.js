@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017, Ambroise Maupate
+ * Copyright © 2016, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,33 +19,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file ExampleNav.js
+ * @file CacheProvider.js
  * @author Ambroise Maupate
  */
-import $ from 'jquery'
-import AbstractNav from './AbstractNav'
 
 /**
- * An example nav which binds links for AJAX use.
+ * Cache provider class.
+ *
+ * This class stores Ajax response in memory.
  */
-export default class ExampleNav extends AbstractNav {
+export default class CacheProvider {
     constructor () {
-        super()
-
-        this.$cont = $('#main-nav').eq(0)
-    /*
-     * Bind only internal links
-     */
-        this.$links = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
+        this.data = {}
     }
 
-    initEvents (router) {
-        super.initEvents(router)
+    /**
+     * @param  {String} key
+     * @return {Boolean}
+     */
+    exists (key) {
+        return key in this.data
+    }
 
-        const bindedLinkClick = this.router.onLinkClick.bind(router)
+    /**
+     * @param  {String} href
+     * @return {Object}
+     */
+    get (href) {
+        return this.data[href]
+    }
 
-        if (this.$links && this.$links.length && this.router.options.ajaxEnabled) {
-            this.$links.on('click', bindedLinkClick)
-        }
+    /**
+     * @param  {String} key
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    set (key, data) {
+        this.data[key] = data
+        return this
+    }
+
+    /**
+     * Flush the cache
+     */
+    reset () {
+        this.data = {}
     }
 }

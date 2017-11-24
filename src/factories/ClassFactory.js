@@ -23,9 +23,9 @@
  * @author Ambroise Maupate
  */
 import log from 'loglevel'
-import Page from './pages/Page'
-import Home from './pages/Home'
-import AbstractBlock from './AbstractBlock'
+import Page from '../pages/Page'
+import Home from '../pages/Home'
+import AbstractBlock from '../abstracts/AbstractBlock'
 
 /**
  * Router mapper class.

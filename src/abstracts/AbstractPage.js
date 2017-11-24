@@ -25,15 +25,15 @@
 import log from 'loglevel'
 import $ from 'jquery'
 import Lazyload from 'vanilla-lazyload'
-import debounce from './utils/debounce'
-import Events from './Events'
+import debounce from '../utils/debounce'
+import Events from '../dispatcher/Events'
 import 'jquery.waitforimages'
 import {
     BEFORE_PAGE_SHOW,
     AFTER_PAGE_SHOW,
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
-} from './EventTypes'
+} from '../types/EventTypes'
 
 /**
  * Base class for creating page implementations.
@@ -131,7 +131,9 @@ export default class AbstractPage {
          * @type {jQuery}
          */
         this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
-        this.bindedLinkClick = this.router.onLinkClick.bind(this.router)
+        // this.bindedLinkClick = this.router.onLinkClick.bind(this.router)
+        // this.bindedLinkMouseOver = this.router.onLinkEnter.bind(this.router)
+        // this.bindedLinkTouchStart = this.router.onLinkEnter.bind(this.router)
         this.bindedUpdateBlocks = this.updateBlocks.bind(this)
 
         // Add target blank on external link
@@ -225,9 +227,11 @@ export default class AbstractPage {
             this.onLoad()
         }
 
-        if (this.$link.length && this.router.options.ajaxEnabled) {
-            this.$link.on('click', this.bindedLinkClick)
-        }
+        // if (this.$link.length && this.router.options.ajaxEnabled) {
+        //     this.$link.on('click', this.bindedLinkClick)
+        //     this.$link.on('mouseover', this.bindedLinkMouseOver)
+        //     this.$link.on('touchstart', this.bindedLinkTouchStart)
+        // }
 
         this.router.$window.on('resize', this.onResizeDebounce)
         this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks)
@@ -243,7 +247,7 @@ export default class AbstractPage {
      *
      */
     destroyEvents () {
-        this.$link.off('click', this.bindedLinkClick)
+        // this.$link.off('click', this.bindedLinkClick)
         this.router.$window.off('resize', this.onResizeDebounce)
         this.domObserver.disconnect()
     }

@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 import log from 'loglevel'
-import debounce from './utils/debounce'
+import debounce from '../utils/debounce'
 import 'jquery.waitforimages'
 
 /**

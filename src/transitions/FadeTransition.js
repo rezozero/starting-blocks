@@ -23,7 +23,7 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../AbstractTransition'
+import AbstractTransition from '../abstracts/AbstractTransition'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.
