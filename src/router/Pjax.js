@@ -24,17 +24,41 @@
  */
 
 import Utils from '../utils/Utils'
+import {
+    CONTAINER_READY,
+    AFTER_PAGE_LOAD,
+    AFTER_DOM_APPENDED,
+    TRANSITION_START,
+    TRANSITION_COMPLETE,
+    BEFORE_PAGE_LOAD
+} from '../types/EventTypes'
+import Dispatcher from '../dispatcher/Dispatcher'
 
 /**
  * Pjax is a static object with main function
  * @type {Object}
  */
 export default class Pjax {
-    constructor (history, dom, cache, transitionFactory, { ignoreClassLink = 'no-ajax-link' } = {}) {
+    /**
+     * Constructor
+     *
+     * @param {Router} router
+     * @param {History} history
+     * @param {Dom} dom
+     * @param {CacheProvider} cache
+     * @param {TransitionFactory} transitionFactory
+     * @param {String} ignoreClassLink
+     */
+    constructor (router, history, dom, cache, transitionFactory, { ignoreClassLink = 'no-ajax-link' } = {}) {
+        this.router = router
         this.history = history
         this.dom = dom
         this.cache = cache
         this.transitionFactory = transitionFactory
+
+        if (!this.router || !this.history || !this.dom || !this.cache || !this.transitionFactory) {
+            throw new Error('Starting Blocks: a Pjax parameter is missing!')
+        }
 
         /**
          * Indicate wether or not use the cache
@@ -53,19 +77,18 @@ export default class Pjax {
         this.ignoreClassLink = ignoreClassLink
 
         /**
-         * Latest HTMLElement clicked
-         *
-         * @type {HTMLElement}
-         */
-        this.lastElementClicked = null
-
-        /**
          * Indicate if there is an animation in progress
          *
          * @readOnly
          * @type {Boolean}
          */
         this.transitionProgress = false
+
+        // Binded methods
+        this.onNewPageLoaded = this.onNewPageLoaded.bind(this)
+        this.onTransitionEnd = this.onTransitionEnd.bind(this)
+        this.onLinkClick = this.onLinkClick.bind(this)
+        this.onStateChange = this.onStateChange.bind(this)
     }
 
     /**
@@ -74,15 +97,10 @@ export default class Pjax {
      * @private
      */
     init () {
-        const container = this.dom.getContainer()
         const wrapper = this.dom.getWrapper()
-
         wrapper.setAttribute('aria-live', 'polite')
 
-        this.history.add(
-            this.getCurrentUrl(),
-            this.dom.getNamespace(container)
-        )
+        this.history.add(this.getCurrentUrl())
 
         this.bindEvents()
     }
@@ -93,9 +111,6 @@ export default class Pjax {
      * @private
      */
     bindEvents () {
-        this.onLinkClick = this.onLinkClick.bind(this)
-        this.onStateChange = this.onStateChange.bind(this)
-
         document.addEventListener('click', this.onLinkClick)
         window.addEventListener('popstate', this.onStateChange)
     }
@@ -107,9 +122,7 @@ export default class Pjax {
      */
     getCurrentUrl () {
         // TODO, clean from what? currenturl do not takes hash..
-        return Utils.cleanLink(
-            Utils.getCurrentUrl()
-        )
+        return Utils.cleanLink(Utils.getCurrentUrl())
     }
 
     /**
@@ -149,16 +162,34 @@ export default class Pjax {
             this.cache.set(url, request)
         }
 
+        // When data are loaded
         request.then(data => {
             const container = this.dom.parseResponse(data)
 
+            // Dispatch an event
+            Dispatcher.commit(AFTER_PAGE_LOAD, {
+                container,
+                currentHTML: this.dom.currentHTML
+            })
+
+            // Add new container to the DOM
             this.dom.putContainer(container)
+
+            // Dispatch an event
+            Dispatcher.commit(AFTER_DOM_APPENDED, {
+                container,
+                currentHTML: this.dom.currentHTML
+            })
+
+            // Build page
+            const page = this.router.buildPage(container)
 
             if (!this.cacheEnabled) { this.cache.reset() }
 
-            deferred.resolve(container)
+            deferred.resolve(page)
         })
-            .catch(() => {
+            .catch((err) => {
+                console.error(err)
                 this.forceGoTo(url)
                 deferred.reject()
             })
@@ -172,7 +203,7 @@ export default class Pjax {
      *
      * @private
      * @param  {HTMLElement} el
-     * @return {String} href
+     * @return {String|undefined} href
      */
     getHref (el) {
         if (!el) {
@@ -198,7 +229,7 @@ export default class Pjax {
      */
     onLinkClick (evt) {
         /**
-         * @type {HTMLElement}
+         * @type {HTMLElement|Node|EventTarget}
          */
         let el = evt.target
 
@@ -212,7 +243,6 @@ export default class Pjax {
             evt.stopPropagation()
             evt.preventDefault()
 
-            this.lastElementClicked = el
             this.linkHash = el.hash.split('#')[1]
 
             const href = this.getHref(el)
@@ -257,9 +287,7 @@ export default class Pjax {
         // In case you're trying to load the same page
         if (Utils.cleanLink(href) === Utils.cleanLink(window.location.href)) { return false }
 
-        if (element.classList.contains(this.ignoreClassLink)) { return false }
-
-        return true
+        return !element.classList.contains(this.ignoreClassLink)
     }
 
     /**
@@ -287,7 +315,12 @@ export default class Pjax {
 
         this.history.add(newUrl)
 
-        const newContainer = this.load(newUrl)
+        Dispatcher.commit(BEFORE_PAGE_LOAD, {
+            currentStatus: this.history.currentStatus(),
+            prevStatus: this.history.prevStatus()
+        })
+
+        const newPagePromise = this.load(newUrl)
         const transition = this.getTransition(
             this.history.prevStatus(),
             this.history.currentStatus()
@@ -295,29 +328,40 @@ export default class Pjax {
 
         this.transitionProgress = true
 
+        Dispatcher.commit(TRANSITION_START, {
+            transition: transition,
+            currentStatus: this.history.currentStatus(),
+            prevStatus: this.history.prevStatus()
+        })
+
         const transitionInstance = transition.init(
-            this.dom.getContainer(),
-            newContainer
+            this.router.page,
+            newPagePromise
         )
 
-        newContainer.then(
-            this.onNewContainerLoaded.bind(this)
-        )
-
-        transitionInstance.then(
-            this.onTransitionEnd.bind(this)
-        )
+        newPagePromise.then(this.onNewPageLoaded)
+        transitionInstance.then(this.onTransitionEnd)
     }
 
     /**
-     * Function called as soon the new container is ready
+     * Function called as soon the new page is ready
      *
      * @private
-     * @param {HTMLElement} container
+     * @param {AbstractPage} page
      */
-    onNewContainerLoaded (container) {
+    onNewPageLoaded (page) {
         const currentStatus = this.history.currentStatus()
-        currentStatus.namespace = this.dom.getNamespace(container)
+
+        this.dom.updateBodyAttributes(page)
+        this.dom.updatePageTitle(page)
+        Utils.trackGoogleAnalytics()
+
+        Dispatcher.commit(CONTAINER_READY, {
+            currentStatus,
+            prevStatus: this.history.prevStatus(),
+            currentHTML: this.dom.currentHTML,
+            page
+        })
     }
 
     /**
@@ -334,5 +378,10 @@ export default class Pjax {
 
             this.linkHash = null
         }
+
+        Dispatcher.commit(TRANSITION_COMPLETE, {
+            currentStatus: this.history.currentStatus(),
+            prevStatus: this.history.prevStatus()
+        })
     }
 }

@@ -21,6 +21,7 @@
  *
  * @file CacheProvider.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
 
 /**

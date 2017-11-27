@@ -22,17 +22,19 @@
  * @file Page.js
  * @author Ambroise Maupate
  */
+
 import AbstractPage from '../abstracts/AbstractPage'
+
 /**
  * Some example "page".
  *
  * @extends {AbstractPage}
  * @private
  */
-export default class Page extends AbstractPage {
+export default class DefaultPage extends AbstractPage {
     init () {
-        super.init()
         this.$duplicate = this.$cont.find('a.duplicate-last')
+        super.init()
     }
 
     initEvents () {

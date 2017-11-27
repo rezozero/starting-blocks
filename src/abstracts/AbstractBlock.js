@@ -21,7 +21,9 @@
  *
  * @file AbstractBlock.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
+
 import log from 'loglevel'
 import debounce from '../utils/debounce'
 import 'jquery.waitforimages'
@@ -50,28 +52,47 @@ export default class AbstractBlock {
         type = type || 'block'
 
         /**
+         * Current page instance
+         *
          * @type {AbstractPage}
          */
         this.page = page
+
         /**
+         * Container
          * jQuery DOM object for current block.
+         *
          * @type {jQuery}
          */
         this.$cont = $cont
+
         /**
+         * Block id
+         *
          * @type {String}
          */
-        this.id = $cont[0].id
+        this.id = $cont.attr('id')
+
         /**
+         * Block type
+         *
          * @type {String}
          */
         this.type = type
+
         /**
+         * Node name
+         *
          * @type {String}
          */
-        this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : ''
-        this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false)
+        this.name = (this.$cont.length) ? this.$cont.attr('data-node-name') : ''
 
+        // Binded methods
+        this.onResize = this.onResize.bind(this)
+        this.onLoad = this.onLoad.bind(this)
+        this.onResizeDebounce = debounce(this.onResize, 50, false)
+
+        // Debugs
         log.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
 
         this.init()
@@ -84,9 +105,7 @@ export default class AbstractBlock {
      *
      * @abstract
      */
-    init () {
-
-    }
+    init () {}
 
     /**
      * Bind load and resize events for this specific block.
@@ -98,17 +117,17 @@ export default class AbstractBlock {
     initEvents () {
         if (this.$cont.find('img').length) {
             this.$cont.waitForImages({
-                finished: this.onLoad.bind(this),
+                finished: this.onLoad,
                 waitForAll: true
             })
         } else {
             this.onLoad()
         }
 
-        this.page.router.$window.on('resize', this.onResizeDebounce)
+        window.addEventListener('resize', this.onResizeDebounce)
     }
 
-    /*
+    /**
      * Destroy current block.
      *
      * Do not forget to call `super.destroy();` while extending this method.
@@ -118,7 +137,7 @@ export default class AbstractBlock {
         this.destroyEvents()
     }
 
-    /*
+    /**
      * Unbind event block events.
      *
      * Make sure you’ve used binded methods to be able to
@@ -129,29 +148,27 @@ export default class AbstractBlock {
      * @abstract
      */
     destroyEvents () {
-        this.page.router.$window.off('resize', this.onResizeDebounce)
+        window.removeEventListener('resize', this.onResizeDebounce)
     }
 
     /**
+     * Called on window resize
+     *
      * @abstract
      */
-    onResize () {
-
-    }
+    onResize () {}
 
     /**
+     * Called once images are loaded
+     *
      * @abstract
      */
-    onLoad () {
-
-    }
+    onLoad () {}
 
     /**
      * Called once all page blocks have been created.
      *
      * @abstract
      */
-    onPageReady () {
-
-    }
+    onPageReady () {}
 }

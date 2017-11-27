@@ -7,8 +7,13 @@
  * @copyright REZO ZERO 2016
  * @author Maxime Bérard
  */
-import $ from 'jquery'
 
+import $ from 'jquery'
+import log from 'loglevel'
+
+/**
+ * Utils class
+ */
 export default class Utils {
     /**
      * @param  {String} str
@@ -21,6 +26,12 @@ export default class Utils {
         return str
     }
 
+    /**
+     * Get port
+     *
+     * @param p
+     * @returns {*}
+     */
     static getPort (p) {
         const port = typeof p !== 'undefined' ? p : window.location.port
         const protocol = window.location.protocol
@@ -34,6 +45,11 @@ export default class Utils {
         return url.replace(/#.*/, '')
     }
 
+    /**
+     * Get current url
+     *
+     * @returns {string}
+     */
     static getCurrentUrl () {
         return window.location.protocol + '//' +
             window.location.host +
@@ -41,8 +57,13 @@ export default class Utils {
             window.location.search
     }
 
+    /**
+     * Request timeout (in ms)
+     *
+     * @returns {number}
+     */
     static requestTimeout () {
-        return 5000
+        return 10000
     }
 
     /**
@@ -60,7 +81,9 @@ export default class Utils {
         }, Utils.requestTimeout())
 
         const headers = new window.Headers()
-        headers.append('x-starting-block', 'yes')
+        headers.append('X-Starting-Blocks', 'yes')
+        headers.append('X-Allow-Partial', 'yes')
+        headers.append('X-Requested-With', 'XMLHttpRequest')
 
         window.fetch(url, {
             method: 'GET',
@@ -222,6 +245,19 @@ export default class Utils {
                     })
                 })
             }
+        }
+    }
+
+    /**
+     * Send a GA page view event when context is AJAX.
+     */
+    static trackGoogleAnalytics () {
+        if (typeof window.ga !== 'undefined') {
+            log.debug('🚩 Push Analytics for: ' + window.location.pathname)
+            window.ga('send', 'pageview', {
+                'page': window.location.pathname,
+                'title': document.title
+            })
         }
     }
 

@@ -20,14 +20,14 @@ gulp.task('webpack', ['clean-build'], function (cb) {
         },
         descriptionFiles: ['package.json'],
         module: {
-            loaders: [
-                { test: /\.css$/, loader: 'style!css' },
-                {
-                    test: /\.js$/,
-                    exclude: /(node_modules|bundle\.js)/,
-                    loader: 'babel-loader'
-                }
-            ]
+            loaders: [{
+                test: /\.css$/,
+                loader: 'style!css'
+            }, {
+                test: /\.js$/,
+                exclude: /(node_modules|bundle\.js)/,
+                loader: 'babel-loader'
+            }]
         },
         plugins: []
     }
@@ -75,14 +75,14 @@ gulp.task('webpack-bundle', function (cb) {
         },
         descriptionFiles: ['package.json'],
         module: {
-            loaders: [
-                { test: /\.css$/, loader: 'style!css' },
-                {
-                    test: /\.js$/,
-                    exclude: /(node_modules|bower_components)/,
-                    loader: 'babel-loader'
-                }
-            ]
+            loaders: [{
+                test: /\.css$/,
+                loader: 'style!css'
+            }, {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader'
+            }]
         },
         plugins: [],
         externals: {

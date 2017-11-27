@@ -21,12 +21,14 @@
  *
  * @file AbstractPage.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
+
 import log from 'loglevel'
 import $ from 'jquery'
 import Lazyload from 'vanilla-lazyload'
 import debounce from '../utils/debounce'
-import Events from '../dispatcher/Events'
+import Dispatcher from '../dispatcher/Dispatcher'
 import 'jquery.waitforimages'
 import {
     BEFORE_PAGE_SHOW,
@@ -49,7 +51,7 @@ export default class AbstractPage {
      * Do not override this method, override `init` method instead.
      *
      * @param  {Router}  router
-     * @param  {jQuery}  $cont
+     * @param  {HTMLElement}  $cont
      * @param  {String}  context
      * @param  {String}  type
      * @param  {Boolean} isHome
@@ -60,62 +62,101 @@ export default class AbstractPage {
         type = type || 'page'
 
         if (!$cont) {
-            throw new Error('AbstractPage need a $cont (JQuery) to be defined.')
+            throw new Error('AbstractPage need a $cont (HTMLElement) to be defined.')
         }
+
         if (!router) {
             throw new Error('AbstractPage need a Router instance to be defined.')
         }
+
         /**
+         * Router
+         *
          * @type {Router}
          */
         this.router = router
+
         /**
+         * Container element (Jquery)
+         *
          * @type {jQuery}
          */
-        this.$cont = $cont
+        this.container = $cont
+        this.$cont = $($cont)
+
+        if (!this.$cont) {
+            throw new Error(`AbstractPage: container not found!`)
+        }
+
         /**
+         * Page id
+         *
          * @type {String}
          */
-        this.id = $cont[0].id
+        this.id = this.$cont.attr('id')
+
+        if (!this.$cont) {
+            throw new Error(`AbstractPage: container have no id!`)
+        }
+
         /**
+         * Page context (static or ajax)
+         *
          * @type {String}
          */
         this.context = context
+
         /**
+         * Page type
+         *
          * @type {String}
          */
         this.type = type
+
         /**
+         * Is home ?
+         *
          * @type {Boolean}
          */
         this.isHome = isHome
+
         /**
+         * Lazyload instance
+         *
          * @type {Lazyload|null}
          */
         this.lazyload = null
 
-        if (this.$cont[0].getAttribute('data-is-home') === '1') {
+        if (this.$cont.attr('data-is-home') === '1') {
             this.isHome = true
         }
 
         /**
          * AbstractBlock collection.
          *
-         * @type {AbstractBlock[]}
+         * @type {Array<AbstractBlock>}
          */
         this.blocks = []
 
         /**
+         * Node name
+         *
          * @type {String}
          */
-        this.name = (this.$cont.length) ? this.$cont[0].getAttribute('data-node-name') : ''
+        this.name = (this.$cont.length) ? this.$cont.attr('data-node-name') : ''
+        this.metaTitle = (this.$cont.length) ? this.$cont.attr('data-meta-title') : ''
 
-        this.onResizeDebounce = debounce(this.onResize.bind(this), 50, false)
+        // Binded methods
+        this.onResize = this.onResize.bind(this)
+        this.onResizeDebounce = debounce(this.onResize, 50, false)
+        this.bindedUpdateBlocks = this.updateBlocks.bind(this)
+        this.onLoad = this.onLoad.bind(this)
+        this.onLazyImageSet = this.onLazyImageSet.bind(this)
+        this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
+        this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
 
+        // Debug
         log.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey')
-
-        this.init()
-        this.initEvents()
     }
 
     /**
@@ -131,16 +172,13 @@ export default class AbstractPage {
          * @type {jQuery}
          */
         this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
-        // this.bindedLinkClick = this.router.onLinkClick.bind(this.router)
-        // this.bindedLinkMouseOver = this.router.onLinkEnter.bind(this.router)
-        // this.bindedLinkTouchStart = this.router.onLinkEnter.bind(this.router)
-        this.bindedUpdateBlocks = this.updateBlocks.bind(this)
 
         // Add target blank on external link
         if (this.$link.length) {
             this.externalLinkTarget(this.$link, this.router.baseUrl)
             this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
         }
+
         /**
          * jQuery blocks collection.
          *
@@ -155,26 +193,17 @@ export default class AbstractPage {
             this.initBlocks()
         }
 
-        // --- Context --- //
-        if (this.router.options.ajaxEnabled) {
-            if (this.context === 'ajax') {
-                this.initAjax()
-            }
+        // Context
+        if (this.router.options.ajaxEnabled && this.context === 'ajax') {
+            this.initAjax()
         }
-        // --- Lazyload --- //
+
+        // Lazyload
         if (this.router.options.lazyloadEnabled) {
-            this.beforeLazyload()
-            this.lazyload = new Lazyload({
-                threshold: this.router.options.lazyloadThreshold,
-                throttle: this.router.options.lazyloadThrottle,
-                elements_selector: '.' + this.router.options.lazyloadClass,
-                data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
-                data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
-                callback_set: this.onLazyImageSet.bind(this),
-                callback_load: this.onLazyImageLoad.bind(this),
-                callback_processed: this.onLazyImageProcessed.bind(this)
-            })
+            this.initLazyload()
         }
+
+        this.initEvents()
     }
 
     /**
@@ -191,6 +220,7 @@ export default class AbstractPage {
         if (this.router.page !== null && this.router.page.name !== this.name) {
             this.router.$body.removeClass(this.name)
         }
+
         /*
          * Do not remove type class on body if destroyed page is the same as current one.
          */
@@ -220,20 +250,15 @@ export default class AbstractPage {
     initEvents () {
         if (this.$cont.find('img').length) {
             this.$cont.waitForImages({
-                finished: this.onLoad.bind(this),
+                finished: this.onLoad,
                 waitForAll: true
             })
         } else {
             this.onLoad()
         }
 
-        // if (this.$link.length && this.router.options.ajaxEnabled) {
-        //     this.$link.on('click', this.bindedLinkClick)
-        //     this.$link.on('mouseover', this.bindedLinkMouseOver)
-        //     this.$link.on('touchstart', this.bindedLinkTouchStart)
-        // }
+        window.addEventListener('resize', this.onResizeDebounce)
 
-        this.router.$window.on('resize', this.onResizeDebounce)
         this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks)
         this.domObserver.observe(this.$cont.get(0), {
             childList: true,
@@ -244,12 +269,36 @@ export default class AbstractPage {
     }
 
     /**
-     *
+     * Destroy events
      */
     destroyEvents () {
-        // this.$link.off('click', this.bindedLinkClick)
-        this.router.$window.off('resize', this.onResizeDebounce)
+        window.removeEventListener('resize', this.onResizeDebounce)
         this.domObserver.disconnect()
+    }
+
+    /**
+     * Init lazyload
+     *
+     * @private
+     */
+    initLazyload () {
+        this.beforeLazyload()
+        this.lazyload = new Lazyload({
+            threshold: this.router.options.lazyloadThreshold,
+            throttle: this.router.options.lazyloadThrottle,
+            elements_selector: '.' + this.router.options.lazyloadClass,
+            data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
+            data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
+            callback_set: this.onLazyImageSet,
+            callback_load: this.onLazyImageLoad,
+            callback_processed: this.onLazyImageProcessed
+        })
+    }
+
+    checkLazyload () {
+        if (this.lazyload) {
+            this.lazyload.update()
+        }
     }
 
     /**
@@ -268,7 +317,7 @@ export default class AbstractPage {
         this.loadDuration = this.loadDate - this.router.loadBeginDate
         this.router.nav.update(this)
 
-        Events.commit(BEFORE_PAGE_SHOW, this)
+        Dispatcher.commit(BEFORE_PAGE_SHOW, this)
     }
 
     updateLazyload () {
@@ -284,35 +333,18 @@ export default class AbstractPage {
         log.debug('▶️ #' + this.id)
         this.$cont[0].style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
-    }
-
-    /**
-     * @deprecated Use onShowEnded
-     */
-    showEnded () {
-        this.onShowEnded()
-    }
-    /**
-     * After show animation has played.
-     */
-    onShowEnded () {
-        this.router.transition = false
-        this.$cont.removeClass(this.router.options.pageClass + '-ajax')
-        this.$cont.removeClass(this.router.options.pageClass + '-transitioning')
-
-        Events.commit(AFTER_PAGE_SHOW, this)
+        Dispatcher.commit(AFTER_PAGE_SHOW, this)
     }
 
     /**
      * @param {Function} onHidden
      */
     hide (onHidden) {
-        Events.commit(BEFORE_PAGE_HIDE, this)
+        Dispatcher.commit(BEFORE_PAGE_HIDE, this)
         log.debug('◀️ #' + this.id)
         this.$cont[0].style.opacity = '0'
         if (typeof onHidden !== 'undefined') onHidden()
-
-        Events.commit(AFTER_PAGE_HIDE, this)
+        Dispatcher.commit(AFTER_PAGE_HIDE, this)
     }
 
     initAjax () {
@@ -360,12 +392,10 @@ export default class AbstractPage {
         this.blockLength = this.$blocks.length
 
         this.$blocks.each((blockIndex, el) => {
-            let block = this.getBlockById($(el).attr('id'))
+            let block = this.getBlockById(el.id)
             if (block === null) {
                 let block = this.initSingleBlock(this.$blocks.eq(blockIndex))
-                /*
-                 * Prevent undefined blocks to be appended to block collection.
-                 */
+                // Prevent undefined blocks to be appended to block collection.
                 if (block) {
                     this.blocks.push(block)
                     block.onPageReady()
@@ -406,10 +436,12 @@ export default class AbstractPage {
      */
     getBlockIndexById (id) {
         for (let i in this.blocks) {
-            if (this.blocks[i] &&
-                this.blocks[i].id &&
-                this.blocks[i].id === id) {
-                return i
+            if (this.blocks.hasOwnProperty(i)) {
+                if (this.blocks[i] &&
+                    this.blocks[i].id &&
+                    this.blocks[i].id === id) {
+                    return i
+                }
             }
         }
         return null
@@ -437,10 +469,12 @@ export default class AbstractPage {
      */
     getFirstBlockIndexByType (type) {
         for (let i in this.blocks) {
-            if (this.blocks[i] &&
-                this.blocks[i].type &&
-                this.blocks[i].type === type) {
-                return i
+            if (this.blocks.hasOwnProperty(i)) {
+                if (this.blocks[i] &&
+                    this.blocks[i].type &&
+                    this.blocks[i].type === type) {
+                    return i
+                }
             }
         }
         return null
@@ -455,12 +489,8 @@ export default class AbstractPage {
 
     /**
      * Called before init lazyload images.
-     *
-     * @abstract
      */
-    beforeLazyload () {
-
-    }
+    beforeLazyload () {}
 
     /**
      * After image src switched.

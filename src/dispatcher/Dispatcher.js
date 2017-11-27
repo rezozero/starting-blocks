@@ -19,17 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file Home.js
+ * @file Events.js
  * @author Ambroise Maupate
  */
-import AbstractPage from '../abstracts/AbstractPage'
+
+import log from 'loglevel'
 
 /**
- * Some example "home" page.
+ * Event dispatcher singleton.
  *
- * @extends {AbstractPage}
- * @class
+ * @abstract
  */
-export default class Home extends AbstractPage {
-
+class Dispatcher {
+    commit (eventType, detail) {
+        const event = new window.CustomEvent(eventType, {detail})
+        log.debug('🚩 Dispatched ' + eventType)
+        window.dispatchEvent(event)
+    }
 }
+
+export default new Dispatcher()

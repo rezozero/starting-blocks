@@ -22,9 +22,10 @@
  * @file ClassFactory.js
  * @author Ambroise Maupate
  */
+
 import log from 'loglevel'
-import Page from '../pages/Page'
-import Home from '../pages/Home'
+import DefaultPage from '../pages/DefaultPage'
+import HomePage from '../pages/HomePage'
 import AbstractBlock from '../abstracts/AbstractBlock'
 
 /**
@@ -39,23 +40,22 @@ export default class ClassFactory {
      * Returns an `AbstractPage` child class instance
      * according to the `nodeTypeName` or an `AbstractPage` as default.
      *
-     * @param  {String}  nodeTypeName
+     * @param  {String}  nodeType
      * @param  {Router}  router
      * @param  {jQuery}  $cont
      * @param  {String}  context
-     * @param  {String}  nodeType
      * @param  {Boolean} isHome
      *
      * @return {AbstractPage}
      */
-    getPageInstance (nodeTypeName, router, $cont, context, nodeType, isHome) {
-        switch (nodeTypeName) {
+    getPageInstance (nodeType, router, $cont, context, isHome) {
+        switch (nodeType) {
         case 'home':
             log.debug('Create new home')
-            return new Home(router, $cont, context, nodeType, isHome)
+            return new HomePage(router, $cont, context, nodeType, isHome)
         default:
-            log.info('"' + nodeTypeName + '" has no defined route, using Page.')
-            return new Page(router, $cont, context, nodeType, isHome)
+            log.info(`"${nodeType}" has no defined route, using Page.`)
+            return new DefaultPage(router, $cont, context, nodeType, isHome)
         }
     }
 

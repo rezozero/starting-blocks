@@ -19,46 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file StatesStack.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @file Home.js
+ * @author Ambroise Maupate
  */
+
+import AbstractPage from '../abstracts/AbstractPage'
 
 /**
- * StatesStack manager.
+ * Some example "home" page.
+ *
+ * @extends {AbstractPage}
+ * @class
  */
-export default class StatesStack {
-    /**
-     * Create a new StatesStack manager
-     */
-    constructor () {
-        this.stack = []
-        this.currentStackIndex = 0
-    }
-
-    /**
-     * push the new state to the stack
-     * @param {State} state
-     */
-    push (state) {
-        this.stack.push(state)
-        this.currentStackIndex = this.stack.length - 1
-    }
-
-    /**
-     * Get navigation direction on pop state events
-     * @param {State} currentState
-     * @returns {string}
-     */
-    getDirection (currentState) {
-        const newStackIndex = this.stack.findIndex(state => state.uid === currentState.uid)
-        let direction = 'forward'
-
-        if (newStackIndex - this.currentStackIndex < 0) {
-            direction = 'back'
-        }
-
-        this.currentStackIndex = newStackIndex
-        return direction
-    }
-}
+export default class HomePage extends AbstractPage {}

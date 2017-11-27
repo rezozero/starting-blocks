@@ -43,11 +43,9 @@ export default class History {
      * Add a new set of url and namespace
      *
      * @param {String} url
-     * @param {String} namespace
-     * @private
      */
-    add (url, namespace = undefined) {
-        this.history.push({ url, namespace })
+    add (url) {
+        this.history.push({ url })
     }
 
     /**

@@ -68,6 +68,9 @@ export default class FadeTransition extends AbstractTransition {
             opacity: 0
         })
 
+        // IMPORTANT Call this method just after set visibility to visible
+        this.newPage.checkLazyload()
+
         // fadeIn the new content container
         this.newPage.$cont.animate({ opacity: 1 }, 400, () => {
             document.body.scrollTop = 0

@@ -31,7 +31,7 @@
 export const BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD'
 
 /**
- * After Router XHR request succeded.
+ * After Router XHR request succeeded.
  *
  * @type {String}
  */
@@ -43,6 +43,13 @@ export const AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD'
  * @type {String}
  */
 export const AFTER_DOM_APPENDED = 'SB_AFTER_DOM_APPENDED'
+
+/**
+ * When new page container is ready.
+ *
+ * @type {String}
+ */
+export const CONTAINER_READY = 'SB_CONTAINER_READY'
 
 /**
  * After Router create new page instance.
@@ -74,9 +81,23 @@ export const AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW'
 export const BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE'
 
 /**
- * After page hidind animation.
+ * After page hiding animation.
  * Be careful, this must be triggered manually if hide() method is overriden.
  *
  * @type {String}
  */
 export const AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE'
+
+/**
+ * Before page transition begin.
+ *
+ * @type {String}
+ */
+export const TRANSITION_START = 'SB_TRANSITION_START'
+
+/**
+ * After page transition completed.
+ *
+ * @type {String}
+ */
+export const TRANSITION_COMPLETE = 'SB_TRANSITION_COMPLETE'

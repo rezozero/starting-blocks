@@ -39,13 +39,15 @@ export default class AbstractTransition {
      */
     constructor () {
         /**
-         * @type {Page} old Page instance
+         * @type {AbstractPage} old Page instance
          */
         this.oldPage = undefined
+
         /**
-         * @type {Page}
+         * @type {AbstractPage}
          */
         this.newPage = undefined
+
         /**
          * @type {Promise}
          */
@@ -56,9 +58,9 @@ export default class AbstractTransition {
      * Initialize transition.
      * Do not override this method.
      *
-     * @returns {Promise}
-     * @param {Page} oldPage
+     * @param {AbstractPage} oldPage
      * @param {Promise} newPagePromise
+     * @returns {Promise}
      */
     init (oldPage, newPagePromise) {
         this.oldPage = oldPage
@@ -82,8 +84,9 @@ export default class AbstractTransition {
      * Call this function when the Transition is finished.
      */
     done () {
-        this.oldPage.parentNode.removeChild(this.oldPage)
-        this.newPage.style.visibility = 'visible'
+        this.oldPage.destroy()
+        this.newPage.$cont[0].style.visibility = 'visible'
+        this.newPage.checkLazyload()
         this.deferred.resolve()
     }
 
