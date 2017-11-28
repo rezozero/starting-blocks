@@ -19,8 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file event-types.js
+ * @file EventTypes.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
 
 /**

@@ -43,9 +43,11 @@ export default class History {
      * Add a new set of url and namespace
      *
      * @param {String} url
+     * @param {String} transitionName
+     * @param {String} context (ajax, history)
      */
-    add (url) {
-        this.history.push({ url })
+    add (url, transitionName, context) {
+        this.history.push({ url, transitionName, context })
     }
 
     /**

@@ -1,5 +1,5 @@
-/**
- * Copyright © 2016, Ambroise Maupate
+/*
+ * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -7,7 +7,6 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
@@ -19,64 +18,73 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file FadeTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * Except as contained in this notice, the name of the ROADIZ shall not
+ * be used in advertising or otherwise to promote the sale, use or other dealings
+ * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
+ *
+ * @file SlideTransition.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
 import AbstractTransition from '../abstracts/AbstractTransition'
+import { TweenMax, Power4 } from 'gsap'
+import 'gsap/ScrollToPlugin'
 
 /**
- * Fade Transition class example. Fade Out / Fade In content.
+ * Slide Transition class example.
  *
  * @extends {AbstractTransition}
  */
-export default class FadeTransition extends AbstractTransition {
+export default class SlideTransition extends AbstractTransition {
     /**
      * Entry point of the animation
      * Automatically called on init()
      */
     start () {
-        // Wait new content and the end of fadeOut animation
-        // this.newPageLoading is a Promise which is resolved when the new content is loaded
-        Promise.all([this.newPageLoading, this.fadeOut()])
-            // then fadeIn the new content
-            .then(this.fadeIn.bind(this))
+        Promise.all([this.newPageLoading, this.slideOut()])
+            .then(this.slideIn.bind(this))
     }
 
     /**
-     * Fade out the old content.
+     * Slide out the old content.
      * @returns {Promise}
      */
-    fadeOut () {
+    slideOut () {
         return new Promise((resolve) => {
-            this.oldPage.$cont.animate({
-                opacity: 0
-            }, 400, 'swing', resolve)
+            TweenMax.to(this.oldPage.$cont, 0.5, {
+                xPercent: 25,
+                alpha: 0,
+                easing: Power4.easeIn,
+                onComplete: resolve
+            })
         })
     }
 
     /**
-     * Fade in the new content
+     * Slide in the new content
      */
-    fadeIn () {
-        // Add display: none on the old container
-        this.oldPage.$cont.hide()
-
-        // Prepare new content css properties for the fade animation
-        this.newPage.$cont.css({
-            visibility: 'visible',
-            opacity: 0
+    slideIn () {
+        TweenMax.set(this.oldPage.$cont, {
+            display: 'none'
         })
 
-        // IMPORTANT Call this method just after set visibility to visible
+        TweenMax.set(this.newPage.$cont, {
+            position: 'absolute',
+            visibility: 'visible',
+            alpha: 0,
+            xPercent: -25
+        })
+
         this.newPage.checkLazyload()
 
-        // fadeIn the new content container
-        this.newPage.$cont.animate({ opacity: 1 }, 400, () => {
-            document.body.scrollTop = 0
-            // IMPORTANT: Call this method at the end
-            this.done()
+        TweenMax.to(this.newPage.$cont, 0.75, {
+            xPercent: 0,
+            alpha: 1,
+            easing: Power4.easeOut,
+            onComplete: () => {
+                TweenMax.set(this.newPage.$cont, { 'position': 'static' })
+                this.done()
+            }
         })
     }
 }

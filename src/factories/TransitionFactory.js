@@ -23,8 +23,10 @@
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
+
 import DefaultTransition from '../transitions/DefaultTransition'
 import FadeTransition from '../transitions/FadeTransition'
+import SlideTransition from '../transitions/SlideTransition'
 
 /**
  * Transition mapper class.
@@ -39,28 +41,23 @@ export default class TransitionFactory {
      *
      * @param {Object} previousState
      * @param {Object} state
-     * @param {String} direction ('back' or 'forward')
      * @returns {AbstractTransition}
      */
-    getTransition (previousState, state, direction = null) {
+    getTransition (previousState, state) {
         /**
-         * You can customise transition logic with the previousState, the new state
-         * and the direction (back or forward)
+         * You can customise transition logic with the previousState and the new state
          *
-         * Ex: when back button its pressed and the previous animation was a FadeTransition
-         * we use the DefaultTransition
+         * Ex: when back or prev button its pressed we use FadeTransition
          */
-        if (previousState && previousState.context === 'history' && direction) {
-            if (previousState.transitionName === 'fade' && direction === 'back') {
-                return new DefaultTransition()
-            }
+        if (state && state.context === 'history') {
+            return new FadeTransition()
         }
 
         let transition
 
         switch (state.transitionName) {
-        case 'fade':
-            transition = new FadeTransition()
+        case 'slide':
+            transition = new SlideTransition()
             break
         default:
             transition = new DefaultTransition()

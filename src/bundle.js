@@ -1,5 +1,4 @@
 import tmpRouter from './router/Router'
-import tmpState from './State'
 import tmpCacheProvider from './router/CacheProvider'
 import tmpGraphicLoader from './GraphicLoader'
 import tmpAbstractPage from './abstracts/AbstractPage'
@@ -15,8 +14,6 @@ import tmpBootstrapMedia from './utils/BootstrapMedia'
 
 /** @private */
 export const Router = tmpRouter
-/** @private */
-export const State = tmpState
 /** @private */
 export const CacheProvider = tmpCacheProvider
 /** @private */

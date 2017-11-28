@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016, Ambroise Maupate
+ * Copyright © 2017, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
  */
 
 import Utils from '../utils/Utils'
+import Dispatcher from '../dispatcher/Dispatcher'
 import {
     CONTAINER_READY,
     AFTER_PAGE_LOAD,
@@ -32,10 +33,10 @@ import {
     TRANSITION_COMPLETE,
     BEFORE_PAGE_LOAD
 } from '../types/EventTypes'
-import Dispatcher from '../dispatcher/Dispatcher'
 
 /**
  * Pjax is a static object with main function
+ *
  * @type {Object}
  */
 export default class Pjax {
@@ -129,10 +130,13 @@ export default class Pjax {
      * Change the URL with pushstate and trigger the state change
      *
      * @param {String} url
+     * @param {String} transitionName
      */
-    goTo (url) {
+    goTo (url, transitionName) {
+        const currentPosition = window.scrollY
         window.history.pushState(null, null, url)
-        this.onStateChange()
+        window.scrollTo(0, currentPosition)
+        this.onStateChange(transitionName)
     }
 
     /**
@@ -222,6 +226,24 @@ export default class Pjax {
     }
 
     /**
+     * Get transition name from HTMLElement attribute (data-transition)
+     *
+     * @param {HTMLElement} el
+     * @returns {String|undefined} The transition name
+     */
+    getTransitionName (el) {
+        if (!el) {
+            return null
+        }
+
+        if (el.getAttribute && typeof el.getAttribute('data-transition') === 'string') {
+            return el.getAttribute('data-transition')
+        }
+
+        return null
+    }
+
+    /**
      * Callback called from click event
      *
      * @private
@@ -246,7 +268,8 @@ export default class Pjax {
             this.linkHash = el.hash.split('#')[1]
 
             const href = this.getHref(el)
-            this.goTo(href)
+            const transitionName = this.getTransitionName(el)
+            this.goTo(href, transitionName)
         }
     }
 
@@ -306,21 +329,31 @@ export default class Pjax {
      *
      * @private
      */
-    onStateChange () {
+    onStateChange (transitionName = null) {
         const newUrl = this.getCurrentUrl()
 
         if (this.transitionProgress) { this.forceGoTo(newUrl) }
 
         if (this.history.currentStatus().url === newUrl) { return false }
 
-        this.history.add(newUrl)
+        // If transition name is a string, a link have been click
+        // Otherwise back/forward buttons have been pressed
+        if (typeof transitionName === 'string') {
+            this.history.add(newUrl, transitionName, 'ajax')
+        } else {
+            this.history.add(newUrl, null, 'history')
+        }
 
+        // Dispatch an event to inform that the page is being load
         Dispatcher.commit(BEFORE_PAGE_LOAD, {
             currentStatus: this.history.currentStatus(),
             prevStatus: this.history.prevStatus()
         })
 
+        // Load the page with the new url (promise is return)
         const newPagePromise = this.load(newUrl)
+
+        // Get the page transition instance (from prev and current state)
         const transition = this.getTransition(
             this.history.prevStatus(),
             this.history.currentStatus()
@@ -328,19 +361,21 @@ export default class Pjax {
 
         this.transitionProgress = true
 
+        // Dispatch an event that the transition is started
         Dispatcher.commit(TRANSITION_START, {
             transition: transition,
             currentStatus: this.history.currentStatus(),
             prevStatus: this.history.prevStatus()
         })
 
-        const transitionInstance = transition.init(
+        // Start the transition (with the current page, and the new page load promise)
+        const transitionPromise = transition.init(
             this.router.page,
             newPagePromise
         )
 
         newPagePromise.then(this.onNewPageLoaded)
-        transitionInstance.then(this.onTransitionEnd)
+        transitionPromise.then(this.onTransitionEnd)
     }
 
     /**
@@ -352,8 +387,11 @@ export default class Pjax {
     onNewPageLoaded (page) {
         const currentStatus = this.history.currentStatus()
 
+        // Update body attributes (class, id, data-attributes
         this.dom.updateBodyAttributes(page)
+        // Update the page title
         this.dom.updatePageTitle(page)
+        // Send google analytic data
         Utils.trackGoogleAnalytics()
 
         Dispatcher.commit(CONTAINER_READY, {
