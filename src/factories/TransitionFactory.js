@@ -59,6 +59,9 @@ export default class TransitionFactory {
         case 'slide':
             transition = new SlideTransition()
             break
+        case 'fade':
+            transition = new FadeTransition()
+            break
         default:
             transition = new DefaultTransition()
             break

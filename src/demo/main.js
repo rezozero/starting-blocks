@@ -14,13 +14,9 @@ polyfills()
 
 log.setLevel(0)
 
-/*
- * Begin main app ---
+/**
+ * Begin main app
  */
-const $body = $('body')
-const dataHome = $body[0].getAttribute('data-is-home')
-const isHome = (dataHome === '1')
-
 if (!window.location.origin) {
     window.location.origin = window.location.protocol + '//' + window.location.host
 }
@@ -40,6 +36,3 @@ new TransitionFactory()
 )
 
 router.init()
-
-// router.initEvents()
-// router.boot($('.page-content').eq(0), 'static', isHome)

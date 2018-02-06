@@ -40,6 +40,7 @@ const DEFAULT_OPTIONS = {
     homeHasClass: false,
     ajaxEnabled: true,
     pageClass: 'page-content',
+    ajaxWrapperId: 'sb-wrapper',
     objectTypeAttr: 'data-node-type',
     ajaxLinkTypeAttr: 'data-node-type',
     noAjaxLinkClass: 'no-ajax-link',
@@ -217,7 +218,11 @@ export default class Router {
     }
 
     init () {
-        this.dom = new Dom(this.$body)
+        this.dom = new Dom(this.$body, {
+            wrapperId: this.options.ajaxWrapperId,
+            objectTypeAttr: this.options.objectTypeAttr,
+            containerClass: this.options.pageClass
+        })
 
         // Check if desktop or mobile
         this.$body.addClass(`is-${this.deviceType}`)

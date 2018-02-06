@@ -36,12 +36,12 @@ export default class Dom {
      * @param {jQuery} $body
      * @param {String} wrapperId
      * @param {String} objectTypeAttr
-     * @param {String} containerClass
+     * @param {String} pageClass
      */
     constructor ($body, {
             wrapperId = 'sb-wrapper',
             objectTypeAttr = 'data-node-type',
-            containerClass = 'page-content'
+            pageClass = 'page-content'
         } = {}) {
         /**
          * Id of the main wrapper
@@ -65,7 +65,7 @@ export default class Dom {
          * @type {String}
          * @default
          */
-        this.containerClass = containerClass
+        this.pageClass = pageClass
 
         /**
          * Full HTML String of the current page.
@@ -174,7 +174,7 @@ export default class Dom {
      * @return {HTMLElement} element
      */
     parseContainer (element) {
-        return element.querySelector(`.${this.containerClass}`)
+        return element.querySelector(`.${this.pageClass}`)
     }
 
     /**

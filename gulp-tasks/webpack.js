@@ -115,7 +115,7 @@ gulp.task('webpack-bundle', function (cb) {
     }
 
     /**
-     * DO NOT use plumber !
+     * DO NOT use plumber!
      * to fail the build if any error occur
      * for Travis-CI
      */

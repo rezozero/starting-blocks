@@ -101,7 +101,7 @@ export default class Pjax {
         const wrapper = this.dom.getWrapper()
         wrapper.setAttribute('aria-live', 'polite')
 
-        this.history.add(this.getCurrentUrl())
+        this.history.add(this.getCurrentUrl(), null, 'static')
 
         this.bindEvents()
     }
