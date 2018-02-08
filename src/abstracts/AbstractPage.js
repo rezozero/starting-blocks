@@ -29,7 +29,7 @@ import $ from 'jquery'
 import Lazyload from 'vanilla-lazyload'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
-import 'jquery.waitforimages'
+// import 'jquery.waitforimages'
 import {
     BEFORE_PAGE_SHOW,
     AFTER_PAGE_SHOW,

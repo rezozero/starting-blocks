@@ -26,7 +26,6 @@
 
 import log from 'loglevel'
 import debounce from '../utils/debounce'
-import 'jquery.waitforimages'
 
 /**
  * Base class for creating block implementations.

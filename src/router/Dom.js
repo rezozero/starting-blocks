@@ -39,10 +39,10 @@ export default class Dom {
      * @param {String} pageClass
      */
     constructor ($body, {
-            wrapperId = 'sb-wrapper',
-            objectTypeAttr = 'data-node-type',
-            pageClass = 'page-content'
-        } = {}) {
+        wrapperId = 'sb-wrapper',
+        objectTypeAttr = 'data-node-type',
+        pageClass = 'page-content'
+    } = {}) {
         /**
          * Id of the main wrapper
          *
