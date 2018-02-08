@@ -36,6 +36,10 @@ import History from './History'
 import Pjax from './Pjax'
 import Dom from './Dom'
 
+import ClassFactory from '../factories/ClassFactory'
+import AbstractNav from '../abstracts/AbstractNav'
+import GraphicLoader from '../GraphicLoader'
+
 const DEFAULT_OPTIONS = {
     homeHasClass: false,
     ajaxEnabled: true,
@@ -56,7 +60,11 @@ const DEFAULT_OPTIONS = {
     lazyloadThrottle: 150,
     minLoadDuration: 0,
     preLoadPageDelay: 0,
-    useCache: false
+    useCache: false,
+    classFactory: null,
+    graphicLoader: null,
+    nav: null,
+    transitionFactory: null
 }
 
 /**
@@ -88,16 +96,15 @@ export default class Router {
      * | `lazyloadThrottle` | `150` |
      * | `minLoadDuration` | `0` |
      * | `preLoadPageDelay` |  |
+     * | `classFactory` | ClassFactory instance |
+     * | `graphicLoader` | GraphicLoader instance |
+     * | `nav` | AbstractNav instance |
+     * | `transitionFactory` | TransitionFactory instance |
      *
      *
      * @param {Object} options
-     * @param {ClassFactory} classFactory
-     * @param {String} baseUrl
-     * @param {GraphicLoader} loader
-     * @param {AbstractNav} nav
-     * @param {TransitionFactory} transitionFactory
      */
-    constructor (options = {}, classFactory, baseUrl, loader, nav, transitionFactory = null) {
+    constructor (options = {}) {
         /**
          * @type {Object}
          */
@@ -106,67 +113,54 @@ export default class Router {
             ...options
         }
 
+        if (!window.location.origin) {
+            window.location.origin = window.location.protocol + '//' + window.location.host
+        }
+
         /**
          * Transition factory instance to manage page transition
          * @type {TransitionFactory}
          */
         this.transitionFactory = null
 
-        if (!baseUrl) {
-            throw new Error('Router needs baseUrl to be defined.')
+        if (!this.options.graphicLoader) {
+            /**
+             * @type {GraphicLoader}
+             */
+            this.loader = new GraphicLoader()
+        } else {
+            this.loader = this.options.graphicLoader
         }
 
-        if (!loader) {
-            throw new Error('Router needs a GraphicLoader instance to be defined.')
+        if (!this.options.classFactory) {
+            /**
+             * Class factory instance to manage page type and blocks.
+             *
+             * @type {ClassFactory}
+             */
+            this.classFactory = new ClassFactory()
+        } else {
+            this.classFactory = this.options.classFactory
         }
 
-        if (!classFactory) {
-            throw new Error('Router needs a ClassFactory instance to be defined.')
+        if (!this.options.nav) {
+            this.nav = new AbstractNav()
+        } else {
+            this.nav = this.options.nav
         }
-
-        if (!nav) {
-            throw new Error('Router needs a Nav instance to be defined.')
-        }
+        this.nav.router = this
 
         /* Check if ajax is enable */
         if (this.options.ajaxEnabled) {
             /* If enabled, we use a transition factory to manage page transition */
-            this.transitionFactory = transitionFactory || new TransitionFactory()
+            this.transitionFactory = this.options.transitionFactory || new TransitionFactory()
         }
-
-        /**
-         * Class factory instance to manage page type and blocks
-         * @type {ClassFactory}
-         */
-        this.classFactory = classFactory
 
         /**
          * Base url
          * @type {String}
          */
-        this.baseUrl = baseUrl
-
-        /**
-         * @type {GraphicLoader}
-         */
-        this.loader = loader
-
-        /**
-         * Nav instance
-         * @type {AbstractNav}
-         */
-        this.nav = nav
-        this.nav.router = this
-
-        /**
-         * @type {State|null}
-         */
-        this.state = null
-
-        /**
-         * @type {Array}
-         */
-        this.formerPages = []
+        this.baseUrl = window.location.origin
 
         /**
          * Page instance

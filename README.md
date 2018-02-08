@@ -3,10 +3,10 @@
 
 [![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
 
-- [Maxime Bérard](https://github.com/maximeberard)
+- [Adrien Scholaert](https://github.com/Gouterman)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
 - [Quentin Neyraud](https://github.com/quentinneyraud)
-- [Adrien Scholaert](https://github.com/Gouterman)
+- [Maxime Bérard](https://github.com/maximeberard)
 
 ## Spec
 
@@ -29,18 +29,18 @@
         crossorigin="anonymous"></script>
 ```
 
-## Usage with NPM
+## Usage with Yarn
 
 ```shell
 # Install dependencies that are NOT bundled
 # with starting-blocks
-npm install jquery.waitforimages --save
-npm install jquery --save
-npm install loglevel --save
-npm install ismobilejs --save
+yarn add jquery.waitforimages
+yarn add jquery
+yarn add loglevel
+yarn add ismobilejs
 
 # Install starting-blocks
-npm install starting-blocks --save
+yarn add starting-blocks
 ```
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
@@ -58,23 +58,17 @@ This bundle is already compiled in ES5, so you don’t need to setup Babel into 
 ```js
 import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks"
 
-const router = new Router(
-    {
-        homeHasClass: false,
-        ajaxEnabled: false,
-        useCache: true,
-        lazyloadEnabled: true
-    },
-    new ClassFactory(),
-    location.origin,
-    new GraphicLoader(),
-    new AbstractNav(),
-    new TransitionFactory()
-)
-router.initEvents()
-router.boot($('.page-content').eq(0), 'static', isHome)
+const router = new Router({
+    homeHasClass: false,
+    ajaxEnabled: true,
+    lazyloadEnabled: true,
+    classFactory: new ClassFactory(),
+    graphicLoader: new GraphicLoader(),
+    nav: new AbstractNav(),
+    transitionFactory: new TransitionFactory()
+})
+router.init()
 ```
-
 
 ## A JS router made to work with HTML partial responses
 
@@ -114,11 +108,11 @@ Then go to your favorite browser and type `http://localhost:8888`.
 
 A Router needs:
 
-- an options object in order to override default configuration
-- a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
-- a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
-- a `Nav` or extending class instance to update your website navigation after AJAX requests.
-- a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
+- an options object in order to override default configuration with important parameters such as:
+    - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
+    - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
+    - a `Nav` or extending class instance to update your website navigation after AJAX requests.
+    - a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
 
 You can look at the `src/main.js` file to see an instantiation example with few parameters.
 
@@ -284,6 +278,6 @@ Documentation will be available in `doc/` folder.
 
 To work locally on *Starting blocks*, we provided some HTML example files.
 
-- Install dependencies: `npm install`.
+- Install dependencies: `yarn`.
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file as: `bundle.js`.
