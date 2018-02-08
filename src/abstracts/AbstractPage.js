@@ -167,19 +167,6 @@ export default class AbstractPage {
      */
     init () {
         /**
-         * All links which will be binded for Ajax requests.
-         *
-         * @type {jQuery}
-         */
-        this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
-
-        // Add target blank on external link
-        if (this.$link.length) {
-            this.externalLinkTarget(this.$link, this.router.baseUrl)
-            this.$link = this.$cont.find('a').not('[target="_blank"]').not('[href="#"]')
-        }
-
-        /**
          * jQuery blocks collection.
          *
          * @type {jQuery}
@@ -245,7 +232,7 @@ export default class AbstractPage {
     /**
      * Initialize basic events.
      *
-     * Such as waitForImages and link click if you enabled Ajax navigation.
+     * Such as waitForImages.
      */
     initEvents () {
         if (this.$cont.find('img').length) {
@@ -519,37 +506,5 @@ export default class AbstractPage {
      */
     onLazyImageProcessed (index) {
         log.debug('\t🖼 Lazy load processed')
-    }
-
-    /**
-     * Add target blank to external links.
-     *
-     * @param {jQuery} $links
-     * @param {String} baseUrl
-     */
-    externalLinkTarget ($links, baseUrl) {
-        const linksLength = $links.length
-        let abstractBaseUrl = baseUrl.split('://')
-
-        abstractBaseUrl = abstractBaseUrl[1]
-
-        for (let linkIndex = 0; linkIndex < linksLength; linkIndex++) {
-            const link = $links[linkIndex]
-            /*
-             * Use RAW href data not to automatically
-             * get protocol and domain in string
-             */
-            const linkString = link.getAttribute('href')
-
-            if (!linkString) {
-                console.warn('⚠️ This link does not contain href attribute', link)
-            } else if (linkString.indexOf(abstractBaseUrl) === -1 &&
-                linkString.indexOf('javascript') === -1 &&
-                linkString.indexOf('mailto:') === -1 &&
-                linkString.charAt(0) !== '/' &&
-                linkString.charAt(0) !== '#') {
-                $links[linkIndex].target = '_blank'
-            }
-        }
     }
 }

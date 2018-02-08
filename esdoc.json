@@ -1,15 +1,31 @@
 {
     "source": "./src",
     "destination": "./doc",
-    "title": "Starting Blocks JS framework",
-    "experimentalProposal": {
-        "classProperties": true,
-        "objectRestSpread": true,
-        "decorators": true,
-        "doExpressions": true,
-        "functionBind": true,
-        "asyncGenerators": true,
-        "exportExtensions": true,
-        "dynamicImport": true
-    }
+    "plugins": [
+        {"name": "esdoc-standard-plugin"},
+        {
+            "name": "esdoc-ecmascript-proposal-plugin",
+            "option": {
+                "classProperties": true,
+                "objectRestSpread": true,
+                "doExpressions": true,
+                "functionBind": true,
+                "functionSent": true,
+                "asyncGenerators": true,
+                "decorators": true,
+                "exportExtensions": true,
+                "dynamicImport": true
+            }
+        },
+        {
+            "name": "esdoc-brand-plugin",
+            "option": {
+                "title": "Starting Blocks JS framework",
+                "description": "A page transition and blocks ES6 framework by REZO ZERO",
+                "repository": "https://github.com/rezozero/starting-blocks",
+                "site": "https://startingblocks.rezo-zero.com/",
+                "author": "https://www.rezo-zero.com/"
+            }
+        }
+    ]
 }

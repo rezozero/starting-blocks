@@ -35,13 +35,13 @@ import {
 } from '../types/EventTypes'
 
 /**
- * Pjax is a static object with main function
+ * Pjax is a static object with main function.
  *
  * @type {Object}
  */
 export default class Pjax {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param {Router} router
      * @param {History} history
@@ -62,7 +62,7 @@ export default class Pjax {
         }
 
         /**
-         * Indicate wether or not use the cache
+         * Indicate wether or not use the cache.
          *
          * @type {Boolean}
          * @default
@@ -70,7 +70,7 @@ export default class Pjax {
         this.cacheEnabled = true
 
         /**
-         * Class name used to ignore links
+         * Class name used to ignore links.
          *
          * @type {String}
          * @default
@@ -78,7 +78,7 @@ export default class Pjax {
         this.ignoreClassLink = ignoreClassLink
 
         /**
-         * Indicate if there is an animation in progress
+         * Indicate if there is an animation in progress.
          *
          * @readOnly
          * @type {Boolean}
@@ -93,7 +93,7 @@ export default class Pjax {
     }
 
     /**
-     * Init the events
+     * Init the events.
      *
      * @private
      */
@@ -107,7 +107,7 @@ export default class Pjax {
     }
 
     /**
-     * Attach the eventlisteners
+     * Attach the eventlisteners.
      *
      * @private
      */
@@ -117,7 +117,7 @@ export default class Pjax {
     }
 
     /**
-     * Return the currentURL cleaned
+     * Return the currentURL cleaned.
      *
      * @return {String} currentUrl
      */
@@ -127,7 +127,7 @@ export default class Pjax {
     }
 
     /**
-     * Change the URL with pushstate and trigger the state change
+     * Change the URL with pushstate and trigger the state change.
      *
      * @param {String} url
      * @param {String} transitionName
@@ -140,7 +140,7 @@ export default class Pjax {
     }
 
     /**
-     * Force the browser to go to a certain url
+     * Force the browser to go to a certain url.
      *
      * @param {String} url
      * @private
@@ -150,7 +150,7 @@ export default class Pjax {
     }
 
     /**
-     * Load an url, will start an ajax request or load from the cache
+     * Load an url, will start an ajax request or load from the cache.
      *
      * @private
      * @param  {String} url
@@ -203,7 +203,7 @@ export default class Pjax {
 
     /**
      * Get the .href parameter out of an element
-     * and handle special cases (like xlink:href)
+     * and handle special cases (like xlink:href).
      *
      * @private
      * @param  {HTMLElement} el
@@ -226,7 +226,7 @@ export default class Pjax {
     }
 
     /**
-     * Get transition name from HTMLElement attribute (data-transition)
+     * Get transition name from HTMLElement attribute (data-transition).
      *
      * @param {HTMLElement} el
      * @returns {String|undefined} The transition name
@@ -244,7 +244,7 @@ export default class Pjax {
     }
 
     /**
-     * Callback called from click event
+     * Callback called from click event.
      *
      * @private
      * @param {MouseEvent} evt
@@ -274,7 +274,7 @@ export default class Pjax {
     }
 
     /**
-     * Determine if the link should be followed
+     * Determine if the link should be followed.
      *
      * @param  {MouseEvent} evt
      * @param  {HTMLElement} element
@@ -314,7 +314,7 @@ export default class Pjax {
     }
 
     /**
-     * Return a transition object
+     * Return a transition object.
      *
      * @param  {object} prev historyManager
      * @param  {object} current historyManager
@@ -325,7 +325,7 @@ export default class Pjax {
     }
 
     /**
-     * Method called after a 'popstate' or from .goTo()
+     * Method called after a 'popstate' or from .goTo().
      *
      * @private
      */
@@ -379,7 +379,7 @@ export default class Pjax {
     }
 
     /**
-     * Function called as soon the new page is ready
+     * Function called as soon the new page is ready.
      *
      * @private
      * @param {AbstractPage} page
@@ -403,7 +403,7 @@ export default class Pjax {
     }
 
     /**
-     * Function called as soon the transition is finished
+     * Function called as soon the transition is finished.
      *
      * @private
      */

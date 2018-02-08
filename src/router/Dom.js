@@ -27,11 +27,11 @@
  */
 
 /**
- * Class that is going to deal with DOM parsing/manipulation
+ * Class that is going to deal with DOM parsing/manipulation.
  */
 export default class Dom {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param {jQuery} $body
      * @param {String} wrapperId
@@ -88,7 +88,7 @@ export default class Dom {
     }
 
     /**
-     * Parse the responseText obtained from the ajax call
+     * Parse the responseText obtained from the ajax call.
      *
      * @param  {String} responseText
      * @return {HTMLElement}
@@ -103,7 +103,7 @@ export default class Dom {
     }
 
     /**
-     * Get the main wrapper by the ID `wrapperId`
+     * Get the main wrapper by the ID `wrapperId`.
      *
      * @return {HTMLElement} element
      */
@@ -118,7 +118,7 @@ export default class Dom {
     }
 
     /**
-     * Return node type
+     * Return node type.
      *
      * @param container
      * @returns {string}
@@ -135,7 +135,7 @@ export default class Dom {
 
     /**
      * Get the container on the current DOM,
-     * or from an HTMLElement passed via argument
+     * or from an HTMLElement passed via argument.
      *
      * @param  {HTMLElement|null} element
      * @return {HTMLElement}
@@ -157,7 +157,7 @@ export default class Dom {
     }
 
     /**
-     * Put the container on the page
+     * Put the container on the page.
      *
      * @param  {HTMLElement} element
      */
@@ -168,7 +168,7 @@ export default class Dom {
     }
 
     /**
-     * Get container selector
+     * Get container selector.
      *
      * @param  {HTMLElement} element
      * @return {HTMLElement} element
@@ -178,7 +178,7 @@ export default class Dom {
     }
 
     /**
-     * Update body attributes
+     * Update body attributes.
      *
      * @param {AbstractPage} page
      */
@@ -193,7 +193,7 @@ export default class Dom {
     }
 
     /**
-     * Update page title
+     * Update page title.
      *
      * @param {AbstractPage} page
      */

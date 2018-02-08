@@ -24,14 +24,14 @@
  */
 
 /**
- * HistoryManager helps to keep track of the navigation
+ * HistoryManager helps to keep track of the navigation.
  *
  * @type {Object}
  */
 export default class History {
     constructor () {
         /**
-         * Keep track of the status in historic order
+         * Keep track of the status in historic order.
          *
          * @readOnly
          * @type {Array}
@@ -40,7 +40,7 @@ export default class History {
     }
 
     /**
-     * Add a new set of url and namespace
+     * Add a new set of url and namespace.
      *
      * @param {String} url
      * @param {String} transitionName
@@ -51,7 +51,7 @@ export default class History {
     }
 
     /**
-     * Return information about the current status
+     * Return information about the current status.
      *
      * @return {Object}
      */
@@ -60,7 +60,7 @@ export default class History {
     }
 
     /**
-     * Return information about the previous status
+     * Return information about the previous status.
      *
      * @return {Object}
      */

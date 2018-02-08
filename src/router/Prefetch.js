@@ -26,13 +26,15 @@
 import Utils from '../utils/Utils'
 
 /**
- * Prefetch
+ * Prefetch.
+ *
  * @type {Object}
  */
 export default class Prefetch {
     constructor (pjax, cacheProvider, ignoreClassLink = 'no-prefetch') {
         /**
-         * Class name used to ignore prefetch on links
+         * Class name used to ignore prefetch on links.
+         *
          * @type {string}
          * @default
          */
