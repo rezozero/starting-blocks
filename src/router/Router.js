@@ -56,7 +56,7 @@ const DEFAULT_OPTIONS = {
     lazyloadThrottle: 150,
     minLoadDuration: 0,
     preLoadPageDelay: 0,
-    useCache: true
+    useCache: false
 }
 
 /**

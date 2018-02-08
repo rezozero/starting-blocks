@@ -15,10 +15,6 @@ gulp.task('webpack', ['clean-build'], function (cb) {
         output: {
             filename: 'app.js'
         },
-        resolve: {
-            extensions: ['', '.js', '.jsx']
-        },
-        descriptionFiles: ['package.json'],
         module: {
             loaders: [{
                 test: /\.css$/,
@@ -70,10 +66,6 @@ gulp.task('webpack-bundle', function (cb) {
             library: 'starting-blocks',
             libraryTarget: 'commonjs2'
         },
-        resolve: {
-            extensions: ['', '.js', '.jsx']
-        },
-        descriptionFiles: ['package.json'],
         module: {
             loaders: [{
                 test: /\.css$/,
