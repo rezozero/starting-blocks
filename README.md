@@ -10,7 +10,7 @@
 
 ## Spec
 
-- *Gulp* (for development)
+- *Gulp + Webpack* (for development)
 - *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
@@ -150,13 +150,6 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 | `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
 
 ⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
-
-### Caching responses
-
-By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
-successful. You can disable this feature with `useCache` router option.
-
-**Be careful, this cache is global and cannot be disabled for special pages.**
 
 ### Transitions
 
