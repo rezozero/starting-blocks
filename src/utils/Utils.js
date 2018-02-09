@@ -1,14 +1,38 @@
 /**
- * Copyright REZO ZERO 2016
+ * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * Except as contained in this notice, the name of the ROADIZ shall not
+ * be used in advertising or otherwise to promote the sale, use or other dealings
+ * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
  * @file Utils.js
- * @copyright REZO ZERO 2016
  * @author Maxime Bérard
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
-import $ from 'jquery'
 
+import $ from 'jquery'
+import log from 'loglevel'
+
+/**
+ * Utils class
+ */
 export default class Utils {
     /**
      * @param  {String} str
@@ -19,6 +43,86 @@ export default class Utils {
             return str.substr(0, str.length - 1)
         }
         return str
+    }
+
+    /**
+     * Get port
+     *
+     * @param p
+     * @returns {*}
+     */
+    static getPort (p) {
+        const port = typeof p !== 'undefined' ? p : window.location.port
+        const protocol = window.location.protocol
+
+        if (port !== '') { return parseInt(port) }
+        if (protocol === 'http:') { return 80 }
+        if (protocol === 'https:') { return 443 }
+    }
+
+    static cleanLink (url) {
+        return url.replace(/#.*/, '')
+    }
+
+    /**
+     * Get current url
+     *
+     * @returns {string}
+     */
+    static getCurrentUrl () {
+        return window.location.protocol + '//' +
+            window.location.host +
+            window.location.pathname +
+            window.location.search
+    }
+
+    /**
+     * Request timeout (in ms)
+     *
+     * @returns {number}
+     */
+    static requestTimeout () {
+        return 10000
+    }
+
+    /**
+     * Start a fetch request
+     *
+     * @param  {String} url
+     * @return {Promise}
+     */
+    static request (url) {
+        // TODO implement timeout!
+        const dfd = Utils.deferred()
+
+        const timeout = window.setTimeout(() => {
+            dfd.reject(new Error('timeout!'))
+        }, Utils.requestTimeout())
+
+        const headers = new window.Headers()
+        headers.append('X-Starting-Blocks', 'yes')
+        headers.append('X-Allow-Partial', 'yes')
+        headers.append('X-Requested-With', 'XMLHttpRequest')
+
+        window.fetch(url, {
+            method: 'GET',
+            headers,
+            cache: 'default'
+        }).then(res => {
+            window.clearTimeout(timeout)
+
+            if (res.status >= 200 && res.status < 300) {
+                return dfd.resolve(res.text())
+            }
+
+            const err = new Error(res.statusText || res.status)
+            return dfd.reject(err)
+        }).catch(err => {
+            window.clearTimeout(timeout)
+            dfd.reject(err)
+        })
+
+        return dfd.promise
     }
 
     /**
@@ -160,6 +264,19 @@ export default class Utils {
                     })
                 })
             }
+        }
+    }
+
+    /**
+     * Send a GA page view event when context is AJAX.
+     */
+    static trackGoogleAnalytics () {
+        if (typeof window.ga !== 'undefined') {
+            log.debug('🚩 Push Analytics for: ' + window.location.pathname)
+            window.ga('send', 'pageview', {
+                'page': window.location.pathname,
+                'title': document.title
+            })
         }
     }
 

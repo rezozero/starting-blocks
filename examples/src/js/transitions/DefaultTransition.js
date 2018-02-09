@@ -1,5 +1,5 @@
-/**
- * Copyright © 2016, Ambroise Maupate
+/*
+ * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -7,7 +7,6 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
@@ -19,11 +18,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
+ * Except as contained in this notice, the name of the ROADIZ shall not
+ * be used in advertising or otherwise to promote the sale, use or other dealings
+ * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
+ *
  * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
+import { AbstractTransition } from 'starting-blocks'
 
 /**
  * Default Transition. Show / Hide content.
