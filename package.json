@@ -17,7 +17,8 @@
         "test": "echo \"No test specified\"",
         "dev": "NODE_ENV=development webpack --progress",
         "serve": "http-server ./examples/dist -o",
-        "build": "NODE_ENV=production webpack --progress",
+        "build": "NODE_ENV=production TARGET=bundle webpack --progress",
+        "demo": "NODE_ENV=production TARGET=demo webpack --progress",
         "doc": "esdoc -c esdoc.json"
     },
     "engines": {

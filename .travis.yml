@@ -17,7 +17,10 @@ jobs:
       node_js: "8"
       script:
         - echo "Generating bundle.js…"
+        # Only generate bundle, not demo
         - npm run build
+        # Only generate demo
+        - npm run demo
         - echo "Deploying to npm…"
       deploy:
         # Do not reset files to send bundle.js

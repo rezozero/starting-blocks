@@ -10,6 +10,7 @@ const getWebpackConfig = (config) => {
     dbg('👷‍♂️  Creating webpack configuration')
 
     const base = getWebpackConfigBase(config)
+    const target = process.env.TARGET || 'all'
     const baseBuild = WebpackMerge.smart(base, webpackConfigOverrides['build'](base, config))
     const baseDemo = WebpackMerge.smart(base, webpackConfigOverrides['examples'](base, config))
 
@@ -19,10 +20,28 @@ const getWebpackConfig = (config) => {
 
     if (webpackConfigOverrides[config.env]) {
         dbg('🙋‍♂️  Found overrides, applying to default configuration.')
-        return [WebpackMerge.smart(baseBuild, overrides(baseBuild, config)), WebpackMerge.smart(baseDemo, overrides(baseDemo, config))]
+        if (target === 'bundle') {
+            return WebpackMerge.smart(baseBuild, overrides(baseBuild, config))
+        } else if (target === 'demo') {
+            return WebpackMerge.smart(baseDemo, overrides(baseDemo, config))
+        } else {
+            return [
+                WebpackMerge.smart(baseBuild, overrides(baseBuild, config)),
+                WebpackMerge.smart(baseDemo, overrides(baseDemo, config))
+            ]
+        }
     } else {
         dbg('🤷‍♂️  No environment overrides found.')
-        return [baseBuild, baseDemo]
+        if (target === 'bundle') {
+            return baseBuild
+        } else if (target === 'demo') {
+            return baseDemo
+        } else {
+            return [
+                baseBuild,
+                baseDemo
+            ]
+        }
     }
 }
 

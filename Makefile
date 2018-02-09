@@ -22,7 +22,7 @@ watch :
 	npm run dev;
 
 build :
-	npm run build;
+	NODE_ENV=production TARGET=all npm run build;
 #
 # Clean generated files
 #
