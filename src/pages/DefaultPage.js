@@ -19,25 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @file Page.js
+ * @author Ambroise Maupate
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
+
+import AbstractPage from '../abstracts/AbstractPage'
 
 /**
- * Default Transition. Show / Hide content.
+ * Some example "page".
  *
- * @extends {AbstractTransition}
+ * @extends {AbstractPage}
+ * @private
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
+export default class DefaultPage extends AbstractPage {
+    init () {
+        this.$duplicate = this.$cont.find('a.duplicate-last')
+        super.init()
     }
 
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
+    initEvents () {
+        super.initEvents()
+        this.$duplicate.on('click', (e) => {
+            e.preventDefault()
+            let $new = this.$blocks.last().clone()
+            $new.attr('id', 'block-' + (this.$blocks.length + 1))
+            this.$cont.append($new)
+            return false
+        })
     }
 }

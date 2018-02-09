@@ -1,4 +1,18 @@
 {
-    "presets": ["es2015", "stage-0"],
-    "plugins": ["transform-runtime"]
+    "presets": [["env", {
+        "modules": false,
+        "loose": true
+    }],"es2015", "stage-0"],
+    "plugins": ["transform-runtime"],
+    "env": {
+        "production": {
+            "presets": [[
+                "minify",
+                {
+                    "mangle": false,
+                    "evaluate": false
+                }
+            ]]
+        }
+    }
 }

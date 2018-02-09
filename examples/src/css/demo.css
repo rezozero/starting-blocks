@@ -1,0 +1,20 @@
+body {
+    background-color: #fff;
+    overflow-x: hidden;
+}
+
+#main-nav {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.page-content {
+    position: relative;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    margin-top: 50px;
+}

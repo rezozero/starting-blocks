@@ -19,25 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
+ * @file TransitionFactory.js
  * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
+
+import DefaultTransition from '../transitions/DefaultTransition'
 
 /**
- * Default Transition. Show / Hide content.
+ * Transition mapper class.
  *
- * @extends {AbstractTransition}
+ * This class maps your `data-transition` with your *ES6* classes.
+ *
+ * **You must define your own ClassFactory for each of your projects.**.
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
-    }
+export default class TransitionFactory {
+    /**
+     * Get Transition
+     *
+     * @param {Object} previousState
+     * @param {Object} state
+     * @returns {AbstractTransition}
+     */
+    getTransition (previousState, state) {
+        /**
+         * You can customise transition logic with the previousState and the new state
+         *
+         * Ex: when back or prev button its pressed we use FadeTransition
+         */
+        if (state && state.context === 'history') {
+            return new DefaultTransition()
+        }
 
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
+        let transition
+
+        switch (state.transitionName) {
+        default:
+            transition = new DefaultTransition()
+            break
+        }
+
+        return transition
     }
 }

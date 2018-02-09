@@ -1,71 +1,88 @@
 # Starting blocks
 ## A page transition and blocks ES6 framework by REZO ZERO
 
+[![npm](https://img.shields.io/npm/l/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
+[![npm](https://img.shields.io/npm/v/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
 [![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
+![64kB size](https://img.shields.io/badge/Size-64kB-green.svg)
 
-- [Maxime Bérard](https://github.com/maximeberard)
+- [Adrien Scholaert](https://github.com/Gouterman)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
 - [Quentin Neyraud](https://github.com/quentinneyraud)
-- [Adrien Scholaert](https://github.com/Gouterman)
+- [Maxime Bérard](https://github.com/maximeberard)
 
 ## Spec
 
-- *Gulp* (for development)
-- *jQuery* 2.2.4
+- *Webpack* (for development)
+- *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
-- *ismobilejs*
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
 - Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 9 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js)
 - Native *window.MutationObserver*. Make sure to use a polyfill for [Internet Explorer 10](https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js)
 
-## Usage with NPM
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js" 
+        integrity="sha256-45YA33UQCDcJsntBst2bhka2t/LBNHP7RNvpllHPkQ0=" 
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js" 
+        integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY=" 
+        crossorigin="anonymous"></script>
+```
+
+## Install with Yarn
 
 ```shell
-# Install dependencies that are NOT bundled
-# with starting-blocks
-npm install jquery.waitforimages --save
-npm install jquery --save
-npm install loglevel --save
-npm install ismobilejs --save
-
 # Install starting-blocks
-npm install starting-blocks --save
+yarn add starting-blocks
 ```
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
 and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
-customize such as `AbstractNav` to fit your own navigation needs.
+customize such as `TransitionFactory` to fit your own navigation needs.
 
-*Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
+*Starting Blocks* requires *jQuery*, *loglevel* and *jquery.waitforimages* as we do not provide it in our bundle. This is meant to allow CDN for
+these libraries as you may need them in your project dependencies too!
 
-### CommonJS2 syntax with ES6
+You can use them for your *node_modules* and package them with your won project or use them as CDN like below:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.2.0/jquery.waitforimages.min.js"
+        integrity="sha256-b9bqxZdvRHQNAL/WJysGQ/mFHym7gGjEtruZ6zTNm7c="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
+        integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
+        crossorigin="anonymous"></script>
+```
+
+**Be careful:** `jquery.waitforimages.min.js` library must be loaded as CDN only because it won’t be compatible with you *Webpack* build.
+
+## Minimal usage
 
 *Starting Blocks* is bundled with *NPM* in order to use *ES6* `import` syntax.
 You won’t need to know where each class is stored, just use the *curly brace* syntax.
 This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
+Minimal configuration:
 ```js
-import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks"
+// Import Router class
+import {
+    Router
+} from 'starting-blocks'
 
-const router = new Router(
-    {
-        homeHasClass: false,
-        ajaxEnabled: false,
-        useCache: true,
-        lazyloadEnabled: true
-    },
-    new ClassFactory(),
-    location.origin,
-    new GraphicLoader(),
-    new AbstractNav(),
-    new TransitionFactory()
-)
-router.initEvents()
-router.boot($('.page-content').eq(0), 'static', isHome)
+// Instanciate a Router
+const routerOptions = {
+    // ...
+}
+const router = new Router(routerOptions)
+
+// Init router
+router.init()
 ```
-
 
 ## A JS router made to work with HTML partial responses
 
@@ -76,7 +93,7 @@ This is the DOM section which is extracted at the end of each complete AJAX requ
 response is *partial* it directly initialize `$cont` with the whole response data. Every new AJAX response will
 be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
 
-When `ajaxEnabled` is set to true, only links **inside** page-container are binded to load pages asynchronously and make transitions. If you want to bind links in a global navigation which **is not inside page-container**, you must extend `AbstractNav` class with your own. See our `ExampleNav` class that bind a simple nav links. Pay attention that your nav won’t be updated between page changes, and it will be your job to update links.
+When `ajaxEnabled` is set to true, only links **inside** page-container are binded to load pages asynchronously and make transitions.
 
 To declare a partial DOM section as the `$cont` you must add some classes and
 data to your HTML tags.
@@ -98,20 +115,44 @@ data to your HTML tags.
 - `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
 
 You’ll find `index.html` and `page1.html` examples files. You can even test them
-by spawning a simple server with `php -S localhost:8888` command (You must have at least *PHP 5.5*).
-Then go to your favorite browser and type `http://localhost:8888`.
+by spawning a simple server with `npm run serve` command.
+Then go to your favorite browser and type `http://localhost:8080`.
 
 ### Router dependencies
 
 A Router needs:
 
-- an options object in order to override default configuration
-- a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
-- a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
-- a `Nav` or extending class instance to update your website navigation after AJAX requests.
-- a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
+- an options object in order to override default configuration with important parameters such as:
+    - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
+    - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
+    - a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
 
-You can look at the `src/main.js` file to see an instantiation example with few parameters.
+You can look at the `example/src/app.js` file to see an instantiation example with few parameters.
+
+### Router options
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| homeHasClass | boolean | false | |
+| ajaxEnabled | boolean | true | |
+| pageClass | string | 'page-content' | |
+| ajaxWrapperId | string | 'sb-wrapper' | |
+| objectTypeAttr | string | 'data-node-type' | |
+| ajaxLinkTypeAttr | string | 'data-node-type' | |
+| noAjaxLinkClass | string | 'no-ajax-link' | |
+| noPrefetchLinkClass | string | 'no-prefetch' | |
+| pageBlockClass | string | '.page-block' | (with point) |
+| lazyloadEnabled | boolean | false | |
+| prefetchEnabled | boolean | true | |
+| lazyloadSrcAttr | string | 'data-src' | |
+| lazyloadClass | string | 'lazyload' | |
+| lazyloadSrcSetAttr | string | 'data-srcset' | |
+| lazyloadThreshold | number | 300 | Lazyload treshold |
+| lazyloadThrottle | number | 150 | Duration of lazyload throttle |
+| useCache | boolean | false | |
+| classFactory | ClassFactory | ClassFactory | |
+| graphicLoader | GraphicLoader | GraphicLoader | |
+| transitionFactory | TransitionFactory | TransitionFactory | |
 
 ### Pages overridable methods
 
@@ -148,13 +189,6 @@ You can look at the `src/main.js` file to see an instantiation example with few 
 
 ⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
 
-### Caching responses
-
-By default, the router will use a JS object cache to store and fetch AJAX responses once they’ve been
-successful. You can disable this feature with `useCache` router option.
-
-**Be careful, this cache is global and cannot be disabled for special pages.**
-
 ### Transitions
 
 When AJAX navigation is enabled, transitions are used to manage animations between pages.
@@ -170,19 +204,18 @@ In this class, implement `getTransition (previousState, state, direction = null)
 This method is called on each transition and give you access to state informations :
 
 - `previousState` and `state`
-	- **transitionName** : `data-transition` attributes of the clicked link
-	- **context** : equal to `"history"`, `"link"` or `"nav"`
-- `direction` : equal to `"back"` or `"forward"` on navigator buttons click (only when `context` equals to `"history"`)
+    - **transitionName** : `data-transition` attributes of the clicked link
+    - **context** : equal to `"history"`, `"link"`
 
 Example:
 ```javascript
-// src/TransitionFactory.js
+// src/factories/TransitionFactory.js
 
 import DefaultTransition from './transitions/DefaultTransition';
 import FadeTransition from './transitions/FadeTransition';
 
 export default class TransitionFactory {
-    getTransition (previousState, state, direction = null) {
+    getTransition (previousState, state) {
         let transition = null
 
         switch (state.transitionName) {
@@ -275,6 +308,7 @@ Documentation will be available in `doc/` folder.
 
 To work locally on *Starting blocks*, we provided some HTML example files.
 
-- Install dependencies: `npm install`.
+- Install dependencies: `yarn`.
 - Type `npm run dev` to improve Starting blocks locally.
-- Type `npm run build` to optimize project in one file as: `bundle.js`.
+- Type `npm run build` to optimize project in one file as: `main.js`.
+- Type `npm run demo` to build demo project in `examples/` folder.

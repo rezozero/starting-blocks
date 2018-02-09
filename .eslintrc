@@ -1,10 +1,30 @@
 {
+    "root": true,
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "env": {
+        "browser": true
+    },
     "extends": ["standard"],
+    "plugins": [
+        "html",
+        "dependencies"
+    ],
     "rules": {
         // enable additional rules
         "indent": [
             "warn",
             4
-        ]
+        ],
+        "dependencies/case-sensitive": 1,
+        "dependencies/no-cycles": 1,
+        "dependencies/require-json-ext": 1
+    },
+    "globals" : {
+        "DEVELOPMENT": false,
+        "PRODUCTION": false,
+        "ENVIRONMENT": false
     }
 }

@@ -16,25 +16,20 @@ update :
 	npm update;
 
 uninstall : clean
-	rm -rf bower_components;
 	rm -rf node_modules;
 
 watch :
 	npm run dev;
 
 build :
-	npm run build;
+	NODE_ENV=production TARGET=all npm run build;
 #
 # Clean generated files
 #
 clean :
 	rm -rf doc;
-	rm -rf build;
-	rm -rf dist;
 #
 # Generate documentation
-#
-# needs esdoc: sudo npm install -g esdoc;
 #
 doc :
 	npm run doc;
@@ -42,7 +37,7 @@ doc :
 # Push generated Documentation on Rezo Zero host.
 # Credentials required, of course
 push-doc : doc
-	rsync -avcz doc/ pageblock@vps1.rezo-zero.com:~/public_html/;
+	rsync -avcz -e "ssh -P 39001" doc/ core@startingblocks.rezo-zero.com:~/http/;
 
 node_modules:
 	npm install;

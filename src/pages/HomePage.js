@@ -19,25 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @file Home.js
+ * @author Ambroise Maupate
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
+
+import AbstractPage from '../abstracts/AbstractPage'
 
 /**
- * Default Transition. Show / Hide content.
+ * Some example "home" page.
  *
- * @extends {AbstractTransition}
+ * @extends {AbstractPage}
+ * @class
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
-    }
-
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
-    }
-}
+export default class HomePage extends AbstractPage {}

@@ -19,25 +19,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
+ * @file CacheProvider.js
+ * @author Ambroise Maupate
  * @author Adrien Scholaert
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
 
 /**
- * Default Transition. Show / Hide content.
+ * Cache provider class.
  *
- * @extends {AbstractTransition}
+ * This class stores Ajax response in memory.
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
+export default class CacheProvider {
+    constructor () {
+        this.data = {}
     }
 
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
+    /**
+     * @param  {String} key
+     * @return {Boolean}
+     */
+    exists (key) {
+        return key in this.data
+    }
+
+    /**
+     * @param  {String} href
+     * @return {Object}
+     */
+    get (href) {
+        return this.data[href]
+    }
+
+    /**
+     * @param  {String} key
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    set (key, data) {
+        this.data[key] = data
+        return this
+    }
+
+    /**
+     * Flush the cache
+     */
+    reset () {
+        this.data = {}
     }
 }

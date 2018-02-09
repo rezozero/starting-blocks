@@ -19,25 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @file Events.js
+ * @author Ambroise Maupate
  */
-import AbstractTransition from '../abstracts/AbstractTransition'
+
+import log from 'loglevel'
 
 /**
- * Default Transition. Show / Hide content.
- *
- * @extends {AbstractTransition}
+ * Event dispatcher singleton.
  */
-export default class DefaultTransition extends AbstractTransition {
-    start () {
-        Promise.all([this.newPageLoading])
-            .then(this.finish.bind(this))
-    }
-
-    finish () {
-        document.body.scrollTop = 0
-        this.done()
+class Dispatcher {
+    commit (eventType, detail) {
+        const event = new window.CustomEvent(eventType, {detail})
+        log.debug('🚩 Dispatched ' + eventType)
+        window.dispatchEvent(event)
     }
 }
+
+/**
+ * @ignore
+ */
+export default new Dispatcher()
