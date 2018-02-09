@@ -1,8 +1,10 @@
 # Starting blocks
 ## A page transition and blocks ES6 framework by REZO ZERO
 
+[![npm](https://img.shields.io/npm/l/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
+[![npm](https://img.shields.io/npm/v/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
 [![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
-![64KB size](https://img.shields.io/badge/Size-64KB-green.svg)
+![64kB size](https://img.shields.io/badge/Size-64kB-green.svg)
 
 - [Adrien Scholaert](https://github.com/Gouterman)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
