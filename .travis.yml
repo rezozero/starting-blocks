@@ -6,7 +6,11 @@ node_js:
   - "7"
   - "6"
 script:
+  - echo "Generating bundle.js…"
+  # Only generate bundle, not demo
   - npm run build
+  # Only generate demo
+  - npm run demo
 skip_cleanup: true
 jobs:
   include:

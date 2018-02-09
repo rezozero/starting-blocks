@@ -2,6 +2,7 @@
 ## A page transition and blocks ES6 framework by REZO ZERO
 
 [![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
+![64KB size](https://img.shields.io/badge/Size-64KB-green.svg)
 
 - [Adrien Scholaert](https://github.com/Gouterman)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
@@ -28,7 +29,7 @@
         crossorigin="anonymous"></script>
 ```
 
-## Usage with Yarn
+## Install with Yarn
 
 ```shell
 # Install starting-blocks
@@ -58,7 +59,7 @@ You can use them for your *node_modules* and package them with your won project 
 
 **Be careful:** `jquery.waitforimages.min.js` library must be loaded as CDN only because it won’t be compatible with you *Webpack* build.
 
-### CommonJS2 syntax with ES6
+## Minimal usage
 
 *Starting Blocks* is bundled with *NPM* in order to use *ES6* `import` syntax.
 You won’t need to know where each class is stored, just use the *curly brace* syntax.
@@ -201,8 +202,8 @@ In this class, implement `getTransition (previousState, state, direction = null)
 This method is called on each transition and give you access to state informations :
 
 - `previousState` and `state`
-	- **transitionName** : `data-transition` attributes of the clicked link
-	- **context** : equal to `"history"`, `"link"`
+    - **transitionName** : `data-transition` attributes of the clicked link
+    - **context** : equal to `"history"`, `"link"`
 
 Example:
 ```javascript
@@ -308,3 +309,4 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 - Install dependencies: `yarn`.
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file as: `main.js`.
+- Type `npm run demo` to build demo project in `examples/` folder.
