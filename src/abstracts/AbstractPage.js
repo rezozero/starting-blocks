@@ -300,7 +300,6 @@ export default class AbstractPage {
          * @type {Date}
          */
         this.loadDuration = this.loadDate - this.router.loadBeginDate
-        this.router.nav.update(this)
 
         Dispatcher.commit(BEFORE_PAGE_SHOW, this)
     }

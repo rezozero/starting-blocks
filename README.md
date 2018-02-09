@@ -43,7 +43,7 @@ yarn add starting-blocks
 
 Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
 and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
-customize such as `AbstractNav` to fit your own navigation needs.
+customize such as `TransitionFactory` to fit your own navigation needs.
 
 *Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
 
@@ -79,7 +79,7 @@ This is the DOM section which is extracted at the end of each complete AJAX requ
 response is *partial* it directly initialize `$cont` with the whole response data. Every new AJAX response will
 be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
 
-When `ajaxEnabled` is set to true, only links **inside** page-container are binded to load pages asynchronously and make transitions. If you want to bind links in a global navigation which **is not inside page-container**, you must extend `AbstractNav` class with your own. See our `ExampleNav` class that bind a simple nav links. Pay attention that your nav won’t be updated between page changes, and it will be your job to update links.
+When `ajaxEnabled` is set to true, only links **inside** page-container are binded to load pages asynchronously and make transitions.
 
 To declare a partial DOM section as the `$cont` you must add some classes and
 data to your HTML tags.
@@ -111,7 +111,6 @@ A Router needs:
 - an options object in order to override default configuration with important parameters such as:
     - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
     - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
-    - a `Nav` or extending class instance to update your website navigation after AJAX requests.
     - a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
 
 You can look at the `example/src/app.js` file to see an instantiation example with few parameters.
@@ -128,9 +127,7 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | ajaxLinkTypeAttr | string | 'data-node-type' | |
 | noAjaxLinkClass | string | 'no-ajax-link' | |
 | noPrefetchLinkClass | string | 'no-prefetch' | |
-| navLinkClass | string | 'nav-link' | |
-| activeClass | string | 'active' | |
-| pageBlockClass | string | '.page-block' | |
+| pageBlockClass | string | '.page-block' | (with point) |
 | lazyloadEnabled | boolean | false | |
 | prefetchEnabled | boolean | true | |
 | lazyloadSrcAttr | string | 'data-src' | |
@@ -138,12 +135,9 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | lazyloadSrcSetAttr | string | 'data-srcset' | |
 | lazyloadThreshold | number | 300 | Lazyload treshold |
 | lazyloadThrottle | number | 150 | Duration of lazyload throttle |
-| minLoadDuration | boolean | 0 | |
-| preLoadPageDelay | boolean | 0 | |
 | useCache | boolean | false | |
 | classFactory | ClassFactory | ClassFactory | |
 | graphicLoader | GraphicLoader | GraphicLoader | |
-| nav | AbstractNav | AbstractNav | |
 | transitionFactory | TransitionFactory | TransitionFactory | |
 
 ### Pages overridable methods
@@ -197,7 +191,7 @@ This method is called on each transition and give you access to state informatio
 
 - `previousState` and `state`
 	- **transitionName** : `data-transition` attributes of the clicked link
-	- **context** : equal to `"history"`, `"link"` or `"nav"`
+	- **context** : equal to `"history"`, `"link"`
 
 Example:
 ```javascript

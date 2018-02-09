@@ -2,7 +2,6 @@ import tmpRouter from './router/Router'
 import tmpCacheProvider from './router/CacheProvider'
 import tmpGraphicLoader from './utils/GraphicLoader'
 import tmpAbstractPage from './abstracts/AbstractPage'
-import tmpAbstractNav from './abstracts/AbstractNav'
 import tmpAbstractBlock from './abstracts/AbstractBlock'
 import tmpAbstractTransition from './abstracts/AbstractTransition'
 import tmpUtils from './utils/Utils'
@@ -20,8 +19,6 @@ export const CacheProvider = tmpCacheProvider
 export const GraphicLoader = tmpGraphicLoader
 /** @private */
 export const AbstractPage = tmpAbstractPage
-/** @private */
-export const AbstractNav = tmpAbstractNav
 /** @private */
 export const AbstractBlock = tmpAbstractBlock
 /** @private */

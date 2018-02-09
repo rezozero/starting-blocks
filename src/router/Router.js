@@ -36,7 +36,6 @@ import Pjax from './Pjax'
 import Dom from './Dom'
 
 import ClassFactory from '../factories/ClassFactory'
-import AbstractNav from '../abstracts/AbstractNav'
 import GraphicLoader from '../utils/GraphicLoader'
 
 const DEFAULT_OPTIONS = {
@@ -48,8 +47,6 @@ const DEFAULT_OPTIONS = {
     ajaxLinkTypeAttr: 'data-node-type',
     noAjaxLinkClass: 'no-ajax-link',
     noPrefetchLinkClass: 'no-prefetch',
-    navLinkClass: 'nav-link',
-    activeClass: 'active',
     pageBlockClass: '.page-block',
     lazyloadEnabled: false,
     prefetchEnabled: true,
@@ -58,12 +55,9 @@ const DEFAULT_OPTIONS = {
     lazyloadSrcSetAttr: 'data-srcset',
     lazyloadThreshold: 300,
     lazyloadThrottle: 150,
-    minLoadDuration: 0,
-    preLoadPageDelay: 0,
     useCache: false,
     classFactory: null,
     graphicLoader: null,
-    nav: null,
     transitionFactory: null
 }
 
@@ -85,8 +79,6 @@ export default class Router {
      * | `ajaxLinkTypeAttr`  | "data-node-type" |
      * | `noAjaxLinkClass` | "no-ajax-link" |
      * | `noPrefetchLinkClass` | "no-prefetch" |
-     * | `navLinkClass` | "nav-link" |
-     * | `activeClass` | "active" |
      * | `useCache` | `true` |
      * | `pageBlockClass` | `".page-block"` **with point!** |
      * | `lazyloadEnabled` | `false` |
@@ -95,11 +87,8 @@ export default class Router {
      * | `lazyloadSrcSetAttr` | "data-src-set" |
      * | `lazyloadThreshold` | `300` |
      * | `lazyloadThrottle` | `150` |
-     * | `minLoadDuration` | `0` |
-     * | `preLoadPageDelay` |  |
      * | `classFactory` | ClassFactory instance |
      * | `graphicLoader` | GraphicLoader instance |
-     * | `nav` | AbstractNav instance |
      * | `transitionFactory` | TransitionFactory instance |
      *
      *
@@ -143,13 +132,6 @@ export default class Router {
         } else {
             this.classFactory = this.options.classFactory
         }
-
-        if (!this.options.nav) {
-            this.nav = new AbstractNav()
-        } else {
-            this.nav = this.options.nav
-        }
-        this.nav.router = this
 
         /* Check if ajax is enable */
         if (this.options.ajaxEnabled) {
