@@ -1,7 +1,7 @@
 {
     "name": "starting-blocks",
     "version": "4.0.0",
-    "description": "An JS page and blocks framework written in ES6 to go along Roadiz CMS.",
+    "description": "A JS page and blocks framework written in ES6 to go along Roadiz CMS or any other great CMS.",
     "author": "Rezo Zero",
     "license": "MIT",
     "repository": {
@@ -11,7 +11,7 @@
     "bugs": {
         "url": "https://github.com/rezozero/starting-blocks/issues"
     },
-    "homepage": "http://startingblocks.rezo-zero.com",
+    "homepage": "https://startingblocks.rezo-zero.com",
     "scripts": {
         "start": "concurrently \"npm run dev\" \"npm run serve\"",
         "test": "echo \"No test specified\"",
