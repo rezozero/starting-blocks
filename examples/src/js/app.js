@@ -48,7 +48,6 @@ log.setLevel(0)
  * Build Router
  */
 const router = new Router({
-    homeHasClass: false,
     ajaxEnabled: true,
     useCache: true,
     lazyloadEnabled: true,
