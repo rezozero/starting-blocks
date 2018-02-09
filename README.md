@@ -10,7 +10,7 @@
 
 ## Spec
 
-- *Gulp + Webpack* (for development)
+- *Webpack* (for development)
 - *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
@@ -54,17 +54,48 @@ You won’t need to know where each class is stored, just use the *curly brace* 
 This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
 ```js
-import {AbstractNav, ClassFactory, Router, GraphicLoader} from "starting-blocks"
+import {
+    GraphicLoader,
+    TransitionFactory,
+    Router
+} from "starting-blocks"
 
+// Custom class factorty example
+class ClassFactory {
+    getPageInstance (nodeTypeName, router, $cont, context, nodeType, isHome) {
+        // ...
+    }
+    
+    getBlockInstance (nodeTypeName, page, $cont) {
+        // ...
+    }
+}
+
+// Custom graphic loader example
+class CustomGraphicLoader extends GraphicLoader {
+    constructor () {
+        super()
+    }
+
+    show () {
+        // ...
+    }
+
+    hide () {
+        // ...
+    }
+}
+
+// Instanciate a Router
 const router = new Router({
-    homeHasClass: false,
     ajaxEnabled: true,
+    useCache: true,
     lazyloadEnabled: true,
-    classFactory: new ClassFactory(),
-    graphicLoader: new GraphicLoader(),
-    nav: new AbstractNav(),
-    transitionFactory: new TransitionFactory()
+    graphicLoader: new CustomGraphicLoader(),
+    classFactory: new ClassFactory()
 })
+
+// Init router
 router.init()
 ```
 
