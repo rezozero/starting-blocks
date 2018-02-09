@@ -53,47 +53,18 @@ customize such as `AbstractNav` to fit your own navigation needs.
 You won’t need to know where each class is stored, just use the *curly brace* syntax.
 This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
 
+Minimal configuration:
 ```js
+// Import Router class
 import {
-    GraphicLoader,
-    TransitionFactory,
     Router
-} from "starting-blocks"
-
-// Custom class factorty example
-class ClassFactory {
-    getPageInstance (nodeTypeName, router, $cont, context, nodeType, isHome) {
-        // ...
-    }
-    
-    getBlockInstance (nodeTypeName, page, $cont) {
-        // ...
-    }
-}
-
-// Custom graphic loader example
-class CustomGraphicLoader extends GraphicLoader {
-    constructor () {
-        super()
-    }
-
-    show () {
-        // ...
-    }
-
-    hide () {
-        // ...
-    }
-}
+} from 'starting-blocks'
 
 // Instanciate a Router
-const router = new Router({
-    ajaxEnabled: true,
-    useCache: true,
-    lazyloadEnabled: true,
-    graphicLoader: new CustomGraphicLoader(),
-    classFactory: new ClassFactory()
-})
+const routerOptions = {
+    // ...
+}
+const router = new Router(routerOptions)
 
 // Init router
 router.init()
@@ -130,8 +101,8 @@ data to your HTML tags.
 - `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
 
 You’ll find `index.html` and `page1.html` examples files. You can even test them
-by spawning a simple server with `php -S localhost:8888` command (You must have at least *PHP 5.5*).
-Then go to your favorite browser and type `http://localhost:8888`.
+by spawning a simple server with `npm run serve` command.
+Then go to your favorite browser and type `http://localhost:8080`.
 
 ### Router dependencies
 
@@ -143,7 +114,37 @@ A Router needs:
     - a `Nav` or extending class instance to update your website navigation after AJAX requests.
     - a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
 
-You can look at the `src/main.js` file to see an instantiation example with few parameters.
+You can look at the `example/src/app.js` file to see an instantiation example with few parameters.
+
+### Router options
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| homeHasClass | boolean | false | |
+| ajaxEnabled | boolean | true | |
+| pageClass | string | 'page-content' | |
+| ajaxWrapperId | string | 'sb-wrapper' | |
+| objectTypeAttr | string | 'data-node-type' | |
+| ajaxLinkTypeAttr | string | 'data-node-type' | |
+| noAjaxLinkClass | string | 'no-ajax-link' | |
+| noPrefetchLinkClass | string | 'no-prefetch' | |
+| navLinkClass | string | 'nav-link' | |
+| activeClass | string | 'active' | |
+| pageBlockClass | string | '.page-block' | |
+| lazyloadEnabled | boolean | false | |
+| prefetchEnabled | boolean | true | |
+| lazyloadSrcAttr | string | 'data-src' | |
+| lazyloadClass | string | 'lazyload' | |
+| lazyloadSrcSetAttr | string | 'data-srcset' | |
+| lazyloadThreshold | number | 300 | Lazyload treshold |
+| lazyloadThrottle | number | 150 | Duration of lazyload throttle |
+| minLoadDuration | boolean | 0 | |
+| preLoadPageDelay | boolean | 0 | |
+| useCache | boolean | false | |
+| classFactory | ClassFactory | ClassFactory | |
+| graphicLoader | GraphicLoader | GraphicLoader | |
+| nav | AbstractNav | AbstractNav | |
+| transitionFactory | TransitionFactory | TransitionFactory | |
 
 ### Pages overridable methods
 
@@ -197,17 +198,16 @@ This method is called on each transition and give you access to state informatio
 - `previousState` and `state`
 	- **transitionName** : `data-transition` attributes of the clicked link
 	- **context** : equal to `"history"`, `"link"` or `"nav"`
-- `direction` : equal to `"back"` or `"forward"` on navigator buttons click (only when `context` equals to `"history"`)
 
 Example:
 ```javascript
-// src/TransitionFactory.js
+// src/factories/TransitionFactory.js
 
 import DefaultTransition from './transitions/DefaultTransition';
 import FadeTransition from './transitions/FadeTransition';
 
 export default class TransitionFactory {
-    getTransition (previousState, state, direction = null) {
+    getTransition (previousState, state) {
         let transition = null
 
         switch (state.transitionName) {
@@ -302,4 +302,4 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 
 - Install dependencies: `yarn`.
 - Type `npm run dev` to improve Starting blocks locally.
-- Type `npm run build` to optimize project in one file as: `bundle.js`.
+- Type `npm run build` to optimize project in one file as: `main.js`.
