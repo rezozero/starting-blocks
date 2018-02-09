@@ -1,7 +1,10 @@
 # Starting blocks
 ## A page transition and blocks ES6 framework by REZO ZERO
 
+[![npm](https://img.shields.io/npm/l/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
+[![npm](https://img.shields.io/npm/v/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
 [![Build Status](https://travis-ci.org/rezozero/starting-blocks.svg?branch=master)](https://travis-ci.org/rezozero/starting-blocks)
+![64kB size](https://img.shields.io/badge/Size-64kB-green.svg)
 
 - [Adrien Scholaert](https://github.com/Gouterman)
 - [Ambroise Maupate](https://github.com/ambroisemaupate)
@@ -28,15 +31,9 @@
         crossorigin="anonymous"></script>
 ```
 
-## Usage with Yarn
+## Install with Yarn
 
 ```shell
-# Install dependencies that are NOT bundled
-# with starting-blocks
-yarn add jquery.waitforimages
-yarn add jquery
-yarn add loglevel
-
 # Install starting-blocks
 yarn add starting-blocks
 ```
@@ -45,9 +42,26 @@ Before using *Starting Blocks* in your own project as a dependency you’ll need
 and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
 customize such as `TransitionFactory` to fit your own navigation needs.
 
-*Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
+*Starting Blocks* requires *jQuery*, *loglevel* and *jquery.waitforimages* as we do not provide it in our bundle. This is meant to allow CDN for
+these libraries as you may need them in your project dependencies too!
 
-### CommonJS2 syntax with ES6
+You can use them for your *node_modules* and package them with your won project or use them as CDN like below:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.2.0/jquery.waitforimages.min.js"
+        integrity="sha256-b9bqxZdvRHQNAL/WJysGQ/mFHym7gGjEtruZ6zTNm7c="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
+        integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
+        crossorigin="anonymous"></script>
+```
+
+**Be careful:** `jquery.waitforimages.min.js` library must be loaded as CDN only because it won’t be compatible with you *Webpack* build.
+
+## Minimal usage
 
 *Starting Blocks* is bundled with *NPM* in order to use *ES6* `import` syntax.
 You won’t need to know where each class is stored, just use the *curly brace* syntax.
@@ -190,8 +204,8 @@ In this class, implement `getTransition (previousState, state, direction = null)
 This method is called on each transition and give you access to state informations :
 
 - `previousState` and `state`
-	- **transitionName** : `data-transition` attributes of the clicked link
-	- **context** : equal to `"history"`, `"link"`
+    - **transitionName** : `data-transition` attributes of the clicked link
+    - **context** : equal to `"history"`, `"link"`
 
 Example:
 ```javascript
@@ -297,3 +311,4 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 - Install dependencies: `yarn`.
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file as: `main.js`.
+- Type `npm run demo` to build demo project in `examples/` folder.

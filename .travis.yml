@@ -1,10 +1,16 @@
 language: node_js
 node_js:
+  - "node"
+  - "lts/*"
   - "8"
   - "7"
   - "6"
 script:
+  - echo "Generating bundle.js…"
+  # Only generate bundle, not demo
   - npm run build
+  # Only generate demo
+  - npm run demo
 skip_cleanup: true
 jobs:
   include:
@@ -12,10 +18,13 @@ jobs:
       branches:
         only:
           - master
-      node_js: "6"
+      node_js: "8"
       script:
         - echo "Generating bundle.js…"
+        # Only generate bundle, not demo
         - npm run build
+        # Only generate demo
+        - npm run demo
         - echo "Deploying to npm…"
       deploy:
         # Do not reset files to send bundle.js
