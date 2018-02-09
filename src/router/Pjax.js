@@ -48,9 +48,14 @@ export default class Pjax {
      * @param {Dom} dom
      * @param {CacheProvider} cache
      * @param {TransitionFactory} transitionFactory
+     * @param {GraphicLoader} loader
      * @param {String} ignoreClassLink
+     * @param {Boolean} cacheEnabled
      */
-    constructor (router, history, dom, cache, transitionFactory, { ignoreClassLink = 'no-ajax-link' } = {}) {
+    constructor (router, history, dom, cache, transitionFactory, loader, {
+        ignoreClassLink = 'no-ajax-link',
+        cacheEnabled = true
+    } = {}) {
         this.router = router
         this.history = history
         this.dom = dom
@@ -62,12 +67,19 @@ export default class Pjax {
         }
 
         /**
+         * GraphicLoader.
+         *
+         * @type {GraphicLoader}
+         */
+        this.loader = loader
+
+        /**
          * Indicate wether or not use the cache.
          *
          * @type {Boolean}
          * @default
          */
-        this.cacheEnabled = true
+        this.cacheEnabled = cacheEnabled
 
         /**
          * Class name used to ignore links.
@@ -159,39 +171,47 @@ export default class Pjax {
     load (url) {
         const deferred = Utils.deferred()
 
+        // Show loader
+        if (this.loader) {
+            this.loader.show()
+        }
+
+        // Check cache
         let request = this.cache.get(url)
 
+        // If no cache, make request and cache it
         if (!request) {
             request = Utils.request(url)
             this.cache.set(url, request)
         }
 
         // When data are loaded
-        request.then(data => {
-            const container = this.dom.parseResponse(data)
+        request
+            .then(data => {
+                const container = this.dom.parseResponse(data)
 
-            // Dispatch an event
-            Dispatcher.commit(AFTER_PAGE_LOAD, {
-                container,
-                currentHTML: this.dom.currentHTML
+                // Dispatch an event
+                Dispatcher.commit(AFTER_PAGE_LOAD, {
+                    container,
+                    currentHTML: this.dom.currentHTML
+                })
+
+                // Add new container to the DOM
+                this.dom.putContainer(container)
+
+                // Dispatch an event
+                Dispatcher.commit(AFTER_DOM_APPENDED, {
+                    container,
+                    currentHTML: this.dom.currentHTML
+                })
+
+                // Build page
+                const page = this.router.buildPage(container)
+
+                if (!this.cacheEnabled) { this.cache.reset() }
+
+                deferred.resolve(page)
             })
-
-            // Add new container to the DOM
-            this.dom.putContainer(container)
-
-            // Dispatch an event
-            Dispatcher.commit(AFTER_DOM_APPENDED, {
-                container,
-                currentHTML: this.dom.currentHTML
-            })
-
-            // Build page
-            const page = this.router.buildPage(container)
-
-            if (!this.cacheEnabled) { this.cache.reset() }
-
-            deferred.resolve(page)
-        })
             .catch((err) => {
                 console.error(err)
                 this.forceGoTo(url)
@@ -386,6 +406,10 @@ export default class Pjax {
      */
     onNewPageLoaded (page) {
         const currentStatus = this.history.currentStatus()
+
+        if (this.loader) {
+            this.loader.hide()
+        }
 
         // Update body attributes (class, id, data-attributes
         this.dom.updateBodyAttributes(page)

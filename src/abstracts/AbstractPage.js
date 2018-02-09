@@ -29,7 +29,6 @@ import $ from 'jquery'
 import Lazyload from 'vanilla-lazyload'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
-// import 'jquery.waitforimages'
 import {
     BEFORE_PAGE_SHOW,
     AFTER_PAGE_SHOW,
@@ -51,18 +50,18 @@ export default class AbstractPage {
      * Do not override this method, override `init` method instead.
      *
      * @param  {Router}  router
-     * @param  {HTMLElement}  $cont
+     * @param  {HTMLElement}  container
      * @param  {String}  context
      * @param  {String}  type
      * @param  {Boolean} isHome
      *
      * @constructor
      */
-    constructor (router, $cont, context, type, isHome) {
+    constructor (router, container, context, type, isHome) {
         type = type || 'page'
 
-        if (!$cont) {
-            throw new Error('AbstractPage need a $cont (HTMLElement) to be defined.')
+        if (!container) {
+            throw new Error('AbstractPage need a container (HTMLElement) to be defined.')
         }
 
         if (!router) {
@@ -81,8 +80,7 @@ export default class AbstractPage {
          *
          * @type {jQuery}
          */
-        this.container = $cont
-        this.$cont = $($cont)
+        this.$cont = $(container)
 
         if (!this.$cont) {
             throw new Error(`AbstractPage: container not found!`)
@@ -343,6 +341,11 @@ export default class AbstractPage {
      */
     initBlocks () {
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+            /**
+             * New Block.
+             *
+             * @type {AbstractBlock}
+             */
             let block = this.initSingleBlock(this.$blocks.eq(blockIndex))
             /*
              * Prevent undefined blocks to be appended to block collection.

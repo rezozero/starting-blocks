@@ -23,7 +23,6 @@
  * @author Ambroise Maupate
  */
 
-import isMobile from 'ismobilejs'
 import $ from 'jquery'
 import CacheProvider from './CacheProvider'
 import Dispatcher from '../dispatcher/Dispatcher'
@@ -38,7 +37,7 @@ import Dom from './Dom'
 
 import ClassFactory from '../factories/ClassFactory'
 import AbstractNav from '../abstracts/AbstractNav'
-import GraphicLoader from '../GraphicLoader'
+import GraphicLoader from '../utils/GraphicLoader'
 
 const DEFAULT_OPTIONS = {
     homeHasClass: false,
@@ -48,6 +47,7 @@ const DEFAULT_OPTIONS = {
     objectTypeAttr: 'data-node-type',
     ajaxLinkTypeAttr: 'data-node-type',
     noAjaxLinkClass: 'no-ajax-link',
+    noPrefetchLinkClass: 'no-prefetch',
     navLinkClass: 'nav-link',
     activeClass: 'active',
     pageBlockClass: '.page-block',
@@ -84,6 +84,7 @@ export default class Router {
      * | `objectTypeAttr` | "data-node-type" |
      * | `ajaxLinkTypeAttr`  | "data-node-type" |
      * | `noAjaxLinkClass` | "no-ajax-link" |
+     * | `noPrefetchLinkClass` | "no-prefetch" |
      * | `navLinkClass` | "nav-link" |
      * | `activeClass` | "active" |
      * | `useCache` | `true` |
@@ -204,7 +205,6 @@ export default class Router {
          */
         this.pjax = null
 
-        this.deviceType = (isMobile.any === false) ? 'desktop' : 'mobile'
         this.$body = $(document.body)
 
         // Binded methods
@@ -218,20 +218,33 @@ export default class Router {
             containerClass: this.options.pageClass
         })
 
-        // Check if desktop or mobile
-        this.$body.addClass(`is-${this.deviceType}`)
-
         // Init pjax is ajax enable
         if (this.options.ajaxEnabled) {
             this.cacheProvider = new CacheProvider()
             this.history = new History()
-            this.pjax = new Pjax(this, this.history, this.dom, this.cacheProvider, this.transitionFactory)
+
+            const pjaxOptions = {
+                ignoreClassLink: this.options.noAjaxLinkClass,
+                cacheEnabled: this.options.useCache
+            }
+
+            this.pjax = new Pjax(
+                this,
+                this.history,
+                this.dom,
+                this.cacheProvider,
+                this.transitionFactory,
+                this.loader,
+                pjaxOptions)
             this.pjax.init()
         }
 
         // Init prefetch if ajax and prefetch option are enabled
         if (this.options.ajaxEnabled && this.options.prefetchEnabled) {
-            this.prefetch = new Prefetch(this.pjax, this.cacheProvider)
+            this.prefetch = new Prefetch(this.pjax, this.cacheProvider, {
+                cacheEnabled: this.options.useCache,
+                noPrefetchLinkClass: this.options.noPrefetchLinkClass
+            })
             this.prefetch.init()
         }
 

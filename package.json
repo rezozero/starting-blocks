@@ -13,9 +13,11 @@
     },
     "homepage": "http://startingblocks.rezo-zero.com",
     "scripts": {
+        "start": "concurrently \"npm run dev\" \"npm run serve\"",
         "test": "echo \"No test specified\"",
-        "dev": "webpack",
-        "build": "NODE_ENV=production webpack",
+        "dev": "NODE_ENV=development webpack --progress",
+        "serve": "http-server ./examples/dist -o",
+        "build": "NODE_ENV=production webpack --progress",
         "doc": "esdoc -c esdoc.json"
     },
     "engines": {
@@ -24,7 +26,6 @@
     },
     "main": "main.js",
     "dependencies": {
-        "ismobilejs": "^0.4.1",
         "jquery": "^3.3.1",
         "loglevel": "^1.6.1",
         "vanilla-lazyload": "^3.0.0"
@@ -43,10 +44,12 @@
         "babel-preset-minify": "^0.3.0",
         "babel-preset-stage-0": "^6.16.0",
         "babel-runtime": "^6.26.0",
+        "concurrently": "^3.5.1",
         "copy-webpack-plugin": "^4.4.1",
         "esdoc": "^1.0.4",
         "esdoc-brand-plugin": "^1.0.0",
         "esdoc-ecmascript-proposal-plugin": "^1.0.0",
+        "esdoc-exclude-source-plugin": "^1.0.0",
         "esdoc-standard-plugin": "^1.0.0",
         "eslint": "^4.17.0",
         "eslint-config-standard": "^10.2.1",

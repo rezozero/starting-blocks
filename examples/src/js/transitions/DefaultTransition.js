@@ -22,69 +22,24 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file SlideTransition.js
+ * @file DefaultTransition.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
-
-import AbstractTransition from '../abstracts/AbstractTransition'
-import { TweenMax, Power4 } from 'gsap'
-import 'gsap/ScrollToPlugin'
+import { AbstractTransition } from 'starting-blocks'
 
 /**
- * Slide Transition class example.
+ * Default Transition. Show / Hide content.
  *
  * @extends {AbstractTransition}
  */
-export default class SlideTransition extends AbstractTransition {
-    /**
-     * Entry point of the animation
-     * Automatically called on init()
-     */
+export default class DefaultTransition extends AbstractTransition {
     start () {
-        Promise.all([this.newPageLoading, this.slideOut()])
-            .then(this.slideIn.bind(this))
+        Promise.all([this.newPageLoading])
+            .then(this.finish.bind(this))
     }
 
-    /**
-     * Slide out the old content.
-     * @returns {Promise}
-     */
-    slideOut () {
-        return new Promise((resolve) => {
-            TweenMax.to(this.oldPage.$cont, 0.5, {
-                xPercent: 25,
-                alpha: 0,
-                easing: Power4.easeIn,
-                onComplete: resolve
-            })
-        })
-    }
-
-    /**
-     * Slide in the new content
-     */
-    slideIn () {
-        TweenMax.set(this.oldPage.$cont, {
-            display: 'none'
-        })
-
-        TweenMax.set(this.newPage.$cont, {
-            position: 'absolute',
-            visibility: 'visible',
-            alpha: 0,
-            xPercent: -25
-        })
-
-        this.newPage.checkLazyload()
-
-        TweenMax.to(this.newPage.$cont, 0.75, {
-            xPercent: 0,
-            alpha: 1,
-            easing: Power4.easeOut,
-            onComplete: () => {
-                TweenMax.set(this.newPage.$cont, { 'position': 'static' })
-                this.done()
-            }
-        })
+    finish () {
+        document.body.scrollTop = 0
+        this.done()
     }
 }

@@ -42,20 +42,20 @@ export default class ClassFactory {
      *
      * @param  {String}  nodeType
      * @param  {Router}  router
-     * @param  {jQuery}  $cont
+     * @param  {HTMLElement}  container
      * @param  {String}  context
      * @param  {Boolean} isHome
      *
      * @return {AbstractPage}
      */
-    getPageInstance (nodeType, router, $cont, context, isHome) {
+    getPageInstance (nodeType, router, container, context, isHome) {
         switch (nodeType) {
         case 'home':
             log.debug('Create new home')
-            return new HomePage(router, $cont, context, nodeType, isHome)
+            return new HomePage(router, container, context, nodeType, isHome)
         default:
             log.info(`"${nodeType}" has no defined route, using Page.`)
-            return new DefaultPage(router, $cont, context, nodeType, isHome)
+            return new DefaultPage(router, container, context, nodeType, isHome)
         }
     }
 

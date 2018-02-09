@@ -1,6 +1,6 @@
 import tmpRouter from './router/Router'
 import tmpCacheProvider from './router/CacheProvider'
-import tmpGraphicLoader from './GraphicLoader'
+import tmpGraphicLoader from './utils/GraphicLoader'
 import tmpAbstractPage from './abstracts/AbstractPage'
 import tmpAbstractNav from './abstracts/AbstractNav'
 import tmpAbstractBlock from './abstracts/AbstractBlock'

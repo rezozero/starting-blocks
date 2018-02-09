@@ -14,7 +14,6 @@
 - *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
-- *ismobilejs*
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
 - Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 9 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js)
@@ -37,7 +36,6 @@
 yarn add jquery.waitforimages
 yarn add jquery
 yarn add loglevel
-yarn add ismobilejs
 
 # Install starting-blocks
 yarn add starting-blocks

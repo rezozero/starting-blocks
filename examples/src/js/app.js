@@ -32,6 +32,7 @@ import {
     Router,
     polyfills
 } from 'starting-blocks'
+import TransitionFactory from './factories/TransitionFactory'
 
 /**
  * Declare polyfills
@@ -50,7 +51,8 @@ const router = new Router({
     homeHasClass: false,
     ajaxEnabled: true,
     useCache: true,
-    lazyloadEnabled: true
+    lazyloadEnabled: true,
+    transitionFactory: new TransitionFactory()
 })
 
 router.init()

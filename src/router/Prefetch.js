@@ -31,7 +31,10 @@ import Utils from '../utils/Utils'
  * @type {Object}
  */
 export default class Prefetch {
-    constructor (pjax, cacheProvider, ignoreClassLink = 'no-prefetch') {
+    constructor (pjax, cacheProvider, {
+        ignoreClassLink = 'no-prefetch',
+        cacheEnabled = true
+    } = {}) {
         /**
          * Class name used to ignore prefetch on links.
          *
@@ -39,6 +42,7 @@ export default class Prefetch {
          * @default
          */
         this.ignoreClassLink = ignoreClassLink
+        this.cacheEnabled = cacheEnabled
         this.pjax = pjax
         this.cacheProvider = cacheProvider
     }
@@ -68,7 +72,10 @@ export default class Prefetch {
         // Check if the link is elegible for Pjax
         if (this.pjax.preventCheck(evt, el) && !this.cacheProvider.get(url)) {
             let xhr = Utils.request(url)
-            this.cacheProvider.set(url, xhr)
+
+            if (this.cacheEnabled) {
+                this.cacheProvider.set(url, xhr)
+            }
         }
     }
 }

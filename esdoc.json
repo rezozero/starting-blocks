@@ -1,7 +1,9 @@
 {
     "source": "./src",
+    "excludes": ["bundle.js"],
     "destination": "./doc",
     "plugins": [
+        {"name": "esdoc-exclude-source-plugin"},
         {"name": "esdoc-standard-plugin"},
         {
             "name": "esdoc-ecmascript-proposal-plugin",

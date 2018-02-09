@@ -27,8 +27,6 @@ import log from 'loglevel'
 
 /**
  * Event dispatcher singleton.
- *
- * @abstract
  */
 class Dispatcher {
     commit (eventType, detail) {
@@ -38,4 +36,7 @@ class Dispatcher {
     }
 }
 
+/**
+ * @ignore
+ */
 export default new Dispatcher()
