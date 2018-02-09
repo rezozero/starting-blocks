@@ -31,12 +31,6 @@
 ## Usage with Yarn
 
 ```shell
-# Install dependencies that are NOT bundled
-# with starting-blocks
-yarn add jquery.waitforimages
-yarn add jquery
-yarn add loglevel
-
 # Install starting-blocks
 yarn add starting-blocks
 ```
@@ -45,7 +39,7 @@ Before using *Starting Blocks* in your own project as a dependency you’ll need
 and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
 customize such as `TransitionFactory` to fit your own navigation needs.
 
-*Starting Blocks* requires *jQuery* as we do not provide it in our bundle.
+*Starting Blocks* requires *jQuery*, *jquery.waitforimages*,  as we do not provide it in our bundle.
 
 ### CommonJS2 syntax with ES6
 

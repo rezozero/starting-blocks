@@ -1,4 +1,4 @@
-/build
+/build/app*.js
 /doc
 /examples/.cache
 
