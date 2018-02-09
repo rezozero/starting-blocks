@@ -39,7 +39,24 @@ Before using *Starting Blocks* in your own project as a dependency you’ll need
 and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
 customize such as `TransitionFactory` to fit your own navigation needs.
 
-*Starting Blocks* requires *jQuery*, *jquery.waitforimages*,  as we do not provide it in our bundle.
+*Starting Blocks* requires *jQuery*, *loglevel* and *jquery.waitforimages* as we do not provide it in our bundle. This is meant to allow CDN for
+these libraries as you may need them in your project dependencies too!
+
+You can use them for your *node_modules* and package them with your won project or use them as CDN like below:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.2.0/jquery.waitforimages.min.js"
+        integrity="sha256-b9bqxZdvRHQNAL/WJysGQ/mFHym7gGjEtruZ6zTNm7c="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
+        integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
+        crossorigin="anonymous"></script>
+```
+
+**Be careful:** `jquery.waitforimages.min.js` library must be loaded as CDN only because it won’t be compatible with you *Webpack* build.
 
 ### CommonJS2 syntax with ES6
 

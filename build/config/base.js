@@ -51,7 +51,9 @@ const getConfig = () => {
             'jQuery': 'jQuery',
             '$': 'jQuery',
             'loglevel': 'log',
-            'log': 'log'
+            'log': 'log',
+            'jquery.waitforimages': 'jquery.waitforimages',
+            'waitforimages': 'jquery.waitforimages'
         },
 
         resolve: {
