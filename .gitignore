@@ -1,6 +1,8 @@
 /build/app*.js
 /doc
 /examples/.cache
+/examples/dist/js/app.js
+/main.js
 
 # Created by https://www.gitignore.io/api/npm,node
 
