@@ -27,12 +27,13 @@
  * @author Ambroise Maupate <ambroise@rezo-zero.com>
  */
 
-import log from 'loglevel'
+import * as log from 'loglevel'
 import {
     Router,
     polyfills
 } from 'starting-blocks'
 import TransitionFactory from './factories/TransitionFactory'
+import ExampleNav from './ExampleNav'
 
 /**
  * Declare polyfills
@@ -49,9 +50,9 @@ log.setLevel(0)
  */
 const router = new Router({
     ajaxEnabled: true,
-    useCache: true,
     lazyloadEnabled: true,
-    transitionFactory: new TransitionFactory()
+    transitionFactory: new TransitionFactory(),
+    nav: new ExampleNav()
 })
 
 router.init()

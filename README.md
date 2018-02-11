@@ -13,7 +13,6 @@
 
 ## Spec
 
-- *Webpack* (for development)
 - *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
@@ -21,6 +20,8 @@
 - *loglevel*
 - Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 9 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js)
 - Native *window.MutationObserver*. Make sure to use a polyfill for [Internet Explorer 10](https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js)
+- Native *window.fetch* method to perform any XHR requests. If *window.fetch* is not available, XHR will be disabled.
+- *Webpack* (for development)
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js" 
@@ -93,7 +94,7 @@ This is the DOM section which is extracted at the end of each complete AJAX requ
 response is *partial* it directly initialize `$cont` with the whole response data. Every new AJAX response will
 be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
 
-When `ajaxEnabled` is set to true, only links **inside** page-container are binded to load pages asynchronously and make transitions.
+When `ajaxEnabled` is set to true and `window.fetch` is supported, **all links inside document body** are listened to load pages asynchronously and make transitions.
 
 To declare a partial DOM section as the `$cont` you must add some classes and
 data to your HTML tags.
@@ -179,13 +180,13 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | Const name | Event name | Description |
 | --- | --- | --- |
 | `BEFORE_PAGE_LOAD` | `SB_BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
-| `AFTER_PAGE_LOAD` | `SB_AFTER_PAGE_LOAD` | After Router XHR request succeded. |
-| `AFTER_DOM_APPENDED` | `SB_AFTER_DOM_APPENDED` | After Router appended new page DOM to page-container. |
+| `AFTER_PAGE_LOAD` | `SB_AFTER_PAGE_LOAD` | After `window.fetch` XHR request succeeded. |
+| `AFTER_DOM_APPENDED` | `SB_AFTER_DOM_APPENDED` | After Router appended new page DOM to `ajaxWrapperId`. |
 | `AFTER_PAGE_BOOT` | `SB_AFTER_PAGE_BOOT` | After Router create new page instance. |
 | `BEFORE_PAGE_SHOW` | `SB_BEFORE_PAGE_SHOW` | Before page begins to show, right after assets are loaded (images). |
 | `AFTER_PAGE_SHOW` | `SB_AFTER_PAGE_SHOW` | After page showed. |
 | `BEFORE_PAGE_HIDE` | `SB_BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
-| `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hidind animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
+| `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hiding animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
 
 ⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
 
