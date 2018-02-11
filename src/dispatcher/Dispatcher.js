@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 
-import log from 'loglevel'
+import * as log from 'loglevel'
 
 /**
  * Event dispatcher singleton.

@@ -134,7 +134,7 @@ export default class Router {
         }
 
         /* Check if ajax is enable */
-        if (this.options.ajaxEnabled) {
+        if (this.options.ajaxEnabled && window.fetch) {
             /* If enabled, we use a transition factory to manage page transition */
             this.transitionFactory = this.options.transitionFactory || new TransitionFactory()
         }
@@ -200,8 +200,8 @@ export default class Router {
             containerClass: this.options.pageClass
         })
 
-        // Init pjax is ajax enable
-        if (this.options.ajaxEnabled) {
+        // Init pjax when ajax is enabled and window.fetch is supported
+        if (this.options.ajaxEnabled && window.fetch) {
             this.cacheProvider = new CacheProvider()
             this.history = new History()
 
@@ -222,7 +222,7 @@ export default class Router {
         }
 
         // Init prefetch if ajax and prefetch option are enabled
-        if (this.options.ajaxEnabled && this.options.prefetchEnabled) {
+        if (this.options.ajaxEnabled && window.fetch && this.options.prefetchEnabled) {
             this.prefetch = new Prefetch(this.pjax, this.cacheProvider, {
                 cacheEnabled: this.options.useCache,
                 noPrefetchLinkClass: this.options.noPrefetchLinkClass

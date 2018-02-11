@@ -28,7 +28,7 @@
  */
 
 import $ from 'jquery'
-import log from 'loglevel'
+import * as log from 'loglevel'
 
 /**
  * Utils class

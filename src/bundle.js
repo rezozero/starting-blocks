@@ -10,6 +10,7 @@ import tmppolyfills from './utils/polyfills'
 import tmpgaTrackErrors from './utils/gaTrackErrors'
 import tmpdebounce from './utils/debounce'
 import tmpBootstrapMedia from './utils/BootstrapMedia'
+import tmpEventTypes from './types/EventTypes'
 
 /** @private */
 export const Router = tmpRouter
@@ -35,3 +36,5 @@ export const gaTrackErrors = tmpgaTrackErrors
 export const debounce = tmpdebounce
 /** @private */
 export const BootstrapMedia = tmpBootstrapMedia
+/** @private */
+export const EventTypes = tmpEventTypes

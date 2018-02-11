@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 
-import log from 'loglevel'
+import * as log from 'loglevel'
 import DefaultPage from '../pages/DefaultPage'
 import HomePage from '../pages/HomePage'
 import AbstractBlock from '../abstracts/AbstractBlock'

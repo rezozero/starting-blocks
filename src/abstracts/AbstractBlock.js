@@ -24,7 +24,7 @@
  * @author Adrien Scholaert
  */
 
-import log from 'loglevel'
+import * as log from 'loglevel'
 import debounce from '../utils/debounce'
 
 /**

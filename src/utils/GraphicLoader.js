@@ -22,7 +22,7 @@
  * @file GraphicLoader.js
  * @author Ambroise Maupate
  */
-import log from 'loglevel'
+import * as log from 'loglevel'
 
 /**
  * Handle your application main loader animation.

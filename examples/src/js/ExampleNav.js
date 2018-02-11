@@ -26,18 +26,16 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 import $ from 'jquery'
-import AbstractNav from '../../../src/abstracts/AbstractNav'
 
 /**
  * An example nav which binds links for AJAX use.
  */
-export default class ExampleNav extends AbstractNav {
+export default class ExampleNav {
     constructor () {
-        super()
         this.$cont = $('#main-nav').eq(0)
     }
 
     initEvents (router) {
-        super.initEvents(router)
+        // do nothing
     }
 }

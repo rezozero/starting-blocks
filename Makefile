@@ -37,7 +37,7 @@ doc :
 # Push generated Documentation on Rezo Zero host.
 # Credentials required, of course
 push-doc : doc
-	rsync -avcz -e "ssh -P 39001" doc/ core@startingblocks.rezo-zero.com:~/http/;
+	rsync -avcz -e "ssh -p 39001" doc/ core@startingblocks.rezo-zero.com:~/http/;
 
 node_modules:
 	npm install;
