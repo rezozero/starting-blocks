@@ -4,13 +4,14 @@ import tmpGraphicLoader from './utils/GraphicLoader'
 import tmpAbstractPage from './abstracts/AbstractPage'
 import tmpAbstractBlock from './abstracts/AbstractBlock'
 import tmpAbstractTransition from './abstracts/AbstractTransition'
+import tmpDefaultTransition from './transitions/DefaultTransition'
 import tmpUtils from './utils/Utils'
 import tmpScroll from './utils/Scroll'
 import tmppolyfills from './utils/polyfills'
 import tmpgaTrackErrors from './utils/gaTrackErrors'
 import tmpdebounce from './utils/debounce'
 import tmpBootstrapMedia from './utils/BootstrapMedia'
-import tmpEventTypes from './types/EventTypes'
+import * as tmpEventTypes from './types/EventTypes'
 
 /** @private */
 export const Router = tmpRouter
@@ -38,3 +39,5 @@ export const debounce = tmpdebounce
 export const BootstrapMedia = tmpBootstrapMedia
 /** @private */
 export const EventTypes = tmpEventTypes
+/** @private */
+export const DefaultTransition = tmpDefaultTransition
