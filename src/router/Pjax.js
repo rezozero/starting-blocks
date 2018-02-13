@@ -282,7 +282,6 @@ export default class Pjax {
         }
 
         if (this.preventCheck(evt, el)) {
-            evt.stopPropagation()
             evt.preventDefault()
 
             this.linkHash = el.hash.split('#')[1]
