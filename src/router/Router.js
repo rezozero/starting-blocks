@@ -55,7 +55,7 @@ const DEFAULT_OPTIONS = {
     lazyloadSrcSetAttr: 'data-srcset',
     lazyloadThreshold: 300,
     lazyloadThrottle: 150,
-    useCache: false,
+    useCache: true,
     classFactory: null,
     graphicLoader: null,
     transitionFactory: null
