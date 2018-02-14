@@ -84,6 +84,48 @@ export default function polyfills () {
     }
 
     /**
+     * Array.from polyfill
+     */
+    if (!Array.from) {
+        Array.from = function (object) {
+            'use strict'
+            return [].slice.call(object)
+        }
+    }
+
+    /**
+     * Array.find polyfill
+     */
+    if (!Array.prototype.find) {
+        // eslint-disable-next-line no-extend-native
+        Object.defineProperty(Array.prototype, 'find', {
+            value: function (predicate) {
+                if (this === null) {
+                    throw new TypeError('Array.prototype.find called on null or undefined')
+                }
+
+                if (typeof predicate !== 'function') {
+                    throw new TypeError('predicate must be a function')
+                }
+
+                let list = Object(this)
+                let length = list.length >>> 0
+                let thisArg = arguments[1]
+                let value
+
+                for (let i = 0; i < length; i++) {
+                    value = list[i]
+                    if (predicate.call(thisArg, value, i, list)) {
+                        return value
+                    }
+                }
+
+                return undefined
+            }
+        })
+    }
+
+    /**
      * FindIndex polyfill
      */
     if (!Array.prototype.findIndex) {
