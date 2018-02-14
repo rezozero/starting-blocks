@@ -82,7 +82,7 @@ import {
 import * as log from 'loglevel'
 
 /*
- * Polyfills for Array.prototype.findIndex, CustomEvent, 
+ * Polyfills for Array.prototype.findIndex,  Array.prototype.find, Array.from, CustomEvent, 
  * console, requestAnimationFrame and cancelAnimationFrame
  */
 polyfills()
