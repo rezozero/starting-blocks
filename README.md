@@ -13,22 +13,26 @@
 
 ## Spec
 
+- Compatible from **Internet Explorer 10+**
 - *jQuery* 3.3.1
 - *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
 - *vanilla-lazyload* (for optional automatic image lazyloading)
 - *debounce* (http://davidwalsh.name/javascript-debounce-function)
 - *loglevel*
-- Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 9 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.js)
+- Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 10 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.auto.js)
 - Native *window.MutationObserver*. Make sure to use a polyfill for [Internet Explorer 10](https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js)
-- Native *window.fetch* method to perform any XHR requests. If *window.fetch* is not available, XHR will be disabled.
+- Native *window.fetch* method to perform any XHR requests. If *window.fetch* is not available, XHR will be disabled. Make sure to use a polyfill for [Internet Explorer 10-11](https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js)
 - *Webpack* (for development)
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js" 
-        integrity="sha256-45YA33UQCDcJsntBst2bhka2t/LBNHP7RNvpllHPkQ0=" 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.auto.min.js"
+        integrity="sha256-OI3N9zCKabDov2rZFzl8lJUXCcP7EmsGcGoP6DMXQCo="
         crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js" 
-        integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY=" 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js"
+        integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"
+        integrity="sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs="
         crossorigin="anonymous"></script>
 ```
 
@@ -72,8 +76,21 @@ Minimal configuration:
 ```js
 // Import Router class
 import {
-    Router
+    Router,
+    polyfills
 } from 'starting-blocks'
+import * as log from 'loglevel'
+
+/*
+ * Polyfills for Array.prototype.findIndex, CustomEvent, 
+ * console, requestAnimationFrame and cancelAnimationFrame
+ */
+polyfills()
+
+/**
+ * Config loglevel
+ */
+log.setLevel(0)
 
 // Instanciate a Router
 const routerOptions = {
