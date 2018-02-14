@@ -167,7 +167,7 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | lazyloadSrcSetAttr | string | 'data-srcset' | |
 | lazyloadThreshold | number | 300 | Lazyload treshold |
 | lazyloadThrottle | number | 150 | Duration of lazyload throttle |
-| useCache | boolean | false | |
+| useCache | boolean | true | |
 | classFactory | ClassFactory | ClassFactory | |
 | graphicLoader | GraphicLoader | GraphicLoader | |
 | transitionFactory | TransitionFactory | TransitionFactory | |

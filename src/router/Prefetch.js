@@ -69,7 +69,7 @@ export default class Prefetch {
 
         let url = this.pjax.getHref(el)
 
-        // Check if the link is elegible for Pjax
+        // Check if the link is eligible for Pjax
         if (this.pjax.preventCheck(evt, el) && !this.cacheProvider.get(url)) {
             let xhr = Utils.request(url)
 

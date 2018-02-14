@@ -106,8 +106,9 @@ export default class Utils {
 
         window.fetch(url, {
             method: 'GET',
-            headers,
-            cache: 'default'
+            headers: headers,
+            cache: 'default',
+            credentials: 'same-origin'
         }).then(res => {
             window.clearTimeout(timeout)
 
