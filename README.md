@@ -151,7 +151,6 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| homeHasClass | boolean | false | |
 | ajaxEnabled | boolean | true | |
 | pageClass | string | 'page-content' | |
 | ajaxWrapperId | string | 'sb-wrapper' | |

@@ -21,6 +21,7 @@
  *
  * @file Router.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
 
 import $ from 'jquery'
@@ -39,7 +40,6 @@ import ClassFactory from '../factories/ClassFactory'
 import GraphicLoader from '../utils/GraphicLoader'
 
 const DEFAULT_OPTIONS = {
-    homeHasClass: false,
     ajaxEnabled: true,
     pageClass: 'page-content',
     ajaxWrapperId: 'sb-wrapper',
@@ -72,7 +72,6 @@ export default class Router {
      *
      * | Options | Default value |
      * | ----- | ----- |
-     * | `homeHasClass` | `false` |
      * | `ajaxEnabled` | `true` |
      * | `pageClass` | "page-content" **without point!** |
      * | `objectTypeAttr` | "data-node-type" |
@@ -150,12 +149,6 @@ export default class Router {
          * @type {AbstractPage|null}
          */
         this.page = null
-
-        /**
-         * Transition instance
-         * @type {AbstractTransition|boolean}
-         */
-        this.transition = false
 
         /**
          * Prefetch instance
@@ -249,10 +242,10 @@ export default class Router {
 
         // Get page
         this.page = this.classFactory.getPageInstance(
-            this.dom.getNodeType(container),
             this,
             container,
-            context
+            context,
+            this.dom.getNodeType(container)
         )
 
         // Init page

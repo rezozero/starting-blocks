@@ -45,9 +45,14 @@ export default class History {
      * @param {String} url
      * @param {String} transitionName
      * @param {String} context (ajax, history)
+     * @param {Object} data (optional data)
+     *
+     * @return {Object}
      */
-    add (url, transitionName, context) {
-        this.history.push({ url, transitionName, context })
+    add (url, transitionName, context, data = {}) {
+        const state = { url, transitionName, context, data }
+        this.history.push(state)
+        return state
     }
 
     /**
