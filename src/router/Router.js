@@ -44,7 +44,6 @@ const DEFAULT_OPTIONS = {
     pageClass: 'page-content',
     ajaxWrapperId: 'sb-wrapper',
     objectTypeAttr: 'data-node-type',
-    ajaxLinkTypeAttr: 'data-node-type',
     noAjaxLinkClass: 'no-ajax-link',
     noPrefetchLinkClass: 'no-prefetch',
     pageBlockClass: '.page-block',
@@ -75,7 +74,6 @@ export default class Router {
      * | `ajaxEnabled` | `true` |
      * | `pageClass` | "page-content" **without point!** |
      * | `objectTypeAttr` | "data-node-type" |
-     * | `ajaxLinkTypeAttr`  | "data-node-type" |
      * | `noAjaxLinkClass` | "no-ajax-link" |
      * | `noPrefetchLinkClass` | "no-prefetch" |
      * | `useCache` | `true` |

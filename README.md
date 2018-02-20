@@ -155,7 +155,6 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | pageClass | string | 'page-content' | |
 | ajaxWrapperId | string | 'sb-wrapper' | |
 | objectTypeAttr | string | 'data-node-type' | |
-| ajaxLinkTypeAttr | string | 'data-node-type' | |
 | noAjaxLinkClass | string | 'no-ajax-link' | |
 | noPrefetchLinkClass | string | 'no-prefetch' | |
 | pageBlockClass | string | '.page-block' | (with point) |
