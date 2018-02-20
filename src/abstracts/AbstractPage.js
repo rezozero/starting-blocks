@@ -53,11 +53,10 @@ export default class AbstractPage {
      * @param  {HTMLElement}  container
      * @param  {String}  context
      * @param  {String}  type
-     * @param  {Boolean} isHome
      *
      * @constructor
      */
-    constructor (router, container, context, type, isHome) {
+    constructor (router, container, context, type) {
         type = type || 'page'
 
         if (!container) {
@@ -116,7 +115,11 @@ export default class AbstractPage {
          *
          * @type {Boolean}
          */
-        this.isHome = isHome
+        this.isHome = false
+
+        if (this.$cont.attr('data-is-home') === '1') {
+            this.isHome = true
+        }
 
         /**
          * Lazyload instance
@@ -124,10 +127,6 @@ export default class AbstractPage {
          * @type {Lazyload|null}
          */
         this.lazyload = null
-
-        if (this.$cont.attr('data-is-home') === '1') {
-            this.isHome = true
-        }
 
         /**
          * AbstractBlock collection.
@@ -317,6 +316,7 @@ export default class AbstractPage {
         log.debug('▶️ #' + this.id)
         this.$cont[0].style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
+        this.$cont.removeClass(this.router.options.pageClass + '-transitioning')
         Dispatcher.commit(AFTER_PAGE_SHOW, this)
     }
 

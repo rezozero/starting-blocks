@@ -113,7 +113,7 @@ export default class Pjax {
         const wrapper = this.dom.getWrapper()
         wrapper.setAttribute('aria-live', 'polite')
 
-        this.history.add(this.getCurrentUrl(), null, 'static')
+        this.currentState = this.history.add(this.getCurrentUrl(), null, 'static')
 
         this.bindEvents()
     }
@@ -148,7 +148,7 @@ export default class Pjax {
         const currentPosition = window.scrollY
         window.history.pushState(null, null, url)
         window.scrollTo(0, currentPosition)
-        this.onStateChange(transitionName)
+        this.onStateChange(transitionName, true)
     }
 
     /**
@@ -348,7 +348,7 @@ export default class Pjax {
      *
      * @private
      */
-    onStateChange (transitionName = null) {
+    onStateChange (transitionName = null, isAjax = false) {
         const newUrl = this.getCurrentUrl()
 
         if (this.transitionProgress) { this.forceGoTo(newUrl) }
@@ -357,10 +357,10 @@ export default class Pjax {
 
         // If transition name is a string, a link have been click
         // Otherwise back/forward buttons have been pressed
-        if (typeof transitionName === 'string') {
-            this.history.add(newUrl, transitionName, 'ajax')
+        if (typeof transitionName === 'string' || isAjax) {
+            this.currentState = this.history.add(newUrl, transitionName, 'ajax')
         } else {
-            this.history.add(newUrl, null, 'history')
+            this.currentState = this.history.add(newUrl, null, 'history')
         }
 
         // Dispatch an event to inform that the page is being load
@@ -416,6 +416,13 @@ export default class Pjax {
         this.dom.updatePageTitle(page)
         // Send google analytic data
         Utils.trackGoogleAnalytics()
+
+        // Update the current state
+        if (this.currentState && page) {
+            if (!this.currentState.data.title && page.metaTitle) {
+                this.currentState.data.title = page.metaTitle
+            }
+        }
 
         Dispatcher.commit(CONTAINER_READY, {
             currentStatus,

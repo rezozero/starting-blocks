@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 4.1.0: 2018-02-20
+
+- Change `classFactory.getInstance()` method parameters order and removed `isHome` parameter
+- Added new `data` object parameter in history `add` method if you want to manually add specific data
+
 ## Version 4.0.0: 2018-02-08
 
 - Big refactoring of all classes

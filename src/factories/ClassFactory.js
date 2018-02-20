@@ -21,6 +21,7 @@
  *
  * @file ClassFactory.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
 
 import * as log from 'loglevel'
@@ -40,22 +41,21 @@ export default class ClassFactory {
      * Returns an `AbstractPage` child class instance
      * according to the `nodeTypeName` or an `AbstractPage` as default.
      *
-     * @param  {String}  nodeType
      * @param  {Router}  router
      * @param  {HTMLElement}  container
      * @param  {String}  context
-     * @param  {Boolean} isHome
+     * @param  {String}  nodeType
      *
      * @return {AbstractPage}
      */
-    getPageInstance (nodeType, router, container, context, isHome) {
+    getPageInstance (router, container, context, nodeType) {
         switch (nodeType) {
         case 'home':
             log.debug('Create new home')
-            return new HomePage(router, container, context, nodeType, isHome)
+            return new HomePage(router, container, context, nodeType)
         default:
             log.info(`"${nodeType}" has no defined route, using Page.`)
-            return new DefaultPage(router, container, context, nodeType, isHome)
+            return new DefaultPage(router, container, context, nodeType)
         }
     }
 
