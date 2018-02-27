@@ -22,67 +22,16 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file SlideTransition.js
+ * @file utils.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
-import { AbstractTransition } from 'starting-blocks'
-import { TweenMax, Power4 } from 'gsap'
-import 'gsap/ScrollToPlugin'
-
-/**
- * Slide Transition class example.
- *
- * @extends {AbstractTransition}
- */
-export default class SlideTransition extends AbstractTransition {
-    /**
-     * Entry point of the animation
-     * Automatically called on init()
-     */
-    start () {
-        Promise.all([this.newPageLoading, this.slideOut()])
-            .then(this.slideIn.bind(this))
-    }
-
-    /**
-     * Slide out the old content.
-     * @returns {Promise}
-     */
-    slideOut () {
-        return new Promise((resolve) => {
-            TweenMax.to(this.oldPage.$cont, 0.5, {
-                xPercent: 25,
-                alpha: 0,
-                ease: Power4.easeIn,
-                onComplete: resolve
-            })
+export function loadImage (url) {
+    return new Promise(resolve => {
+        const $img = new window.Image()
+        $img.addEventListener('load', () => {
+            resolve($img)
         })
-    }
-
-    /**
-     * Slide in the new content
-     */
-    slideIn () {
-        TweenMax.set(this.oldPage.$cont, {
-            display: 'none'
-        })
-
-        TweenMax.set(this.newPage.$cont, {
-            visibility: 'visible',
-            alpha: 0,
-            xPercent: -25
-        })
-
-        this.newPage.checkLazyload()
-
-        TweenMax.to(this.newPage.$cont, 0.75, {
-            xPercent: 0,
-            alpha: 1,
-            ease: Power4.easeOut,
-            onComplete: () => {
-                this.done()
-            }
-        })
-    }
+        $img.src = url
+    })
 }

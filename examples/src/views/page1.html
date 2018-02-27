@@ -37,9 +37,67 @@
         <title>Page 1</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../css/demo.css">
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20="
+              crossorigin="anonymous" />
+        <link rel="stylesheet" href="../css/demo.css">
+    </head>
+    <body id="page1" class="page1 bg-light">
+        <nav id="main-nav" class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Starting Blocks <small>v4</small></a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a href="/" class="nav-link" data-transition="fade">Homepage</a></li>
+                <li class="nav-item"><a href="page1.html" class="nav-link active" data-transition="slide">Page 1</a></li>
+                <li class="nav-item"><a href="page1.html" class="nav-link no-ajax-link" data-transition="fade">Link to page 1 (no-ajax)</a></li>
+                <li class="nav-item"><a href="partial.html" class="nav-link" data-transition="fade">Link to partial page</a></li>
+            </ul>
+        </nav>
+        <main role="main" id="sb-wrapper">
+            <div id="page-page-1"
+                 class="page-content page-content-ajax"
+                 data-node-name="page-1"
+                 data-node-type="page"
+                 data-meta-title="Page 1">
+                <div class="container">
+                    <h1>Page 1</h1>
+                    <p><a href="#" class="duplicate-last btn btn-primary">Duplicated last block</a></p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ex est, maximus aliquam sagittis vel, tempus vel odio. Praesent felis elit, blandit et laoreet nec, hendrerit et arcu. Aenean ligula sapien, sodales vel semper in, pulvinar id nulla. Donec pellentesque non tellus vel imperdiet. Pellentesque posuere, nisl sed rutrum tincidunt, augue augue vestibulum ex, vel ornare justo arcu eu magna. Praesent vel nisl enim. Aenean a odio porttitor, fermentum est et, mattis sem. Suspendisse aliquam, risus a aliquam vestibulum, eros ipsum pulvinar sem, quis posuere tellus ex id velit. Quisque eu pellentesque nisl, sed volutpat purus. Sed auctor convallis sapien sed hendrerit. Vivamus et neque facilisis, ultrices ex non, faucibus velit. Aliquam laoreet sed turpis a blandit. Nulla fringilla massa non fermentum rutrum.</p>
+                </div>
+                <div class="page-block" id="block-1" data-node-type="DefaultBlock">
+                    <div class="container">
+                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
+                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
+                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
+                        <p><img class="lazyload img-fluid"
+                                id="4-image"
+                                width="700"
+                                src="#"
+                                data-src="/img/test1.jpg"
+                                alt="Lazyloaded img"></p>
+                        <p><img class="lazyload img-fluid"
+                                id="5-image"
+                                width="700"
+                                src="#"
+                                data-src="/img/test2.jpg"
+                                alt="Lazyloaded img"></p>
+                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
+                    </div>
+                </div>
+                <div class="page-block" id="block-2" data-node-type="DefaultBlock">
+                    <div class="container">
+                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
+                        <p><img class="lazyload img-fluid"
+                                id="snd-image"
+                                width="700"
+                                src="#"
+                                data-src="/img/test3.jpg"
+                                alt="Lazyloaded img"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.auto.min.js"
                 integrity="sha256-OI3N9zCKabDov2rZFzl8lJUXCcP7EmsGcGoP6DMXQCo="
                 crossorigin="anonymous"></script>
@@ -49,63 +107,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"
                 integrity="sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs="
                 crossorigin="anonymous"></script>
-    </head>
-    <body id="page1">
-        <nav id="main-nav" class="navbar navbar-default">
-            <ul class="nav navbar-nav">
-                <li><a href="page1.html" data-transition="fade">Link to page 1</a></li>
-                <li><a href="page1.html#block-2" data-transition="fade">Link to page 1 with hash</a></li>
-                <li><a href="partial.html" data-transition="fade">Link to partial page</a></li>
-                <li><a href="/" data-transition="fade">Link to home page</a></li>
-                <li><a href="/" class="no-ajax-link" data-transition="fade">Link to home page (no-ajax)</a></li>
-            </ul>
-        </nav>
-        <div id="sb-wrapper">
-            <div id="page-page-1"
-                class="page-content page-content-ajax"
-                data-node-name="page-1"
-                data-node-type="page"
-                data-meta-title="Page 1">
-                <div class="container">
-                    <h1>Page 1</h1>
-
-                    <p><a href="#" class="duplicate-last">Duplicated last block</a></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ex est, maximus aliquam sagittis vel, tempus vel odio. Praesent felis elit, blandit et laoreet nec, hendrerit et arcu. Aenean ligula sapien, sodales vel semper in, pulvinar id nulla. Donec pellentesque non tellus vel imperdiet. Pellentesque posuere, nisl sed rutrum tincidunt, augue augue vestibulum ex, vel ornare justo arcu eu magna. Praesent vel nisl enim. Aenean a odio porttitor, fermentum est et, mattis sem. Suspendisse aliquam, risus a aliquam vestibulum, eros ipsum pulvinar sem, quis posuere tellus ex id velit. Quisque eu pellentesque nisl, sed volutpat purus. Sed auctor convallis sapien sed hendrerit. Vivamus et neque facilisis, ultrices ex non, faucibus velit. Aliquam laoreet sed turpis a blandit. Nulla fringilla massa non fermentum rutrum.</p>
-
-                </div>
-                <div class="page-block" id="block-1" data-node-type="block">
-                    <div class="container">
-                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
-                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
-                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
-                        <p><img class="lazyload img-responsive"
-                                id="4-image"
-                                width="700"
-                                src="#"
-                                data-src="/img/test1.jpg"
-                                alt="Lazyloaded img"></p>
-                        <p><img class="lazyload img-responsive"
-                                id="5-image"
-                                width="700"
-                                src="#"
-                                data-src="/img/test2.jpg"
-                                alt="Lazyloaded img"></p>
-                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
-                    </div>
-                </div>
-                <div class="page-block" id="block-2" data-node-type="block">
-                    <div class="container">
-                        <p>Vivamus dolor massa, aliquet ut leo vel, sodales mattis tortor. Aenean at mauris et ex mollis fringilla. Sed volutpat viverra vehicula. Nullam maximus ligula ac nisl aliquam commodo. Donec sed vestibulum orci. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin ut porttitor lorem, sit amet aliquet dui. Nunc dictum, lorem vitae elementum pharetra, sapien orci dignissim ligula, aliquam interdum erat urna a nibh. Morbi quis tellus maximus, pellentesque erat ac, porttitor nulla. Curabitur rhoncus urna non magna mattis aliquet. Vestibulum non lobortis turpis. Nunc aliquet velit a magna dictum pulvinar vitae laoreet tortor. Duis auctor iaculis arcu ac rutrum. Suspendisse vel odio risus.</p>
-                        <p><img class="lazyload img-responsive"
-                                id="snd-image"
-                                width="700"
-                                src="#"
-                                data-src="/img/test3.jpg"
-                                alt="Lazyloaded img"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
                 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
                 crossorigin="anonymous"></script>
@@ -114,12 +115,6 @@
                 crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
                 integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
-                crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js"
-                integrity="sha256-45YA33UQCDcJsntBst2bhka2t/LBNHP7RNvpllHPkQ0="
-                crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js"
-                integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY="
                 crossorigin="anonymous"></script>
     </body>
 </html>
