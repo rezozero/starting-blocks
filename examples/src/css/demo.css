@@ -9,7 +9,7 @@ body {
 }
 
 body {
-    padding-top: 56px;
+    padding-top: 75px;
     margin-bottom: 60px;
 }
 
@@ -33,7 +33,6 @@ body {
 }
 
 .usersblock__intro {
-    background-color: #fafaf9;
     color: var(--black);
 }
 

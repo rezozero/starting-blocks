@@ -19,6 +19,7 @@
         "serve": "http-server ./examples/dist -o",
         "build": "NODE_ENV=production TARGET=bundle webpack --progress",
         "demo": "NODE_ENV=production TARGET=demo webpack --progress",
+        "dev-demo": "NODE_ENV=development TARGET=demo webpack --progress",
         "doc": "esdoc -c esdoc.json"
     },
     "engines": {

@@ -72,14 +72,14 @@ export default class ClassFactory {
      * @param  {jQuery}  $cont
      * @return {AbstractBlock}
      */
-    // getBlockInstance (nodeTypeName, page, $cont) {
-    //     switch (nodeTypeName) {
-    //     case 'block':
-    //         return new AbstractBlock(page, $cont, nodeTypeName)
-    //     }
-    // }
-
     async getBlockInstance (nodeTypeName, page, $cont) {
+        // Standard import
+        // switch (nodeTypeName) {
+        // case 'UsersBlock':
+        //     return new UsersBlock(page, $cont, nodeTypeName)
+        // }
+
+        // Dynamic import
         try {
             const Block = await this.getModule(nodeTypeName)
             return new Block(page, $cont, nodeTypeName)

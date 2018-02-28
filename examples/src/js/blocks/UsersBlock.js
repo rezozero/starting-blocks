@@ -27,7 +27,7 @@
  */
 
 import { AbstractBlock } from 'starting-blocks'
-import request from 'axios'
+import * as Api from '../api/Api'
 import * as Utils from '../utils/utils'
 
 export default class UsersBlock extends AbstractBlock {
@@ -43,13 +43,9 @@ export default class UsersBlock extends AbstractBlock {
         this.owner = null
         this.contributors = []
         this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks'
-        this.accessToken = 'aef262c309493b8b0a5bdf40130e382dbbab3206'
-        this.params = {
-            access_token: this.accessToken
-        }
 
         // Init request
-        this.data = await this.getData(this.initialUrl)
+        this.data = await Api.getData(this.initialUrl)
         this.fillData(this.data)
     }
 
@@ -65,19 +61,10 @@ export default class UsersBlock extends AbstractBlock {
         return super.destroyEvents()
     }
 
-    getData (url) {
-        return request
-            .get(url, {
-                params: this.params
-            })
-            .then(({ data }) => data)
-            .catch(e => console.error(e.message))
-    }
-
     async fillData () {
         if (!this.data) return
 
-        this.contributors = await this.getData(this.data.contributors_url)
+        this.contributors = await Api.getData(this.data.contributors_url)
         this.owner = this.data.owner
 
         this.setAvatar()
@@ -112,6 +99,7 @@ export default class UsersBlock extends AbstractBlock {
     async setAvatar () {
         if (!this.owner.avatar_url) return
         const $img = await Utils.loadImage(this.owner.avatar_url)
+        $img.classList.add('img-thumbnail')
         this.$avatarCont.append($img)
     }
 

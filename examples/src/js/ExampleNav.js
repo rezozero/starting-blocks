@@ -26,16 +26,39 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 import $ from 'jquery'
+import {
+    EventTypes
+} from 'starting-blocks'
 
 /**
  * An example nav which binds links for AJAX use.
  */
 export default class ExampleNav {
     constructor () {
+        // Elements
         this.$cont = $('#main-nav').eq(0)
+        this.$links = this.$cont.find('a')
+
+        // Binded methods
+        this.onAfterPageBoot = this.onAfterPageBoot.bind(this)
     }
 
-    initEvents (router) {
-        // do nothing
+    init () {
+        this.initEvents()
+    }
+
+    initEvents () {
+        window.addEventListener(EventTypes.AFTER_PAGE_BOOT, this.onAfterPageBoot)
+    }
+
+    onAfterPageBoot () {
+        // Remove all active class
+        this.$links.removeClass('active')
+
+        this.$links.each((i, link) => {
+            if (link.href === window.location.href) {
+                $(link).addClass('active')
+            }
+        })
     }
 }

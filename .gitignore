@@ -126,3 +126,6 @@ fabric.properties
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/phpstorm
+
+# Config
+/examples/src/js/config/config.js
