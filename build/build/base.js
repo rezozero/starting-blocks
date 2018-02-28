@@ -17,7 +17,7 @@ const getWebpackConfigBase = (config) => {
         target: 'web',
         context: paths.dist(),
         module: {
-            loaders: [{
+            rules: [{
                 test: /\.js$/,
                 enforce: 'pre',
                 loader: 'eslint-loader',
@@ -36,7 +36,7 @@ const getWebpackConfigBase = (config) => {
             new webpack.NoEmitOnErrorsPlugin(),
             new WebpackNotifierPlugin({alwaysNotify: true})
         ],
-        externals: config.externals,
+        externals: config.externals
     }
 
     if (config.refreshOnChange) {
