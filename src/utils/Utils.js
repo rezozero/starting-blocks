@@ -31,17 +31,6 @@ import $ from 'jquery'
 import * as log from 'loglevel'
 import work from 'webworkify-webpack'
 
-// const worker = new Worker()
-//
-// worker.onmessage = function (event) {
-//     console.log(event)
-// }
-// worker.addEventListener('message', function (event) {
-//     console.log(event)
-// })
-// worker.postMessage({ a: 1 })
-// console.log('lol')
-
 /**
  * Utils class
  */
@@ -118,11 +107,15 @@ export default class Utils {
             const worker = work(require.resolve('../workers/Request.worker.js'))
 
             // Listen worker event message
-            worker.addEventListener('message', function ({data}) {
+            worker.addEventListener('message', function (e) {
+                const data = JSON.parse(e.data)
+
                 if (data.err) {
                     window.clearTimeout(timeout)
+                    worker.terminate()
                     dfd.reject(data.err)
                 } else {
+                    worker.terminate()
                     return dfd.resolve(data.res)
                 }
             })

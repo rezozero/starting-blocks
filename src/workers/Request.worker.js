@@ -39,14 +39,14 @@ export default function () {
         req.send(null)
 
         if (req.status === 200) {
-            self.postMessage({
+            self.postMessage(JSON.stringify({
                 res: req.responseText
-            })
+            }))
         } else {
-            self.postMessage({
+            self.postMessage(JSON.stringify({
                 err: req.statusText,
                 status: req.status
-            })
+            }))
         }
     })
 };
