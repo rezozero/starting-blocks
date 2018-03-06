@@ -67,12 +67,12 @@ export default class ClassFactory {
      * Comment out the default case if you don’t want a default block to be instantiated
      * for each block.
      *
-     * @param  {String}  nodeTypeName
      * @param  {AbstractPage} page
      * @param  {jQuery}  $cont
+     * @param  {String}  nodeType
      * @return {AbstractBlock}
      */
-    async getBlockInstance (nodeTypeName, page, $cont) {
+    async getBlockInstance (page, $cont, nodeType) {
         // Standard import
         // switch (nodeTypeName) {
         // case 'UsersBlock':
@@ -81,15 +81,15 @@ export default class ClassFactory {
 
         // Dynamic import
         try {
-            const Block = await this.getModule(nodeTypeName)
-            return new Block(page, $cont, nodeTypeName)
+            const Block = await this.getModule(nodeType)
+            return new Block(page, $cont, nodeType)
         } catch (e) {
             console.error(e.message)
         }
     }
 
     async getModule (moduleName) {
-        return import(`../blocks/${moduleName}`)
+        return import(`../blocks/${moduleName}` /* webpackChunkName: "block-" */)
             .then(block => {
                 return block.default
             })
