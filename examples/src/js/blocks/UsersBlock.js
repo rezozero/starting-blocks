@@ -35,8 +35,8 @@ export default class UsersBlock extends AbstractBlock {
         super.init()
 
         // Elements
-        this.$avatarCont = this.$cont.find('.avatar-cont')
-        this.$contributorsListing = this.$cont.find('.usersblock__contributors-list')
+        this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0]
+        this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0]
 
         // Values
         this.data = null
@@ -90,7 +90,7 @@ export default class UsersBlock extends AbstractBlock {
                     </div>
                 </div>`
 
-            this.$contributorsListing.append(tpl)
+            this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl)
         }
 
         this.page.updateLazyload()
@@ -98,9 +98,9 @@ export default class UsersBlock extends AbstractBlock {
 
     async setAvatar () {
         if (!this.owner.avatar_url) return
-        const $img = await Utils.loadImage(this.owner.avatar_url)
-        $img.classList.add('img-thumbnail')
-        this.$avatarCont.append($img)
+        const img = await Utils.loadImage(this.owner.avatar_url)
+        img.classList.add('img-thumbnail')
+        this.avatarContainer.appendChild(img)
     }
 
     onResize () {

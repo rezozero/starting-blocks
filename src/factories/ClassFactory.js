@@ -62,9 +62,9 @@ export default class ClassFactory {
      * for each block.
      *
      * @param  {AbstractPage} page
-     * @param  {jQuery}  $cont
-     * @param  {String}  nodeType
+     * @param  {HTMLElement} container
+     * @param  {String} nodeType
      * @return {AbstractBlock}
      */
-    getBlockInstance (page, $cont, nodeType) {}
+    getBlockInstance (page, container, nodeType) {}
 }

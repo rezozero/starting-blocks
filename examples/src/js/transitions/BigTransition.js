@@ -38,9 +38,9 @@ import { TweenMax } from 'gsap'
 export default class FadeTransition extends AbstractTransition {
     constructor () {
         super()
-        this.$el = document.getElementById('big-transition')
-        this.$verticals = [...document.getElementById('big-transition-vertical').querySelectorAll('div')]
-        this.$horizontals = [...document.getElementById('big-transition-horizontal').querySelectorAll('div')]
+        this.mainElement = document.getElementById('big-transition')
+        this.verticalElements = [...document.getElementById('big-transition-vertical').querySelectorAll('div')]
+        this.horizontalElements = [...document.getElementById('big-transition-horizontal').querySelectorAll('div')]
     }
 
     /**
@@ -61,18 +61,18 @@ export default class FadeTransition extends AbstractTransition {
      */
     startAnim () {
         return new Promise((resolve) => {
-            TweenMax.to(this.oldPage.$cont, 0.75, {
+            TweenMax.to(this.oldPage.container, 0.75, {
                 alpha: 0
             })
 
-            TweenMax.set(this.$el, {
+            TweenMax.set(this.mainElement, {
                 autoAlpha: 1,
                 onComplete: () => {
-                    TweenMax.staggerTo(this.$horizontals, 0.5, {
+                    TweenMax.staggerTo(this.horizontalElements, 0.5, {
                         scaleX: 1
                     }, 0.1)
 
-                    TweenMax.staggerTo(this.$verticals.reverse(), 0.5, {
+                    TweenMax.staggerTo(this.verticalElements.reverse(), 0.5, {
                         scaleY: 1
                     }, 0.1, resolve)
                 }
@@ -85,32 +85,31 @@ export default class FadeTransition extends AbstractTransition {
      */
     endAnim () {
         // Add display: none on the old container
-        this.oldPage.$cont.hide()
+        this.oldPage.container.style.display = 'none'
 
         // Prepare new content css properties for the fade animation
-        this.newPage.$cont.css({
-            visibility: 'visible',
-            opacity: 0
-        })
+        this.newPage.container.style.visibility = 'visible'
+        this.newPage.container.style.opacity = '0'
 
         // IMPORTANT Call this method just after set visibility to visible
         this.newPage.checkLazyload()
 
         // Scroll to the top
+        document.documentElement.scrollTop = 0
         document.body.scrollTop = 0
 
-        TweenMax.to(this.newPage.$cont, 0.75, {
+        TweenMax.to(this.newPage.container, 0.75, {
             alpha: 1
         })
 
-        TweenMax.staggerTo(this.$horizontals, 0.5, {
+        TweenMax.staggerTo(this.horizontalElements, 0.5, {
             scaleX: 0
         }, 0.1)
 
-        TweenMax.staggerTo(this.$verticals, 0.5, {
+        TweenMax.staggerTo(this.verticalElements, 0.5, {
             scaleY: 0
         }, 0.1, () => {
-            TweenMax.set(this.$el, {
+            TweenMax.set(this.mainElement, {
                 autoAlpha: 0
             })
 

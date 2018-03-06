@@ -68,11 +68,11 @@ export default class ClassFactory {
      * for each block.
      *
      * @param  {AbstractPage} page
-     * @param  {jQuery}  $cont
-     * @param  {String}  nodeType
+     * @param  {HTMLElement} container
+     * @param  {String} nodeType
      * @return {AbstractBlock}
      */
-    async getBlockInstance (page, $cont, nodeType) {
+    async getBlockInstance (page, container, nodeType) {
         // Standard import
         // switch (nodeTypeName) {
         // case 'UsersBlock':
@@ -82,7 +82,7 @@ export default class ClassFactory {
         // Dynamic import
         try {
             const Block = await this.getModule(nodeType)
-            return new Block(page, $cont, nodeType)
+            return new Block(page, container, nodeType)
         } catch (e) {
             console.error(e.message)
         }

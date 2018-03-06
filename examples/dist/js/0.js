@@ -1,5 +1,5 @@
-webpackJsonp([0],Array(72).concat([
-/* 72 */
+webpackJsonp([0],Array(71).concat([
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13,11 +13,11 @@ var _getIterator2 = __webpack_require__(142);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _regenerator = __webpack_require__(68);
+var _regenerator = __webpack_require__(67);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(69);
+var _asyncToGenerator2 = __webpack_require__(68);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -37,7 +37,7 @@ var _possibleConstructorReturn2 = __webpack_require__(24);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _get2 = __webpack_require__(67);
+var _get2 = __webpack_require__(66);
 
 var _get3 = _interopRequireDefault(_get2);
 
@@ -78,8 +78,8 @@ var UsersBlock = function (_AbstractBlock) {
                                 (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'init', this).call(this);
 
                                 // Elements
-                                this.$avatarCont = this.$cont.find('.avatar-cont');
-                                this.$contributorsListing = this.$cont.find('.usersblock__contributors-list');
+                                this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0];
+                                this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0];
 
                                 // Values
                                 this.data = null;
@@ -179,7 +179,7 @@ var UsersBlock = function (_AbstractBlock) {
 
                     var tpl = '\n                <div class="col">\n                    <div class="media text-muted pt-3">\n                        <img data-src="' + contributor.avatar_url + '" alt="@' + contributor.login + '"\n                             class="mr-2 rounded lazyload" style="width: 64px; height: 64px;"\n                             src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_161c2d21760%20text%20%7B%20fill%3A%23e83e8c%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_161c2d21760%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23e83e8c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2212.3046875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"\n                             data-holder-rendered="true">\n                        <div class="media-body">\n                            <h6 class="mt-0">@' + contributor.login + '</h6>\n                            <p class="media-body pb-3 mb-0 small lh-125 border-gray">\n                                Contributions: ' + contributor.contributions + '<br>\n                                <a href="' + contributor.html_url + '" target="_blank">See more</a>\n                            </p>\n                        </div>\n                    </div>\n                </div>';
 
-                    this.$contributorsListing.append(tpl);
+                    this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl);
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -202,7 +202,7 @@ var UsersBlock = function (_AbstractBlock) {
         key: 'setAvatar',
         value: function () {
             var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3() {
-                var $img;
+                var img;
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
@@ -219,10 +219,10 @@ var UsersBlock = function (_AbstractBlock) {
                                 return Utils.loadImage(this.owner.avatar_url);
 
                             case 4:
-                                $img = _context3.sent;
+                                img = _context3.sent;
 
-                                $img.classList.add('img-thumbnail');
-                                this.$avatarCont.append($img);
+                                img.classList.add('img-thumbnail');
+                                this.avatarContainer.appendChild(img);
 
                             case 7:
                             case 'end':
@@ -286,6 +286,7 @@ var UsersBlock = function (_AbstractBlock) {
 exports.default = UsersBlock;
 
 /***/ }),
+/* 72 */,
 /* 73 */,
 /* 74 */,
 /* 75 */,
@@ -1381,7 +1382,7 @@ var getKeys = __webpack_require__(27);
 var gOPS = __webpack_require__(47);
 var pIE = __webpack_require__(29);
 var toObject = __webpack_require__(28);
-var IObject = __webpack_require__(70);
+var IObject = __webpack_require__(69);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
@@ -2390,11 +2391,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function loadImage(url) {
     return new _promise2.default(function (resolve) {
-        var $img = new window.Image();
-        $img.addEventListener('load', function () {
-            resolve($img);
+        var imageElement = new window.Image();
+        imageElement.addEventListener('load', function () {
+            resolve(imageElement);
         });
-        $img.src = url;
+        imageElement.src = url;
     });
 }
 

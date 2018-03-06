@@ -33,18 +33,54 @@ import { AbstractPage } from 'starting-blocks'
  */
 export default class DefaultPage extends AbstractPage {
     init () {
-        this.$duplicate = this.$cont.find('a.duplicate-last')
         super.init()
+
+        /**
+         * @type {HTMLElement}
+         */
+        this.duplicateButtonElement = this.container.querySelectorAll('a.duplicate-last')[0]
+
+        // Binded methods
+        this.onButtonClick = this.onButtonClick.bind(this)
     }
 
     initEvents () {
         super.initEvents()
-        this.$duplicate.on('click', (e) => {
-            e.preventDefault()
-            let $new = this.$blocks.last().clone()
-            $new.attr('id', 'block-' + (this.$blocks.length + 1))
-            this.$cont.append($new)
-            return false
-        })
+
+        if (this.duplicateButtonElement) {
+            this.duplicateButtonElement.addEventListener('click', this.onButtonClick)
+        }
+    }
+
+    destroyEvents () {
+        super.destroyEvents()
+
+        if (this.duplicateButtonElement) {
+            this.duplicateButtonElement.removeEventListener('click', this.onButtonClick)
+        }
+    }
+
+    onButtonClick (e) {
+        e.preventDefault()
+        let newBlockElement = this.blockElements[this.blockElements.length - 1].cloneNode(true)
+        newBlockElement.setAttribute('id', `block-${this.blockElements.length + 1}`)
+        this.container.appendChild(newBlockElement)
+        return false
+    }
+
+    onLazyImageProcessed (index) {
+        super.onLazyImageProcessed(index)
+    }
+
+    onResize () {
+        super.onResize()
+    }
+
+    onLazyImageSet (element) {
+        super.onLazyImageSet(element)
+    }
+
+    onLazyImageLoad (element) {
+        super.onLazyImageLoad(element)
     }
 }

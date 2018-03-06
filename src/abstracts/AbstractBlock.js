@@ -42,12 +42,12 @@ export default class AbstractBlock {
      * of extending `constructor`.
      *
      * @param  {AbstractPage} page
-     * @param  {jQuery} $cont
+     * @param  {HTMLElement} container
      * @param  {String} type
      *
      * @constructor
      */
-    constructor (page, $cont, type) {
+    constructor (page, container, type) {
         type = type || 'block'
 
         /**
@@ -59,18 +59,18 @@ export default class AbstractBlock {
 
         /**
          * Container
-         * jQuery DOM object for current block.
+         * Root container HTMLElement for current block.
          *
-         * @type {jQuery}
+         * @type {HTMLElement}
          */
-        this.$cont = $cont
+        this.container = container
 
         /**
          * Block id
          *
          * @type {String}
          */
-        this.id = $cont.attr('id')
+        this.id = this.container.id
 
         /**
          * Block type
@@ -84,7 +84,7 @@ export default class AbstractBlock {
          *
          * @type {String}
          */
-        this.name = (this.$cont.length) ? this.$cont.attr('data-node-name') : ''
+        this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : ''
 
         // Binded methods
         this.onResize = this.onResize.bind(this)
@@ -114,14 +114,16 @@ export default class AbstractBlock {
      * @abstract
      */
     initEvents () {
-        if (this.$cont.find('img').length) {
-            this.$cont.waitForImages({
-                finished: this.onLoad,
-                waitForAll: true
-            })
-        } else {
-            this.onLoad()
-        }
+        // TODO : Change waitForImages
+        this.onLoad()
+        // if (this.container.querySelectorAll('img').length) {
+        //     this.$cont.waitForImages({
+        //         finished: this.onLoad,
+        //         waitForAll: true
+        //     })
+        // } else {
+        //     this.onLoad()
+        // }
 
         window.addEventListener('resize', this.onResizeDebounce)
     }

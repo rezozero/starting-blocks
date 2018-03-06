@@ -47,13 +47,8 @@ const getConfig = () => {
         // Externals
         // ----------------------------------
         externals: {
-            'jquery': 'jQuery',
-            'jQuery': 'jQuery',
-            '$': 'jQuery',
             'loglevel': 'log',
-            'log': 'log',
-            'jquery.waitforimages': 'jquery.waitforimages',
-            'waitforimages': 'jquery.waitforimages'
+            'log': 'log'
         },
 
         resolve: {

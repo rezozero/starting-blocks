@@ -33,12 +33,11 @@ export default class Dom {
     /**
      * Constructor.
      *
-     * @param {jQuery} $body
      * @param {String} wrapperId
      * @param {String} objectTypeAttr
      * @param {String} pageClass
      */
-    constructor ($body, {
+    constructor ({
         wrapperId = 'sb-wrapper',
         objectTypeAttr = 'data-node-type',
         pageClass = 'page-content'
@@ -77,14 +76,6 @@ export default class Dom {
          * @default
          */
         this.currentHTML = document.documentElement.innerHTML
-
-        /**
-         * Body jquery element
-         *
-         * @type {jQuery}
-         * @default
-         */
-        this.$body = $body
     }
 
     /**
@@ -180,10 +171,10 @@ export default class Dom {
         // Change body class and id
         if (page.name) {
             document.body.id = page.name
-            this.$body.addClass(page.name)
+            document.body.classList.add(page.name)
         }
 
-        this.$body.addClass(page.type)
+        document.body.classList.add(page.type)
     }
 
     /**
