@@ -6,6 +6,8 @@ node_js:
   - "7"
   - "6"
 script:
+  # Copy config for demo
+  - cp examples/src/js/config/config.example.js examples/src/js/config/config.js
   - echo "Generating bundle.js…"
   # Only generate bundle, not demo
   - npm run build
@@ -20,6 +22,8 @@ jobs:
           - master
       node_js: "8"
       script:
+        # Copy config for demo
+        - cp examples/src/js/config/config.example.js examples/src/js/config/config.js
         - echo "Generating bundle.js…"
         # Only generate bundle, not demo
         - npm run build
