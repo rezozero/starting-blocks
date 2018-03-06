@@ -1,8 +1,14 @@
 # Changelog
 
+## Version 4.2.0: 2018-03-06
+
+- Change `classFactory.getBlockInstance()` method parameters order (`page, $cont, nodeType`). Make sure to update your `classFactory` file
+- You can now switch `classFactory.getBlockInstance()` to `async` and dynamically load your modules with `import('yourModule').then()`, see example for more details.
+- Optional web worker feature to load pages content. Add `workerEnabled` router option to true to enable
+
 ## Version 4.1.0: 2018-02-20
 
-- Change `classFactory.getInstance()` method parameters order and removed `isHome` parameter
+- Change `classFactory.getPageInstance()` method parameters order and removed `isHome` parameter
 - Added new `data` object parameter in history `add` method if you want to manually add specific data
 
 ## Version 4.0.0: 2018-02-08
