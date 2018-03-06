@@ -35,6 +35,7 @@ import {
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
 } from '../types/EventTypes'
+import AbstractBlock from './AbstractBlock'
 
 /**
  * Base class for creating page implementations.
@@ -146,7 +147,7 @@ export default class AbstractPage {
         // Binded methods
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
-        this.bindedUpdateBlocks = this.updateBlocks.bind(this)
+        this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
         this.onLoad = this.onLoad.bind(this)
         this.onLazyImageSet = this.onLazyImageSet.bind(this)
         this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
@@ -350,9 +351,7 @@ export default class AbstractPage {
             /*
              * Prevent undefined blocks to be appended to block collection.
              */
-            if (block) {
-                this.blocks.push(block)
-            }
+            this.blocks.push(block)
         }
 
         /*
@@ -403,7 +402,13 @@ export default class AbstractPage {
      */
     async initSingleBlock ($singleBlock) {
         let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr)
-        return this.router.classFactory.getBlockInstance(type, this, $singleBlock)
+        let blockInstance = await this.router.classFactory.getBlockInstance(this, $singleBlock, type)
+
+        if (!blockInstance) {
+            return new AbstractBlock(this, $singleBlock, type)
+        }
+
+        return blockInstance
     }
 
     /**

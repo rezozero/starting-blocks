@@ -24,9 +24,10 @@
  * @author Adrien Scholaert
  */
 
-import DefaultTransition from '../transitions/DefaultTransition'
-import FadeTransition from '../transitions/FadeTransition'
-import SlideTransition from '../transitions/SlideTransition'
+// import DefaultTransition from '../transitions/DefaultTransition'
+// import FadeTransition from '../transitions/FadeTransition'
+// import SlideTransition from '../transitions/SlideTransition'
+import BigTransition from '../transitions/BigTransition'
 
 /**
  * Transition mapper class.
@@ -49,24 +50,26 @@ export default class TransitionFactory {
          *
          * Ex: when back or prev button its pressed we use FadeTransition
          */
-        if (state && state.context === 'history') {
-            return new FadeTransition()
-        }
+        // if (state && state.context === 'history') {
+        //     return new FadeTransition()
+        // }
+        //
+        // let transition
+        //
+        // switch (state.transitionName) {
+        // case 'slide':
+        //     transition = new SlideTransition()
+        //     break
+        // case 'fade':
+        //     transition = new FadeTransition()
+        //     break
+        // default:
+        //     transition = new DefaultTransition()
+        //     break
+        // }
 
-        let transition
+        // return transition
 
-        switch (state.transitionName) {
-        case 'slide':
-            transition = new SlideTransition()
-            break
-        case 'fade':
-            transition = new FadeTransition()
-            break
-        default:
-            transition = new DefaultTransition()
-            break
-        }
-
-        return transition
+        return new BigTransition()
     }
 }

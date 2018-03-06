@@ -15,10 +15,11 @@
     "scripts": {
         "start": "concurrently \"npm run dev\" \"npm run serve\"",
         "test": "echo \"No test specified\"",
-        "dev": "NODE_ENV=development webpack --progress",
+        "dev": "NODE_ENV=development TARGET=bundle webpack --progress",
         "serve": "http-server ./examples/dist -o",
         "build": "NODE_ENV=production TARGET=bundle webpack --progress",
         "demo": "NODE_ENV=production TARGET=demo webpack --progress",
+        "dev-all": "NODE_ENV=development webpack --progress",
         "dev-demo": "NODE_ENV=development TARGET=demo webpack --progress",
         "doc": "esdoc -c esdoc.json"
     },
@@ -29,6 +30,7 @@
     "main": "main.js",
     "dependencies": {
         "axios": "^0.18.0",
+        "babel-polyfill": "^6.26.0",
         "jquery": "^3.3.1",
         "loglevel": "^1.6.1",
         "vanilla-lazyload": "^3.0.0"
@@ -72,6 +74,8 @@
         "webpack-bundle-analyzer": "^2.10.0",
         "webpack-merge": "^4.1.1",
         "webpack-notifier": "^1.5.1",
-        "webpack-stream": "^4.0.0"
+        "webpack-stream": "^4.0.0",
+        "webworkify-webpack": "^2.1.1",
+        "worker-loader": "^1.1.1"
     }
 }

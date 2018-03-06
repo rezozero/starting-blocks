@@ -36,6 +36,49 @@ body {
     color: var(--black);
 }
 
+/** Big transition **/
+#big-transition {
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+}
+
+#big-transition #big-transition-vertical,
+#big-transition #big-transition-horizontal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+}
+
+#big-transition #big-transition-vertical > div {
+    height: 100%;
+    flex: 1;
+    background: #eee;
+    transform-origin: 0 0;
+    transform: scaleY(0);
+}
+
+#big-transition #big-transition-horizontal {
+    flex-flow: column;
+}
+
+#big-transition #big-transition-horizontal > div {
+    width: 100%;
+    flex: 1 1;
+    background: #8f8f8f;
+    transform-origin: 0 0;
+    transform: scaleX(0);
+}
+
 /** Footer **/
 .footer {
     position: absolute;

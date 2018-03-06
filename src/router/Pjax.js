@@ -50,10 +50,12 @@ export default class Pjax {
      * @param {TransitionFactory} transitionFactory
      * @param {GraphicLoader} loader
      * @param {String} ignoreClassLink
+     * @param {Boolean} workerEnabled
      * @param {Boolean} cacheEnabled
      */
     constructor (router, history, dom, cache, transitionFactory, loader, {
         ignoreClassLink = 'no-ajax-link',
+        workerEnabled = false,
         cacheEnabled = true
     } = {}) {
         this.router = router
@@ -80,6 +82,14 @@ export default class Pjax {
          * @default
          */
         this.cacheEnabled = cacheEnabled
+
+        /**
+         * Indicate wether or not use web worker for ajax request.
+         *
+         * @type {Boolean}
+         * @default
+         */
+        this.workerEnabled = workerEnabled
 
         /**
          * Class name used to ignore links.
@@ -181,7 +191,7 @@ export default class Pjax {
 
         // If no cache, make request and cache it
         if (!request) {
-            request = Utils.request(url)
+            request = Utils.request(url, this.workerEnabled)
             this.cache.set(url, request)
         }
 
