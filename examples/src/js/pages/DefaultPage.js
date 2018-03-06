@@ -23,7 +23,7 @@
  * @author Ambroise Maupate
  */
 
-import AbstractPage from '../abstracts/AbstractPage'
+import { AbstractPage } from 'starting-blocks'
 
 /**
  * Some example "page".

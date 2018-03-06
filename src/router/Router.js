@@ -49,6 +49,7 @@ const DEFAULT_OPTIONS = {
     pageBlockClass: '.page-block',
     lazyloadEnabled: false,
     prefetchEnabled: true,
+    workerEnabled: false,
     lazyloadSrcAttr: 'data-src',
     lazyloadClass: 'lazyload',
     lazyloadSrcSetAttr: 'data-srcset',
@@ -77,6 +78,7 @@ export default class Router {
      * | `noAjaxLinkClass` | "no-ajax-link" |
      * | `noPrefetchLinkClass` | "no-prefetch" |
      * | `useCache` | `true` |
+     * | `workerEnabled` | `false` |
      * | `pageBlockClass` | `".page-block"` **with point!** |
      * | `lazyloadEnabled` | `false` |
      * | `lazyloadSrcAttr` | "data-src" |
@@ -198,7 +200,8 @@ export default class Router {
 
             const pjaxOptions = {
                 ignoreClassLink: this.options.noAjaxLinkClass,
-                cacheEnabled: this.options.useCache
+                cacheEnabled: this.options.useCache,
+                workerEnabled: this.options.workerEnabled
             }
 
             this.pjax = new Pjax(
@@ -216,6 +219,7 @@ export default class Router {
         if (this.options.ajaxEnabled && window.fetch && this.options.prefetchEnabled) {
             this.prefetch = new Prefetch(this.pjax, this.cacheProvider, {
                 cacheEnabled: this.options.useCache,
+                workerEnabled: this.options.workerEnabled,
                 noPrefetchLinkClass: this.options.noPrefetchLinkClass
             })
             this.prefetch.init()

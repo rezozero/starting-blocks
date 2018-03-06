@@ -1,5 +1,5 @@
-/**
- * Copyright © 2016, Ambroise Maupate
+/*
+ * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -7,7 +7,6 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
@@ -19,13 +18,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
+ * Except as contained in this notice, the name of the ROADIZ shall not
+ * be used in advertising or otherwise to promote the sale, use or other dealings
+ * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
+ *
  * @file ClassFactory.js
- * @author Ambroise Maupate
- * @author Adrien Scholaert
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
 import * as log from 'loglevel'
-import AbstractPage from '../abstracts/AbstractPage'
+import DefaultPage from '../pages/DefaultPage'
+import HomePage from '../pages/HomePage'
 
 /**
  * Router mapper class.
@@ -48,9 +51,12 @@ export default class ClassFactory {
      */
     getPageInstance (router, container, context, nodeType) {
         switch (nodeType) {
+        case 'home':
+            log.debug('Create new home')
+            return new HomePage(router, container, context, nodeType)
         default:
             log.info(`"${nodeType}" has no defined route, using Page.`)
-            return new AbstractPage(router, container, context, nodeType)
+            return new DefaultPage(router, container, context, nodeType)
         }
     }
 
@@ -66,5 +72,26 @@ export default class ClassFactory {
      * @param  {String}  nodeType
      * @return {AbstractBlock}
      */
-    getBlockInstance (page, $cont, nodeType) {}
+    async getBlockInstance (page, $cont, nodeType) {
+        // Standard import
+        // switch (nodeTypeName) {
+        // case 'UsersBlock':
+        //     return new UsersBlock(page, $cont, nodeTypeName)
+        // }
+
+        // Dynamic import
+        try {
+            const Block = await this.getModule(nodeType)
+            return new Block(page, $cont, nodeType)
+        } catch (e) {
+            console.error(e.message)
+        }
+    }
+
+    async getModule (moduleName) {
+        return import(`../blocks/${moduleName}` /* webpackChunkName: "block-" */)
+            .then(block => {
+                return block.default
+            })
+    }
 }

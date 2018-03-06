@@ -159,6 +159,7 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | noPrefetchLinkClass | string | 'no-prefetch' | |
 | pageBlockClass | string | '.page-block' | (with point) |
 | lazyloadEnabled | boolean | false | |
+| workerEnabled | boolean | false | |
 | prefetchEnabled | boolean | true | |
 | lazyloadSrcAttr | string | 'data-src' | |
 | lazyloadClass | string | 'lazyload' | |
@@ -328,3 +329,7 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file as: `main.js`.
 - Type `npm run demo` to build demo project in `examples/` folder.
+
+### Demo
+
+To launch the example you need to change the `examples/srv/js/config/config.example.js` file with your own information.

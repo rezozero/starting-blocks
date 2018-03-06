@@ -54,7 +54,7 @@ export default class SlideTransition extends AbstractTransition {
             TweenMax.to(this.oldPage.$cont, 0.5, {
                 xPercent: 25,
                 alpha: 0,
-                easing: Power4.easeIn,
+                ease: Power4.easeIn,
                 onComplete: resolve
             })
         })
@@ -69,20 +69,21 @@ export default class SlideTransition extends AbstractTransition {
         })
 
         TweenMax.set(this.newPage.$cont, {
-            position: 'absolute',
             visibility: 'visible',
             alpha: 0,
             xPercent: -25
         })
+
+        // Scroll top
+        document.body.scrollTop = 0
 
         this.newPage.checkLazyload()
 
         TweenMax.to(this.newPage.$cont, 0.75, {
             xPercent: 0,
             alpha: 1,
-            easing: Power4.easeOut,
+            ease: Power4.easeOut,
             onComplete: () => {
-                TweenMax.set(this.newPage.$cont, { 'position': 'static' })
                 this.done()
             }
         })

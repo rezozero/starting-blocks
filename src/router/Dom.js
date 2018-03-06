@@ -124,13 +124,7 @@ export default class Dom {
      * @returns {string}
      */
     getNodeType (container) {
-        const nodeType = container.getAttribute(this.objectTypeAttr)
-
-        if (!nodeType) {
-            throw new Error(`Starting Blocks: Node Type not found!`)
-        }
-
-        return nodeType
+        return container.getAttribute(this.objectTypeAttr)
     }
 
     /**

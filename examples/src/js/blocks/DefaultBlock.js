@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,47 +22,38 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file app.js
+ * @file DefaultBlock.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
- * @author Ambroise Maupate <ambroise@rezo-zero.com>
  */
 
-import * as log from 'loglevel'
-import {
-    Router,
-    polyfills
-} from 'starting-blocks'
-import ClassFactory from './factories/ClassFactory'
-import TransitionFactory from './factories/TransitionFactory'
-import ExampleNav from './ExampleNav'
+import { AbstractBlock } from 'starting-blocks'
 
-/**
- * Declare polyfills
- */
-polyfills()
+export default class DefaultBlock extends AbstractBlock {
+    init () {
+        return super.init()
+    }
 
-/**
- * Config loglevel
- */
-log.setLevel(0)
+    initEvents () {
+        return super.initEvents()
+    }
 
-/**
- * Build nav
- * @type {ExampleNav}
- */
-const nav = new ExampleNav()
+    destroy () {
+        return super.destroy()
+    }
 
-/**
- * Build Router
- */
-const router = new Router({
-    ajaxEnabled: true,
-    lazyloadEnabled: true,
-    cacheEnabled: true,
-    workerEnabled: true,
-    transitionFactory: new TransitionFactory(),
-    classFactory: new ClassFactory()
-})
+    destroyEvents () {
+        return super.destroyEvents()
+    }
 
-nav.init()
-router.init()
+    onResize () {
+        return super.onResize()
+    }
+
+    onLoad () {
+        return super.onLoad()
+    }
+
+    onPageReady () {
+        return super.onPageReady()
+    }
+}

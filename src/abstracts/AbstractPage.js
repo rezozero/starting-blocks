@@ -35,6 +35,7 @@ import {
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
 } from '../types/EventTypes'
+import AbstractBlock from './AbstractBlock'
 
 /**
  * Base class for creating page implementations.
@@ -146,7 +147,7 @@ export default class AbstractPage {
         // Binded methods
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
-        this.bindedUpdateBlocks = this.updateBlocks.bind(this)
+        this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
         this.onLoad = this.onLoad.bind(this)
         this.onLazyImageSet = this.onLazyImageSet.bind(this)
         this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
@@ -162,7 +163,7 @@ export default class AbstractPage {
      * You should always extends this method in your child implementations instead
      * of extending page constructor.
      */
-    init () {
+    async init () {
         /**
          * jQuery blocks collection.
          *
@@ -174,7 +175,7 @@ export default class AbstractPage {
          */
         this.blockLength = this.$blocks.length
         if (this.blockLength) {
-            this.initBlocks()
+            await this.initBlocks()
         }
 
         // Context
@@ -338,21 +339,21 @@ export default class AbstractPage {
     /**
      * Initialize page blocks on page.
      */
-    initBlocks () {
+    async initBlocks () {
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
             /**
              * New Block.
              *
              * @type {AbstractBlock}
              */
-            let block = this.initSingleBlock(this.$blocks.eq(blockIndex))
+            let block = await this.initSingleBlock(this.$blocks.eq(blockIndex))
+
             /*
              * Prevent undefined blocks to be appended to block collection.
              */
-            if (block) {
-                this.blocks.push(block)
-            }
+            this.blocks.push(block)
         }
+
         /*
          * Notify all blocks that page init is over.
          */
@@ -364,7 +365,7 @@ export default class AbstractPage {
     /**
      * Append new blocks which were not present at init.
      */
-    updateBlocks () {
+    async updateBlocks () {
         log.debug('\t📯 Page DOM changed…')
 
         /*
@@ -380,27 +381,34 @@ export default class AbstractPage {
         this.$blocks = this.$cont.find(this.router.options.pageBlockClass)
         this.blockLength = this.$blocks.length
 
-        this.$blocks.each((blockIndex, el) => {
-            let block = this.getBlockById(el.id)
-            if (block === null) {
-                let block = this.initSingleBlock(this.$blocks.eq(blockIndex))
-                // Prevent undefined blocks to be appended to block collection.
-                if (block) {
+        for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+            let $block = this.$blocks[blockIndex]
+
+            if (!this.getBlockById($block.id)) {
+                try {
+                    let block = await this.initSingleBlock(this.$blocks.eq(blockIndex))
                     this.blocks.push(block)
                     block.onPageReady()
+                } catch (e) {
+                    log.info(e.message)
                 }
             }
-        })
+        }
     }
 
     /**
      * @param {jQuery} $singleBlock
      * @return {AbstractBlock}
      */
-    initSingleBlock ($singleBlock) {
+    async initSingleBlock ($singleBlock) {
         let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr)
+        let blockInstance = await this.router.classFactory.getBlockInstance(this, $singleBlock, type)
 
-        return this.router.classFactory.getBlockInstance(type, this, $singleBlock)
+        if (!blockInstance) {
+            return new AbstractBlock(this, $singleBlock, type)
+        }
+
+        return blockInstance
     }
 
     /**

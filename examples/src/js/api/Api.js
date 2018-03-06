@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,47 +22,21 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file app.js
+ * @file Api.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
- * @author Ambroise Maupate <ambroise@rezo-zero.com>
  */
 
-import * as log from 'loglevel'
-import {
-    Router,
-    polyfills
-} from 'starting-blocks'
-import ClassFactory from './factories/ClassFactory'
-import TransitionFactory from './factories/TransitionFactory'
-import ExampleNav from './ExampleNav'
+import config from '../config/config'
+import request from 'axios'
 
-/**
- * Declare polyfills
- */
-polyfills()
-
-/**
- * Config loglevel
- */
-log.setLevel(0)
-
-/**
- * Build nav
- * @type {ExampleNav}
- */
-const nav = new ExampleNav()
-
-/**
- * Build Router
- */
-const router = new Router({
-    ajaxEnabled: true,
-    lazyloadEnabled: true,
-    cacheEnabled: true,
-    workerEnabled: true,
-    transitionFactory: new TransitionFactory(),
-    classFactory: new ClassFactory()
-})
-
-nav.init()
-router.init()
+export function getData (url, params = {}) {
+    return request
+        .get(url, {
+            params: {
+                ...params,
+                access_token: config.token
+            }
+        })
+        .then(({ data }) => data)
+        .catch(e => console.error(e.message))
+}
