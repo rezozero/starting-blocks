@@ -143,7 +143,6 @@ export default class AbstractPage {
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
         this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
-        this.onLoad = this.onLoad.bind(this)
         this.onLazyImageSet = this.onLazyImageSet.bind(this)
         this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
         this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
@@ -227,17 +226,6 @@ export default class AbstractPage {
      * Such as waitForImages.
      */
     initEvents () {
-        // TODO : Change waitForImages
-        this.onLoad()
-        // if (this.container.querySelectorAll('img').length) {
-        //     this.container.waitForImages({
-        //         finished: this.onLoad,
-        //         waitForAll: true
-        //     })
-        // } else {
-        //     this.onLoad()
-        // }
-
         window.addEventListener('resize', this.onResizeDebounce)
 
         this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks)
@@ -280,25 +268,6 @@ export default class AbstractPage {
         if (this.lazyload) {
             this.lazyload.update()
         }
-    }
-
-    /**
-     * @private
-     */
-    onLoad () {
-        /**
-         * Date when onLoad was triggered.
-         * @type {Date}
-         */
-        this.loadDate = new Date()
-
-        /**
-         * Duration between router loaded page and when onLoad was triggered.
-         * @type {Date}
-         */
-        this.loadDuration = this.loadDate - this.router.loadBeginDate
-
-        Dispatcher.commit(BEFORE_PAGE_SHOW, this)
     }
 
     updateLazyload () {

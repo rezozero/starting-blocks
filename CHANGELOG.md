@@ -1,5 +1,10 @@
 # Changelog
 
+## version 5.0.0 2018-03-06
+
+- Drop jquery and waitForImages
+- Remove `onLoad` method in `AbstractPage` and `AbstractBlock`
+
 ## Version 4.2.0: 2018-03-06
 
 - Change `classFactory.getBlockInstance()` method parameters order (`page, $cont, nodeType`). Make sure to update your `classFactory` file

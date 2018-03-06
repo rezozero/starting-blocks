@@ -88,7 +88,6 @@ export default class AbstractBlock {
 
         // Binded methods
         this.onResize = this.onResize.bind(this)
-        this.onLoad = this.onLoad.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
 
         // Debugs
@@ -114,17 +113,6 @@ export default class AbstractBlock {
      * @abstract
      */
     initEvents () {
-        // TODO : Change waitForImages
-        this.onLoad()
-        // if (this.container.querySelectorAll('img').length) {
-        //     this.$cont.waitForImages({
-        //         finished: this.onLoad,
-        //         waitForAll: true
-        //     })
-        // } else {
-        //     this.onLoad()
-        // }
-
         window.addEventListener('resize', this.onResizeDebounce)
     }
 
@@ -158,13 +146,6 @@ export default class AbstractBlock {
      * @abstract
      */
     onResize () {}
-
-    /**
-     * Called once images are loaded
-     *
-     * @abstract
-     */
-    onLoad () {}
 
     /**
      * Called once all page blocks have been created.
