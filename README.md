@@ -321,6 +321,18 @@ npm run doc;
 
 Documentation will be available in `doc/` folder.
 
+## Naming conventions
+
+We drop jQuery in Starting-blocks v5 and change variables names and use some conventions.
+We suffix every `DOMElement` variable with `Element`, `Container`, `Elements` or `Containers`.
+
+Examples:
+```js
+let mainContainer = document.getElementById('main-container')
+let imageContainer = document.getElementById('image-container')
+let imageElements = imageContainer.querySelectorAll('.image')
+```
+
 ## Improving Starting blocks
 
 To work locally on *Starting blocks*, we provided some HTML example files.
