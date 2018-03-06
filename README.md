@@ -159,6 +159,7 @@ You can look at the `example/src/app.js` file to see an instantiation example wi
 | noPrefetchLinkClass | string | 'no-prefetch' | |
 | pageBlockClass | string | '.page-block' | (with point) |
 | lazyloadEnabled | boolean | false | |
+| workerEnabled | boolean | false | |
 | prefetchEnabled | boolean | true | |
 | lazyloadSrcAttr | string | 'data-src' | |
 | lazyloadClass | string | 'lazyload' | |
