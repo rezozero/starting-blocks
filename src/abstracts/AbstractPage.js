@@ -402,7 +402,7 @@ export default class AbstractPage {
      */
     async initSingleBlock ($singleBlock) {
         let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr)
-        let blockInstance = await this.router.classFactory.getBlockInstance(type, this, $singleBlock)
+        let blockInstance = await this.router.classFactory.getBlockInstance(this, $singleBlock, type)
 
         if (!blockInstance) {
             return new AbstractBlock(this, $singleBlock, type)

@@ -61,10 +61,10 @@ export default class ClassFactory {
      * Comment out the default case if you don’t want a default block to be instantiated
      * for each block.
      *
-     * @param  {String}  nodeTypeName
      * @param  {AbstractPage} page
      * @param  {jQuery}  $cont
+     * @param  {String}  nodeType
      * @return {AbstractBlock}
      */
-    getBlockInstance (nodeTypeName, page, $cont) {}
+    getBlockInstance (page, $cont, nodeType) {}
 }
