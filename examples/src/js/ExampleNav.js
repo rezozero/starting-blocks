@@ -37,12 +37,12 @@ export default class ExampleNav {
 
     onAfterPageBoot () {
         // Remove all active class
-        this.linkElements.forEach(linkElement => {
+        for (const linkElement of this.linkElements) {
             linkElement.classList.remove('active')
 
             if (linkElement.href === window.location.href) {
                 linkElement.classList.add('active')
             }
-        })
+        }
     }
 }

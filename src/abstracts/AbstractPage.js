@@ -29,7 +29,6 @@ import Lazyload from 'vanilla-lazyload'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
 import {
-    BEFORE_PAGE_SHOW,
     AFTER_PAGE_SHOW,
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
@@ -217,6 +216,7 @@ export default class AbstractPage {
         // Remove Lazyload instance and listeners
         if (this.lazyload !== null) {
             this.lazyload.destroy()
+            this.lazyload = null
         }
     }
 

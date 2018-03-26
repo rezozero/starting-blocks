@@ -1,361 +1,13 @@
-webpackJsonp([0],Array(71).concat([
-/* 71 */
+webpackJsonp([0],{
+
+/***/ 137:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _getIterator2 = __webpack_require__(142);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _regenerator = __webpack_require__(67);
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = __webpack_require__(68);
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var _getPrototypeOf = __webpack_require__(19);
-
-var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-var _classCallCheck2 = __webpack_require__(11);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(14);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _possibleConstructorReturn2 = __webpack_require__(24);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _get2 = __webpack_require__(66);
-
-var _get3 = _interopRequireDefault(_get2);
-
-var _inherits2 = __webpack_require__(25);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _startingBlocks = __webpack_require__(13);
-
-var _Api = __webpack_require__(145);
-
-var Api = _interopRequireWildcard(_Api);
-
-var _utils = __webpack_require__(171);
-
-var Utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var UsersBlock = function (_AbstractBlock) {
-    (0, _inherits3.default)(UsersBlock, _AbstractBlock);
-
-    function UsersBlock() {
-        (0, _classCallCheck3.default)(this, UsersBlock);
-        return (0, _possibleConstructorReturn3.default)(this, (UsersBlock.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock)).apply(this, arguments));
-    }
-
-    (0, _createClass3.default)(UsersBlock, [{
-        key: 'init',
-        value: function () {
-            var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-                return _regenerator2.default.wrap(function _callee$(_context) {
-                    while (1) {
-                        switch (_context.prev = _context.next) {
-                            case 0:
-                                (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'init', this).call(this);
-
-                                // Elements
-                                this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0];
-                                this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0];
-
-                                // Values
-                                this.data = null;
-                                this.owner = null;
-                                this.contributors = [];
-                                this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks';
-
-                                // Init request
-                                _context.next = 9;
-                                return Api.getData(this.initialUrl);
-
-                            case 9:
-                                this.data = _context.sent;
-
-                                this.fillData(this.data);
-
-                            case 11:
-                            case 'end':
-                                return _context.stop();
-                        }
-                    }
-                }, _callee, this);
-            }));
-
-            function init() {
-                return _ref.apply(this, arguments);
-            }
-
-            return init;
-        }()
-    }, {
-        key: 'initEvents',
-        value: function initEvents() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'initEvents', this).call(this);
-        }
-    }, {
-        key: 'destroy',
-        value: function destroy() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'destroy', this).call(this);
-        }
-    }, {
-        key: 'destroyEvents',
-        value: function destroyEvents() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'destroyEvents', this).call(this);
-        }
-    }, {
-        key: 'fillData',
-        value: function () {
-            var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2() {
-                return _regenerator2.default.wrap(function _callee2$(_context2) {
-                    while (1) {
-                        switch (_context2.prev = _context2.next) {
-                            case 0:
-                                if (this.data) {
-                                    _context2.next = 2;
-                                    break;
-                                }
-
-                                return _context2.abrupt('return');
-
-                            case 2:
-                                _context2.next = 4;
-                                return Api.getData(this.data.contributors_url);
-
-                            case 4:
-                                this.contributors = _context2.sent;
-
-                                this.owner = this.data.owner;
-
-                                this.setAvatar();
-                                this.setContributors();
-
-                            case 8:
-                            case 'end':
-                                return _context2.stop();
-                        }
-                    }
-                }, _callee2, this);
-            }));
-
-            function fillData() {
-                return _ref2.apply(this, arguments);
-            }
-
-            return fillData;
-        }()
-    }, {
-        key: 'setContributors',
-        value: function setContributors() {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)(this.contributors), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var contributor = _step.value;
-
-                    var tpl = '\n                <div class="col">\n                    <div class="media text-muted pt-3">\n                        <img data-src="' + contributor.avatar_url + '" alt="@' + contributor.login + '"\n                             class="mr-2 rounded lazyload" style="width: 64px; height: 64px;"\n                             src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_161c2d21760%20text%20%7B%20fill%3A%23e83e8c%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_161c2d21760%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23e83e8c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2212.3046875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"\n                             data-holder-rendered="true">\n                        <div class="media-body">\n                            <h6 class="mt-0">@' + contributor.login + '</h6>\n                            <p class="media-body pb-3 mb-0 small lh-125 border-gray">\n                                Contributions: ' + contributor.contributions + '<br>\n                                <a href="' + contributor.html_url + '" target="_blank">See more</a>\n                            </p>\n                        </div>\n                    </div>\n                </div>';
-
-                    this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            this.page.updateLazyload();
-        }
-    }, {
-        key: 'setAvatar',
-        value: function () {
-            var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3() {
-                var img;
-                return _regenerator2.default.wrap(function _callee3$(_context3) {
-                    while (1) {
-                        switch (_context3.prev = _context3.next) {
-                            case 0:
-                                if (this.owner.avatar_url) {
-                                    _context3.next = 2;
-                                    break;
-                                }
-
-                                return _context3.abrupt('return');
-
-                            case 2:
-                                _context3.next = 4;
-                                return Utils.loadImage(this.owner.avatar_url);
-
-                            case 4:
-                                img = _context3.sent;
-
-                                img.classList.add('img-thumbnail');
-                                this.avatarContainer.appendChild(img);
-
-                            case 7:
-                            case 'end':
-                                return _context3.stop();
-                        }
-                    }
-                }, _callee3, this);
-            }));
-
-            function setAvatar() {
-                return _ref3.apply(this, arguments);
-            }
-
-            return setAvatar;
-        }()
-    }, {
-        key: 'onResize',
-        value: function onResize() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onResize', this).call(this);
-        }
-    }, {
-        key: 'onLoad',
-        value: function onLoad() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onLoad', this).call(this);
-        }
-    }, {
-        key: 'onPageReady',
-        value: function onPageReady() {
-            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onPageReady', this).call(this);
-        }
-    }]);
-    return UsersBlock;
-}(_startingBlocks.AbstractBlock); /*
-                                   * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
-                                   *
-                                   * Permission is hereby granted, free of charge, to any person obtaining a copy
-                                   * of this software and associated documentation files (the "Software"), to deal
-                                   * in the Software without restriction, including without limitation the rights
-                                   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                                   * copies of the Software, and to permit persons to whom the Software is furnished
-                                   * to do so, subject to the following conditions:
-                                   * The above copyright notice and this permission notice shall be included in all
-                                   * copies or substantial portions of the Software.
-                                   *
-                                   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-                                   * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                                   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-                                   * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                                   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                                   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-                                   * IN THE SOFTWARE.
-                                   *
-                                   * Except as contained in this notice, the name of the ROADIZ shall not
-                                   * be used in advertising or otherwise to promote the sale, use or other dealings
-                                   * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
-                                   *
-                                   * @file UsersBlock.js
-                                   * @author Adrien Scholaert <adrien@rezo-zero.com>
-                                   */
-
-exports.default = UsersBlock;
-
-/***/ }),
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */,
-/* 97 */,
-/* 98 */,
-/* 99 */,
-/* 100 */,
-/* 101 */,
-/* 102 */,
-/* 103 */,
-/* 104 */,
-/* 105 */,
-/* 106 */,
-/* 107 */,
-/* 108 */,
-/* 109 */,
-/* 110 */,
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */,
-/* 117 */,
-/* 118 */,
-/* 119 */,
-/* 120 */,
-/* 121 */,
-/* 122 */,
-/* 123 */,
-/* 124 */,
-/* 125 */,
-/* 126 */,
-/* 127 */,
-/* 128 */,
-/* 129 */,
-/* 130 */,
-/* 131 */,
-/* 132 */,
-/* 133 */,
-/* 134 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var bind = __webpack_require__(136);
-var isBuffer = __webpack_require__(154);
+var bind = __webpack_require__(139);
+var isBuffer = __webpack_require__(157);
 
 /*global toString:true*/
 
@@ -658,14 +310,15 @@ module.exports = {
 
 
 /***/ }),
-/* 135 */
+
+/***/ 138:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(134);
-var normalizeHeaderName = __webpack_require__(156);
+var utils = __webpack_require__(137);
+var normalizeHeaderName = __webpack_require__(159);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -681,10 +334,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(138);
+    adapter = __webpack_require__(141);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(138);
+    adapter = __webpack_require__(141);
   }
   return adapter;
 }
@@ -759,10 +412,11 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(137)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(140)))
 
 /***/ }),
-/* 136 */
+
+/***/ 139:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -780,7 +434,8 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 137 */
+
+/***/ 140:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -970,19 +625,20 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 138 */
+
+/***/ 141:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(134);
-var settle = __webpack_require__(157);
-var buildURL = __webpack_require__(159);
-var parseHeaders = __webpack_require__(160);
-var isURLSameOrigin = __webpack_require__(161);
-var createError = __webpack_require__(139);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(162);
+var utils = __webpack_require__(137);
+var settle = __webpack_require__(160);
+var buildURL = __webpack_require__(162);
+var parseHeaders = __webpack_require__(163);
+var isURLSameOrigin = __webpack_require__(164);
+var createError = __webpack_require__(142);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(165);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -1079,7 +735,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(163);
+      var cookies = __webpack_require__(166);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -1155,16 +811,17 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(137)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(140)))
 
 /***/ }),
-/* 139 */
+
+/***/ 142:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(158);
+var enhanceError = __webpack_require__(161);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -1183,7 +840,8 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 140 */
+
+/***/ 143:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1195,7 +853,8 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 141 */
+
+/***/ 144:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1221,35 +880,8 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 142 */
-/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(143), __esModule: true };
-
-/***/ }),
-/* 143 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(45);
-__webpack_require__(26);
-module.exports = __webpack_require__(144);
-
-
-/***/ }),
-/* 144 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject = __webpack_require__(4);
-var get = __webpack_require__(46);
-module.exports = __webpack_require__(0).getIterator = function (it) {
-  var iterFn = get(it);
-  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
-  return anObject(iterFn.call(it));
-};
-
-
-/***/ }),
-/* 145 */
+/***/ 148:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1259,17 +891,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(146);
+var _extends2 = __webpack_require__(149);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
 exports.getData = getData;
 
-var _config = __webpack_require__(151);
+var _config = __webpack_require__(154);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _axios = __webpack_require__(152);
+var _axios = __webpack_require__(155);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -1319,7 +951,8 @@ function getData(url) {
 }
 
 /***/ }),
-/* 146 */
+
+/***/ 149:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1327,7 +960,7 @@ function getData(url) {
 
 exports.__esModule = true;
 
-var _assign = __webpack_require__(147);
+var _assign = __webpack_require__(150);
 
 var _assign2 = _interopRequireDefault(_assign);
 
@@ -1348,45 +981,49 @@ exports.default = _assign2.default || function (target) {
 };
 
 /***/ }),
-/* 147 */
+
+/***/ 150:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(148), __esModule: true };
+module.exports = { "default": __webpack_require__(151), __esModule: true };
 
 /***/ }),
-/* 148 */
+
+/***/ 151:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(149);
+__webpack_require__(152);
 module.exports = __webpack_require__(0).Object.assign;
 
 
 /***/ }),
-/* 149 */
+
+/***/ 152:
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.1 Object.assign(target, source)
 var $export = __webpack_require__(3);
 
-$export($export.S + $export.F, 'Object', { assign: __webpack_require__(150) });
+$export($export.S + $export.F, 'Object', { assign: __webpack_require__(153) });
 
 
 /***/ }),
-/* 150 */
+
+/***/ 153:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 19.1.2.1 Object.assign(target, source, ...)
-var getKeys = __webpack_require__(27);
-var gOPS = __webpack_require__(47);
-var pIE = __webpack_require__(29);
-var toObject = __webpack_require__(28);
-var IObject = __webpack_require__(69);
+var getKeys = __webpack_require__(28);
+var gOPS = __webpack_require__(49);
+var pIE = __webpack_require__(30);
+var toObject = __webpack_require__(29);
+var IObject = __webpack_require__(73);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || __webpack_require__(15)(function () {
+module.exports = !$assign || __webpack_require__(18)(function () {
   var A = {};
   var B = {};
   // eslint-disable-next-line no-undef
@@ -1413,7 +1050,8 @@ module.exports = !$assign || __webpack_require__(15)(function () {
 
 
 /***/ }),
-/* 151 */
+
+/***/ 154:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1455,22 +1093,24 @@ exports.default = {
 };
 
 /***/ }),
-/* 152 */
+
+/***/ 155:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(153);
+module.exports = __webpack_require__(156);
 
 /***/ }),
-/* 153 */
+
+/***/ 156:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
-var bind = __webpack_require__(136);
-var Axios = __webpack_require__(155);
-var defaults = __webpack_require__(135);
+var utils = __webpack_require__(137);
+var bind = __webpack_require__(139);
+var Axios = __webpack_require__(158);
+var defaults = __webpack_require__(138);
 
 /**
  * Create an instance of Axios
@@ -1503,15 +1143,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(141);
-axios.CancelToken = __webpack_require__(169);
-axios.isCancel = __webpack_require__(140);
+axios.Cancel = __webpack_require__(144);
+axios.CancelToken = __webpack_require__(172);
+axios.isCancel = __webpack_require__(143);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(170);
+axios.spread = __webpack_require__(173);
 
 module.exports = axios;
 
@@ -1520,7 +1160,8 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 154 */
+
+/***/ 157:
 /***/ (function(module, exports) {
 
 /*!
@@ -1547,16 +1188,17 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 155 */
+
+/***/ 158:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(135);
-var utils = __webpack_require__(134);
-var InterceptorManager = __webpack_require__(164);
-var dispatchRequest = __webpack_require__(165);
+var defaults = __webpack_require__(138);
+var utils = __webpack_require__(137);
+var InterceptorManager = __webpack_require__(167);
+var dispatchRequest = __webpack_require__(168);
 
 /**
  * Create a new instance of Axios
@@ -1633,13 +1275,14 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 156 */
+
+/***/ 159:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
@@ -1652,13 +1295,14 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 157 */
+
+/***/ 160:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(139);
+var createError = __webpack_require__(142);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -1685,7 +1329,8 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 158 */
+
+/***/ 161:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1713,13 +1358,14 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 159 */
+
+/***/ 162:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 function encode(val) {
   return encodeURIComponent(val).
@@ -1786,13 +1432,14 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 160 */
+
+/***/ 163:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -1846,13 +1493,14 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 161 */
+
+/***/ 164:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -1921,7 +1569,8 @@ module.exports = (
 
 
 /***/ }),
-/* 162 */
+
+/***/ 165:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1964,13 +1613,14 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 163 */
+
+/***/ 166:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -2024,13 +1674,14 @@ module.exports = (
 
 
 /***/ }),
-/* 164 */
+
+/***/ 167:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 function InterceptorManager() {
   this.handlers = [];
@@ -2083,18 +1734,19 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 165 */
+
+/***/ 168:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
-var transformData = __webpack_require__(166);
-var isCancel = __webpack_require__(140);
-var defaults = __webpack_require__(135);
-var isAbsoluteURL = __webpack_require__(167);
-var combineURLs = __webpack_require__(168);
+var utils = __webpack_require__(137);
+var transformData = __webpack_require__(169);
+var isCancel = __webpack_require__(143);
+var defaults = __webpack_require__(138);
+var isAbsoluteURL = __webpack_require__(170);
+var combineURLs = __webpack_require__(171);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -2176,13 +1828,14 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 166 */
+
+/***/ 169:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(134);
+var utils = __webpack_require__(137);
 
 /**
  * Transform the data for a request or a response
@@ -2203,7 +1856,8 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 167 */
+
+/***/ 170:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2224,7 +1878,8 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 168 */
+
+/***/ 171:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2245,13 +1900,14 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 169 */
+
+/***/ 172:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(141);
+var Cancel = __webpack_require__(144);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -2309,7 +1965,8 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 170 */
+
+/***/ 173:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2343,7 +2000,8 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 171 */
+
+/***/ 174:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2353,7 +2011,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _promise = __webpack_require__(44);
+var _promise = __webpack_require__(22);
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -2399,5 +2057,294 @@ function loadImage(url) {
     });
 }
 
+/***/ }),
+
+/***/ 75:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getIterator2 = __webpack_require__(145);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _regenerator = __webpack_require__(71);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(72);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _getPrototypeOf = __webpack_require__(14);
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(6);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(10);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(16);
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _get2 = __webpack_require__(70);
+
+var _get3 = _interopRequireDefault(_get2);
+
+var _inherits2 = __webpack_require__(17);
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _startingBlocks = __webpack_require__(9);
+
+var _Api = __webpack_require__(148);
+
+var Api = _interopRequireWildcard(_Api);
+
+var _utils = __webpack_require__(174);
+
+var Utils = _interopRequireWildcard(_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var UsersBlock = function (_AbstractBlock) {
+    (0, _inherits3.default)(UsersBlock, _AbstractBlock);
+
+    function UsersBlock() {
+        (0, _classCallCheck3.default)(this, UsersBlock);
+        return (0, _possibleConstructorReturn3.default)(this, (UsersBlock.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock)).apply(this, arguments));
+    }
+
+    (0, _createClass3.default)(UsersBlock, [{
+        key: 'init',
+        value: function () {
+            var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'init', this).call(this);
+
+                                // Elements
+                                this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0];
+                                this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0];
+
+                                // Values
+                                this.data = null;
+                                this.owner = null;
+                                this.contributors = [];
+                                this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks';
+
+                                // Init request
+                                _context.next = 9;
+                                return Api.getData(this.initialUrl);
+
+                            case 9:
+                                this.data = _context.sent;
+
+                                this.fillData(this.data);
+
+                            case 11:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function init() {
+                return _ref.apply(this, arguments);
+            }
+
+            return init;
+        }()
+    }, {
+        key: 'initEvents',
+        value: function initEvents() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'initEvents', this).call(this);
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'destroy', this).call(this);
+        }
+    }, {
+        key: 'destroyEvents',
+        value: function destroyEvents() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'destroyEvents', this).call(this);
+        }
+    }, {
+        key: 'fillData',
+        value: function () {
+            var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2() {
+                return _regenerator2.default.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                if (this.data) {
+                                    _context2.next = 2;
+                                    break;
+                                }
+
+                                return _context2.abrupt('return');
+
+                            case 2:
+                                _context2.next = 4;
+                                return Api.getData(this.data.contributors_url);
+
+                            case 4:
+                                this.contributors = _context2.sent;
+
+                                this.owner = this.data.owner;
+
+                                this.setAvatar();
+                                this.setContributors();
+
+                            case 8:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function fillData() {
+                return _ref2.apply(this, arguments);
+            }
+
+            return fillData;
+        }()
+    }, {
+        key: 'setContributors',
+        value: function setContributors() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.contributors), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var contributor = _step.value;
+
+                    var tpl = '\n                <div class="col">\n                    <div class="media text-muted pt-3">\n                        <img data-src="' + contributor.avatar_url + '" alt="@' + contributor.login + '"\n                             class="mr-2 rounded lazyload" style="width: 64px; height: 64px;"\n                             src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_161c2d21760%20text%20%7B%20fill%3A%23e83e8c%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_161c2d21760%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23e83e8c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2212.3046875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"\n                             data-holder-rendered="true">\n                        <div class="media-body">\n                            <h6 class="mt-0">@' + contributor.login + '</h6>\n                            <p class="media-body pb-3 mb-0 small lh-125 border-gray">\n                                Contributions: ' + contributor.contributions + '<br>\n                                <a href="' + contributor.html_url + '" target="_blank">See more</a>\n                            </p>\n                        </div>\n                    </div>\n                </div>';
+
+                    this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this.page.updateLazyload();
+        }
+    }, {
+        key: 'setAvatar',
+        value: function () {
+            var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3() {
+                var img;
+                return _regenerator2.default.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                if (this.owner.avatar_url) {
+                                    _context3.next = 2;
+                                    break;
+                                }
+
+                                return _context3.abrupt('return');
+
+                            case 2:
+                                _context3.next = 4;
+                                return Utils.loadImage(this.owner.avatar_url);
+
+                            case 4:
+                                img = _context3.sent;
+
+                                img.classList.add('img-thumbnail');
+                                this.avatarContainer.appendChild(img);
+
+                            case 7:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function setAvatar() {
+                return _ref3.apply(this, arguments);
+            }
+
+            return setAvatar;
+        }()
+    }, {
+        key: 'onResize',
+        value: function onResize() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onResize', this).call(this);
+        }
+    }, {
+        key: 'onLoad',
+        value: function onLoad() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onLoad', this).call(this);
+        }
+    }, {
+        key: 'onPageReady',
+        value: function onPageReady() {
+            return (0, _get3.default)(UsersBlock.prototype.__proto__ || (0, _getPrototypeOf2.default)(UsersBlock.prototype), 'onPageReady', this).call(this);
+        }
+    }]);
+    return UsersBlock;
+}(_startingBlocks.AbstractBlock); /*
+                                   * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
+                                   *
+                                   * Permission is hereby granted, free of charge, to any person obtaining a copy
+                                   * of this software and associated documentation files (the "Software"), to deal
+                                   * in the Software without restriction, including without limitation the rights
+                                   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                                   * copies of the Software, and to permit persons to whom the Software is furnished
+                                   * to do so, subject to the following conditions:
+                                   * The above copyright notice and this permission notice shall be included in all
+                                   * copies or substantial portions of the Software.
+                                   *
+                                   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+                                   * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+                                   * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                                   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                                   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+                                   * IN THE SOFTWARE.
+                                   *
+                                   * Except as contained in this notice, the name of the ROADIZ shall not
+                                   * be used in advertising or otherwise to promote the sale, use or other dealings
+                                   * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
+                                   *
+                                   * @file UsersBlock.js
+                                   * @author Adrien Scholaert <adrien@rezo-zero.com>
+                                   */
+
+exports.default = UsersBlock;
+
 /***/ })
-]));
+
+});
