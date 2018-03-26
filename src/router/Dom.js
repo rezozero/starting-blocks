@@ -183,6 +183,12 @@ export default class Dom {
             this.$body.addClass(page.name)
         }
 
+        if (page.isHome) {
+            this.$body.attr('data-is-home', 1)
+        } else {
+            this.$body.attr('data-is-home', 0)
+        }
+
         this.$body.addClass(page.type)
     }
 
