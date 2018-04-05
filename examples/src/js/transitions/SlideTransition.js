@@ -77,7 +77,7 @@ export default class SlideTransition extends AbstractTransition {
         // Scroll top
         document.body.scrollTop = 0
 
-        this.newPage.checkLazyload()
+        this.newPage.updateLazyload()
 
         TweenMax.to(this.newPage.$cont, 0.75, {
             xPercent: 0,

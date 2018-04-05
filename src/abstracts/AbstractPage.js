@@ -224,6 +224,7 @@ export default class AbstractPage {
          */
         if (this.lazyload !== null) {
             this.lazyload.destroy()
+            this.lazyload = null
         }
     }
 
@@ -278,12 +279,6 @@ export default class AbstractPage {
             callback_load: this.onLazyImageLoad,
             callback_processed: this.onLazyImageProcessed
         })
-    }
-
-    checkLazyload () {
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
     }
 
     /**
@@ -371,9 +366,7 @@ export default class AbstractPage {
         /*
          * Update Lazyload if init.
          */
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
+        this.updateLazyload()
 
         /*
          * Create new blocks
