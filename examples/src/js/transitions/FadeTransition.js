@@ -72,7 +72,7 @@ export default class FadeTransition extends AbstractTransition {
         })
 
         // IMPORTANT Call this method just after set visibility to visible
-        this.newPage.checkLazyload()
+        this.newPage.updateLazyload()
 
         // fadeIn the new content container
         this.newPage.$cont.animate({ opacity: 1 }, 400, () => {

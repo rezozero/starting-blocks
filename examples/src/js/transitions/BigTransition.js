@@ -94,7 +94,7 @@ export default class FadeTransition extends AbstractTransition {
         })
 
         // IMPORTANT Call this method just after set visibility to visible
-        this.newPage.checkLazyload()
+        this.newPage.updateLazyload()
 
         // Scroll to the top
         document.body.scrollTop = 0
