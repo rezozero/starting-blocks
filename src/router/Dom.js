@@ -144,7 +144,8 @@ export default class Dom {
         const container = this.parseContainer(element)
 
         if (!container) {
-            throw new Error('Starting Blocks: no container found')
+            throw new Error(`Starting Blocks: container not found! Did you use at least
+            one dom element with ".${this.pageClass}" class and "data-node-type" attribute?`)
         }
 
         return container
@@ -168,7 +169,7 @@ export default class Dom {
      * @return {HTMLElement} element
      */
     parseContainer (element) {
-        return element.querySelector(`.${this.pageClass}`)
+        return element.querySelector(`.${this.pageClass}[data-node-type]`)
     }
 
     /**
