@@ -190,7 +190,7 @@ export default class Router {
         this.dom = new Dom(this.$body, {
             wrapperId: this.options.ajaxWrapperId,
             objectTypeAttr: this.options.objectTypeAttr,
-            containerClass: this.options.pageClass
+            pageClass: this.options.pageClass
         })
 
         // Init pjax when ajax is enabled and window.fetch is supported
@@ -240,7 +240,10 @@ export default class Router {
      * @returns {AbstractPage|null}
      */
     buildPage (container, context = 'ajax') {
-        if (!container) throw new Error('Router: container not found!')
+        if (!container) {
+            throw new Error(`Router: container not found! Did you use at least 
+            one dom element with ".${this.options.pageClass}" class and "data-node-type" attribute`)
+        }
 
         // Get page
         this.page = this.classFactory.getPageInstance(
