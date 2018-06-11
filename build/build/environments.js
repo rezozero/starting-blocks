@@ -3,6 +3,7 @@ import debug from 'debug'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 
 const dbg = debug('StartingBlocks:webpack-config:environments  ')
 dbg.color = debug.colors[5]
@@ -104,22 +105,7 @@ export default {
                         NODE_ENV: '"production"'
                     }
                 }),
-                new webpack.optimize.UglifyJsPlugin({
-                    uglifyOptions: {
-                        beautify: false,
-                        mangle: {
-                            screw_ie8: true,
-                            keep_fnames: true
-                        },
-                        compress: {
-                            screw_ie8: true,
-                            warnings: false
-                        },
-                        comments: false,
-                        parallel: true,
-                        sourceMap: false
-                    }
-                })
+                new UglifyJsPlugin()
             ]
         }
     }
