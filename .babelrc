@@ -3,7 +3,12 @@
         "modules": false,
         "loose": true
     }],"es2015", "stage-0"],
-    "plugins": ["transform-runtime"],
+    "plugins": [["transform-runtime", {
+        "helpers": false,
+        "polyfill": false,
+        "regenerator": true,
+        "moduleName": "babel-runtime"
+    }]],
     "env": {
         "production": {
             "presets": [[

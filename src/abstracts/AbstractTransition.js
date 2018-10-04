@@ -86,7 +86,7 @@ export default class AbstractTransition {
     done () {
         this.oldPage.destroy()
         this.newPage.container.style.visibility = 'visible'
-        this.newPage.checkLazyload()
+        this.newPage.updateLazyload()
         this.deferred.resolve()
     }
 

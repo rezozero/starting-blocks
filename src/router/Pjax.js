@@ -232,8 +232,7 @@ export default class Pjax {
     }
 
     /**
-     * Get the .href parameter out of an element
-     * and handle special cases (like xlink:href).
+     * Get the .href parameter out of a link element
      *
      * @private
      * @param  {HTMLElement} el
@@ -244,11 +243,8 @@ export default class Pjax {
             return undefined
         }
 
-        if (el.getAttribute && typeof el.getAttribute('xlink:href') === 'string') {
-            return el.getAttribute('xlink:href')
-        }
-
-        if (typeof el.href === 'string') {
+        // Check if has a href and if it's a link element
+        if (typeof el.href === 'string' && el.tagName.toUpperCase() === 'A') {
             return el.href
         }
 

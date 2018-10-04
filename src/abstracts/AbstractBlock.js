@@ -24,7 +24,6 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
 import debounce from '../utils/debounce'
 
 /**
@@ -91,7 +90,7 @@ export default class AbstractBlock {
         this.onResizeDebounce = debounce(this.onResize, 50, false)
 
         // Debugs
-        log.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
+        console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
 
         this.init()
         this.initEvents()
@@ -122,7 +121,7 @@ export default class AbstractBlock {
      * Do not forget to call `super.destroy();` while extending this method.
      */
     destroy () {
-        log.debug('\t🗑 #' + this.id)
+        console.debug('\t🗑 #' + this.id)
         this.destroyEvents()
     }
 

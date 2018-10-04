@@ -92,7 +92,7 @@ export default class FadeTransition extends AbstractTransition {
         this.newPage.container.style.opacity = '0'
 
         // IMPORTANT Call this method just after set visibility to visible
-        this.newPage.checkLazyload()
+        this.newPage.updateLazyload()
 
         // Scroll to the top
         document.documentElement.scrollTop = 0

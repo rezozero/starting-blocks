@@ -1,4 +1,3 @@
-import * as log from 'loglevel'
 import work from 'webworkify-webpack'
 
 /**
@@ -194,7 +193,7 @@ export default class Utils {
      */
     static trackGoogleAnalytics () {
         if (typeof window.ga !== 'undefined') {
-            log.debug('🚩 Push Analytics for: ' + window.location.pathname)
+            console.debug('🚩 Push Analytics for: ' + window.location.pathname)
             window.ga('send', 'pageview', {
                 'page': window.location.pathname,
                 'title': document.title

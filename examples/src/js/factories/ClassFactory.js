@@ -26,7 +26,6 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
-import * as log from 'loglevel'
 import DefaultPage from '../pages/DefaultPage'
 import HomePage from '../pages/HomePage'
 
@@ -52,10 +51,10 @@ export default class ClassFactory {
     getPageInstance (router, container, context, nodeType) {
         switch (nodeType) {
         case 'home':
-            log.debug('Create new home')
+            console.debug('Create new home')
             return new HomePage(router, container, context, nodeType)
         default:
-            log.info(`"${nodeType}" has no defined route, using Page.`)
+            console.info(`"${nodeType}" has no defined route, using Page.`)
             return new DefaultPage(router, container, context, nodeType)
         }
     }

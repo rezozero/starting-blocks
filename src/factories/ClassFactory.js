@@ -24,7 +24,6 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
 import AbstractPage from '../abstracts/AbstractPage'
 
 /**
@@ -49,7 +48,7 @@ export default class ClassFactory {
     getPageInstance (router, container, context, nodeType) {
         switch (nodeType) {
         default:
-            log.info(`"${nodeType}" has no defined route, using Page.`)
+            console.info(`"${nodeType}" has no defined route, using Page.`)
             return new AbstractPage(router, container, context, nodeType)
         }
     }

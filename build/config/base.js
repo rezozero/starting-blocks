@@ -1,6 +1,5 @@
 import debug from 'debug'
 import path from 'path'
-import startingBlocks from '../../src/bundle'
 
 const dbg = debug('StartingBlocks:config:base  ')
 dbg.color = debug.colors[2]
@@ -47,8 +46,7 @@ const getConfig = () => {
         // Externals
         // ----------------------------------
         externals: {
-            'loglevel': 'log',
-            'log': 'log'
+
         },
 
         resolve: {

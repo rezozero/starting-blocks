@@ -24,16 +24,15 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
-import Lazyload from 'vanilla-lazyload'
+import Lazyload from 'vanilla-lazyload/dist/lazyload.min'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
+import AbstractBlock from './AbstractBlock'
 import {
     AFTER_PAGE_SHOW,
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
 } from '../types/EventTypes'
-import AbstractBlock from './AbstractBlock'
 
 /**
  * Base class for creating page implementations.
@@ -147,7 +146,7 @@ export default class AbstractPage {
         this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
 
         // Debug
-        log.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey')
+        console.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey')
     }
 
     /**
@@ -190,7 +189,7 @@ export default class AbstractPage {
      * Destroy current page and all its blocks.
      */
     destroy () {
-        log.debug('🗑 #' + this.id)
+        console.debug('🗑 #' + this.id)
         this.container.parentNode.removeChild(this.container)
         this.destroyEvents()
 
@@ -222,8 +221,6 @@ export default class AbstractPage {
 
     /**
      * Initialize basic events.
-     *
-     * Such as waitForImages.
      */
     initEvents () {
         window.addEventListener('resize', this.onResizeDebounce)
@@ -264,12 +261,6 @@ export default class AbstractPage {
         })
     }
 
-    checkLazyload () {
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
-    }
-
     updateLazyload () {
         if (this.lazyload) {
             this.lazyload.update()
@@ -280,7 +271,7 @@ export default class AbstractPage {
      * @param {Function} onShow
      */
     show (onShow) {
-        log.debug('▶️ #' + this.id)
+        console.debug('▶️ #' + this.id)
         this.container.style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
         this.container.classList.remove(this.router.options.pageClass + '-transitioning')
@@ -292,7 +283,7 @@ export default class AbstractPage {
      */
     hide (onHidden) {
         Dispatcher.commit(BEFORE_PAGE_HIDE, this)
-        log.debug('◀️ #' + this.id)
+        console.debug('◀️ #' + this.id)
         this.container.style.opacity = '0'
         if (typeof onHidden !== 'undefined') onHidden()
         Dispatcher.commit(AFTER_PAGE_HIDE, this)
@@ -328,12 +319,10 @@ export default class AbstractPage {
      * Append new blocks which were not present at init.
      */
     async updateBlocks () {
-        log.debug('\t📯 Page DOM changed…')
+        console.debug('\t📯 Page DOM changed…')
 
-        // Update Lazyload if init.
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
+        // Update lazy load if init.
+        this.updateLazyload()
 
         // Create new blocks
         this.blockElements = this.container.querySelectorAll(this.router.options.pageBlockClass)
@@ -348,7 +337,7 @@ export default class AbstractPage {
                     this.blocks.push(block)
                     block.onPageReady()
                 } catch (e) {
-                    log.info(e.message)
+                    console.info(e.message)
                 }
             }
         }
@@ -458,7 +447,7 @@ export default class AbstractPage {
      * @param {HTMLImageElement} element
      */
     onLazyImageSet (element) {
-        log.debug('\t🖼 «' + element.id + '» set')
+        console.debug('\t🖼 «' + element.id + '» set')
     }
 
     /**
@@ -468,7 +457,7 @@ export default class AbstractPage {
      * @param {HTMLImageElement} element
      */
     onLazyImageLoad (element) {
-        log.debug('\t🖼 «' + element.id + '» load')
+        console.debug('\t🖼 «' + element.id + '» load')
     }
 
     /**
@@ -477,6 +466,6 @@ export default class AbstractPage {
      * @abstract
      */
     onLazyImageProcessed (index) {
-        log.debug('\t🖼 Lazy load processed')
+        console.debug('\t🖼 Lazy load processed')
     }
 }

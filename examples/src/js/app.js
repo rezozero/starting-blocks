@@ -27,7 +27,6 @@
  * @author Ambroise Maupate <ambroise@rezo-zero.com>
  */
 
-import * as log from 'loglevel'
 import {
     Router,
     polyfills
@@ -40,11 +39,6 @@ import ExampleNav from './ExampleNav'
  * Declare polyfills
  */
 polyfills()
-
-/**
- * Config loglevel
- */
-log.setLevel(0)
 
 /**
  * Build nav

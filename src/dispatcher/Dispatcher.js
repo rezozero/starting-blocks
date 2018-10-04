@@ -23,15 +23,13 @@
  * @author Ambroise Maupate
  */
 
-import * as log from 'loglevel'
-
 /**
  * Event dispatcher singleton.
  */
 class Dispatcher {
     commit (eventType, detail) {
         const event = new window.CustomEvent(eventType, {detail})
-        log.debug('🚩 Dispatched ' + eventType)
+        console.debug('🚩 Dispatched ' + eventType)
         window.dispatchEvent(event)
     }
 }
