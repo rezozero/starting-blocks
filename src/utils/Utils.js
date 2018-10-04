@@ -90,7 +90,7 @@ export default class Utils {
             })
 
             // Send url to the worker
-            worker.postMessage({url})
+            worker.postMessage({ url })
         } else {
             const headers = new window.Headers()
             headers.append('X-Starting-Blocks', 'yes')

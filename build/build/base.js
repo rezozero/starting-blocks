@@ -1,6 +1,7 @@
 import webpack from 'webpack'
 import debug from 'debug'
 import WebpackNotifierPlugin from 'webpack-notifier'
+import CleanTerminalPlugin from 'clean-terminal-webpack-plugin'
 
 const dbg = debug('StartingBlocks:webpack-config:base  ')
 dbg.color = debug.colors[3]
@@ -32,6 +33,7 @@ const getWebpackConfigBase = (config) => {
             }]
         },
         plugins: [
+            new CleanTerminalPlugin(),
             new webpack.DefinePlugin(config.globals),
             new webpack.NoEmitOnErrorsPlugin(),
             new WebpackNotifierPlugin({alwaysNotify: true})

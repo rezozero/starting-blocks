@@ -3,7 +3,7 @@ import debug from 'debug'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
+import UglifyJsWebpackPlugin from 'uglifyjs-webpack-plugin'
 
 const dbg = debug('StartingBlocks:webpack-config:environments  ')
 dbg.color = debug.colors[5]
@@ -13,6 +13,7 @@ export default {
         const paths = config.utils_paths
 
         let override = {
+            mode: 'production',
             entry: {
                 bundle: paths.client('bundle.js')
             },
@@ -20,7 +21,7 @@ export default {
                 path: paths.dist(),
                 filename: 'main.js',
                 library: 'starting-blocks',
-                libraryTarget: 'umd'
+                libraryTarget: 'commonjs2'
             },
             plugins: []
         }
@@ -58,7 +59,8 @@ export default {
                 }]),
                 new ExtractTextPlugin({
                     filename: paths.clientDemo('css/[name].css'),
-                    allChunks: true
+                    ignoreOrder: true,
+                    allChunks: false
                 }),
                 new HtmlWebpackPlugin({
                     filename: paths.distDemo('index.html'),
@@ -89,6 +91,7 @@ export default {
 
     development: (base, config) => {
         return {
+            mode: 'development',
             watch: true
         }
     },
@@ -99,14 +102,30 @@ export default {
         dbg('🎨  Using PostCss')
 
         return {
+            mode: 'production',
             plugins: [
                 new webpack.DefinePlugin({
                     'process.env': {
                         NODE_ENV: '"production"'
                     }
-                }),
-                new UglifyJsPlugin()
-            ]
+                })
+            ],
+            optimization: {
+                minimize: true,
+                occurrenceOrder: true,
+                sideEffects: false,
+                minimizer: [
+                    new UglifyJsWebpackPlugin({
+                        parallel: true,
+                        uglifyOptions: {
+                            output: {
+                                comments: false,
+                                beautify: false
+                            }
+                        }
+                    })
+                ]
+            }
         }
     }
 }

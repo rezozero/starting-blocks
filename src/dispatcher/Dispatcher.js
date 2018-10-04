@@ -28,7 +28,7 @@
  */
 class Dispatcher {
     commit (eventType, detail) {
-        const event = new window.CustomEvent(eventType, {detail})
+        const event = new window.CustomEvent(eventType, { detail })
         console.debug('🚩 Dispatched ' + eventType)
         window.dispatchEvent(event)
     }

@@ -28,7 +28,7 @@
  */
 
 import { AbstractTransition } from 'starting-blocks'
-import { TweenMax } from 'gsap'
+import TweenMax from 'gsap/TweenMax'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.

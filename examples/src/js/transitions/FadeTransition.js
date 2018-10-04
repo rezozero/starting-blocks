@@ -26,7 +26,7 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
-import { TweenLite } from 'gsap'
+import TweenLite from 'gsap/TweenLite'
 import { AbstractTransition } from 'starting-blocks'
 
 /**

@@ -34,6 +34,7 @@ import {
 import ClassFactory from './factories/ClassFactory'
 import TransitionFactory from './factories/TransitionFactory'
 import ExampleNav from './ExampleNav'
+import 'gsap/CSSPlugin'
 
 /**
  * Declare polyfills
