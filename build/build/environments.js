@@ -21,7 +21,8 @@ export default {
                 path: paths.dist(),
                 filename: 'main.js',
                 library: 'starting-blocks',
-                libraryTarget: 'commonjs2'
+                libraryTarget: 'umd',
+                umdNamedDefine: true
             },
             plugins: []
         }
