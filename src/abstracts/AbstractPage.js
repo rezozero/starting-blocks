@@ -24,7 +24,7 @@
  * @author Adrien Scholaert
  */
 
-import Lazyload from 'vanilla-lazyload/dist/lazyload.min'
+// import Lazyload from 'vanilla-lazyload/dist/lazyload.min'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
 import AbstractBlock from './AbstractBlock'
@@ -47,30 +47,30 @@ export default class AbstractPage {
      *
      * Do not override this method, override `init` method instead.
      *
-     * @param  {Router}  router
+     * @param  {Kernel}  kernel
      * @param  {HTMLElement}  container
      * @param  {String}  context
      * @param  {String}  type
      *
      * @constructor
      */
-    constructor (router, container, context, type) {
+    constructor (kernel, container, context, type) {
         type = type || 'page'
 
         if (!container) {
             throw new Error('AbstractPage need a container (HTMLElement) to be defined.')
         }
 
-        if (!router) {
-            throw new Error('AbstractPage need a Router instance to be defined.')
+        if (!kernel) {
+            throw new Error('AbstractPage need a Kernel instance to be defined.')
         }
 
         /**
-         * Router
+         * Kernel
          *
-         * @type {Router}
+         * @type {Kernel}
          */
-        this.router = router
+        this.kernel = kernel
 
         /**
          * Container element
@@ -161,7 +161,7 @@ export default class AbstractPage {
          *
          * @type {Array}
          */
-        this.blockElements = [...this.container.querySelectorAll(this.router.options.pageBlockClass)]
+        this.blockElements = [...this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`)]
 
         /**
          * @type {Number}
@@ -173,12 +173,12 @@ export default class AbstractPage {
         }
 
         // Context
-        if (this.router.options.ajaxEnabled && this.context === 'ajax') {
+        if (this.kernel.options.ajaxEnabled && this.context === 'ajax') {
             this.initAjax()
         }
 
         // Lazyload
-        if (this.router.options.lazyloadEnabled) {
+        if (this.kernel.options.lazyloadEnabled) {
             this.initLazyload()
         }
 
@@ -194,12 +194,12 @@ export default class AbstractPage {
         this.destroyEvents()
 
         // Do not remove name class on body if destroyed page is the same as current one.
-        if (this.router.page !== null && this.router.page.name !== this.name) {
+        if (this.kernel.page !== null && this.kernel.page.name !== this.name) {
             document.body.classList.remove(this.name)
         }
 
         // Do not remove type class on body if destroyed page is the same as current one.
-        if (this.router.page !== null && this.router.page.type !== this.type) {
+        if (this.kernel.page !== null && this.kernel.page.type !== this.type) {
             document.body.classList.remove(this.type)
         }
 
@@ -249,16 +249,16 @@ export default class AbstractPage {
      */
     initLazyload () {
         this.beforeLazyload()
-        this.lazyload = new Lazyload({
-            threshold: this.router.options.lazyloadThreshold,
-            throttle: this.router.options.lazyloadThrottle,
-            elements_selector: '.' + this.router.options.lazyloadClass,
-            data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
-            data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
-            callback_set: this.onLazyImageSet,
-            callback_load: this.onLazyImageLoad,
-            callback_processed: this.onLazyImageProcessed
-        })
+        // this.lazyload = new Lazyload({
+        //     threshold: this.kernel.options.lazyloadThreshold,
+        //     throttle: this.kernel.options.lazyloadThrottle,
+        //     elements_selector: '.' + this.kernel.options.lazyloadClass,
+        //     data_src: this.kernel.options.lazyloadSrcAttr.replace('data-', ''),
+        //     data_srcset: this.kernel.options.lazyloadSrcSetAttr.replace('data-', ''),
+        //     callback_set: this.onLazyImageSet,
+        //     callback_load: this.onLazyImageLoad,
+        //     callback_processed: this.onLazyImageProcessed
+        // })
     }
 
     updateLazyload () {
@@ -274,7 +274,7 @@ export default class AbstractPage {
         console.debug('▶️ #' + this.id)
         this.container.style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
-        this.container.classList.remove(this.router.options.pageClass + '-transitioning')
+        this.container.classList.remove(this.kernel.options.pageClass + '-transitioning')
         Dispatcher.commit(AFTER_PAGE_SHOW, this)
     }
 
@@ -290,7 +290,7 @@ export default class AbstractPage {
     }
 
     initAjax () {
-        this.container.classList.add(this.router.options.pageClass + '-transitioning')
+        this.container.classList.add(this.kernel.options.pageClass + '-transitioning')
     }
 
     /**
@@ -325,7 +325,7 @@ export default class AbstractPage {
         this.updateLazyload()
 
         // Create new blocks
-        this.blockElements = this.container.querySelectorAll(this.router.options.pageBlockClass)
+        this.blockElements = this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`)
         this.blockLength = this.blockElements.length
 
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
@@ -348,8 +348,8 @@ export default class AbstractPage {
      * @return {AbstractBlock}
      */
     async initSingleBlock (blockElement) {
-        let type = blockElement.getAttribute(this.router.options.objectTypeAttr)
-        let blockInstance = await this.router.classFactory.getBlockInstance(this, blockElement, type)
+        let type = blockElement.getAttribute(this.kernel.options.objectTypeAttr)
+        let blockInstance = await this.kernel.classFactory.getBlockInstance(this, blockElement, type)
 
         if (!blockInstance) {
             return new AbstractBlock(this, blockElement, type)

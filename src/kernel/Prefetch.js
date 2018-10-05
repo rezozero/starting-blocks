@@ -31,10 +31,8 @@ import Utils from '../utils/Utils'
  * @type {Object}
  */
 export default class Prefetch {
-    constructor (pjax, cacheProvider, {
-        ignoreClassLink = 'no-prefetch',
-        workerEnabled = false,
-        cacheEnabled = true
+    constructor ({
+        noPrefetchClass = 'no-prefetch'
     } = {}) {
         /**
          * Class name used to ignore prefetch on links.
@@ -42,11 +40,34 @@ export default class Prefetch {
          * @type {string}
          * @default
          */
-        this.ignoreClassLink = ignoreClassLink
-        this.cacheEnabled = cacheEnabled
-        this.workerEnabled = workerEnabled
-        this.pjax = pjax
-        this.cacheProvider = cacheProvider
+        this.noPrefetchClass = noPrefetchClass
+
+        /**
+         * @type {(Worker|null)}
+         */
+        this._worker = null
+
+        /**
+         * @type {(Pjax|null)}
+         */
+        this._pjax = null
+
+        /**
+         * @type {(CacheProvider|null)}
+         */
+        this._cacheProvider = null
+    }
+
+    set worker (value) {
+        this._worker = value
+    }
+
+    set pjax (value) {
+        this._pjax = value
+    }
+
+    set cacheProvider (value) {
+        this._cacheProvider = value
     }
 
     init () {
@@ -61,22 +82,22 @@ export default class Prefetch {
     onLinkEnter (evt) {
         let el = evt.target
 
-        while (el && !this.pjax.getHref(el)) {
+        while (el && !this._pjax.getHref(el)) {
             el = el.parentNode
         }
 
-        if (!el || el.classList.contains(this.ignoreClassLink)) {
+        if (!el || el.classList.contains(this.noPrefetchClass)) {
             return
         }
 
-        let url = this.pjax.getHref(el)
+        let url = this._pjax.getHref(el)
 
         // Check if the link is eligible for Pjax
-        if (this.pjax.preventCheck(evt, el) && !this.cacheProvider.get(url)) {
-            let xhr = Utils.request(url, this.workerEnabled)
+        if (this._pjax.preventCheck(evt, el) && (this._cacheProvider && !this._cacheProvider.get(url))) {
+            let xhr = Utils.request(url, this._worker)
 
-            if (this.cacheEnabled) {
-                this.cacheProvider.set(url, xhr)
+            if (this._cacheProvider) {
+                this._cacheProvider.set(url, xhr)
             }
         }
     }

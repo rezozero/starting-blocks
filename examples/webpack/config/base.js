@@ -16,26 +16,24 @@ const getConfig = () => {
         // ----------------------------------
         // Project Structure
         // ----------------------------------
-        path_base: path.resolve(__dirname, '..', '..'),
-        dir_entry: 'src',
-        dir_dist: '',
-        dir_entry_demo: 'examples/src',
-        dir_dist_demo: 'examples/dist',
+        path_base: path.resolve(__dirname, '..'),
+        dir_entry_demo: '../src',
+        dir_dist_demo: '../dist',
 
         bundleAnalyzerReportDemo: false,
-        bundleAnalyzerReportBundle: false,
 
         // ----------------------------------
         // Stats
         // ----------------------------------
-        stats: {
-            chunks: false,
-            chunkModules: false,
-            colors: true,
-            children: false,
-            version: false,
-            reasons: false
-        },
+        // stats: {
+        //     chunks: false,
+        //     chunkModules: false,
+        //     colors: true,
+        //     children: false,
+        //     version: false,
+        //     reasons: false
+        // },
+        stats: 'minimal',
 
         // ----------------------------------
         // Inputs
@@ -51,7 +49,7 @@ const getConfig = () => {
 
         resolve: {
             alias: {
-                'starting-blocks': path.resolve(__dirname, '../../main.js')
+                'starting-blocks': path.resolve(__dirname, '../../../')
             },
             extensions: ['.js']
         },

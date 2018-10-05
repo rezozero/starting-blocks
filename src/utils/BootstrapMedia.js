@@ -14,7 +14,7 @@ import Utils from './Utils'
 /**
  * Static class to get bootstrap breakpoints.
  */
-class BootstrapMedia {
+export default class BootstrapMedia {
     constructor () {
         // Values
         this.viewportSize = null
@@ -56,5 +56,3 @@ class BootstrapMedia {
         return this.viewportSize.width >= this.breakpoints[breakpoint]
     }
 }
-
-export default new BootstrapMedia()

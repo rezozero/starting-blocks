@@ -33,7 +33,7 @@ body {
 }
 
 .usersblock__intro {
-    color: var(--black);
+    color: #000;
 }
 
 /** Big transition **/

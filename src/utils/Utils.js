@@ -1,4 +1,4 @@
-import work from 'webworkify-webpack'
+// import work from 'webworkify-webpack'
 
 /**
  * Utils class
@@ -59,38 +59,38 @@ export default class Utils {
      * Start a fetch request
      *
      * @param {String} url
-     * @param {Boolean} workerEnabled
+     * @param {Worker|null} worker
      * @return {Promise}
      */
-    static request (url, workerEnabled = false) {
+    static request (url, worker) {
         const dfd = Utils.deferred()
         const timeout = window.setTimeout(() => {
             window.clearTimeout(timeout)
             dfd.reject('timeout!')
         }, Utils.requestTimeout())
 
-        if (window.Worker && workerEnabled) {
+        if (window.Worker && worker) {
             /**
              * @type {Window.Worker}
              */
-            const worker = work(require.resolve('../workers/Request.worker.js'))
+            // const worker = work(require.resolve('../workers/Request.worker.js'))
 
             // Listen worker event message
-            worker.addEventListener('message', function (e) {
-                const data = JSON.parse(e.data)
-
-                if (data.err) {
-                    window.clearTimeout(timeout)
-                    worker.terminate()
-                    dfd.reject(data.err)
-                } else {
-                    worker.terminate()
-                    return dfd.resolve(data.res)
-                }
-            })
+            // worker.addEventListener('message', function (e) {
+            //     const data = JSON.parse(e.data)
+            //
+            //     if (data.err) {
+            //         window.clearTimeout(timeout)
+            //         worker.terminate()
+            //         dfd.reject(data.err)
+            //     } else {
+            //         worker.terminate()
+            //         return dfd.resolve(data.res)
+            //     }
+            // })
 
             // Send url to the worker
-            worker.postMessage({ url })
+            // worker.postMessage({ url })
         } else {
             const headers = new window.Headers()
             headers.append('X-Starting-Blocks', 'yes')

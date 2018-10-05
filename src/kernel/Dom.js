@@ -33,9 +33,10 @@ export default class Dom {
     /**
      * Constructor.
      *
-     * @param {String} wrapperId
-     * @param {String} objectTypeAttr
-     * @param {String} pageClass
+     * @params options
+     * @param {String} [options.wrapperId=sb-wrapper']
+     * @param {String} [options.objectTypeAttr=data-node-type']
+     * @param {String} [options.pageClass=page-content]
      */
     constructor ({
         wrapperId = 'sb-wrapper',
