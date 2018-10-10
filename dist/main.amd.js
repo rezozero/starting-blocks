@@ -6424,6 +6424,7 @@ define(['exports'], function (exports) { 'use strict';
 	exports.gaTrackErrors = gaTrackErrors;
 	exports.debounce = debounce;
 	exports.BootstrapMedia = BootstrapMedia;
+	exports.Dispatcher = Dispatcher;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

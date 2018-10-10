@@ -6426,3 +6426,4 @@ exports.polyfills = polyfills;
 exports.gaTrackErrors = gaTrackErrors;
 exports.debounce = debounce;
 exports.BootstrapMedia = BootstrapMedia;
+exports.Dispatcher = Dispatcher;
