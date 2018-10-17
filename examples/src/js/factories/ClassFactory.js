@@ -26,7 +26,6 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
-import * as log from 'loglevel'
 import DefaultPage from '../pages/DefaultPage'
 import HomePage from '../pages/HomePage'
 
@@ -52,10 +51,10 @@ export default class ClassFactory {
     getPageInstance (router, container, context, nodeType) {
         switch (nodeType) {
         case 'home':
-            log.debug('Create new home')
+            console.debug('Create new home')
             return new HomePage(router, container, context, nodeType)
         default:
-            log.info(`"${nodeType}" has no defined route, using Page.`)
+            console.info(`"${nodeType}" has no defined route, using Page.`)
             return new DefaultPage(router, container, context, nodeType)
         }
     }
@@ -68,11 +67,11 @@ export default class ClassFactory {
      * for each block.
      *
      * @param  {AbstractPage} page
-     * @param  {jQuery}  $cont
-     * @param  {String}  nodeType
+     * @param  {HTMLElement} container
+     * @param  {String} nodeType
      * @return {AbstractBlock}
      */
-    async getBlockInstance (page, $cont, nodeType) {
+    async getBlockInstance (page, container, nodeType) {
         // Standard import
         // switch (nodeTypeName) {
         // case 'UsersBlock':
@@ -82,7 +81,7 @@ export default class ClassFactory {
         // Dynamic import
         try {
             const Block = await this.getModule(nodeType)
-            return new Block(page, $cont, nodeType)
+            return new Block(page, container, nodeType)
         } catch (e) {
             console.error(e.message)
         }

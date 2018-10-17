@@ -6,60 +6,53 @@
  * @file bootstrapMedia.js
  * @copyright REZO ZERO 2016
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
+
 import Utils from './Utils'
 
 /**
  * Static class to get bootstrap breakpoints.
  */
 export default class BootstrapMedia {
-    /**
-     * Test if viewport width in greater or equal than bootstrap XS breakpoint (480px).
-     *
-     * @return {Boolean}
-     */
-    static isMinXS () {
-        const size = Utils.getViewportSize()
-        return size.width >= 480
+    constructor () {
+        // Values
+        this.viewportSize = null
+        this.breakpoints = {
+            xs: 480,
+            sm: 768,
+            md: 992,
+            lg: 1200,
+            xl: 1920
+        }
+
+        // Binded methods
+        this.setValues = this.setValues.bind(this)
+
+        // Init
+        this.init()
     }
 
-    /**
-     * Test if viewport width in greater or equal than bootstrap SM breakpoint (768px).
-     *
-     * @return {Boolean}
-     */
-    static isMinSM () {
-        const size = Utils.getViewportSize()
-        return size.width >= 768
+    init () {
+        window.addEventListener('resize', this.setValues)
+        this.setValues()
     }
 
-    /**
-     * Test if viewport width in greater or equal than bootstrap MD breakpoint (992px).
-     *
-     * @return {Boolean}
-     */
-    static isMinMD () {
-        const size = Utils.getViewportSize()
-        return size.width >= 992
+    setValues () {
+        this.viewportSize = Utils.getViewportSize()
     }
 
-    /**
-     * Test if viewport width in greater or equal than bootstrap LG breakpoint (1200px).
-     *
-     * @return {Boolean}
-     */
-    static isMinLG () {
-        const size = Utils.getViewportSize()
-        return size.width >= 1200
+    resize () {
+        this.setValues()
     }
 
-    /**
-     * Test if viewport width in greater or equal than bootstrap XL breakpoint (1920px).
-     *
-     * @return {Boolean}
-     */
-    static isMinXL () {
-        const size = Utils.getViewportSize()
-        return size.width >= 1920
+    isMin (breakpoint) {
+        if (!this.breakpoints[breakpoint]) {
+            const errorMessage = `Breakpoint '${breakpoint}' do not exist`
+            console.error(errorMessage)
+            throw new Error(errorMessage)
+        }
+
+        return this.viewportSize.width >= this.breakpoints[breakpoint]
     }
 }

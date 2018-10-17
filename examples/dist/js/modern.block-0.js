@@ -1,3 +1,16 @@
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["block-0"],{
+
+/***/ "./examples/src/js/blocks/DefaultBlock.js":
+/*!************************************************!*\
+  !*** ./examples/src/js/blocks/DefaultBlock.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DefaultBlock; });
+/* harmony import */ var starting_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! starting-blocks */ "./dist/main.esm.js");
 /*
  * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
  *
@@ -22,20 +35,41 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file Api.js
+ * @file DefaultBlock.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
-import config from '../config/config'
+class DefaultBlock extends starting_blocks__WEBPACK_IMPORTED_MODULE_0__["AbstractBlock"] {
+  init() {
+    return super.init();
+  }
 
-export async function getData (sourceUrl, params = {}) {
-    const url = new URL(sourceUrl)
-    const mergedParams = { ...params, access_token: config.token }
+  initEvents() {
+    return super.initEvents();
+  }
 
-    Object.keys(mergedParams).forEach(key => url.searchParams.append(key, mergedParams[key]))
+  destroy() {
+    return super.destroy();
+  }
 
-    const result = await window.fetch(url.toString())
-    const json = await result.json()
+  destroyEvents() {
+    return super.destroyEvents();
+  }
 
-    return json
+  onResize() {
+    return super.onResize();
+  }
+
+  onLoad() {
+    return super.onLoad();
+  }
+
+  onPageReady() {
+    return super.onPageReady();
+  }
+
 }
+
+/***/ })
+
+}]);

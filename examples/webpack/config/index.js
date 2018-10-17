@@ -31,8 +31,6 @@ const getConfig = () => {
 
     configBase.utils_paths = {
         base: base,
-        client: base.bind(null, configBase.dir_entry),
-        dist: base.bind(null, configBase.dir_dist),
         clientDemo: base.bind(null, configBase.dir_entry_demo),
         distDemo: base.bind(null, configBase.dir_dist_demo)
     }

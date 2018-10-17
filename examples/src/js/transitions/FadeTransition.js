@@ -26,6 +26,7 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
+import TweenLite from 'gsap/TweenLite'
 import { AbstractTransition } from 'starting-blocks'
 
 /**
@@ -52,9 +53,10 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeOut () {
         return new Promise((resolve) => {
-            this.oldPage.$cont.animate({
-                opacity: 0
-            }, 400, 'swing', resolve)
+            TweenLite.to(this.oldPage.container, 0.4, {
+                alpha: 0,
+                onComplete: resolve
+            })
         })
     }
 
@@ -63,22 +65,26 @@ export default class FadeTransition extends AbstractTransition {
      */
     fadeIn () {
         // Add display: none on the old container
-        this.oldPage.$cont.hide()
+        this.oldPage.container.style.display = 'none'
 
         // Prepare new content css properties for the fade animation
-        this.newPage.$cont.css({
-            visibility: 'visible',
-            opacity: 0
-        })
+        this.newPage.container.style.visibility = 'visible'
+        this.newPage.container.style.opacity = '0'
 
         // IMPORTANT Call this method just after set visibility to visible
         this.newPage.updateLazyload()
 
+        // Scroll to the top
+        document.documentElement.scrollTop = 0
+        document.body.scrollTop = 0
+
         // fadeIn the new content container
-        this.newPage.$cont.animate({ opacity: 1 }, 400, () => {
-            document.body.scrollTop = 0
-            // IMPORTANT: Call this method at the end
-            this.done()
+        TweenLite.to(this.newPage.container, 0.4, {
+            alpha: 1,
+            onComplete: () => {
+                // IMPORTANT: Call this method at the end
+                this.done()
+            }
         })
     }
 }

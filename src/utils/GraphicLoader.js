@@ -22,7 +22,6 @@
  * @file GraphicLoader.js
  * @author Ambroise Maupate
  */
-import * as log from 'loglevel'
 
 /**
  * Handle your application main loader animation.
@@ -39,7 +38,7 @@ export default class GraphicLoader {
      * @abstract
      */
     constructor () {
-        log.debug('🌀 Construct loader')
+        console.debug('🌀 Construct loader')
     }
 
     /**
@@ -48,7 +47,7 @@ export default class GraphicLoader {
      * @abstract
      */
     show () {
-        log.debug('🌀 Show loader')
+        console.debug('🌀 Show loader')
     }
 
     /**
@@ -57,6 +56,6 @@ export default class GraphicLoader {
      * @abstract
      */
     hide () {
-        log.debug('🌀 Hide loader')
+        console.debug('🌀 Hide loader')
     }
 }

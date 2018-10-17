@@ -24,11 +24,10 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
 import AbstractPage from '../abstracts/AbstractPage'
 
 /**
- * Router mapper class.
+ * Kernel mapper class.
  *
  * This class maps your `data-node-type` with your *ES6* classes.
  *
@@ -39,18 +38,18 @@ export default class ClassFactory {
      * Returns an `AbstractPage` child class instance
      * according to the `nodeTypeName` or an `AbstractPage` as default.
      *
-     * @param  {Router}  router
+     * @param  {Kernel}  kernel
      * @param  {HTMLElement}  container
      * @param  {String}  context
      * @param  {String}  nodeType
      *
      * @return {AbstractPage}
      */
-    getPageInstance (router, container, context, nodeType) {
+    getPageInstance (kernel, container, context, nodeType) {
         switch (nodeType) {
         default:
-            log.info(`"${nodeType}" has no defined route, using Page.`)
-            return new AbstractPage(router, container, context, nodeType)
+            console.info(`"${nodeType}" has no defined route, using Page.`)
+            return new AbstractPage(kernel, container, context, nodeType)
         }
     }
 
@@ -62,9 +61,9 @@ export default class ClassFactory {
      * for each block.
      *
      * @param  {AbstractPage} page
-     * @param  {jQuery}  $cont
-     * @param  {String}  nodeType
+     * @param  {HTMLElement} container
+     * @param  {String} nodeType
      * @return {AbstractBlock}
      */
-    getBlockInstance (page, $cont, nodeType) {}
+    getBlockInstance (page, container, nodeType) {}
 }

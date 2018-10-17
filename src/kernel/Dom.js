@@ -33,12 +33,12 @@ export default class Dom {
     /**
      * Constructor.
      *
-     * @param {jQuery} $body
-     * @param {String} wrapperId
-     * @param {String} objectTypeAttr
-     * @param {String} pageClass
+     * @params options
+     * @param {String} [options.wrapperId=sb-wrapper']
+     * @param {String} [options.objectTypeAttr=data-node-type']
+     * @param {String} [options.pageClass=page-content]
      */
-    constructor ($body, {
+    constructor ({
         wrapperId = 'sb-wrapper',
         objectTypeAttr = 'data-node-type',
         pageClass = 'page-content'
@@ -77,14 +77,6 @@ export default class Dom {
          * @default
          */
         this.currentHTML = document.documentElement.innerHTML
-
-        /**
-         * Body jquery element
-         *
-         * @type {jQuery}
-         * @default
-         */
-        this.$body = $body
     }
 
     /**
@@ -181,16 +173,16 @@ export default class Dom {
         // Change body class and id
         if (page.name) {
             document.body.id = page.name
-            this.$body.addClass(page.name)
+            document.body.classList.add(page.name)
         }
+
+        document.body.classList.add(page.type)
 
         if (page.isHome) {
-            this.$body.attr('data-is-home', 1)
+            document.body.setAttribute('data-is-home', '1')
         } else {
-            this.$body.attr('data-is-home', 0)
+            document.body.setAttribute('data-is-home', '0')
         }
-
-        this.$body.addClass(page.type)
     }
 
     /**

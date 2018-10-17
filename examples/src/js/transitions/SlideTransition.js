@@ -27,7 +27,8 @@
  */
 
 import { AbstractTransition } from 'starting-blocks'
-import { TweenMax, Power4 } from 'gsap'
+import TweenLite from 'gsap/TweenLite'
+import { Power4 } from 'gsap/EasePack'
 import 'gsap/ScrollToPlugin'
 
 /**
@@ -51,7 +52,7 @@ export default class SlideTransition extends AbstractTransition {
      */
     slideOut () {
         return new Promise((resolve) => {
-            TweenMax.to(this.oldPage.$cont, 0.5, {
+            TweenLite.to(this.oldPage.container, 0.5, {
                 xPercent: 25,
                 alpha: 0,
                 ease: Power4.easeIn,
@@ -64,22 +65,23 @@ export default class SlideTransition extends AbstractTransition {
      * Slide in the new content
      */
     slideIn () {
-        TweenMax.set(this.oldPage.$cont, {
+        TweenLite.set(this.oldPage.container, {
             display: 'none'
         })
 
-        TweenMax.set(this.newPage.$cont, {
+        TweenLite.set(this.newPage.container, {
             visibility: 'visible',
             alpha: 0,
             xPercent: -25
         })
 
         // Scroll top
+        document.documentElement.scrollTop = 0
         document.body.scrollTop = 0
 
         this.newPage.updateLazyload()
 
-        TweenMax.to(this.newPage.$cont, 0.75, {
+        TweenLite.to(this.newPage.container, 0.75, {
             xPercent: 0,
             alpha: 1,
             ease: Power4.easeOut,

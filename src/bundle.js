@@ -1,43 +1,20 @@
-import tmpRouter from './router/Router'
-import tmpCacheProvider from './router/CacheProvider'
-import tmpGraphicLoader from './utils/GraphicLoader'
-import tmpAbstractPage from './abstracts/AbstractPage'
-import tmpAbstractBlock from './abstracts/AbstractBlock'
-import tmpAbstractTransition from './abstracts/AbstractTransition'
-import tmpDefaultTransition from './transitions/DefaultTransition'
-import tmpUtils from './utils/Utils'
-import tmpScroll from './utils/Scroll'
-import tmppolyfills from './utils/polyfills'
-import tmpgaTrackErrors from './utils/gaTrackErrors'
-import tmpdebounce from './utils/debounce'
-import tmpBootstrapMedia from './utils/BootstrapMedia'
-import * as tmpEventTypes from './types/EventTypes'
+import * as EventTypes from './types/EventTypes'
 
-/** @private */
-export const Router = tmpRouter
-/** @private */
-export const CacheProvider = tmpCacheProvider
-/** @private */
-export const GraphicLoader = tmpGraphicLoader
-/** @private */
-export const AbstractPage = tmpAbstractPage
-/** @private */
-export const AbstractBlock = tmpAbstractBlock
-/** @private */
-export const AbstractTransition = tmpAbstractTransition
-/** @private */
-export const Utils = tmpUtils
-/** @private */
-export const Scroll = tmpScroll
-/** @private */
-export const polyfills = tmppolyfills
-/** @private */
-export const gaTrackErrors = tmpgaTrackErrors
-/** @private */
-export const debounce = tmpdebounce
-/** @private */
-export const BootstrapMedia = tmpBootstrapMedia
-/** @private */
-export const EventTypes = tmpEventTypes
-/** @private */
-export const DefaultTransition = tmpDefaultTransition
+export { default as Kernel } from './kernel/Kernel'
+export { default as Pjax } from './kernel/Pjax'
+export { default as History } from './kernel/History'
+export { default as Prefetch } from './kernel/Prefetch'
+export { default as CacheProvider } from './kernel/CacheProvider'
+export { default as GraphicLoader } from './utils/GraphicLoader'
+export { default as AbstractPage } from './abstracts/AbstractPage'
+export { default as AbstractBlock } from './abstracts/AbstractBlock'
+export { default as AbstractTransition } from './abstracts/AbstractTransition'
+export { default as DefaultTransition } from './transitions/DefaultTransition'
+export { default as Utils } from './utils/Utils'
+export { default as Scroll } from './utils/Scroll'
+export { default as polyfills } from './utils/polyfills'
+export { default as gaTrackErrors } from './utils/gaTrackErrors'
+export { default as debounce } from './utils/debounce'
+export { default as BootstrapMedia } from './utils/BootstrapMedia'
+export { default as Dispatcher } from './dispatcher/Dispatcher'
+export { EventTypes }
