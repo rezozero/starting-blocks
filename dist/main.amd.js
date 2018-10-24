@@ -924,7 +924,7 @@ define(['exports'], function (exports) { 'use strict';
 	  return store[key] || (store[key] = value !== undefined ? value : {});
 	})('versions', []).push({
 	  version: _core.version,
-	  mode: _library ? 'pure' : 'global',
+	  mode: 'global',
 	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	});
 	});
@@ -1623,10 +1623,10 @@ define(['exports'], function (exports) { 'use strict';
 	    return capability.promise;
 	  }
 	});
-	_export(_export.S + _export.F * (!USE_NATIVE), PROMISE, {
+	_export(_export.S + _export.F * (_library || !USE_NATIVE), PROMISE, {
 	  // 25.4.4.6 Promise.resolve(x)
 	  resolve: function resolve(x) {
-	    return _promiseResolve(this, x);
+	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
 	  }
 	});
 	_export(_export.S + _export.F * !(USE_NATIVE && _iterDetect(function (iter) {
@@ -4800,8 +4800,6 @@ define(['exports'], function (exports) { 'use strict';
 	    this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
 
 	    console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
-	    this.init();
-	    this.initEvents();
 	  }
 	  /**
 	   * Basic members initialization for children classes.
@@ -5334,9 +5332,11 @@ define(['exports'], function (exports) { 'use strict';
 	                return _context4.abrupt("return", new AbstractBlock(this, blockElement, type));
 
 	              case 6:
+	                blockInstance.init();
+	                blockInstance.initEvents();
 	                return _context4.abrupt("return", blockInstance);
 
-	              case 7:
+	              case 9:
 	              case "end":
 	                return _context4.stop();
 	            }

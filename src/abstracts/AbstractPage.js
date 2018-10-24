@@ -355,6 +355,9 @@ export default class AbstractPage {
             return new AbstractBlock(this, blockElement, type)
         }
 
+        blockInstance.init()
+        blockInstance.initEvents()
+
         return blockInstance
     }
 

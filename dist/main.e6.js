@@ -1786,8 +1786,6 @@ class AbstractBlock {
     this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
 
     console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
-    this.init();
-    this.initEvents();
   }
   /**
    * Basic members initialization for children classes.
@@ -2207,6 +2205,8 @@ class AbstractPage {
       return new AbstractBlock(this, blockElement, type);
     }
 
+    blockInstance.init();
+    blockInstance.initEvents();
     return blockInstance;
   }
   /**

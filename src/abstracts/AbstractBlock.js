@@ -91,9 +91,6 @@ export default class AbstractBlock {
 
         // Debugs
         console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
-
-        this.init()
-        this.initEvents()
     }
 
     /**
