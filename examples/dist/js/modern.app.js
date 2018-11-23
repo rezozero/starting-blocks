@@ -225,7 +225,7 @@
 /*!**************************!*\
   !*** ./dist/main.esm.js ***!
   \**************************/
-/*! exports provided: EventTypes, Kernel, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia */
+/*! exports provided: EventTypes, Kernel, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -247,6 +247,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gaTrackErrors", function() { return gaTrackErrors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BootstrapMedia", function() { return BootstrapMedia; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Dispatcher", function() { return Dispatcher; });
 /**
  * Copyright © 2016, Ambroise Maupate
  *
@@ -5198,8 +5199,6 @@ function () {
     this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
 
     console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
-    this.init();
-    this.initEvents();
   }
   /**
    * Basic members initialization for children classes.
@@ -5730,9 +5729,11 @@ function () {
                 return _context4.abrupt("return", new AbstractBlock(this, blockElement, type));
 
               case 6:
+                blockInstance.init();
+                blockInstance.initEvents();
                 return _context4.abrupt("return", blockInstance);
 
-              case 7:
+              case 9:
               case "end":
                 return _context4.stop();
             }

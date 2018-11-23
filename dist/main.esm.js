@@ -922,7 +922,7 @@ var store = _global[SHARED] || (_global[SHARED] = {});
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
   version: _core.version,
-  mode: _library ? 'pure' : 'global',
+  mode: 'global',
   copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 });
 });
@@ -1621,10 +1621,10 @@ _export(_export.S + _export.F * !USE_NATIVE, PROMISE, {
     return capability.promise;
   }
 });
-_export(_export.S + _export.F * (!USE_NATIVE), PROMISE, {
+_export(_export.S + _export.F * (_library || !USE_NATIVE), PROMISE, {
   // 25.4.4.6 Promise.resolve(x)
   resolve: function resolve(x) {
-    return _promiseResolve(this, x);
+    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
   }
 });
 _export(_export.S + _export.F * !(USE_NATIVE && _iterDetect(function (iter) {

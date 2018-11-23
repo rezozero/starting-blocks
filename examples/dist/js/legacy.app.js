@@ -225,7 +225,7 @@
 /*!**************************!*\
   !*** ./dist/main.esm.js ***!
   \**************************/
-/*! exports provided: EventTypes, Kernel, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia */
+/*! exports provided: EventTypes, Kernel, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -247,6 +247,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gaTrackErrors", function() { return gaTrackErrors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BootstrapMedia", function() { return BootstrapMedia; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Dispatcher", function() { return Dispatcher; });
 /* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.array.find */ "./node_modules/core-js/modules/es6.array.find.js");
 /* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es6_array_find_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.array.find-index */ "./node_modules/core-js/modules/es6.array.find-index.js");
@@ -5312,8 +5313,6 @@ function () {
     this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
 
     console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
-    this.init();
-    this.initEvents();
   }
   /**
    * Basic members initialization for children classes.
@@ -5844,9 +5843,11 @@ function () {
                 return _context4.abrupt("return", new AbstractBlock(this, blockElement, type));
 
               case 6:
+                blockInstance.init();
+                blockInstance.initEvents();
                 return _context4.abrupt("return", blockInstance);
 
-              case 7:
+              case 9:
               case "end":
                 return _context4.stop();
             }
@@ -8263,7 +8264,7 @@ function (_AbstractTransition) {
 __webpack_require__(/*! whatwg-fetch */"./node_modules/whatwg-fetch/fetch.js");
 __webpack_require__(/*! es6-promise */"./node_modules/es6-promise/dist/es6-promise.js");
 __webpack_require__(/*! url-polyfill */"./node_modules/url-polyfill/url-polyfill.js");
-module.exports = __webpack_require__(/*! /Users/adrien/Experiments/starting-blocks/examples/src/js/app.js */"./examples/src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/adrien/Dev/starting-blocks/examples/src/js/app.js */"./examples/src/js/app.js");
 
 
 /***/ })

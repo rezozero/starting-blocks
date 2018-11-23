@@ -432,11 +432,11 @@ __webpack_require__.r(__webpack_exports__);
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
  *
- * @file config.js
+ * @file config.example.js
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 /* harmony default export */ __webpack_exports__["default"] = ({
-  token: '754e1aa9e2f39ea8d234a2f51002362310b058c2'
+  token: 'e1b8398cd29100cd893e71ac1cefdbecb08bf83b'
 });
 
 /***/ }),

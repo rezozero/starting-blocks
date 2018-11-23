@@ -8241,7 +8241,7 @@ __webpack_require__.r(__webpack_exports__);
 				}
 
 				//at the end or beginning of the tween, if the matrix is normal (1, 0, 0, 1) and opacity is 100 (or doesn't exist), remove the filter to improve browser performance.
-				if (v === 0 || v === 1) if (a === 1) if (b === 0) if (c === 0) if (d === 1) if (!clip || m.indexOf("Dx=0, Dy=0") !== -1) if (!_opacityExp.test(filters) || parseFloat(RegExp.$1) === 100) if (filters.indexOf("gradient(" && filters.indexOf("Alpha")) === -1) {
+				if (v === 0 || v === 1) if (a === 1) if (b === 0) if (c === 0) if (d === 1) if (!clip || m.indexOf("Dx=0, Dy=0") !== -1) if (!_opacityExp.test(filters) || parseFloat(RegExp.$1) === 100) if (filters.indexOf(true && filters.indexOf("Alpha")) === -1) {
 					style.removeAttribute("filter");
 				}
 
@@ -11707,7 +11707,7 @@ __webpack_require__.r(__webpack_exports__);
 	- pass in _gsScope as the first parameter of the main function (which is actually at the bottom)
 	- remove the "export to multiple environments" in Definition().
  */
-var _gsScope = (typeof(window) !== "undefined") ? window : (typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : undefined || {};
+var _gsScope = (typeof(window) !== "undefined") ? window : (true && module.exports && typeof(global) !== "undefined") ? global : undefined || {};
 
 var TweenLite = (function(window, moduleName) {
 
