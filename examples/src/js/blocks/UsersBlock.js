@@ -32,7 +32,7 @@ import * as Utils from '../utils/utils'
 
 export default class UsersBlock extends AbstractBlock {
     constructor (container) {
-        super(container)
+        super(container, 'UsersBlock')
 
         // Elements
         this.avatarContainer = null

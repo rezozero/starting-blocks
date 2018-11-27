@@ -45,8 +45,8 @@ export default class AbstractBlock extends AbstractService {
      *
      * @constructor
      */
-    constructor (container) {
-        super(container)
+    constructor (container, blockName = 'AbstractBlock') {
+        super(container, blockName)
 
         /**
          * Node Type block name type

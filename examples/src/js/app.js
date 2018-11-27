@@ -13,12 +13,11 @@ import StartingBlocks, {
     CacheProvider,
     polyfills
 } from 'starting-blocks'
-// import WebpackAsyncBlockBuilder from './services/WebpackAsyncBlockBuilder'
+import WebpackAsyncBlockBuilder from './services/WebpackAsyncBlockBuilder'
 import TransitionFactory from './factories/TransitionFactory'
+import HomePage from './pages/HomePage'
 import ExampleNav from './ExampleNav'
 import 'gsap/CSSPlugin'
-import HomePage from './pages/HomePage'
-// import UsersBlock from './blocks/UsersBlock'
 
 // BEING IMPORTANT (Bug Safari 10.1)
 // DO NOT REMOVE
@@ -46,11 +45,12 @@ const nav = new ExampleNav()
 const startingBlocks = new StartingBlocks()
 
 // Add services
-// console.log(TransitionFactory)
 startingBlocks.provider('TransitionFactory', TransitionFactory)
 startingBlocks.provider('History', History)
 startingBlocks.provider('CacheProvider', CacheProvider)
-// startingBlocks.provider('BlockBuilder', WebpackAsyncBlockBuilder)
+
+// Custom block builder (dynamic import)
+startingBlocks.provider('BlockBuilder', WebpackAsyncBlockBuilder)
 
 // Add bootable services
 startingBlocks.bootableProvider('Prefetch', Prefetch)
@@ -61,9 +61,8 @@ startingBlocks.instanceFactory('home', c => {
     return new HomePage(c)
 })
 
-// startingBlocks.factory('UsersBlock', c => {
-//     return new UsersBlock(c)
-// })
+// If you want to use standard block import
+// startingBlocks.provider('UsersBlock', UsersBlock)
 
 nav.init()
 startingBlocks.boot()

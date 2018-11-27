@@ -5559,9 +5559,11 @@ function (_AbstractService) {
   function AbstractBlock(container) {
     var _this;
 
+    var blockName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractBlock';
+
     classCallCheck(this, AbstractBlock);
 
-    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractBlock).call(this, container));
+    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractBlock).call(this, container, blockName));
     /**
      * Node Type block name type
      *
