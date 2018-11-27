@@ -129,3 +129,4 @@ fabric.properties
 
 # Config
 /examples/src/js/config/config.js
+/examples/dist/
