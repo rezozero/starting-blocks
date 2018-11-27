@@ -102,16 +102,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class UsersBlock extends starting_blocks__WEBPACK_IMPORTED_MODULE_0__["AbstractBlock"] {
-  async init() {
-    super.init(); // Elements
+  constructor(container) {
+    super(container); // Elements
 
-    this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0];
-    this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0]; // Values
+    this.avatarContainer = null;
+    this.contributorsListingContainer = null; // Values
 
     this.data = null;
     this.owner = null;
     this.contributors = [];
-    this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks'; // Init request
+    this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks';
+  }
+
+  async init() {
+    super.init(); // Elements
+
+    this.avatarContainer = this.page.rootElement.querySelectorAll('.avatar-cont')[0];
+    this.contributorsListingContainer = this.page.rootElement.querySelectorAll('.usersblock__contributors-list')[0]; // Init request
 
     this.data = await _api_Api__WEBPACK_IMPORTED_MODULE_1__["getData"](this.initialUrl);
     this.fillData(this.data);

@@ -206,10 +206,21 @@ var UsersBlock =
 function (_AbstractBlock) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_11___default()(UsersBlock, _AbstractBlock);
 
-  function UsersBlock() {
+  function UsersBlock(container) {
+    var _this;
+
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_6___default()(this, UsersBlock);
 
-    return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_8___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9___default()(UsersBlock).apply(this, arguments));
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_8___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9___default()(UsersBlock).call(this, container)); // Elements
+
+    _this.avatarContainer = null;
+    _this.contributorsListingContainer = null; // Values
+
+    _this.data = null;
+    _this.owner = null;
+    _this.contributors = [];
+    _this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks';
+    return _this;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_7___default()(UsersBlock, [{
@@ -225,22 +236,17 @@ function (_AbstractBlock) {
                 _babel_runtime_helpers_get__WEBPACK_IMPORTED_MODULE_10___default()(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9___default()(UsersBlock.prototype), "init", this).call(this); // Elements
 
 
-                this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0];
-                this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0]; // Values
+                this.avatarContainer = this.page.rootElement.querySelectorAll('.avatar-cont')[0];
+                this.contributorsListingContainer = this.page.rootElement.querySelectorAll('.usersblock__contributors-list')[0]; // Init request
 
-                this.data = null;
-                this.owner = null;
-                this.contributors = [];
-                this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks'; // Init request
-
-                _context.next = 9;
+                _context.next = 5;
                 return _api_Api__WEBPACK_IMPORTED_MODULE_13__["getData"](this.initialUrl);
 
-              case 9:
+              case 5:
                 this.data = _context.sent;
                 this.fillData(this.data);
 
-              case 11:
+              case 7:
               case "end":
                 return _context.stop();
             }

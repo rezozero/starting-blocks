@@ -249,7 +249,7 @@ var _objectDp = {
 
 var defineProperty = _objectDp.f;
 var _wksDefine = function (name) {
-  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
   if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: _wksExt.f(name) });
 };
 
@@ -4741,10 +4741,10 @@ _export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
     return capability.promise;
   }
 });
-_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
+_export(_export.S + _export.F * (!USE_NATIVE$1), PROMISE, {
   // 25.4.4.6 Promise.resolve(x)
   resolve: function resolve(x) {
-    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
+    return _promiseResolve(this, x);
   }
 });
 _export(_export.S + _export.F * !(USE_NATIVE$1 && _iterDetect(function (iter) {
