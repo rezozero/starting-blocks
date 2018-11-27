@@ -52,7 +52,7 @@ export default class SlideTransition extends AbstractTransition {
      */
     slideOut () {
         return new Promise((resolve) => {
-            TweenLite.to(this.oldPage.container, 0.5, {
+            TweenLite.to(this.oldPage.rootElement, 0.5, {
                 xPercent: 25,
                 alpha: 0,
                 ease: Power4.easeIn,
@@ -65,11 +65,11 @@ export default class SlideTransition extends AbstractTransition {
      * Slide in the new content
      */
     slideIn () {
-        TweenLite.set(this.oldPage.container, {
+        TweenLite.set(this.oldPage.rootElement, {
             display: 'none'
         })
 
-        TweenLite.set(this.newPage.container, {
+        TweenLite.set(this.newPage.rootElement, {
             visibility: 'visible',
             alpha: 0,
             xPercent: -25
@@ -81,7 +81,7 @@ export default class SlideTransition extends AbstractTransition {
 
         this.newPage.updateLazyload()
 
-        TweenLite.to(this.newPage.container, 0.75, {
+        TweenLite.to(this.newPage.rootElement, 0.75, {
             xPercent: 0,
             alpha: 1,
             ease: Power4.easeOut,

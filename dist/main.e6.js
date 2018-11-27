@@ -25,20 +25,20 @@
  */
 
 /**
- * Before Kernel initialize XHR request to load new page.
+ * Before initialize XHR request to load new page.
  *
  * @type {String}
  */
 const BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD';
 /**
- * After Kernel XHR request succeeded.
+ * After XHR request succeeded.
  *
  * @type {String}
  */
 
 const AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD';
 /**
- * After Kernel appended new page DOM to page-container.
+ * After Dom service appended new page DOM to page-container.
  *
  * @type {String}
  */
@@ -52,7 +52,7 @@ const AFTER_DOM_APPENDED = 'SB_AFTER_DOM_APPENDED';
 
 const CONTAINER_READY = 'SB_CONTAINER_READY';
 /**
- * After Kernel create new page instance.
+ * After PageBuilder create new page instance.
  *
  * @type {String}
  */
@@ -155,213 +155,707 @@ function _objectSpread(target) {
 
 var objectSpread = _objectSpread;
 
-/**
- * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * Except as contained in this notice, the name of the ROADIZ shall not
- * be used in advertising or otherwise to promote the sale, use or other dealings
- * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
- *
- * @file Dom.js
- * @author Adrien Scholaert <adrien@rezo-zero.com>
- */
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-/**
- * Class that is going to deal with DOM parsing/manipulation.
- */
-class Dom {
-  /**
-   * Constructor.
-   *
-   * @params options
-   * @param {String} [options.wrapperId=sb-wrapper']
-   * @param {String} [options.objectTypeAttr=data-node-type']
-   * @param {String} [options.pageClass=page-content]
-   */
-  constructor({
-    wrapperId = 'sb-wrapper',
-    objectTypeAttr = 'data-node-type',
-    pageClass = 'page-content'
-  } = {}) {
-    /**
-     * Id of the main wrapper
-     *
-     * @type {String}
-     * @default
-     */
-    this.wrapperId = wrapperId;
-    /**
-     * The data attribute name to find the node type
-     *
-     * @type {string}
-     * @default
-     */
-
-    this.objectTypeAttr = objectTypeAttr;
-    /**
-     * Class name used to identify the containers
-     *
-     * @type {String}
-     * @default
-     */
-
-    this.pageClass = pageClass;
-    /**
-     * Full HTML String of the current page.
-     * By default is the innerHTML of the initial loaded page.
-     *
-     * Each time a new page is loaded, the value is the response of the ajax call.
-     *
-     * @type {String}
-     * @default
-     */
-
-    this.currentHTML = document.documentElement.innerHTML;
-  }
-  /**
-   * Parse the responseText obtained from the ajax call.
-   *
-   * @param  {String} responseText
-   * @return {HTMLElement}
-   */
-
-
-  parseResponse(responseText) {
-    this.currentHTML = responseText;
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = responseText;
-    return this.getContainer(wrapper);
-  }
-  /**
-   * Get the main wrapper by the ID `wrapperId`.
-   *
-   * @return {HTMLElement} element
-   */
-
-
-  getWrapper() {
-    const wrapper = document.getElementById(this.wrapperId);
-
-    if (!wrapper) {
-      throw new Error('Starting Blocks: Wrapper not found!');
-    }
-
-    return wrapper;
-  }
-  /**
-   * Return node type.
-   *
-   * @param container
-   * @returns {string}
-   */
-
-
-  getNodeType(container) {
-    return container.getAttribute(this.objectTypeAttr);
-  }
-  /**
-   * Get the container on the current DOM,
-   * or from an HTMLElement passed via argument.
-   *
-   * @param  {HTMLElement|null} element
-   * @return {HTMLElement}
-   */
-
-
-  getContainer(element = null) {
-    if (!element) {
-      element = document.body;
-    }
-
-    if (!element) {
-      throw new Error('Starting Blocks: DOM not ready!');
-    }
-
-    const container = this.parseContainer(element);
-
-    if (!container) {
-      throw new Error(`Starting Blocks: container not found! Did you use at least
-            one dom element with ".${this.pageClass}" class and "data-node-type" attribute?`);
-    }
-
-    return container;
-  }
-  /**
-   * Put the container on the page.
-   *
-   * @param  {HTMLElement} element
-   */
-
-
-  putContainer(element) {
-    element.style.visibility = 'hidden';
-    const wrapper = this.getWrapper();
-    wrapper.appendChild(element);
-  }
-  /**
-   * Get container selector.
-   *
-   * @param  {HTMLElement} element
-   * @return {HTMLElement} element
-   */
-
-
-  parseContainer(element) {
-    return element.querySelector(`.${this.pageClass}[data-node-type]`);
-  }
-  /**
-   * Update body attributes.
-   *
-   * @param {AbstractPage} page
-   */
-
-
-  updateBodyAttributes(page) {
-    // Change body class and id
-    if (page.name) {
-      document.body.id = page.name;
-      document.body.classList.add(page.name);
-    }
-
-    document.body.classList.add(page.type);
-
-    if (page.isHome) {
-      document.body.setAttribute('data-is-home', '1');
-    } else {
-      document.body.setAttribute('data-is-home', '0');
-    }
-  }
-  /**
-   * Update page title.
-   *
-   * @param {AbstractPage} page
-   */
-
-
-  updatePageTitle(page) {
-    if (page.metaTitle) {
-      document.title = page.metaTitle;
-    }
-  }
-
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
+
+var bottle = createCommonjsModule(function (module, exports) {
+(function(undefined) {
+    /**
+     * BottleJS v1.7.1 - 2018-05-03
+     * A powerful dependency injection micro container
+     *
+     * Copyright (c) 2018 Stephen Young
+     * Licensed MIT
+     */
+    var Bottle;
+    
+    /**
+     * String constants
+     */
+    var DELIMITER = '.';
+    var FUNCTION_TYPE = 'function';
+    var STRING_TYPE = 'string';
+    var GLOBAL_NAME = '__global__';
+    var PROVIDER_SUFFIX = 'Provider';
+    
+    /**
+     * Unique id counter;
+     *
+     * @type Number
+     */
+    var id = 0;
+    
+    /**
+     * Local slice alias
+     *
+     * @type Functions
+     */
+    var slice = Array.prototype.slice;
+    
+    /**
+     * Iterator used to walk down a nested object.
+     *
+     * If Bottle.config.strict is true, this method will throw an exception if it encounters an
+     * undefined path
+     *
+     * @param Object obj
+     * @param String prop
+     * @return mixed
+     * @throws Error if Bottle is unable to resolve the requested service.
+     */
+    var getNested = function getNested(obj, prop) {
+        var service = obj[prop];
+        if (service === undefined && Bottle.config.strict) {
+            throw new Error('Bottle was unable to resolve a service.  `' + prop + '` is undefined.');
+        }
+        return service;
+    };
+    
+    /**
+     * Get a nested bottle. Will set and return if not set.
+     *
+     * @param String name
+     * @return Bottle
+     */
+    var getNestedBottle = function getNestedBottle(name) {
+        var bottle;
+        if (!this.nested[name]) {
+            bottle = Bottle.pop();
+            this.nested[name] = bottle;
+            this.factory(name, function SubProviderFactory() {
+                return bottle.container;
+            });
+        }
+        return this.nested[name];
+    };
+    
+    /**
+     * Get a service stored under a nested key
+     *
+     * @param String fullname
+     * @return Service
+     */
+    var getNestedService = function getNestedService(fullname) {
+        return fullname.split(DELIMITER).reduce(getNested, this);
+    };
+    
+    /**
+     * Function used by provider to set up middleware for each request.
+     *
+     * @param Number id
+     * @param String name
+     * @param Object instance
+     * @param Object container
+     * @return void
+     */
+    var applyMiddleware = function applyMiddleware(middleware, name, instance, container) {
+        var descriptor = {
+            configurable : true,
+            enumerable : true
+        };
+        if (middleware.length) {
+            descriptor.get = function getWithMiddlewear() {
+                var index = 0;
+                var next = function nextMiddleware(err) {
+                    if (err) {
+                        throw err;
+                    }
+                    if (middleware[index]) {
+                        middleware[index++](instance, next);
+                    }
+                };
+                next();
+                return instance;
+            };
+        } else {
+            descriptor.value = instance;
+            descriptor.writable = true;
+        }
+    
+        Object.defineProperty(container, name, descriptor);
+    
+        return container[name];
+    };
+    
+    /**
+     * Register middleware.
+     *
+     * @param String name
+     * @param Function func
+     * @return Bottle
+     */
+    var middleware = function middleware(fullname, func) {
+        var parts, name;
+        if (typeof fullname === FUNCTION_TYPE) {
+            func = fullname;
+            fullname = GLOBAL_NAME;
+        }
+    
+        parts = fullname.split(DELIMITER);
+        name = parts.shift();
+        if (parts.length) {
+            getNestedBottle.call(this, name).middleware(parts.join(DELIMITER), func);
+        } else {
+            if (!this.middlewares[name]) {
+                this.middlewares[name] = [];
+            }
+            this.middlewares[name].push(func);
+        }
+        return this;
+    };
+    
+    /**
+     * Used to process decorators in the provider
+     *
+     * @param Object instance
+     * @param Function func
+     * @return Mixed
+     */
+    var reducer = function reducer(instance, func) {
+        return func(instance);
+    };
+    
+    
+    /**
+     * Get decorators and middleware including globals
+     *
+     * @return array
+     */
+    var getWithGlobal = function getWithGlobal(collection, name) {
+        return (collection[name] || []).concat(collection.__global__ || []);
+    };
+    
+    
+    /**
+     * Create the provider properties on the container
+     *
+     * @param String name
+     * @param Function Provider
+     * @return Bottle
+     */
+    var createProvider = function createProvider(name, Provider) {
+        var providerName, properties, container, id, decorators, middlewares;
+    
+        id = this.id;
+        container = this.container;
+        decorators = this.decorators;
+        middlewares = this.middlewares;
+        providerName = name + PROVIDER_SUFFIX;
+    
+        properties = Object.create(null);
+        properties[providerName] = {
+            configurable : true,
+            enumerable : true,
+            get : function getProvider() {
+                var instance = new Provider();
+                delete container[providerName];
+                container[providerName] = instance;
+                return instance;
+            }
+        };
+    
+        properties[name] = {
+            configurable : true,
+            enumerable : true,
+            get : function getService() {
+                var provider = container[providerName];
+                var instance;
+                if (provider) {
+                    // filter through decorators
+                    instance = getWithGlobal(decorators, name).reduce(reducer, provider.$get(container));
+    
+                    delete container[providerName];
+                    delete container[name];
+                }
+                return instance === undefined ? instance : applyMiddleware(getWithGlobal(middlewares, name),
+                    name, instance, container);
+            }
+        };
+    
+        Object.defineProperties(container, properties);
+        return this;
+    };
+    
+    
+    /**
+     * Register a provider.
+     *
+     * @param String fullname
+     * @param Function Provider
+     * @return Bottle
+     */
+    var provider = function provider(fullname, Provider) {
+        var parts, name;
+        parts = fullname.split(DELIMITER);
+        if (this.providerMap[fullname] && parts.length === 1 && !this.container[fullname + PROVIDER_SUFFIX]) {
+            return console.error(fullname + ' provider already instantiated.');
+        }
+        this.originalProviders[fullname] = Provider;
+        this.providerMap[fullname] = true;
+    
+        name = parts.shift();
+    
+        if (parts.length) {
+            getNestedBottle.call(this, name).provider(parts.join(DELIMITER), Provider);
+            return this;
+        }
+        return createProvider.call(this, name, Provider);
+    };
+    
+    /**
+     * Register a factory inside a generic provider.
+     *
+     * @param String name
+     * @param Function Factory
+     * @return Bottle
+     */
+    var factory = function factory(name, Factory) {
+        return provider.call(this, name, function GenericProvider() {
+            this.$get = Factory;
+        });
+    };
+    
+    /**
+     * Private helper for creating service and service factories.
+     *
+     * @param String name
+     * @param Function Service
+     * @return Bottle
+     */
+    var createService = function createService(name, Service, isClass) {
+        var deps = arguments.length > 3 ? slice.call(arguments, 3) : [];
+        var bottle = this;
+        return factory.call(this, name, function GenericFactory() {
+            var serviceFactory = Service; // alias for jshint
+            var args = deps.map(getNestedService, bottle.container);
+    
+            if (!isClass) {
+                return serviceFactory.apply(null, args);
+            }
+            return new (Service.bind.apply(Service, [null].concat(args)))();
+        });
+    };
+    
+    /**
+     * Register a class service
+     *
+     * @param String name
+     * @param Function Service
+     * @return Bottle
+     */
+    var service = function service(name, Service) {
+        return createService.apply(this, [name, Service, true].concat(slice.call(arguments, 2)));
+    };
+    
+    /**
+     * Register a function service
+     */
+    var serviceFactory = function serviceFactory(name, factoryService) {
+        return createService.apply(this, [name, factoryService, false].concat(slice.call(arguments, 2)));
+    };
+    
+    /**
+     * Define a mutable property on the container.
+     *
+     * @param String name
+     * @param mixed val
+     * @return void
+     * @scope container
+     */
+    var defineValue = function defineValue(name, val) {
+        Object.defineProperty(this, name, {
+            configurable : true,
+            enumerable : true,
+            value : val,
+            writable : true
+        });
+    };
+    
+    /**
+     * Iterator for setting a plain object literal via defineValue
+     *
+     * @param Object container
+     * @param string name
+     */
+    var setValueObject = function setValueObject(container, name) {
+        var nestedContainer = container[name];
+        if (!nestedContainer) {
+            nestedContainer = {};
+            defineValue.call(container, name, nestedContainer);
+        }
+        return nestedContainer;
+    };
+    
+    
+    /**
+     * Register a value
+     *
+     * @param String name
+     * @param mixed val
+     * @return Bottle
+     */
+    var value = function value(name, val) {
+        var parts;
+        parts = name.split(DELIMITER);
+        name = parts.pop();
+        defineValue.call(parts.reduce(setValueObject, this.container), name, val);
+        return this;
+    };
+    
+    /**
+     * Define an enumerable, non-configurable, non-writable value.
+     *
+     * @param String name
+     * @param mixed value
+     * @return undefined
+     */
+    var defineConstant = function defineConstant(name, value) {
+        Object.defineProperty(this, name, {
+            configurable : false,
+            enumerable : true,
+            value : value,
+            writable : false
+        });
+    };
+    
+    /**
+     * Register a constant
+     *
+     * @param String name
+     * @param mixed value
+     * @return Bottle
+     */
+    var constant = function constant(name, value) {
+        var parts = name.split(DELIMITER);
+        name = parts.pop();
+        defineConstant.call(parts.reduce(setValueObject, this.container), name, value);
+        return this;
+    };
+    
+    /**
+     * Register decorator.
+     *
+     * @param String fullname
+     * @param Function func
+     * @return Bottle
+     */
+    var decorator = function decorator(fullname, func) {
+        var parts, name;
+        if (typeof fullname === FUNCTION_TYPE) {
+            func = fullname;
+            fullname = GLOBAL_NAME;
+        }
+    
+        parts = fullname.split(DELIMITER);
+        name = parts.shift();
+        if (parts.length) {
+            getNestedBottle.call(this, name).decorator(parts.join(DELIMITER), func);
+        } else {
+            if (!this.decorators[name]) {
+                this.decorators[name] = [];
+            }
+            this.decorators[name].push(func);
+        }
+        return this;
+    };
+    
+    /**
+     * Register a function that will be executed when Bottle#resolve is called.
+     *
+     * @param Function func
+     * @return Bottle
+     */
+    var defer = function defer(func) {
+        this.deferred.push(func);
+        return this;
+    };
+    
+    
+    /**
+     * Immediately instantiates the provided list of services and returns them.
+     *
+     * @param Array services
+     * @return Array Array of instances (in the order they were provided)
+     */
+    var digest = function digest(services) {
+        return (services || []).map(getNestedService, this.container);
+    };
+    
+    /**
+     * Register an instance factory inside a generic factory.
+     *
+     * @param {String} name - The name of the service
+     * @param {Function} Factory - The factory function, matches the signature required for the
+     * `factory` method
+     * @return Bottle
+     */
+    var instanceFactory = function instanceFactory(name, Factory) {
+        return factory.call(this, name, function GenericInstanceFactory(container) {
+            return {
+                instance : Factory.bind(Factory, container)
+            };
+        });
+    };
+    
+    /**
+     * A filter function for removing bottle container methods and providers from a list of keys
+     */
+    var byMethod = function byMethod(name) {
+        return !/^\$(?:decorator|register|list)$|Provider$/.test(name);
+    };
+    
+    /**
+     * List the services registered on the container.
+     *
+     * @param Object container
+     * @return Array
+     */
+    var list = function list(container) {
+        return Object.keys(container || this.container || {}).filter(byMethod);
+    };
+    
+    /**
+     * Named bottle instances
+     *
+     * @type Object
+     */
+    var bottles = {};
+    
+    /**
+     * Get an instance of bottle.
+     *
+     * If a name is provided the instance will be stored in a local hash.  Calling Bottle.pop multiple
+     * times with the same name will return the same instance.
+     *
+     * @param String name
+     * @return Bottle
+     */
+    var pop = function pop(name) {
+        var instance;
+        if (typeof name === STRING_TYPE) {
+            instance = bottles[name];
+            if (!instance) {
+                bottles[name] = instance = new Bottle();
+                instance.constant('BOTTLE_NAME', name);
+            }
+            return instance;
+        }
+        return new Bottle();
+    };
+    
+    /**
+     * Clear all named bottles.
+     */
+    var clear = function clear(name) {
+        if (typeof name === STRING_TYPE) {
+            delete bottles[name];
+        } else {
+            bottles = {};
+        }
+    };
+    
+    /**
+     * Register a service, factory, provider, or value based on properties on the object.
+     *
+     * properties:
+     *  * Obj.$name   String required ex: `'Thing'`
+     *  * Obj.$type   String optional 'service', 'factory', 'provider', 'value'.  Default: 'service'
+     *  * Obj.$inject Mixed  optional only useful with $type 'service' name or array of names
+     *  * Obj.$value  Mixed  optional Normally Obj is registered on the container.  However, if this
+     *                       property is included, it's value will be registered on the container
+     *                       instead of the object itsself.  Useful for registering objects on the
+     *                       bottle container without modifying those objects with bottle specific keys.
+     *
+     * @param Function Obj
+     * @return Bottle
+     */
+    var register = function register(Obj) {
+        var value = Obj.$value === undefined ? Obj : Obj.$value;
+        return this[Obj.$type || 'service'].apply(this, [Obj.$name, value].concat(Obj.$inject || []));
+    };
+    
+    /**
+     * Deletes providers from the map and container.
+     *
+     * @param String name
+     * @return void
+     */
+    var removeProviderMap = function resetProvider(name) {
+        delete this.providerMap[name];
+        delete this.container[name];
+        delete this.container[name + PROVIDER_SUFFIX];
+    };
+    
+    /**
+     * Resets providers on a bottle instance. If 'names' array is provided, only the named providers will be reset.
+     *
+     * @param Array names
+     * @return void
+     */
+    var resetProviders = function resetProviders(names) {
+        var tempProviders = this.originalProviders;
+        var shouldFilter = Array.isArray(names);
+    
+        Object.keys(this.originalProviders).forEach(function resetProvider(originalProviderName) {
+            if (shouldFilter && names.indexOf(originalProviderName) === -1) {
+                return;
+            }
+            var parts = originalProviderName.split(DELIMITER);
+            if (parts.length > 1) {
+                parts.forEach(removeProviderMap, getNestedBottle.call(this, parts[0]));
+            }
+            removeProviderMap.call(this, originalProviderName);
+            this.provider(originalProviderName, tempProviders[originalProviderName]);
+        }, this);
+    };
+    
+    
+    /**
+     * Execute any deferred functions
+     *
+     * @param Mixed data
+     * @return Bottle
+     */
+    var resolve = function resolve(data) {
+        this.deferred.forEach(function deferredIterator(func) {
+            func(data);
+        });
+    
+        return this;
+    };
+    
+    
+    /**
+     * Bottle constructor
+     *
+     * @param String name Optional name for functional construction
+     */
+    Bottle = function Bottle(name) {
+        if (!(this instanceof Bottle)) {
+            return Bottle.pop(name);
+        }
+    
+        this.id = id++;
+    
+        this.decorators = {};
+        this.middlewares = {};
+        this.nested = {};
+        this.providerMap = {};
+        this.originalProviders = {};
+        this.deferred = [];
+        this.container = {
+            $decorator : decorator.bind(this),
+            $register : register.bind(this),
+            $list : list.bind(this)
+        };
+    };
+    
+    /**
+     * Bottle prototype
+     */
+    Bottle.prototype = {
+        constant : constant,
+        decorator : decorator,
+        defer : defer,
+        digest : digest,
+        factory : factory,
+        instanceFactory: instanceFactory,
+        list : list,
+        middleware : middleware,
+        provider : provider,
+        resetProviders : resetProviders,
+        register : register,
+        resolve : resolve,
+        service : service,
+        serviceFactory : serviceFactory,
+        value : value
+    };
+    
+    /**
+     * Bottle static
+     */
+    Bottle.pop = pop;
+    Bottle.clear = clear;
+    Bottle.list = list;
+    
+    /**
+     * Global config
+     */
+    Bottle.config = {
+        strict : false
+    };
+    
+    /**
+     * Exports script adapted from lodash v2.4.1 Modern Build
+     *
+     * @see http://lodash.com/
+     */
+    
+    /**
+     * Valid object type map
+     *
+     * @type Object
+     */
+    var objectTypes = {
+        'function' : true,
+        'object' : true
+    };
+    
+    (function exportBottle(root) {
+    
+        /**
+         * Free variable exports
+         *
+         * @type Function
+         */
+        var freeExports = exports && !exports.nodeType && exports;
+    
+        /**
+         * Free variable module
+         *
+         * @type Object
+         */
+        var freeModule = module && !module.nodeType && module;
+    
+        /**
+         * CommonJS module.exports
+         *
+         * @type Function
+         */
+        var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+    
+        /**
+         * Free variable `global`
+         *
+         * @type Object
+         */
+        var freeGlobal = objectTypes[typeof commonjsGlobal] && commonjsGlobal;
+        if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+            root = freeGlobal;
+        }
+    
+        /**
+         * Export
+         */
+        if (typeof undefined === FUNCTION_TYPE && typeof undefined.amd === 'object' && undefined.amd) {
+            root.Bottle = Bottle;
+            undefined(function() { return Bottle; });
+        } else if (freeExports && freeModule) {
+            if (moduleExports) {
+                (freeModule.exports = Bottle).Bottle = Bottle;
+            } else {
+                freeExports.Bottle = Bottle;
+            }
+        } else {
+            root.Bottle = Bottle;
+        }
+    }((objectTypes[typeof window] && window) || this));
+    
+}.call(commonjsGlobal));
+});
 
 /**
  * Copyright © 2016, Ambroise Maupate
@@ -402,146 +896,116 @@ class Dispatcher {
 
 }
 
-const DEFAULT_OPTIONS = {
-  pageClass: 'page-content',
-  pageBlockClass: 'page-block',
-  objectTypeAttr: 'data-node-type',
-  ajaxWrapperId: 'sb-wrapper',
-  noAjaxLinkClass: 'no-ajax-link',
-  noPrefetchLinkClass: 'no-prefetch'
-  /**
-   * Application kernel.
-   */
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file UnknownServiceException.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class UnknownServiceException extends Error {
+  constructor(id) {
+    super(`Service "${id}" is not defined`);
+    this.name = `UnknownServiceException`;
+  }
 
-};
-class Kernel {
-  /**
-   * Create a new Kernel.
-   *
-   * @param {Object} services
-   * @param {Pjax|null} [services.pjax]
-   * @param {CacheProvider|null} [services.cacheProvider]
-   * @param {Prefetch|null} [services.prefetch]
-   * @param {Lazyload|null} [services.lazyload]
-   * @param {Worker|null} [services.worker]
-   * @param {GraphicLoader|null} [services.graphicLoader]
-   * @param {ClassFactory|null} [services.classFactory]
-   * @param {TransitionFactory|null} [services.transitionFactory]
-   *
-   * @param {Object} options
-   * @param {string} [options.pageClass=page-content] - The class name of the root page node
-   * @param {string} [options.pageBlockClass=page-block] - The class name to detect blocks
-   * @param {string} [options.objectTypeAttr=data-node-type]
-   * @param {string} [options.ajaxWrapperId=sb-wrapper]
-   */
-  constructor({
-    services = {},
-    options = {}
-  } = {}) {
-    /**
-     * @type {Object}
-     */
-    this.options = objectSpread({}, DEFAULT_OPTIONS, options);
-    /**
-     * @type {(Pjax|null)}
-     */
+}
 
-    this.pjax = services.pjax || null;
-    /**
-     * @type {(CacheProvider|null)}
-     */
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file DependencyNotFulfilledException.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class DependencyNotFulfilledException extends Error {
+  constructor(firstServiceName, secondeServiceName) {
+    super(`Object of type "${firstServiceName}" needs "${secondeServiceName}" service`);
+    this.name = `DependencyNotFulfilledException`;
+  }
 
-    this.cacheProvider = services.cacheProvider || null;
-    /**
-     * @type {(Prefetch|null)}
-     */
+}
 
-    this.prefetch = services.prefetch || null;
-    /**
-     * @type {(Lazyload|null)}
-     */
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file AbstractService.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class AbstractService {
+  constructor(container = {}, serviceName = 'AbstractService', dependencies = ['Config']) {
+    this.container = container;
+    this.serviceName = serviceName;
+    console.debug(`${serviceName} awake`);
+    this.checkDependencies(dependencies);
+  }
 
-    this.lazyload = services.lazyload || null;
-    /**
-     * @type {(Worker|null)}
-     */
+  init() {}
 
-    this.worker = services.worker || null;
-    /**
-     * @type {(GraphicLoader|null)}
-     */
+  hasService(serviceName) {
+    return this.container.hasOwnProperty(serviceName);
+  }
 
-    this.graphicLoader = services.graphicLoader || null;
-    /**
-     * @type {(ClassFactory|null)}
-     */
+  checkDependencies(dependencies = []) {
+    for (const serviceName of dependencies) {
+      if (!this.hasService(serviceName)) {
+        throw new DependencyNotFulfilledException(this.serviceName, serviceName);
+      }
+    }
+  }
 
-    this.classFactory = services.classFactory || null;
-    /**
-     * @type {(TransitionFactory|null)}
-     */
+  getService(serviceName) {
+    if (!this.hasService(serviceName)) {
+      throw new UnknownServiceException(serviceName);
+    }
 
-    this.transitionFactory = services.transitionFactory || null;
+    return this.container[serviceName];
+  }
+
+}
+
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file AbstractBootableService.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class AbstractBootableService extends AbstractService {
+  boot() {
+    console.debug(`${this.serviceName} boot`);
+  }
+
+}
+
+/**
+ * @file PageBuilder.js
+ * @author Ambroise Maupate
+ * @author Adrien Scholaert
+ */
+/**
+ * PageBuilder.
+ */
+
+class PageBuilder extends AbstractBootableService {
+  constructor(container) {
+    super(container, 'PageBuilder', ['Dom']);
 
     if (!window.location.origin) {
       window.location.origin = window.location.protocol + '//' + window.location.host;
     }
     /**
-     * Base url
-     * @type {String}
-     */
-
-
-    this.baseUrl = window.location.origin;
-    /**
      * Page instance
      * @type {(AbstractPage|null)}
      */
 
-    this.page = null;
-    /**
-     * Dom instance
-     * @type {(Dom|null)}
-     */
 
-    this.dom = null; // Bind methods
+    this.page = null; // Bind methods
 
     this.buildPage = this.buildPage.bind(this);
   }
 
-  init() {
-    this.dom = new Dom({
-      wrapperId: this.options.ajaxWrapperId,
-      objectTypeAttr: this.options.objectTypeAttr,
-      pageClass: this.options.pageClass
-    }); // Init pjax when ajax is enabled and window.fetch is supported
+  boot() {
+    super.boot(); // Build first page with static context
 
-    if (this.pjax && window.fetch) {
-      if (this.cacheProvider) {
-        this.pjax.cacheProvider = this.cacheProvider;
-      }
-
-      if (this.worker) {
-        this.pjax.worker = this.worker;
-      }
-
-      if (this.transitionFactory) {
-        this.pjax.transitionFactory = this.transitionFactory;
-      }
-
-      this.pjax.kernel = this;
-      this.pjax.dom = this.dom;
-      this.pjax.init(); // Init prefetch
-
-      if (this.prefetch) {
-        this.prefetch.cacheProvider = this.cacheProvider;
-        this.prefetch.pjax = this.pjax;
-        this.prefetch.init();
-      }
-    } // Build first page with static context
-
-
-    this.buildPage(this.dom.getContainer(), 'static');
+    this.buildPage(this.getService('Dom').getContainer(), 'static');
   }
   /**
    * Build a new page instance.
@@ -552,19 +1016,262 @@ class Kernel {
    */
 
 
-  buildPage(container, context = 'ajax') {
-    if (!container) {
-      throw new Error(`Kernel: container not found! Did you use at least 
-            one dom element with ".${this.options.pageClass}" class and "data-node-type" attribute`);
-    } // Get page
+  buildPage(rootElement, context = 'ajax') {
+    let nodeTypeName = this.getService('Dom').getNodeType(rootElement);
+
+    if (this.hasService(nodeTypeName)) {
+      this.page = this.getService(nodeTypeName).instance();
+    } else {
+      nodeTypeName = 'AbstractPage';
+      this.page = this.getService('AbstractPage').instance();
+    } // Set some values
 
 
-    this.page = this.classFactory.getPageInstance(this, container, context, this.dom.getNodeType(container)); // Init page
-
+    this.page.type = nodeTypeName;
+    this.page.context = context;
+    this.page.id = rootElement.id;
+    this.page.rootElement = rootElement;
+    this.page.name = rootElement.hasAttribute('data-node-name') ? rootElement.getAttribute('data-node-name') : '';
+    this.page.metaTitle = rootElement.hasAttribute('data-meta-title') ? rootElement.getAttribute('data-meta-title') : '';
+    this.page.isHome = rootElement.getAttribute('data-is-home') === '1';
     this.page.init(); // Dispatch an event to inform that the new page is ready
 
     Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
     return this.page;
+  }
+
+}
+
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file AbstractBlockBuilder.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class AbstractBlockBuilder extends AbstractService {
+  /**
+   * Returns an `AbstractBlock` child class instance
+   * according to the nodeTypeName or an AbstractBlock as default.
+   *
+   * Comment out the default case if you don’t want a default block to be instantiated
+   * for each block.
+   *
+   * @param  {String} blockType
+   * @return {AbstractBlock|null}
+   */
+  async getBlockInstance(blockType) {
+    return null;
+  }
+
+}
+
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file BlockBuilder.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class BlockBuilder extends AbstractBlockBuilder {
+  constructor(container) {
+    super(container, 'BlockBuilder');
+  }
+  /**
+   * Returns an `AbstractBlock` child class instance
+   * according to the nodeTypeName or an AbstractBlock as default.
+   *
+   * Comment out the default case if you don’t want a default block to be instantiated
+   * for each block.
+   *
+   * @param  {String} blockType
+   * @return {AbstractBlock}
+   */
+
+
+  async getBlockInstance(blockType) {
+    if (this.hasService(blockType)) {
+      return this.getService(blockType);
+    }
+
+    return null;
+  }
+
+}
+
+/**
+ * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * Except as contained in this notice, the name of the ROADIZ shall not
+ * be used in advertising or otherwise to promote the sale, use or other dealings
+ * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
+ *
+ * @file Dom.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+/**
+ * Class that is going to deal with DOM parsing/manipulation.
+ */
+
+class Dom extends AbstractService {
+  /**
+   * Constructor.
+   *
+   * @param {object} container
+   */
+  constructor(container) {
+    super(container, 'Dom');
+    /**
+     * Full HTML String of the current page.
+     * By default is the innerHTML of the initial loaded page.
+     *
+     * Each time a new page is loaded, the value is the response of the ajax call.
+     *
+     * @type {String}
+     * @default
+     */
+
+    this.currentHTML = document.documentElement.innerHTML;
+  }
+  /**
+   * Parse the responseText obtained from the ajax call.
+   *
+   * @param  {String} responseText
+   * @return {HTMLElement}
+   */
+
+
+  parseResponse(responseText) {
+    this.currentHTML = responseText;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = responseText;
+    return this.getContainer(wrapper);
+  }
+  /**
+   * Get the main wrapper by the ID `wrapperId`.
+   *
+   * @return {HTMLElement} element
+   */
+
+
+  getWrapper() {
+    const wrapper = document.getElementById(this.getService('Config').wrapperId);
+
+    if (!wrapper) {
+      throw new Error('Starting Blocks: Wrapper not found!');
+    }
+
+    return wrapper;
+  }
+  /**
+   * Return node type.
+   *
+   * @param container
+   * @returns {string}
+   */
+
+
+  getNodeType(container) {
+    return container.getAttribute(this.getService('Config').objectTypeAttr);
+  }
+  /**
+   * Get the container on the current DOM,
+   * or from an HTMLElement passed via argument.
+   *
+   * @param  {HTMLElement|null} element
+   * @return {HTMLElement}
+   */
+
+
+  getContainer(element = null) {
+    if (!element) {
+      element = document.body;
+    }
+
+    if (!element) {
+      throw new Error('Starting Blocks: DOM not ready!');
+    }
+
+    const container = this.parseContainer(element);
+
+    if (!container) {
+      throw new Error(`Starting Blocks: container not found! Did you use at least
+            one dom element with ".${this.getService('Config').pageClass}" class and "data-node-type" attribute?`);
+    }
+
+    return container;
+  }
+  /**
+   * Put the container on the page.
+   *
+   * @param  {HTMLElement} element
+   */
+
+
+  putContainer(element) {
+    element.style.visibility = 'hidden';
+    const wrapper = this.getWrapper();
+    wrapper.appendChild(element);
+  }
+  /**
+   * Get container selector.
+   *
+   * @param  {HTMLElement} element
+   * @return {HTMLElement} element
+   */
+
+
+  parseContainer(element) {
+    return element.querySelector(`.${this.getService('Config').pageClass}[data-node-type]`);
+  }
+  /**
+   * Update body attributes.
+   *
+   * @param {AbstractPage} page
+   */
+
+
+  updateBodyAttributes(page) {
+    // Change body class and id
+    if (page.name) {
+      document.body.id = page.name;
+      document.body.classList.add(page.name);
+    }
+
+    document.body.classList.add(page.type);
+
+    if (page.isHome) {
+      document.body.setAttribute('data-is-home', '1');
+    } else {
+      document.body.setAttribute('data-is-home', '0');
+    }
+  }
+  /**
+   * Update page title.
+   *
+   * @param {AbstractPage} page
+   */
+
+
+  updatePageTitle(page) {
+    if (page.metaTitle) {
+      document.title = page.metaTitle;
+    }
   }
 
 }
@@ -868,72 +1575,856 @@ class Utils {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file History.js
+ * @file AbstractTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating transition.
+ *
+ * @abstract
+ */
+
+class AbstractTransition {
+  /**
+   * Constructor.
+   * Do not override this method.
+   *
+   * @constructor
+   */
+  constructor() {
+    /**
+     * @type {AbstractPage|null} old Page instance
+     */
+    this.oldPage = null;
+    /**
+     * @type {AbstractPage|null}
+     */
+
+    this.newPage = null;
+    /**
+     * @type {Promise|null}
+     */
+
+    this.newPageLoading = null;
+  }
+  /**
+   * Initialize transition.
+   * Do not override this method.
+   *
+   * @param {AbstractPage} oldPage
+   * @param {Promise} newPagePromise
+   * @returns {Promise}
+   */
+
+
+  init(oldPage, newPagePromise) {
+    this.oldPage = oldPage;
+    this._newPagePromise = newPagePromise;
+    this.deferred = Utils.deferred();
+    this.newPageReady = Utils.deferred();
+    this.newPageLoading = this.newPageReady.promise;
+    this.start();
+
+    this._newPagePromise.then(newPage => {
+      this.newPage = newPage;
+      this.newPageReady.resolve();
+    });
+
+    return this.deferred.promise;
+  }
+  /**
+   * Call this function when the Transition is finished.
+   */
+
+
+  done() {
+    this.oldPage.destroy();
+    this.newPage.rootElement.style.visibility = 'visible';
+    this.newPage.updateLazyload();
+    this.deferred.resolve();
+  }
+  /**
+   * Entry point to create a custom Transition.
+   * @abstract
+   */
+
+
+  start() {}
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file DefaultTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Default Transition. Show / Hide content.
+ *
+ * @extends {AbstractTransition}
+ */
+
+class DefaultTransition extends AbstractTransition {
+  start() {
+    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+  }
+
+  finish() {
+    document.body.scrollTop = 0;
+    this.done();
+  }
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file TransitionFactory.js
+ * @author Quentin Neyraud
  * @author Adrien Scholaert
  */
 
 /**
- * HistoryManager helps to keep track of the navigation.
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered.
  *
- * @type {Object}
+ * The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @see   http://davidwalsh.name/javascript-debounce-function
+ * @param {Function} func     [function to debounce]
+ * @param {Number} wait       [time to wait]
+ * @param {Boolean} immediate []
  */
-class History {
-  constructor() {
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function () {
+    let context = this;
+    let args = arguments;
+
+    let later = function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file AbstractBlock.js
+ * @author Ambroise Maupate
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating block implementations.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
+ */
+
+class AbstractBlock extends AbstractService {
+  /**
+   * Abstract block constructor.
+   *
+   * It‘s better to extend this class by using `init` method instead
+   * of extending `constructor`.
+   *
+   * @param  {Object} container
+   *
+   * @constructor
+   */
+  constructor(container) {
+    super(container);
     /**
-     * Keep track of the status in historic order.
+     * Node Type block name type
      *
-     * @readOnly
+     * @type {String|null}
+     */
+
+    this.type = null;
+    /**
+     * Current page instance
+     *
+     * @type {AbstractPage|null}
+     */
+
+    this.page = null;
+    /**
+     * Container
+     * Root container HTMLElement for current block.
+     *
+     * @type {HTMLElement|null}
+     */
+
+    this.rootElement = null;
+    /**
+     * Block id
+     *
+     * @type {String|null}
+     */
+
+    this.id = null;
+    /**
+     * Node name
+     *
+     * @type {String}
+     */
+
+    this.name = null; // Bind methods
+
+    this.onResize = this.onResize.bind(this);
+    this.onResizeDebounce = debounce(this.onResize, 50, false);
+  }
+  /**
+   * Basic members initialization for children classes.
+   * Do not search for page blocks here, use `onPageReady` method instead
+   *
+   * @abstract
+   */
+
+
+  init() {
+    console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+  }
+  /**
+   * Bind load and resize events for this specific block.
+   *
+   * Do not forget to call `super.initEvents();` while extending this method.
+   *
+   * @abstract
+   */
+
+
+  initEvents() {
+    window.addEventListener('resize', this.onResizeDebounce);
+  }
+  /**
+   * Destroy current block.
+   *
+   * Do not forget to call `super.destroy();` while extending this method.
+   */
+
+
+  destroy() {
+    console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+    this.destroyEvents();
+  }
+  /**
+   * Unbind event block events.
+   *
+   * Make sure you’ve used binded methods to be able to
+   * `off` them correctly.
+   *
+   * Do not forget to call `super.destroyEvents();` while extending this method.
+   *
+   * @abstract
+   */
+
+
+  destroyEvents() {
+    window.removeEventListener('resize', this.onResizeDebounce);
+  }
+  /**
+   * Called on window resize
+   *
+   * @abstract
+   */
+
+
+  onResize() {}
+  /**
+   * Called once all page blocks have been created.
+   *
+   * @abstract
+   */
+
+
+  onPageReady() {}
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file AbstractPage.js
+ * @author Ambroise Maupate
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating page implementations.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
+ */
+
+class AbstractPage extends AbstractService {
+  /**
+   * Base constructor for Pages.
+   * @constructor
+   */
+  constructor(container) {
+    super(container, 'AbstractPage');
+    /**
+     * Container element
+     *
+     * @type {HTMLElement}
+     */
+
+    this.rootElement = null;
+    /**
+     * Page id
+     *
+     * @type {String|null}
+     */
+
+    this.id = null;
+    /**
+     * Page context (static or ajax)
+     *
+     * @type {String|null}
+     */
+
+    this.context = null;
+    /**
+     * Page type
+     *
+     * @type {String|null}
+     */
+
+    this.type = null;
+    /**
+     * Is home ?
+     *
+     * @type {boolean}
+     */
+
+    this.isHome = null;
+    /**
+     * AbstractBlock collection.
+     *
+     * @type {Array<AbstractBlock>}
+     */
+
+    this.blocks = [];
+    /**
+     * Node name
+     *
+     * @type {String|null}
+     */
+
+    this.name = null;
+    /**
+     * Meta title
+     * @type {String|null}
+     */
+
+    this.metaTitle = null; // Bind methods
+
+    this.onResize = this.onResize.bind(this);
+    this.onResizeDebounce = debounce(this.onResize, 50, false);
+    this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false);
+    this.onLazyImageSet = this.onLazyImageSet.bind(this);
+    this.onLazyImageLoad = this.onLazyImageLoad.bind(this);
+    this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this);
+  }
+  /**
+   * Initialize page.
+   *
+   * You should always extends this method in your child implementations instead
+   * of extending page constructor.
+   */
+
+
+  async init() {
+    // Debug
+    console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
+    /**
+     * HTMLElement blocks collection.
+     *
      * @type {Array}
      */
-    this.history = [];
-  }
-  /**
-   * Add a new set of url and namespace.
-   *
-   * @param {String} url
-   * @param {String} transitionName
-   * @param {String} context (ajax, history)
-   * @param {Object} data (optional data)
-   *
-   * @return {Object}
-   */
+
+    this.blockElements = [...this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)];
+    /**
+     * @type {Number}
+     */
+
+    this.blockLength = this.blockElements.length;
+
+    if (this.blockLength) {
+      await this.initBlocks();
+    } // Context
 
 
-  add(url, transitionName, context, data = {}) {
-    const state = {
-      url,
-      transitionName,
-      context,
-      data
-    };
-    this.history.push(state);
-    return state;
-  }
-  /**
-   * Return information about the current status.
-   *
-   * @return {Object}
-   */
+    if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
+      this.initAjax();
+    } // Lazyload
 
 
-  currentStatus() {
-    return this.history[this.history.length - 1];
-  }
-  /**
-   * Return information about the previous status.
-   *
-   * @return {Object}
-   */
-
-
-  prevStatus() {
-    const history = this.history;
-
-    if (history.length < 2) {
-      return null;
+    if (this.getService('Config').lazyloadEnabled) {
+      this.initLazyload();
     }
 
-    return history[history.length - 2];
+    this.initEvents();
+  }
+  /**
+   * Destroy current page and all its blocks.
+   */
+
+
+  destroy() {
+    console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+    this.rootElement.parentNode.removeChild(this.rootElement);
+    this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
+
+    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
+      document.body.classList.remove(this.name);
+    } // Do not remove type class on body if destroyed page is the same as current one.
+
+
+    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
+      document.body.classList.remove(this.type);
+    } // Blocks
+
+
+    if (this.blocks !== null) {
+      for (let blockIndex in this.blocks) {
+        if (this.blocks.hasOwnProperty(blockIndex)) {
+          this.blocks[blockIndex].destroy();
+        }
+      }
+    } // Remove Lazyload instance and listeners
+    // if (this.lazyload !== null) {
+    //     this.lazyload.destroy()
+    //     this.lazyload = null
+    // }
+
+  }
+  /**
+   * Initialize basic events.
+   */
+
+
+  initEvents() {
+    window.addEventListener('resize', this.onResizeDebounce);
+    this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
+    this.domObserver.observe(this.rootElement, {
+      childList: true,
+      attributes: false,
+      characterData: false,
+      subtree: true
+    });
+  }
+  /**
+   * Destroy events
+   */
+
+
+  destroyEvents() {
+    window.removeEventListener('resize', this.onResizeDebounce);
+    this.domObserver.disconnect();
+  }
+  /**
+   * Init lazyload
+   *
+   * @private
+   */
+
+
+  initLazyload() {
+    this.beforeLazyload(); // this.lazyload = new Lazyload({
+    //     threshold: this.pageBuilder.options.lazyloadThreshold,
+    //     throttle: this.pageBuilder.options.lazyloadThrottle,
+    //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
+    //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
+    //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
+    //     callback_set: this.onLazyImageSet,
+    //     callback_load: this.onLazyImageLoad,
+    //     callback_processed: this.onLazyImageProcessed
+    // })
+  }
+
+  updateLazyload() {} // if (this.lazyload) {
+  //     this.lazyload.update()
+  // }
+
+  /**
+   * @param {Function} onShow
+   */
+
+
+  show(onShow) {
+    console.debug('▶️ #' + this.id);
+    this.rootElement.style.opacity = '1';
+    if (typeof onShow !== 'undefined') onShow();
+    this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
+    Dispatcher.commit(AFTER_PAGE_SHOW, this);
+  }
+  /**
+   * @param {Function} onHidden
+   */
+
+
+  hide(onHidden) {
+    Dispatcher.commit(BEFORE_PAGE_HIDE, this);
+    console.debug('◀️ #' + this.id);
+    this.rootElement.style.opacity = '0';
+    if (typeof onHidden !== 'undefined') onHidden();
+    Dispatcher.commit(AFTER_PAGE_HIDE, this);
+  }
+
+  initAjax() {
+    this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
+  }
+  /**
+   * Initialize page blocks on page.
+   */
+
+
+  async initBlocks() {
+    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+      /**
+       * New Block.
+       *
+       * @type {AbstractBlock}
+       */
+      let block = await this.initSingleBlock(this.blockElements[blockIndex]); // Prevent undefined blocks to be appended to block collection.
+
+      if (block) {
+        this.blocks.push(block);
+      }
+    } // Notify all blocks that page init is over.
+
+
+    for (let i = this.blocks.length - 1; i >= 0; i--) {
+      if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
+    }
+  }
+  /**
+   * Append new blocks which were not present at init.
+   */
+
+
+  async updateBlocks() {
+    console.debug('\t📯 Page DOM changed…'); // Update lazy load if init.
+
+    this.updateLazyload(); // Create new blocks
+
+    this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`);
+    this.blockLength = this.blockElements.length;
+
+    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+      let blockElement = this.blockElements[blockIndex];
+
+      if (!this.getBlockById(blockElement.id)) {
+        try {
+          let block = await this.initSingleBlock(this.blockElements[blockIndex]);
+
+          if (block) {
+            this.blocks.push(block);
+            block.onPageReady();
+          }
+        } catch (e) {
+          console.info(e.message);
+        }
+      }
+    }
+  }
+  /**
+   * @param {HTMLElement} blockElement
+   * @return {AbstractBlock}
+   */
+
+
+  async initSingleBlock(blockElement) {
+    let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
+    let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType);
+
+    if (!blockInstance) {
+      return null;
+    } // Set values
+
+
+    blockInstance.type = blockType;
+    blockInstance.page = this;
+    blockInstance.rootElement = blockElement;
+    blockInstance.id = blockElement.id;
+    blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
+
+    blockInstance.init();
+    blockInstance.initEvents();
+    return blockInstance;
+  }
+  /**
+   * Get a page block instance from its `id`.
+   *
+   * @param  {String} id
+   * @return {AbstractBlock|null}
+   */
+
+
+  getBlockById(id) {
+    const index = this.getBlockIndexById(id);
+
+    if (this.blocks[index]) {
+      return this.blocks[index];
+    }
+
+    return null;
+  }
+  /**
+   * Get a page block index from its `id`.
+   *
+   * @param  {String} id
+   * @return {*|null}
+   */
+
+
+  getBlockIndexById(id) {
+    for (let i in this.blocks) {
+      if (this.blocks.hasOwnProperty(i)) {
+        if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id === id) {
+          return i;
+        }
+      }
+    }
+
+    return null;
+  }
+  /**
+   * Get the first page block instance from its `type`.
+   *
+   * @param  {String} type
+   * @return {AbstractBlock|null}
+   */
+
+
+  getFirstBlockByType(type) {
+    const index = this.getFirstBlockIndexByType(type);
+
+    if (this.blocks[index]) {
+      return this.blocks[index];
+    }
+
+    return null;
+  }
+  /**
+   * Get the first page block index from its `type`.
+   *
+   * @param  {String} type
+   * @return {*|null}
+   */
+
+
+  getFirstBlockIndexByType(type) {
+    for (let i in this.blocks) {
+      if (this.blocks.hasOwnProperty(i)) {
+        if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type === type) {
+          return i;
+        }
+      }
+    }
+
+    return null;
+  }
+  /**
+   * @abstract
+   */
+
+
+  onResize() {}
+  /**
+   * Called before init lazyload images.
+   */
+
+
+  beforeLazyload() {}
+  /**
+   * After image src switched.
+   *
+   * @abstract
+   * @param {HTMLImageElement} element
+   */
+
+
+  onLazyImageSet(element) {
+    console.debug('\t🖼 «' + element.id + '» set');
+  }
+  /**
+   * After lazyload image loaded.
+   *
+   * @abstract
+   * @param {HTMLImageElement} element
+   */
+
+
+  onLazyImageLoad(element) {
+    console.debug('\t🖼 «' + element.id + '» load');
+  }
+  /**
+   * Before lazyload.
+   *
+   * @abstract
+   */
+
+
+  onLazyImageProcessed(index) {
+    console.debug('\t🖼 Lazy load processed');
+  }
+
+}
+
+/**
+ * @namespace
+ * @type {Object} defaults                      - Default config
+ * @property {String} defaults.wrapperId        - Id of the main wrapper
+ * @property {String} defaults.pageBlockClass
+ * @property {String} defaults.pageClass        - Class name used to identify the containers
+ * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
+ * @property {String} defaults.noAjaxLinkClass
+ * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+ * @const
+ * @default
+ */
+
+const CONFIG = {
+  defaults: {
+    wrapperId: 'sb-wrapper',
+    pageBlockClass: 'page-block',
+    pageClass: 'page-content',
+    objectTypeAttr: 'data-node-type',
+    noAjaxLinkClass: 'no-ajax-link',
+    noPrefetchClass: 'no-prefetch'
+  }
+};
+class StartingBlocks {
+  constructor(config = {}) {
+    this.bottle = new bottle();
+    this.bootables = [];
+    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
+    this.provider('Dom', Dom);
+    this.provider('BlockBuilder', BlockBuilder);
+    this.instanceFactory('AbstractPage', c => {
+      return new AbstractPage(c);
+    });
+    this.bootableProvider('PageBuilder', PageBuilder);
+  }
+
+  provider(id, ClassName, ...args) {
+    if (!id || !ClassName) {
+      throw new Error('A parameter is missing');
+    }
+
+    this.bottle.provider(id, function () {
+      this.$get = container => {
+        return new ClassName(container, ...args);
+      };
+    });
+  }
+
+  factory(id, f) {
+    this.bottle.factory(id, f);
+  }
+
+  instanceFactory(id, f) {
+    this.bottle.instanceFactory(id, f);
+  }
+
+  bootableProvider(id, ClassName, ...args) {
+    this.provider(id, ClassName, ...args);
+    this.bootables.push(id);
+  }
+
+  boot() {
+    for (const serviceName of this.bootables) {
+      if (this.bottle.container.hasOwnProperty(serviceName)) {
+        this.bottle.container[serviceName].boot();
+      }
+    }
   }
 
 }
@@ -966,55 +2457,9 @@ class History {
  * Pjax.
  */
 
-class Pjax {
-  /**
-   * Constructor.
-   *
-   * @param {Object} options
-   * @param {string} [options.noAjaxLinkClass=no-ajax-link] - The link class name to prevent ajax
-   */
-  constructor({
-    noAjaxLinkClass = 'no-ajax-link'
-  } = {}) {
-    /**
-     * @type {string}
-     */
-    this.noAjaxLinkClass = noAjaxLinkClass;
-    /**
-     * @type {(Kernel|null)}
-     */
-
-    this._kernel = null;
-    /**
-     * @type {(History|null)}
-     */
-
-    this._history = null;
-    /**
-     * @type {(Dom|null)}
-     */
-
-    this._dom = null;
-    /**
-     * @type {(CacheProvider|null)}
-     */
-
-    this._cacheProvider = null;
-    /**
-     * @type {(TransitionFactory|null)}
-     */
-
-    this._transitionFactory = null;
-    /**
-     * @type {(GraphicLoader|null)}
-     */
-
-    this._graphicLoader = null;
-    /**
-     * @type {(Worker|null)}
-     */
-
-    this._worker = null;
+class Pjax extends AbstractBootableService {
+  constructor(container) {
+    super(container, 'Pjax', ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']);
     /**
      * Indicate if there is an animation in progress.
      *
@@ -1029,34 +2474,6 @@ class Pjax {
     this.onLinkClick = this.onLinkClick.bind(this);
     this.onStateChange = this.onStateChange.bind(this);
   }
-
-  set kernel(value) {
-    this._kernel = value;
-  }
-
-  set history(value) {
-    this._history = value;
-  }
-
-  set dom(value) {
-    this._dom = value;
-  }
-
-  set cacheProvider(value) {
-    this._cacheProvider = value;
-  }
-
-  set graphicLoader(value) {
-    this._graphicLoader = value;
-  }
-
-  set worker(value) {
-    this._worker = value;
-  }
-
-  set transitionFactory(value) {
-    this._transitionFactory = value;
-  }
   /**
    * Init the events.
    *
@@ -1064,13 +2481,11 @@ class Pjax {
    */
 
 
-  init() {
-    this._history = new History();
-
-    const wrapper = this._dom.getWrapper();
-
+  boot() {
+    super.boot();
+    const wrapper = this.getService('Dom').getWrapper();
     wrapper.setAttribute('aria-live', 'polite');
-    this.currentState = this._history.add(this.getCurrentUrl(), null, 'static');
+    this.currentState = this.getService('History').add(this.getCurrentUrl(), null, 'static');
     this.bindEvents();
   }
   /**
@@ -1132,46 +2547,49 @@ class Pjax {
   load(url) {
     const deferred = Utils.deferred(); // Show loader
 
-    if (this._graphicLoader) {
-      this._graphicLoader.show();
+    if (this.hasService('GraphicLoader')) {
+      this.getService('GraphicLoader').show();
     } // Check cache
 
 
     let request = null;
 
-    if (this._cacheProvider) {
-      request = this._cacheProvider.get(url);
+    if (this.hasService('CacheProvider')) {
+      request = this.getService('CacheProvider').get(url);
     } // If no cache, make request
 
 
     if (!request) {
-      request = Utils.request(url, this._worker); // If cache provider, cache the request
+      let serviceWorker = null;
 
-      if (this._cacheProvider) {
-        this._cacheProvider.set(url, request);
+      if (this.hasService('Worker')) {
+        serviceWorker = this.getService('Worker');
+      }
+
+      request = Utils.request(url, serviceWorker); // If cache provider, cache the request
+
+      if (this.hasService('CacheProvider')) {
+        this.getService('CacheProvider').set(url, request);
       }
     } // When data are loaded
 
 
     request.then(data => {
-      const container = this._dom.parseResponse(data); // Dispatch an event
-
+      const container = this.getService('Dom').parseResponse(data); // Dispatch an event
 
       Dispatcher.commit(AFTER_PAGE_LOAD, {
         container,
-        currentHTML: this._dom.currentHTML
+        currentHTML: this.getService('Dom').currentHTML
       }); // Add new container to the DOM
 
-      this._dom.putContainer(container); // Dispatch an event
-
+      this.getService('Dom').putContainer(container); // Dispatch an event
 
       Dispatcher.commit(AFTER_DOM_APPENDED, {
         container,
-        currentHTML: this._dom.currentHTML
+        currentHTML: this.getService('Dom').currentHTML
       }); // Build page
 
-      const page = this._kernel.buildPage(container);
-
+      const page = this.getService('PageBuilder').buildPage(container);
       deferred.resolve(page);
     }).catch(err => {
       console.error(err);
@@ -1300,7 +2718,7 @@ class Pjax {
       return false;
     }
 
-    return !element.classList.contains(this.noAjaxLinkClass);
+    return !element.classList.contains(this.getService('Config').noAjaxLinkClass);
   }
   /**
    * Return a transition object.
@@ -1312,7 +2730,7 @@ class Pjax {
 
 
   getTransition(prev, current) {
-    return this._transitionFactory.getTransition(prev, current);
+    return this.getService('TransitionFactory').getTransition(prev, current);
   }
   /**
    * Method called after a 'popstate' or from .goTo().
@@ -1328,36 +2746,36 @@ class Pjax {
       this.forceGoTo(newUrl);
     }
 
-    if (this._history.currentStatus().url === newUrl) {
+    if (this.getService('History').currentStatus().url === newUrl) {
       return false;
     } // If transition name is a string, a link have been click
     // Otherwise back/forward buttons have been pressed
 
 
     if (typeof transitionName === 'string' || isAjax) {
-      this.currentState = this._history.add(newUrl, transitionName, 'ajax');
+      this.currentState = this.getService('History').add(newUrl, transitionName, 'ajax');
     } else {
-      this.currentState = this._history.add(newUrl, null, '_history');
+      this.currentState = this.getService('History').add(newUrl, null, '_history');
     } // Dispatch an event to inform that the page is being load
 
 
     Dispatcher.commit(BEFORE_PAGE_LOAD, {
-      currentStatus: this._history.currentStatus(),
-      prevStatus: this._history.prevStatus()
+      currentStatus: this.getService('History').currentStatus(),
+      prevStatus: this.getService('History').prevStatus()
     }); // Load the page with the new url (promise is return)
 
     const newPagePromise = this.load(newUrl); // Get the page transition instance (from prev and current state)
 
-    const transition = this.getTransition(this._history.prevStatus(), this._history.currentStatus());
+    const transition = this.getTransition(this.getService('History').prevStatus(), this.getService('History').currentStatus());
     this.transitionProgress = true; // Dispatch an event that the transition is started
 
     Dispatcher.commit(TRANSITION_START, {
       transition: transition,
-      currentStatus: this._history.currentStatus(),
-      prevStatus: this._history.prevStatus()
+      currentStatus: this.getService('History').currentStatus(),
+      prevStatus: this.getService('History').prevStatus()
     }); // Start the transition (with the current page, and the new page load promise)
 
-    const transitionPromise = transition.init(this._kernel.page, newPagePromise);
+    const transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise);
     newPagePromise.then(this.onNewPageLoaded);
     transitionPromise.then(this.onTransitionEnd);
   }
@@ -1370,18 +2788,16 @@ class Pjax {
 
 
   onNewPageLoaded(page) {
-    const currentStatus = this._history.currentStatus();
+    const currentStatus = this.getService('History').currentStatus();
 
-    if (this._graphicLoader) {
-      this._graphicLoader.hide();
+    if (this.hasService('GraphicLoader')) {
+      this.getService('GraphicLoader').hide();
     } // Update body attributes (class, id, data-attributes
 
 
-    this._dom.updateBodyAttributes(page); // Update the page title
+    this.getService('Dom').updateBodyAttributes(page); // Update the page title
 
-
-    this._dom.updatePageTitle(page); // Send google analytic data
-
+    this.getService('Dom').updatePageTitle(page); // Send google analytic data
 
     Utils.trackGoogleAnalytics(); // Update the current state
 
@@ -1393,8 +2809,8 @@ class Pjax {
 
     Dispatcher.commit(CONTAINER_READY, {
       currentStatus,
-      prevStatus: this._history.prevStatus(),
-      currentHTML: this._dom.currentHTML,
+      prevStatus: this.getService('History').prevStatus(),
+      currentHTML: this.getService('Dom').currentHTML,
       page
     });
   }
@@ -1415,9 +2831,102 @@ class Pjax {
     }
 
     Dispatcher.commit(TRANSITION_COMPLETE, {
-      currentStatus: this._history.currentStatus(),
-      prevStatus: this._history.prevStatus()
+      currentStatus: this.getService('History').currentStatus(),
+      prevStatus: this.getService('History').prevStatus()
     });
+  }
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file History.js
+ * @author Adrien Scholaert
+ */
+/**
+ * HistoryManager helps to keep track of the navigation.
+ *
+ * @type {Object}
+ */
+
+class History extends AbstractService {
+  constructor(container) {
+    super(container, 'History');
+    /**
+     * Keep track of the status in historic order.
+     *
+     * @readOnly
+     * @type {Array}
+     */
+
+    this.history = [];
+  }
+  /**
+   * Add a new set of url and namespace.
+   *
+   * @param {String} url
+   * @param {String} transitionName
+   * @param {String} context (ajax, history)
+   * @param {Object} data (optional data)
+   *
+   * @return {Object}
+   */
+
+
+  add(url, transitionName, context, data = {}) {
+    const state = {
+      url,
+      transitionName,
+      context,
+      data
+    };
+    this.history.push(state);
+    return state;
+  }
+  /**
+   * Return information about the current status.
+   *
+   * @return {Object}
+   */
+
+
+  currentStatus() {
+    return this.history[this.history.length - 1];
+  }
+  /**
+   * Return information about the previous status.
+   *
+   * @return {Object}
+   */
+
+
+  prevStatus() {
+    const history = this.history;
+
+    if (history.length < 2) {
+      return null;
+    }
+
+    return history[history.length - 2];
   }
 
 }
@@ -1452,47 +2961,14 @@ class Pjax {
  * @type {Object}
  */
 
-class Prefetch {
-  constructor({
-    noPrefetchClass = 'no-prefetch'
-  } = {}) {
-    /**
-     * Class name used to ignore prefetch on links.
-     *
-     * @type {string}
-     * @default
-     */
-    this.noPrefetchClass = noPrefetchClass;
-    /**
-     * @type {(Worker|null)}
-     */
-
-    this._worker = null;
-    /**
-     * @type {(Pjax|null)}
-     */
-
-    this._pjax = null;
-    /**
-     * @type {(CacheProvider|null)}
-     */
-
-    this._cacheProvider = null;
+class Prefetch extends AbstractBootableService {
+  constructor(container) {
+    super(container, 'Prefetch', ['Pjax', 'Config']);
   }
 
-  set worker(value) {
-    this._worker = value;
-  }
+  boot() {
+    super.boot();
 
-  set pjax(value) {
-    this._pjax = value;
-  }
-
-  set cacheProvider(value) {
-    this._cacheProvider = value;
-  }
-
-  init() {
     if (!window.history.pushState) {
       return false;
     }
@@ -1504,22 +2980,31 @@ class Prefetch {
   onLinkEnter(evt) {
     let el = evt.target;
 
-    while (el && !this._pjax.getHref(el)) {
+    while (el && !this.getService('Pjax').getHref(el)) {
       el = el.parentNode;
     }
 
-    if (!el || el.classList.contains(this.noPrefetchClass)) {
+    if (!el || el.classList.contains(this.getService('Config').noPrefetchClass)) {
       return;
     }
 
-    let url = this._pjax.getHref(el); // Check if the link is eligible for Pjax
+    let url = this.getService('Pjax').getHref(el); // Check if the link is eligible for Pjax
 
+    if (this.getService('Pjax').preventCheck(evt, el)) {
+      if (this.hasService('CacheProvider') && this.getService('CacheProvider').get(url)) {
+        return;
+      }
 
-    if (this._pjax.preventCheck(evt, el) && this._cacheProvider && !this._cacheProvider.get(url)) {
-      let xhr = Utils.request(url, this._worker);
+      let serviceWorker = null;
 
-      if (this._cacheProvider) {
-        this._cacheProvider.set(url, xhr);
+      if (this.hasService('Worker')) {
+        serviceWorker = this.getService('Worker');
+      }
+
+      let xhr = Utils.request(url, serviceWorker);
+
+      if (this.hasService('CacheProvider')) {
+        this.getService('CacheProvider').set(url, xhr);
       }
     }
   }
@@ -1541,7 +3026,7 @@ class Prefetch {
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL
  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
@@ -1551,14 +3036,15 @@ class Prefetch {
  * @author Ambroise Maupate
  * @author Adrien Scholaert
  */
-
 /**
  * Cache provider class.
  *
  * This class stores Ajax response in memory.
  */
-class CacheProvider {
-  constructor() {
+
+class CacheProvider extends AbstractService {
+  constructor(container) {
+    super(container, 'CacheProvider');
     this.data = {};
   }
   /**
@@ -1662,811 +3148,6 @@ class GraphicLoader {
 
   hide() {
     console.debug('🌀 Hide loader');
-  }
-
-}
-
-/**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered.
- *
- * The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
- *
- * @see   http://davidwalsh.name/javascript-debounce-function
- * @param {Function} func     [function to debounce]
- * @param {Number} wait       [time to wait]
- * @param {Boolean} immediate []
- */
-function debounce(func, wait, immediate) {
-  let timeout;
-  return function () {
-    let context = this;
-    let args = arguments;
-
-    let later = function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractBlock.js
- * @author Ambroise Maupate
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating block implementations.
- *
- * **Do not instanciate this class directly, create a sub-class**.
- *
- * @abstract
- */
-
-class AbstractBlock {
-  /**
-   * Abstract block constructor.
-   *
-   * It‘s better to extend this class by using `init` method instead
-   * of extending `constructor`.
-   *
-   * @param  {AbstractPage} page
-   * @param  {HTMLElement} container
-   * @param  {String} type
-   *
-   * @constructor
-   */
-  constructor(page, container, type) {
-    type = type || 'block';
-    /**
-     * Current page instance
-     *
-     * @type {AbstractPage}
-     */
-
-    this.page = page;
-    /**
-     * Container
-     * Root container HTMLElement for current block.
-     *
-     * @type {HTMLElement}
-     */
-
-    this.container = container;
-    /**
-     * Block id
-     *
-     * @type {String}
-     */
-
-    this.id = this.container.id;
-    /**
-     * Block type
-     *
-     * @type {String}
-     */
-
-    this.type = type;
-    /**
-     * Node name
-     *
-     * @type {String}
-     */
-
-    this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : ''; // Binded methods
-
-    this.onResize = this.onResize.bind(this);
-    this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
-
-    console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
-  }
-  /**
-   * Basic members initialization for children classes.
-   * Do not search for page blocks here, use `onPageReady` method instead
-   *
-   * @abstract
-   */
-
-
-  init() {}
-  /**
-   * Bind load and resize events for this specific block.
-   *
-   * Do not forget to call `super.initEvents();` while extending this method.
-   *
-   * @abstract
-   */
-
-
-  initEvents() {
-    window.addEventListener('resize', this.onResizeDebounce);
-  }
-  /**
-   * Destroy current block.
-   *
-   * Do not forget to call `super.destroy();` while extending this method.
-   */
-
-
-  destroy() {
-    console.debug('\t🗑 #' + this.id);
-    this.destroyEvents();
-  }
-  /**
-   * Unbind event block events.
-   *
-   * Make sure you’ve used binded methods to be able to
-   * `off` them correctly.
-   *
-   * Do not forget to call `super.destroyEvents();` while extending this method.
-   *
-   * @abstract
-   */
-
-
-  destroyEvents() {
-    window.removeEventListener('resize', this.onResizeDebounce);
-  }
-  /**
-   * Called on window resize
-   *
-   * @abstract
-   */
-
-
-  onResize() {}
-  /**
-   * Called once all page blocks have been created.
-   *
-   * @abstract
-   */
-
-
-  onPageReady() {}
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractPage.js
- * @author Ambroise Maupate
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating page implementations.
- *
- * **Do not instanciate this class directly, create a sub-class**.
- *
- * @abstract
- */
-
-class AbstractPage {
-  /**
-   * Base constructor for Pages.
-   *
-   * Do not override this method, override `init` method instead.
-   *
-   * @param  {Kernel}  kernel
-   * @param  {HTMLElement}  container
-   * @param  {String}  context
-   * @param  {String}  type
-   *
-   * @constructor
-   */
-  constructor(kernel, container, context, type) {
-    type = type || 'page';
-
-    if (!container) {
-      throw new Error('AbstractPage need a container (HTMLElement) to be defined.');
-    }
-
-    if (!kernel) {
-      throw new Error('AbstractPage need a Kernel instance to be defined.');
-    }
-    /**
-     * Kernel
-     *
-     * @type {Kernel}
-     */
-
-
-    this.kernel = kernel;
-    /**
-     * Container element
-     *
-     * @type {HTMLElement}
-     */
-
-    this.container = container;
-
-    if (!this.container) {
-      throw new Error(`AbstractPage: container not found!`);
-    }
-    /**
-     * Page id
-     *
-     * @type {String}
-     */
-
-
-    this.id = this.container.id;
-
-    if (!this.id) {
-      throw new Error(`AbstractPage: container have no id!`);
-    }
-    /**
-     * Page context (static or ajax)
-     *
-     * @type {String}
-     */
-
-
-    this.context = context;
-    /**
-     * Page type
-     *
-     * @type {String}
-     */
-
-    this.type = type;
-    /**
-     * Is home ?
-     *
-     * @type {boolean}
-     */
-
-    this.isHome = this.container.getAttribute('data-is-home') === '1';
-    /**
-     * Lazyload instance
-     *
-     * @type {Lazyload|null}
-     */
-
-    this.lazyload = null;
-    /**
-     * AbstractBlock collection.
-     *
-     * @type {Array<AbstractBlock>}
-     */
-
-    this.blocks = [];
-    /**
-     * Node name
-     *
-     * @type {String}
-     */
-
-    this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : '';
-    this.metaTitle = this.container.hasAttribute('data-meta-title') ? this.container.getAttribute('data-meta-title') : ''; // Binded methods
-
-    this.onResize = this.onResize.bind(this);
-    this.onResizeDebounce = debounce(this.onResize, 50, false);
-    this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false);
-    this.onLazyImageSet = this.onLazyImageSet.bind(this);
-    this.onLazyImageLoad = this.onLazyImageLoad.bind(this);
-    this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this); // Debug
-
-    console.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey');
-  }
-  /**
-   * Initialize page.
-   *
-   * You should always extends this method in your child implementations instead
-   * of extending page constructor.
-   */
-
-
-  async init() {
-    /**
-     * HTMLElement blocks collection.
-     *
-     * @type {Array}
-     */
-    this.blockElements = [...this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`)];
-    /**
-     * @type {Number}
-     */
-
-    this.blockLength = this.blockElements.length;
-
-    if (this.blockLength) {
-      await this.initBlocks();
-    } // Context
-
-
-    if (this.kernel.options.ajaxEnabled && this.context === 'ajax') {
-      this.initAjax();
-    } // Lazyload
-
-
-    if (this.kernel.options.lazyloadEnabled) {
-      this.initLazyload();
-    }
-
-    this.initEvents();
-  }
-  /**
-   * Destroy current page and all its blocks.
-   */
-
-
-  destroy() {
-    console.debug('🗑 #' + this.id);
-    this.container.parentNode.removeChild(this.container);
-    this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
-
-    if (this.kernel.page !== null && this.kernel.page.name !== this.name) {
-      document.body.classList.remove(this.name);
-    } // Do not remove type class on body if destroyed page is the same as current one.
-
-
-    if (this.kernel.page !== null && this.kernel.page.type !== this.type) {
-      document.body.classList.remove(this.type);
-    } // Blocks
-
-
-    if (this.blocks !== null) {
-      for (let blockIndex in this.blocks) {
-        if (this.blocks.hasOwnProperty(blockIndex)) {
-          this.blocks[blockIndex].destroy();
-        }
-      }
-    } // Remove Lazyload instance and listeners
-
-
-    if (this.lazyload !== null) {
-      this.lazyload.destroy();
-      this.lazyload = null;
-    }
-  }
-  /**
-   * Initialize basic events.
-   */
-
-
-  initEvents() {
-    window.addEventListener('resize', this.onResizeDebounce);
-    this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
-    this.domObserver.observe(this.container, {
-      childList: true,
-      attributes: false,
-      characterData: false,
-      subtree: true
-    });
-  }
-  /**
-   * Destroy events
-   */
-
-
-  destroyEvents() {
-    window.removeEventListener('resize', this.onResizeDebounce);
-    this.domObserver.disconnect();
-  }
-  /**
-   * Init lazyload
-   *
-   * @private
-   */
-
-
-  initLazyload() {
-    this.beforeLazyload(); // this.lazyload = new Lazyload({
-    //     threshold: this.kernel.options.lazyloadThreshold,
-    //     throttle: this.kernel.options.lazyloadThrottle,
-    //     elements_selector: '.' + this.kernel.options.lazyloadClass,
-    //     data_src: this.kernel.options.lazyloadSrcAttr.replace('data-', ''),
-    //     data_srcset: this.kernel.options.lazyloadSrcSetAttr.replace('data-', ''),
-    //     callback_set: this.onLazyImageSet,
-    //     callback_load: this.onLazyImageLoad,
-    //     callback_processed: this.onLazyImageProcessed
-    // })
-  }
-
-  updateLazyload() {
-    if (this.lazyload) {
-      this.lazyload.update();
-    }
-  }
-  /**
-   * @param {Function} onShow
-   */
-
-
-  show(onShow) {
-    console.debug('▶️ #' + this.id);
-    this.container.style.opacity = '1';
-    if (typeof onShow !== 'undefined') onShow();
-    this.container.classList.remove(this.kernel.options.pageClass + '-transitioning');
-    Dispatcher.commit(AFTER_PAGE_SHOW, this);
-  }
-  /**
-   * @param {Function} onHidden
-   */
-
-
-  hide(onHidden) {
-    Dispatcher.commit(BEFORE_PAGE_HIDE, this);
-    console.debug('◀️ #' + this.id);
-    this.container.style.opacity = '0';
-    if (typeof onHidden !== 'undefined') onHidden();
-    Dispatcher.commit(AFTER_PAGE_HIDE, this);
-  }
-
-  initAjax() {
-    this.container.classList.add(this.kernel.options.pageClass + '-transitioning');
-  }
-  /**
-   * Initialize page blocks on page.
-   */
-
-
-  async initBlocks() {
-    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-      /**
-       * New Block.
-       *
-       * @type {AbstractBlock}
-       */
-      let block = await this.initSingleBlock(this.blockElements[blockIndex]); // Prevent undefined blocks to be appended to block collection.
-
-      this.blocks.push(block);
-    } // Notify all blocks that page init is over.
-
-
-    for (let i = this.blocks.length - 1; i >= 0; i--) {
-      if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
-    }
-  }
-  /**
-   * Append new blocks which were not present at init.
-   */
-
-
-  async updateBlocks() {
-    console.debug('\t📯 Page DOM changed…'); // Update lazy load if init.
-
-    this.updateLazyload(); // Create new blocks
-
-    this.blockElements = this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`);
-    this.blockLength = this.blockElements.length;
-
-    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-      let blockElement = this.blockElements[blockIndex];
-
-      if (!this.getBlockById(blockElement.id)) {
-        try {
-          let block = await this.initSingleBlock(this.blockElements[blockIndex]);
-          this.blocks.push(block);
-          block.onPageReady();
-        } catch (e) {
-          console.info(e.message);
-        }
-      }
-    }
-  }
-  /**
-   * @param {HTMLElement} blockElement
-   * @return {AbstractBlock}
-   */
-
-
-  async initSingleBlock(blockElement) {
-    let type = blockElement.getAttribute(this.kernel.options.objectTypeAttr);
-    let blockInstance = await this.kernel.classFactory.getBlockInstance(this, blockElement, type);
-
-    if (!blockInstance) {
-      return new AbstractBlock(this, blockElement, type);
-    }
-
-    blockInstance.init();
-    blockInstance.initEvents();
-    return blockInstance;
-  }
-  /**
-   * Get a page block instance from its `id`.
-   *
-   * @param  {String} id
-   * @return {AbstractBlock|null}
-   */
-
-
-  getBlockById(id) {
-    const index = this.getBlockIndexById(id);
-
-    if (this.blocks[index]) {
-      return this.blocks[index];
-    }
-
-    return null;
-  }
-  /**
-   * Get a page block index from its `id`.
-   *
-   * @param  {String} id
-   * @return {*|null}
-   */
-
-
-  getBlockIndexById(id) {
-    for (let i in this.blocks) {
-      if (this.blocks.hasOwnProperty(i)) {
-        if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id === id) {
-          return i;
-        }
-      }
-    }
-
-    return null;
-  }
-  /**
-   * Get the first page block instance from its `type`.
-   *
-   * @param  {String} type
-   * @return {AbstractBlock|null}
-   */
-
-
-  getFirstBlockByType(type) {
-    const index = this.getFirstBlockIndexByType(type);
-
-    if (this.blocks[index]) {
-      return this.blocks[index];
-    }
-
-    return null;
-  }
-  /**
-   * Get the first page block index from its `type`.
-   *
-   * @param  {String} type
-   * @return {*|null}
-   */
-
-
-  getFirstBlockIndexByType(type) {
-    for (let i in this.blocks) {
-      if (this.blocks.hasOwnProperty(i)) {
-        if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type === type) {
-          return i;
-        }
-      }
-    }
-
-    return null;
-  }
-  /**
-   * @abstract
-   */
-
-
-  onResize() {}
-  /**
-   * Called before init lazyload images.
-   */
-
-
-  beforeLazyload() {}
-  /**
-   * After image src switched.
-   *
-   * @abstract
-   * @param {HTMLImageElement} element
-   */
-
-
-  onLazyImageSet(element) {
-    console.debug('\t🖼 «' + element.id + '» set');
-  }
-  /**
-   * After lazyload image loaded.
-   *
-   * @abstract
-   * @param {HTMLImageElement} element
-   */
-
-
-  onLazyImageLoad(element) {
-    console.debug('\t🖼 «' + element.id + '» load');
-  }
-  /**
-   * Before lazyload.
-   *
-   * @abstract
-   */
-
-
-  onLazyImageProcessed(index) {
-    console.debug('\t🖼 Lazy load processed');
-  }
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating transition.
- *
- * @abstract
- */
-
-class AbstractTransition {
-  /**
-   * Constructor.
-   * Do not override this method.
-   *
-   * @constructor
-   */
-  constructor() {
-    /**
-     * @type {AbstractPage} old Page instance
-     */
-    this.oldPage = undefined;
-    /**
-     * @type {AbstractPage}
-     */
-
-    this.newPage = undefined;
-    /**
-     * @type {Promise}
-     */
-
-    this.newPageLoading = undefined;
-  }
-  /**
-   * Initialize transition.
-   * Do not override this method.
-   *
-   * @param {AbstractPage} oldPage
-   * @param {Promise} newPagePromise
-   * @returns {Promise}
-   */
-
-
-  init(oldPage, newPagePromise) {
-    this.oldPage = oldPage;
-    this._newPagePromise = newPagePromise;
-    this.deferred = Utils.deferred();
-    this.newPageReady = Utils.deferred();
-    this.newPageLoading = this.newPageReady.promise;
-    this.start();
-
-    this._newPagePromise.then(newPage => {
-      this.newPage = newPage;
-      this.newPageReady.resolve();
-    });
-
-    return this.deferred.promise;
-  }
-  /**
-   * Call this function when the Transition is finished.
-   */
-
-
-  done() {
-    this.oldPage.destroy();
-    this.newPage.container.style.visibility = 'visible';
-    this.newPage.updateLazyload();
-    this.deferred.resolve();
-  }
-  /**
-   * Entry point to create a custom Transition.
-   * @abstract
-   */
-
-
-  start() {}
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-/**
- * Default Transition. Show / Hide content.
- *
- * @extends {AbstractTransition}
- */
-
-class DefaultTransition extends AbstractTransition {
-  start() {
-    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-  }
-
-  finish() {
-    document.body.scrollTop = 0;
-    this.done();
   }
 
 }
@@ -2828,4 +3509,5 @@ class BootstrapMedia {
 
 }
 
-export { EventTypes, Kernel, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };
+export default StartingBlocks;
+export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };

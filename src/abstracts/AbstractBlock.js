@@ -25,6 +25,7 @@
  */
 
 import debounce from '../utils/debounce'
+import AbstractService from './AbstractService'
 
 /**
  * Base class for creating block implementations.
@@ -33,64 +34,59 @@ import debounce from '../utils/debounce'
  *
  * @abstract
  */
-export default class AbstractBlock {
+export default class AbstractBlock extends AbstractService {
     /**
      * Abstract block constructor.
      *
      * It‘s better to extend this class by using `init` method instead
      * of extending `constructor`.
      *
-     * @param  {AbstractPage} page
-     * @param  {HTMLElement} container
-     * @param  {String} type
+     * @param  {Object} container
      *
      * @constructor
      */
-    constructor (page, container, type) {
-        type = type || 'block'
+    constructor (container) {
+        super(container)
+
+        /**
+         * Node Type block name type
+         *
+         * @type {String|null}
+         */
+        this.type = null
 
         /**
          * Current page instance
          *
-         * @type {AbstractPage}
+         * @type {AbstractPage|null}
          */
-        this.page = page
+        this.page = null
 
         /**
          * Container
          * Root container HTMLElement for current block.
          *
-         * @type {HTMLElement}
+         * @type {HTMLElement|null}
          */
-        this.container = container
+        this.rootElement = null
 
         /**
          * Block id
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.id = this.container.id
-
-        /**
-         * Block type
-         *
-         * @type {String}
-         */
-        this.type = type
+        this.id = null
 
         /**
          * Node name
          *
          * @type {String}
          */
-        this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : ''
+        this.name = null
 
-        // Binded methods
+        // Bind methods
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
-
-        // Debugs
-        console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
     }
 
     /**
@@ -99,7 +95,9 @@ export default class AbstractBlock {
      *
      * @abstract
      */
-    init () {}
+    init () {
+        console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+    }
 
     /**
      * Bind load and resize events for this specific block.
@@ -118,7 +116,7 @@ export default class AbstractBlock {
      * Do not forget to call `super.destroy();` while extending this method.
      */
     destroy () {
-        console.debug('\t🗑 #' + this.id)
+        console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
         this.destroyEvents()
     }
 

@@ -33,6 +33,7 @@ import {
     BEFORE_PAGE_HIDE,
     AFTER_PAGE_HIDE
 } from '../types/EventTypes'
+import AbstractService from './AbstractService'
 
 /**
  * Base class for creating page implementations.
@@ -41,86 +42,48 @@ import {
  *
  * @abstract
  */
-export default class AbstractPage {
+export default class AbstractPage extends AbstractService {
     /**
      * Base constructor for Pages.
-     *
-     * Do not override this method, override `init` method instead.
-     *
-     * @param  {Kernel}  kernel
-     * @param  {HTMLElement}  container
-     * @param  {String}  context
-     * @param  {String}  type
-     *
      * @constructor
      */
-    constructor (kernel, container, context, type) {
-        type = type || 'page'
-
-        if (!container) {
-            throw new Error('AbstractPage need a container (HTMLElement) to be defined.')
-        }
-
-        if (!kernel) {
-            throw new Error('AbstractPage need a Kernel instance to be defined.')
-        }
-
-        /**
-         * Kernel
-         *
-         * @type {Kernel}
-         */
-        this.kernel = kernel
+    constructor (container) {
+        super(container, 'AbstractPage')
 
         /**
          * Container element
          *
          * @type {HTMLElement}
          */
-        this.container = container
-
-        if (!this.container) {
-            throw new Error(`AbstractPage: container not found!`)
-        }
+        this.rootElement = null
 
         /**
          * Page id
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.id = this.container.id
-
-        if (!this.id) {
-            throw new Error(`AbstractPage: container have no id!`)
-        }
+        this.id = null
 
         /**
          * Page context (static or ajax)
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.context = context
+        this.context = null
 
         /**
          * Page type
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.type = type
+        this.type = null
 
         /**
          * Is home ?
          *
          * @type {boolean}
          */
-        this.isHome = this.container.getAttribute('data-is-home') === '1'
-
-        /**
-         * Lazyload instance
-         *
-         * @type {Lazyload|null}
-         */
-        this.lazyload = null
+        this.isHome = null
 
         /**
          * AbstractBlock collection.
@@ -132,21 +95,23 @@ export default class AbstractPage {
         /**
          * Node name
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : ''
-        this.metaTitle = this.container.hasAttribute('data-meta-title') ? this.container.getAttribute('data-meta-title') : ''
+        this.name = null
 
-        // Binded methods
+        /**
+         * Meta title
+         * @type {String|null}
+         */
+        this.metaTitle = null
+
+        // Bind methods
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
         this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
         this.onLazyImageSet = this.onLazyImageSet.bind(this)
         this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
         this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
-
-        // Debug
-        console.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey')
     }
 
     /**
@@ -156,12 +121,15 @@ export default class AbstractPage {
      * of extending page constructor.
      */
     async init () {
+        // Debug
+        console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey')
+
         /**
          * HTMLElement blocks collection.
          *
          * @type {Array}
          */
-        this.blockElements = [...this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`)]
+        this.blockElements = [...this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)]
 
         /**
          * @type {Number}
@@ -173,12 +141,12 @@ export default class AbstractPage {
         }
 
         // Context
-        if (this.kernel.options.ajaxEnabled && this.context === 'ajax') {
+        if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
             this.initAjax()
         }
 
         // Lazyload
-        if (this.kernel.options.lazyloadEnabled) {
+        if (this.getService('Config').lazyloadEnabled) {
             this.initLazyload()
         }
 
@@ -189,17 +157,17 @@ export default class AbstractPage {
      * Destroy current page and all its blocks.
      */
     destroy () {
-        console.debug('🗑 #' + this.id)
-        this.container.parentNode.removeChild(this.container)
+        console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+        this.rootElement.parentNode.removeChild(this.rootElement)
         this.destroyEvents()
 
         // Do not remove name class on body if destroyed page is the same as current one.
-        if (this.kernel.page !== null && this.kernel.page.name !== this.name) {
+        if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
             document.body.classList.remove(this.name)
         }
 
         // Do not remove type class on body if destroyed page is the same as current one.
-        if (this.kernel.page !== null && this.kernel.page.type !== this.type) {
+        if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
             document.body.classList.remove(this.type)
         }
 
@@ -213,10 +181,10 @@ export default class AbstractPage {
         }
 
         // Remove Lazyload instance and listeners
-        if (this.lazyload !== null) {
-            this.lazyload.destroy()
-            this.lazyload = null
-        }
+        // if (this.lazyload !== null) {
+        //     this.lazyload.destroy()
+        //     this.lazyload = null
+        // }
     }
 
     /**
@@ -226,7 +194,7 @@ export default class AbstractPage {
         window.addEventListener('resize', this.onResizeDebounce)
 
         this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks)
-        this.domObserver.observe(this.container, {
+        this.domObserver.observe(this.rootElement, {
             childList: true,
             attributes: false,
             characterData: false,
@@ -250,11 +218,11 @@ export default class AbstractPage {
     initLazyload () {
         this.beforeLazyload()
         // this.lazyload = new Lazyload({
-        //     threshold: this.kernel.options.lazyloadThreshold,
-        //     throttle: this.kernel.options.lazyloadThrottle,
-        //     elements_selector: '.' + this.kernel.options.lazyloadClass,
-        //     data_src: this.kernel.options.lazyloadSrcAttr.replace('data-', ''),
-        //     data_srcset: this.kernel.options.lazyloadSrcSetAttr.replace('data-', ''),
+        //     threshold: this.pageBuilder.options.lazyloadThreshold,
+        //     throttle: this.pageBuilder.options.lazyloadThrottle,
+        //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
+        //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
+        //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
         //     callback_set: this.onLazyImageSet,
         //     callback_load: this.onLazyImageLoad,
         //     callback_processed: this.onLazyImageProcessed
@@ -262,9 +230,9 @@ export default class AbstractPage {
     }
 
     updateLazyload () {
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
+        // if (this.lazyload) {
+        //     this.lazyload.update()
+        // }
     }
 
     /**
@@ -272,9 +240,9 @@ export default class AbstractPage {
      */
     show (onShow) {
         console.debug('▶️ #' + this.id)
-        this.container.style.opacity = '1'
+        this.rootElement.style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
-        this.container.classList.remove(this.kernel.options.pageClass + '-transitioning')
+        this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning')
         Dispatcher.commit(AFTER_PAGE_SHOW, this)
     }
 
@@ -284,13 +252,13 @@ export default class AbstractPage {
     hide (onHidden) {
         Dispatcher.commit(BEFORE_PAGE_HIDE, this)
         console.debug('◀️ #' + this.id)
-        this.container.style.opacity = '0'
+        this.rootElement.style.opacity = '0'
         if (typeof onHidden !== 'undefined') onHidden()
         Dispatcher.commit(AFTER_PAGE_HIDE, this)
     }
 
     initAjax () {
-        this.container.classList.add(this.kernel.options.pageClass + '-transitioning')
+        this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning')
     }
 
     /**
@@ -306,7 +274,9 @@ export default class AbstractPage {
             let block = await this.initSingleBlock(this.blockElements[blockIndex])
 
             // Prevent undefined blocks to be appended to block collection.
-            this.blocks.push(block)
+            if (block) {
+                this.blocks.push(block)
+            }
         }
 
         // Notify all blocks that page init is over.
@@ -325,7 +295,7 @@ export default class AbstractPage {
         this.updateLazyload()
 
         // Create new blocks
-        this.blockElements = this.container.querySelectorAll(`.${this.kernel.options.pageBlockClass}`)
+        this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)
         this.blockLength = this.blockElements.length
 
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
@@ -334,8 +304,11 @@ export default class AbstractPage {
             if (!this.getBlockById(blockElement.id)) {
                 try {
                     let block = await this.initSingleBlock(this.blockElements[blockIndex])
-                    this.blocks.push(block)
-                    block.onPageReady()
+
+                    if (block) {
+                        this.blocks.push(block)
+                        block.onPageReady()
+                    }
                 } catch (e) {
                     console.info(e.message)
                 }
@@ -348,13 +321,21 @@ export default class AbstractPage {
      * @return {AbstractBlock}
      */
     async initSingleBlock (blockElement) {
-        let type = blockElement.getAttribute(this.kernel.options.objectTypeAttr)
-        let blockInstance = await this.kernel.classFactory.getBlockInstance(this, blockElement, type)
+        let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr)
+        let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType)
 
         if (!blockInstance) {
-            return new AbstractBlock(this, blockElement, type)
+            return null
         }
 
+        // Set values
+        blockInstance.type = blockType
+        blockInstance.page = this
+        blockInstance.rootElement = blockElement
+        blockInstance.id = blockElement.id
+        blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''
+
+        // Init everything
         blockInstance.init()
         blockInstance.initEvents()
 

@@ -38,7 +38,7 @@ export default class DefaultPage extends AbstractPage {
         /**
          * @type {HTMLElement}
          */
-        this.duplicateButtonElement = this.container.querySelectorAll('a.duplicate-last')[0]
+        this.duplicateButtonElement = this.rootElement.querySelectorAll('a.duplicate-last')[0]
 
         // Binded methods
         this.onButtonClick = this.onButtonClick.bind(this)
@@ -64,7 +64,7 @@ export default class DefaultPage extends AbstractPage {
         e.preventDefault()
         let newBlockElement = this.blockElements[this.blockElements.length - 1].cloneNode(true)
         newBlockElement.setAttribute('id', `block-${this.blockElements.length + 1}`)
-        this.container.appendChild(newBlockElement)
+        this.rootElement.appendChild(newBlockElement)
         return false
     }
 

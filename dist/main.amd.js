@@ -27,20 +27,20 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 	/**
-	 * Before Kernel initialize XHR request to load new page.
+	 * Before initialize XHR request to load new page.
 	 *
 	 * @type {String}
 	 */
 	var BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD';
 	/**
-	 * After Kernel XHR request succeeded.
+	 * After XHR request succeeded.
 	 *
 	 * @type {String}
 	 */
 
 	var AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD';
 	/**
-	 * After Kernel appended new page DOM to page-container.
+	 * After Dom service appended new page DOM to page-container.
 	 *
 	 * @type {String}
 	 */
@@ -54,7 +54,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	var CONTAINER_READY = 'SB_CONTAINER_READY';
 	/**
-	 * After Kernel create new page instance.
+	 * After PageBuilder create new page instance.
 	 *
 	 * @type {String}
 	 */
@@ -119,6 +119,8 @@ define(['exports'], function (exports) { 'use strict';
 		TRANSITION_COMPLETE: TRANSITION_COMPLETE
 	});
 
+	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
@@ -137,6 +139,47 @@ define(['exports'], function (exports) { 'use strict';
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
+
+	var _library = false;
+
+	var _shared = createCommonjsModule(function (module) {
+	var SHARED = '__core-js_shared__';
+	var store = _global[SHARED] || (_global[SHARED] = {});
+
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: _core.version,
+	  mode: 'global',
+	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+	});
+	});
+
+	var id = 0;
+	var px = Math.random();
+	var _uid = function (key) {
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+	};
+
+	var _wks = createCommonjsModule(function (module) {
+	var store = _shared('wks');
+
+	var Symbol = _global.Symbol;
+	var USE_SYMBOL = typeof Symbol == 'function';
+
+	var $exports = module.exports = function (name) {
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+	};
+
+	$exports.store = store;
+	});
+
+	var f = _wks;
+
+	var _wksExt = {
+		f: f
+	};
 
 	var _isObject = function (it) {
 	  return typeof it === 'object' ? it !== null : typeof it === 'function';
@@ -186,7 +229,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	var dP = Object.defineProperty;
 
-	var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+	var f$1 = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
 	  _anObject(O);
 	  P = _toPrimitive(P, true);
 	  _anObject(Attributes);
@@ -199,7 +242,20 @@ define(['exports'], function (exports) { 'use strict';
 	};
 
 	var _objectDp = {
-		f: f
+		f: f$1
+	};
+
+	var defineProperty = _objectDp.f;
+	var _wksDefine = function (name) {
+	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: _wksExt.f(name) });
+	};
+
+	_wksDefine('asyncIterator');
+
+	var hasOwnProperty = {}.hasOwnProperty;
+	var _has = function (it, key) {
+	  return hasOwnProperty.call(it, key);
 	};
 
 	var _propertyDesc = function (bitmap, value) {
@@ -216,17 +272,6 @@ define(['exports'], function (exports) { 'use strict';
 	} : function (object, key, value) {
 	  object[key] = value;
 	  return object;
-	};
-
-	var hasOwnProperty = {}.hasOwnProperty;
-	var _has = function (it, key) {
-	  return hasOwnProperty.call(it, key);
-	};
-
-	var id = 0;
-	var px = Math.random();
-	var _uid = function (key) {
-	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 	};
 
 	var _redefine = createCommonjsModule(function (module) {
@@ -325,644 +370,73 @@ define(['exports'], function (exports) { 'use strict';
 	$export.R = 128; // real proto method for `library`
 	var _export = $export;
 
-	// fast apply, http://jsperf.lnkit.com/fast-apply/5
-	var _invoke = function (fn, args, that) {
-	  var un = that === undefined;
-	  switch (args.length) {
-	    case 0: return un ? fn()
-	                      : fn.call(that);
-	    case 1: return un ? fn(args[0])
-	                      : fn.call(that, args[0]);
-	    case 2: return un ? fn(args[0], args[1])
-	                      : fn.call(that, args[0], args[1]);
-	    case 3: return un ? fn(args[0], args[1], args[2])
-	                      : fn.call(that, args[0], args[1], args[2]);
-	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
-	                      : fn.call(that, args[0], args[1], args[2], args[3]);
-	  } return fn.apply(that, args);
+	var _meta = createCommonjsModule(function (module) {
+	var META = _uid('meta');
+
+
+	var setDesc = _objectDp.f;
+	var id = 0;
+	var isExtensible = Object.isExtensible || function () {
+	  return true;
 	};
-
-	var arraySlice = [].slice;
-	var factories = {};
-
-	var construct = function (F, len, args) {
-	  if (!(len in factories)) {
-	    for (var n = [], i = 0; i < len; i++) n[i] = 'a[' + i + ']';
-	    // eslint-disable-next-line no-new-func
-	    factories[len] = Function('F,a', 'return new F(' + n.join(',') + ')');
-	  } return factories[len](F, args);
-	};
-
-	var _bind = Function.bind || function bind(that /* , ...args */) {
-	  var fn = _aFunction(this);
-	  var partArgs = arraySlice.call(arguments, 1);
-	  var bound = function (/* args... */) {
-	    var args = partArgs.concat(arraySlice.call(arguments));
-	    return this instanceof bound ? construct(fn, args.length, args) : _invoke(fn, args, that);
-	  };
-	  if (_isObject(fn.prototype)) bound.prototype = fn.prototype;
-	  return bound;
-	};
-
-	// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
-
-
-	_export(_export.P, 'Function', { bind: _bind });
-
-	function _defineProperty(obj, key, value) {
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-
-	  return obj;
-	}
-
-	var defineProperty = _defineProperty;
-
-	function _objectSpread(target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i] != null ? arguments[i] : {};
-	    var ownKeys = Object.keys(source);
-
-	    if (typeof Object.getOwnPropertySymbols === 'function') {
-	      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-	        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-	      }));
-	    }
-
-	    ownKeys.forEach(function (key) {
-	      defineProperty(target, key, source[key]);
-	    });
-	  }
-
-	  return target;
-	}
-
-	var objectSpread = _objectSpread;
-
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-
-	var classCallCheck = _classCallCheck;
-
-	function _defineProperties(target, props) {
-	  for (var i = 0; i < props.length; i++) {
-	    var descriptor = props[i];
-	    descriptor.enumerable = descriptor.enumerable || false;
-	    descriptor.configurable = true;
-	    if ("value" in descriptor) descriptor.writable = true;
-	    Object.defineProperty(target, descriptor.key, descriptor);
-	  }
-	}
-
-	function _createClass(Constructor, protoProps, staticProps) {
-	  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-	  if (staticProps) _defineProperties(Constructor, staticProps);
-	  return Constructor;
-	}
-
-	var createClass = _createClass;
-
-	var dP$1 = _objectDp.f;
-	var FProto = Function.prototype;
-	var nameRE = /^\s*function ([^ (]*)/;
-	var NAME = 'name';
-
-	// 19.2.4.2 name
-	NAME in FProto || _descriptors && dP$1(FProto, NAME, {
-	  configurable: true,
-	  get: function () {
-	    try {
-	      return ('' + this).match(nameRE)[1];
-	    } catch (e) {
-	      return '';
-	    }
-	  }
+	var FREEZE = !_fails(function () {
+	  return isExtensible(Object.preventExtensions({}));
 	});
-
-	/**
-	 * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * Except as contained in this notice, the name of the ROADIZ shall not
-	 * be used in advertising or otherwise to promote the sale, use or other dealings
-	 * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
-	 *
-	 * @file Dom.js
-	 * @author Adrien Scholaert <adrien@rezo-zero.com>
-	 */
-
-	/**
-	 * Class that is going to deal with DOM parsing/manipulation.
-	 */
-	var Dom =
-	/*#__PURE__*/
-	function () {
-	  /**
-	   * Constructor.
-	   *
-	   * @params options
-	   * @param {String} [options.wrapperId=sb-wrapper']
-	   * @param {String} [options.objectTypeAttr=data-node-type']
-	   * @param {String} [options.pageClass=page-content]
-	   */
-	  function Dom() {
-	    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	        _ref$wrapperId = _ref.wrapperId,
-	        wrapperId = _ref$wrapperId === void 0 ? 'sb-wrapper' : _ref$wrapperId,
-	        _ref$objectTypeAttr = _ref.objectTypeAttr,
-	        objectTypeAttr = _ref$objectTypeAttr === void 0 ? 'data-node-type' : _ref$objectTypeAttr,
-	        _ref$pageClass = _ref.pageClass,
-	        pageClass = _ref$pageClass === void 0 ? 'page-content' : _ref$pageClass;
-
-	    classCallCheck(this, Dom);
-
-	    /**
-	     * Id of the main wrapper
-	     *
-	     * @type {String}
-	     * @default
-	     */
-	    this.wrapperId = wrapperId;
-	    /**
-	     * The data attribute name to find the node type
-	     *
-	     * @type {string}
-	     * @default
-	     */
-
-	    this.objectTypeAttr = objectTypeAttr;
-	    /**
-	     * Class name used to identify the containers
-	     *
-	     * @type {String}
-	     * @default
-	     */
-
-	    this.pageClass = pageClass;
-	    /**
-	     * Full HTML String of the current page.
-	     * By default is the innerHTML of the initial loaded page.
-	     *
-	     * Each time a new page is loaded, the value is the response of the ajax call.
-	     *
-	     * @type {String}
-	     * @default
-	     */
-
-	    this.currentHTML = document.documentElement.innerHTML;
-	  }
-	  /**
-	   * Parse the responseText obtained from the ajax call.
-	   *
-	   * @param  {String} responseText
-	   * @return {HTMLElement}
-	   */
-
-
-	  createClass(Dom, [{
-	    key: "parseResponse",
-	    value: function parseResponse(responseText) {
-	      this.currentHTML = responseText;
-	      var wrapper = document.createElement('div');
-	      wrapper.innerHTML = responseText;
-	      return this.getContainer(wrapper);
-	    }
-	    /**
-	     * Get the main wrapper by the ID `wrapperId`.
-	     *
-	     * @return {HTMLElement} element
-	     */
-
-	  }, {
-	    key: "getWrapper",
-	    value: function getWrapper() {
-	      var wrapper = document.getElementById(this.wrapperId);
-
-	      if (!wrapper) {
-	        throw new Error('Starting Blocks: Wrapper not found!');
-	      }
-
-	      return wrapper;
-	    }
-	    /**
-	     * Return node type.
-	     *
-	     * @param container
-	     * @returns {string}
-	     */
-
-	  }, {
-	    key: "getNodeType",
-	    value: function getNodeType(container) {
-	      return container.getAttribute(this.objectTypeAttr);
-	    }
-	    /**
-	     * Get the container on the current DOM,
-	     * or from an HTMLElement passed via argument.
-	     *
-	     * @param  {HTMLElement|null} element
-	     * @return {HTMLElement}
-	     */
-
-	  }, {
-	    key: "getContainer",
-	    value: function getContainer() {
-	      var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-	      if (!element) {
-	        element = document.body;
-	      }
-
-	      if (!element) {
-	        throw new Error('Starting Blocks: DOM not ready!');
-	      }
-
-	      var container = this.parseContainer(element);
-
-	      if (!container) {
-	        throw new Error("Starting Blocks: container not found! Did you use at least\n            one dom element with \".".concat(this.pageClass, "\" class and \"data-node-type\" attribute?"));
-	      }
-
-	      return container;
-	    }
-	    /**
-	     * Put the container on the page.
-	     *
-	     * @param  {HTMLElement} element
-	     */
-
-	  }, {
-	    key: "putContainer",
-	    value: function putContainer(element) {
-	      element.style.visibility = 'hidden';
-	      var wrapper = this.getWrapper();
-	      wrapper.appendChild(element);
-	    }
-	    /**
-	     * Get container selector.
-	     *
-	     * @param  {HTMLElement} element
-	     * @return {HTMLElement} element
-	     */
-
-	  }, {
-	    key: "parseContainer",
-	    value: function parseContainer(element) {
-	      return element.querySelector(".".concat(this.pageClass, "[data-node-type]"));
-	    }
-	    /**
-	     * Update body attributes.
-	     *
-	     * @param {AbstractPage} page
-	     */
-
-	  }, {
-	    key: "updateBodyAttributes",
-	    value: function updateBodyAttributes(page) {
-	      // Change body class and id
-	      if (page.name) {
-	        document.body.id = page.name;
-	        document.body.classList.add(page.name);
-	      }
-
-	      document.body.classList.add(page.type);
-
-	      if (page.isHome) {
-	        document.body.setAttribute('data-is-home', '1');
-	      } else {
-	        document.body.setAttribute('data-is-home', '0');
-	      }
-	    }
-	    /**
-	     * Update page title.
-	     *
-	     * @param {AbstractPage} page
-	     */
-
-	  }, {
-	    key: "updatePageTitle",
-	    value: function updatePageTitle(page) {
-	      if (page.metaTitle) {
-	        document.title = page.metaTitle;
-	      }
-	    }
-	  }]);
-
-	  return Dom;
-	}();
-
-	/**
-	 * Copyright © 2016, Ambroise Maupate
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * @file Events.js
-	 * @author Ambroise Maupate
-	 */
-
-	/**
-	 * Event dispatcher.
-	 */
-	var Dispatcher =
-	/*#__PURE__*/
-	function () {
-	  function Dispatcher() {
-	    classCallCheck(this, Dispatcher);
-	  }
-
-	  createClass(Dispatcher, null, [{
-	    key: "commit",
-	    value: function commit(eventType, detail) {
-	      var event = new window.CustomEvent(eventType, {
-	        detail: detail
-	      });
-	      console.debug('🚩 Dispatched ' + eventType);
-	      window.dispatchEvent(event);
-	    }
-	  }]);
-
-	  return Dispatcher;
-	}();
-
-	var DEFAULT_OPTIONS = {
-	  pageClass: 'page-content',
-	  pageBlockClass: 'page-block',
-	  objectTypeAttr: 'data-node-type',
-	  ajaxWrapperId: 'sb-wrapper',
-	  noAjaxLinkClass: 'no-ajax-link',
-	  noPrefetchLinkClass: 'no-prefetch'
-	  /**
-	   * Application kernel.
-	   */
-
+	var setMeta = function (it) {
+	  setDesc(it, META, { value: {
+	    i: 'O' + ++id, // object ID
+	    w: {}          // weak collections IDs
+	  } });
 	};
-
-	var Kernel =
-	/*#__PURE__*/
-	function () {
-	  /**
-	   * Create a new Kernel.
-	   *
-	   * @param {Object} services
-	   * @param {Pjax|null} [services.pjax]
-	   * @param {CacheProvider|null} [services.cacheProvider]
-	   * @param {Prefetch|null} [services.prefetch]
-	   * @param {Lazyload|null} [services.lazyload]
-	   * @param {Worker|null} [services.worker]
-	   * @param {GraphicLoader|null} [services.graphicLoader]
-	   * @param {ClassFactory|null} [services.classFactory]
-	   * @param {TransitionFactory|null} [services.transitionFactory]
-	   *
-	   * @param {Object} options
-	   * @param {string} [options.pageClass=page-content] - The class name of the root page node
-	   * @param {string} [options.pageBlockClass=page-block] - The class name to detect blocks
-	   * @param {string} [options.objectTypeAttr=data-node-type]
-	   * @param {string} [options.ajaxWrapperId=sb-wrapper]
-	   */
-	  function Kernel() {
-	    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	        _ref$services = _ref.services,
-	        services = _ref$services === void 0 ? {} : _ref$services,
-	        _ref$options = _ref.options,
-	        options = _ref$options === void 0 ? {} : _ref$options;
-
-	    classCallCheck(this, Kernel);
-
-	    /**
-	     * @type {Object}
-	     */
-	    this.options = objectSpread({}, DEFAULT_OPTIONS, options);
-	    /**
-	     * @type {(Pjax|null)}
-	     */
-
-	    this.pjax = services.pjax || null;
-	    /**
-	     * @type {(CacheProvider|null)}
-	     */
-
-	    this.cacheProvider = services.cacheProvider || null;
-	    /**
-	     * @type {(Prefetch|null)}
-	     */
-
-	    this.prefetch = services.prefetch || null;
-	    /**
-	     * @type {(Lazyload|null)}
-	     */
-
-	    this.lazyload = services.lazyload || null;
-	    /**
-	     * @type {(Worker|null)}
-	     */
-
-	    this.worker = services.worker || null;
-	    /**
-	     * @type {(GraphicLoader|null)}
-	     */
-
-	    this.graphicLoader = services.graphicLoader || null;
-	    /**
-	     * @type {(ClassFactory|null)}
-	     */
-
-	    this.classFactory = services.classFactory || null;
-	    /**
-	     * @type {(TransitionFactory|null)}
-	     */
-
-	    this.transitionFactory = services.transitionFactory || null;
-
-	    if (!window.location.origin) {
-	      window.location.origin = window.location.protocol + '//' + window.location.host;
-	    }
-	    /**
-	     * Base url
-	     * @type {String}
-	     */
-
-
-	    this.baseUrl = window.location.origin;
-	    /**
-	     * Page instance
-	     * @type {(AbstractPage|null)}
-	     */
-
-	    this.page = null;
-	    /**
-	     * Dom instance
-	     * @type {(Dom|null)}
-	     */
-
-	    this.dom = null; // Bind methods
-
-	    this.buildPage = this.buildPage.bind(this);
-	  }
-
-	  createClass(Kernel, [{
-	    key: "init",
-	    value: function init() {
-	      this.dom = new Dom({
-	        wrapperId: this.options.ajaxWrapperId,
-	        objectTypeAttr: this.options.objectTypeAttr,
-	        pageClass: this.options.pageClass
-	      }); // Init pjax when ajax is enabled and window.fetch is supported
-
-	      if (this.pjax && window.fetch) {
-	        if (this.cacheProvider) {
-	          this.pjax.cacheProvider = this.cacheProvider;
-	        }
-
-	        if (this.worker) {
-	          this.pjax.worker = this.worker;
-	        }
-
-	        if (this.transitionFactory) {
-	          this.pjax.transitionFactory = this.transitionFactory;
-	        }
-
-	        this.pjax.kernel = this;
-	        this.pjax.dom = this.dom;
-	        this.pjax.init(); // Init prefetch
-
-	        if (this.prefetch) {
-	          this.prefetch.cacheProvider = this.cacheProvider;
-	          this.prefetch.pjax = this.pjax;
-	          this.prefetch.init();
-	        }
-	      } // Build first page with static context
-
-
-	      this.buildPage(this.dom.getContainer(), 'static');
-	    }
-	    /**
-	     * Build a new page instance.
-	     *
-	     * @param {HTMLElement} container
-	     * @param {String} context
-	     * @returns {AbstractPage|null}
-	     */
-
-	  }, {
-	    key: "buildPage",
-	    value: function buildPage(container) {
-	      var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ajax';
-
-	      if (!container) {
-	        throw new Error("Kernel: container not found! Did you use at least \n            one dom element with \".".concat(this.options.pageClass, "\" class and \"data-node-type\" attribute"));
-	      } // Get page
-
-
-	      this.page = this.classFactory.getPageInstance(this, container, context, this.dom.getNodeType(container)); // Init page
-
-	      this.page.init(); // Dispatch an event to inform that the new page is ready
-
-	      Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
-	      return this.page;
-	    }
-	  }]);
-
-	  return Kernel;
-	}();
-
-	// 7.2.1 RequireObjectCoercible(argument)
-	var _defined = function (it) {
-	  if (it == undefined) throw TypeError("Can't call method on  " + it);
+	var fastKey = function (it, create) {
+	  // return primitive with prefix
+	  if (!_isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+	  if (!_has(it, META)) {
+	    // can't set metadata to uncaught frozen object
+	    if (!isExtensible(it)) return 'F';
+	    // not necessary to add metadata
+	    if (!create) return 'E';
+	    // add missing metadata
+	    setMeta(it);
+	  // return object ID
+	  } return it[META].i;
+	};
+	var getWeak = function (it, create) {
+	  if (!_has(it, META)) {
+	    // can't set metadata to uncaught frozen object
+	    if (!isExtensible(it)) return true;
+	    // not necessary to add metadata
+	    if (!create) return false;
+	    // add missing metadata
+	    setMeta(it);
+	  // return hash weak collections IDs
+	  } return it[META].w;
+	};
+	// add metadata on freeze-family methods calling
+	var onFreeze = function (it) {
+	  if (FREEZE && meta.NEED && isExtensible(it) && !_has(it, META)) setMeta(it);
 	  return it;
 	};
-
-	var _library = false;
-
-	var _shared = createCommonjsModule(function (module) {
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-
-	(module.exports = function (key, value) {
-	  return store[key] || (store[key] = value !== undefined ? value : {});
-	})('versions', []).push({
-	  version: _core.version,
-	  mode: 'global',
-	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-	});
-	});
-
-	var _wks = createCommonjsModule(function (module) {
-	var store = _shared('wks');
-
-	var Symbol = _global.Symbol;
-	var USE_SYMBOL = typeof Symbol == 'function';
-
-	var $exports = module.exports = function (name) {
-	  return store[name] || (store[name] =
-	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+	var meta = module.exports = {
+	  KEY: META,
+	  NEED: false,
+	  fastKey: fastKey,
+	  getWeak: getWeak,
+	  onFreeze: onFreeze
 	};
-
-	$exports.store = store;
 	});
+	var _meta_1 = _meta.KEY;
+	var _meta_2 = _meta.NEED;
+	var _meta_3 = _meta.fastKey;
+	var _meta_4 = _meta.getWeak;
+	var _meta_5 = _meta.onFreeze;
 
-	var _fixReWks = function (KEY, length, exec) {
-	  var SYMBOL = _wks(KEY);
-	  var fns = exec(_defined, SYMBOL, ''[KEY]);
-	  var strfn = fns[0];
-	  var rxfn = fns[1];
-	  if (_fails(function () {
-	    var O = {};
-	    O[SYMBOL] = function () { return 7; };
-	    return ''[KEY](O) != 7;
-	  })) {
-	    _redefine(String.prototype, KEY, strfn);
-	    _hide(RegExp.prototype, SYMBOL, length == 2
-	      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
-	      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
-	      ? function (string, arg) { return rxfn.call(string, this, arg); }
-	      // 21.2.5.6 RegExp.prototype[@@match](string)
-	      // 21.2.5.9 RegExp.prototype[@@search](string)
-	      : function (string) { return rxfn.call(string, this); }
-	    );
-	  }
+	var def = _objectDp.f;
+
+	var TAG = _wks('toStringTag');
+
+	var _setToStringTag = function (it, tag, stat) {
+	  if (it && !_has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 	};
 
 	var toString = {}.toString;
@@ -971,138 +445,24 @@ define(['exports'], function (exports) { 'use strict';
 	  return toString.call(it).slice(8, -1);
 	};
 
-	// 7.2.8 IsRegExp(argument)
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
 
-
-	var MATCH = _wks('match');
-	var _isRegexp = function (it) {
-	  var isRegExp;
-	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	// eslint-disable-next-line no-prototype-builtins
+	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+	  return _cof(it) == 'String' ? it.split('') : Object(it);
 	};
 
-	// @@split logic
-	_fixReWks('split', 2, function (defined, SPLIT, $split) {
-	  var isRegExp = _isRegexp;
-	  var _split = $split;
-	  var $push = [].push;
-	  var $SPLIT = 'split';
-	  var LENGTH = 'length';
-	  var LAST_INDEX = 'lastIndex';
-	  if (
-	    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
-	    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
-	    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
-	    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
-	    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
-	    ''[$SPLIT](/.?/)[LENGTH]
-	  ) {
-	    var NPCG = /()??/.exec('')[1] === undefined; // nonparticipating capturing group
-	    // based on es5-shim implementation, need to rework it
-	    $split = function (separator, limit) {
-	      var string = String(this);
-	      if (separator === undefined && limit === 0) return [];
-	      // If `separator` is not a regex, use native split
-	      if (!isRegExp(separator)) return _split.call(string, separator, limit);
-	      var output = [];
-	      var flags = (separator.ignoreCase ? 'i' : '') +
-	                  (separator.multiline ? 'm' : '') +
-	                  (separator.unicode ? 'u' : '') +
-	                  (separator.sticky ? 'y' : '');
-	      var lastLastIndex = 0;
-	      var splitLimit = limit === undefined ? 4294967295 : limit >>> 0;
-	      // Make `global` and avoid `lastIndex` issues by working with a copy
-	      var separatorCopy = new RegExp(separator.source, flags + 'g');
-	      var separator2, match, lastIndex, lastLength, i;
-	      // Doesn't need flags gy, but they don't hurt
-	      if (!NPCG) separator2 = new RegExp('^' + separatorCopy.source + '$(?!\\s)', flags);
-	      while (match = separatorCopy.exec(string)) {
-	        // `separatorCopy.lastIndex` is not reliable cross-browser
-	        lastIndex = match.index + match[0][LENGTH];
-	        if (lastIndex > lastLastIndex) {
-	          output.push(string.slice(lastLastIndex, match.index));
-	          // Fix browsers whose `exec` methods don't consistently return `undefined` for NPCG
-	          // eslint-disable-next-line no-loop-func
-	          if (!NPCG && match[LENGTH] > 1) match[0].replace(separator2, function () {
-	            for (i = 1; i < arguments[LENGTH] - 2; i++) if (arguments[i] === undefined) match[i] = undefined;
-	          });
-	          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
-	          lastLength = match[0][LENGTH];
-	          lastLastIndex = lastIndex;
-	          if (output[LENGTH] >= splitLimit) break;
-	        }
-	        if (separatorCopy[LAST_INDEX] === match.index) separatorCopy[LAST_INDEX]++; // Avoid an infinite loop
-	      }
-	      if (lastLastIndex === string[LENGTH]) {
-	        if (lastLength || !separatorCopy.test('')) output.push('');
-	      } else output.push(string.slice(lastLastIndex));
-	      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
-	    };
-	  // Chakra, V8
-	  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
-	    $split = function (separator, limit) {
-	      return separator === undefined && limit === 0 ? [] : _split.call(this, separator, limit);
-	    };
-	  }
-	  // 21.1.3.17 String.prototype.split(separator, limit)
-	  return [function split(separator, limit) {
-	    var O = defined(this);
-	    var fn = separator == undefined ? undefined : separator[SPLIT];
-	    return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
-	  }, $split];
-	});
-
-	// getting tag from 19.1.3.6 Object.prototype.toString()
-
-	var TAG = _wks('toStringTag');
-	// ES3 wrong here
-	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
-
-	// fallback for IE11 Script Access Denied error
-	var tryGet = function (it, key) {
-	  try {
-	    return it[key];
-	  } catch (e) { /* empty */ }
+	// 7.2.1 RequireObjectCoercible(argument)
+	var _defined = function (it) {
+	  if (it == undefined) throw TypeError("Can't call method on  " + it);
+	  return it;
 	};
 
-	var _classof = function (it) {
-	  var O, T, B;
-	  return it === undefined ? 'Undefined' : it === null ? 'Null'
-	    // @@toStringTag case
-	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
-	    // builtinTag case
-	    : ARG ? _cof(O)
-	    // ES3 arguments fallback
-	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
-	};
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
 
-	var _anInstance = function (it, Constructor, name, forbiddenField) {
-	  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
-	    throw TypeError(name + ': incorrect invocation!');
-	  } return it;
-	};
 
-	// call something on iterator step with safe closing on error
-
-	var _iterCall = function (iterator, fn, value, entries) {
-	  try {
-	    return entries ? fn(_anObject(value)[0], value[1]) : fn(value);
-	  // 7.4.6 IteratorClose(iterator, completion)
-	  } catch (e) {
-	    var ret = iterator['return'];
-	    if (ret !== undefined) _anObject(ret.call(iterator));
-	    throw e;
-	  }
-	};
-
-	var _iterators = {};
-
-	// check on default Array iterator
-
-	var ITERATOR = _wks('iterator');
-	var ArrayProto = Array.prototype;
-
-	var _isArrayIter = function (it) {
-	  return it !== undefined && (_iterators.Array === it || ArrayProto[ITERATOR] === it);
+	var _toIobject = function (it) {
+	  return _iobject(_defined(it));
 	};
 
 	// 7.1.4 ToInteger
@@ -1117,631 +477,6 @@ define(['exports'], function (exports) { 'use strict';
 	var min = Math.min;
 	var _toLength = function (it) {
 	  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-	};
-
-	var ITERATOR$1 = _wks('iterator');
-
-	var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
-	  if (it != undefined) return it[ITERATOR$1]
-	    || it['@@iterator']
-	    || _iterators[_classof(it)];
-	};
-
-	var _forOf = createCommonjsModule(function (module) {
-	var BREAK = {};
-	var RETURN = {};
-	var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
-	  var iterFn = ITERATOR ? function () { return iterable; } : core_getIteratorMethod(iterable);
-	  var f = _ctx(fn, that, entries ? 2 : 1);
-	  var index = 0;
-	  var length, step, iterator, result;
-	  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
-	  // fast case for arrays with default iterator
-	  if (_isArrayIter(iterFn)) for (length = _toLength(iterable.length); length > index; index++) {
-	    result = entries ? f(_anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-	    if (result === BREAK || result === RETURN) return result;
-	  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
-	    result = _iterCall(iterator, f, step.value, entries);
-	    if (result === BREAK || result === RETURN) return result;
-	  }
-	};
-	exports.BREAK = BREAK;
-	exports.RETURN = RETURN;
-	});
-
-	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
-
-
-	var SPECIES = _wks('species');
-	var _speciesConstructor = function (O, D) {
-	  var C = _anObject(O).constructor;
-	  var S;
-	  return C === undefined || (S = _anObject(C)[SPECIES]) == undefined ? D : _aFunction(S);
-	};
-
-	var document$2 = _global.document;
-	var _html = document$2 && document$2.documentElement;
-
-	var process = _global.process;
-	var setTask = _global.setImmediate;
-	var clearTask = _global.clearImmediate;
-	var MessageChannel = _global.MessageChannel;
-	var Dispatch = _global.Dispatch;
-	var counter = 0;
-	var queue = {};
-	var ONREADYSTATECHANGE = 'onreadystatechange';
-	var defer, channel, port;
-	var run = function () {
-	  var id = +this;
-	  // eslint-disable-next-line no-prototype-builtins
-	  if (queue.hasOwnProperty(id)) {
-	    var fn = queue[id];
-	    delete queue[id];
-	    fn();
-	  }
-	};
-	var listener = function (event) {
-	  run.call(event.data);
-	};
-	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
-	if (!setTask || !clearTask) {
-	  setTask = function setImmediate(fn) {
-	    var args = [];
-	    var i = 1;
-	    while (arguments.length > i) args.push(arguments[i++]);
-	    queue[++counter] = function () {
-	      // eslint-disable-next-line no-new-func
-	      _invoke(typeof fn == 'function' ? fn : Function(fn), args);
-	    };
-	    defer(counter);
-	    return counter;
-	  };
-	  clearTask = function clearImmediate(id) {
-	    delete queue[id];
-	  };
-	  // Node.js 0.8-
-	  if (_cof(process) == 'process') {
-	    defer = function (id) {
-	      process.nextTick(_ctx(run, id, 1));
-	    };
-	  // Sphere (JS game engine) Dispatch API
-	  } else if (Dispatch && Dispatch.now) {
-	    defer = function (id) {
-	      Dispatch.now(_ctx(run, id, 1));
-	    };
-	  // Browsers with MessageChannel, includes WebWorkers
-	  } else if (MessageChannel) {
-	    channel = new MessageChannel();
-	    port = channel.port2;
-	    channel.port1.onmessage = listener;
-	    defer = _ctx(port.postMessage, port, 1);
-	  // Browsers with postMessage, skip WebWorkers
-	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-	  } else if (_global.addEventListener && typeof postMessage == 'function' && !_global.importScripts) {
-	    defer = function (id) {
-	      _global.postMessage(id + '', '*');
-	    };
-	    _global.addEventListener('message', listener, false);
-	  // IE8-
-	  } else if (ONREADYSTATECHANGE in _domCreate('script')) {
-	    defer = function (id) {
-	      _html.appendChild(_domCreate('script'))[ONREADYSTATECHANGE] = function () {
-	        _html.removeChild(this);
-	        run.call(id);
-	      };
-	    };
-	  // Rest old browsers
-	  } else {
-	    defer = function (id) {
-	      setTimeout(_ctx(run, id, 1), 0);
-	    };
-	  }
-	}
-	var _task = {
-	  set: setTask,
-	  clear: clearTask
-	};
-
-	var macrotask = _task.set;
-	var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
-	var process$1 = _global.process;
-	var Promise$1 = _global.Promise;
-	var isNode = _cof(process$1) == 'process';
-
-	var _microtask = function () {
-	  var head, last, notify;
-
-	  var flush = function () {
-	    var parent, fn;
-	    if (isNode && (parent = process$1.domain)) parent.exit();
-	    while (head) {
-	      fn = head.fn;
-	      head = head.next;
-	      try {
-	        fn();
-	      } catch (e) {
-	        if (head) notify();
-	        else last = undefined;
-	        throw e;
-	      }
-	    } last = undefined;
-	    if (parent) parent.enter();
-	  };
-
-	  // Node.js
-	  if (isNode) {
-	    notify = function () {
-	      process$1.nextTick(flush);
-	    };
-	  // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
-	  } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
-	    var toggle = true;
-	    var node = document.createTextNode('');
-	    new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
-	    notify = function () {
-	      node.data = toggle = !toggle;
-	    };
-	  // environments with maybe non-completely correct, but existent Promise
-	  } else if (Promise$1 && Promise$1.resolve) {
-	    // Promise.resolve without an argument throws an error in LG WebOS 2
-	    var promise = Promise$1.resolve(undefined);
-	    notify = function () {
-	      promise.then(flush);
-	    };
-	  // for other environments - macrotask based on:
-	  // - setImmediate
-	  // - MessageChannel
-	  // - window.postMessag
-	  // - onreadystatechange
-	  // - setTimeout
-	  } else {
-	    notify = function () {
-	      // strange IE + webpack dev server bug - use .call(global)
-	      macrotask.call(_global, flush);
-	    };
-	  }
-
-	  return function (fn) {
-	    var task = { fn: fn, next: undefined };
-	    if (last) last.next = task;
-	    if (!head) {
-	      head = task;
-	      notify();
-	    } last = task;
-	  };
-	};
-
-	// 25.4.1.5 NewPromiseCapability(C)
-
-
-	function PromiseCapability(C) {
-	  var resolve, reject;
-	  this.promise = new C(function ($$resolve, $$reject) {
-	    if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
-	    resolve = $$resolve;
-	    reject = $$reject;
-	  });
-	  this.resolve = _aFunction(resolve);
-	  this.reject = _aFunction(reject);
-	}
-
-	var f$1 = function (C) {
-	  return new PromiseCapability(C);
-	};
-
-	var _newPromiseCapability = {
-		f: f$1
-	};
-
-	var _perform = function (exec) {
-	  try {
-	    return { e: false, v: exec() };
-	  } catch (e) {
-	    return { e: true, v: e };
-	  }
-	};
-
-	var navigator$1 = _global.navigator;
-
-	var _userAgent = navigator$1 && navigator$1.userAgent || '';
-
-	var _promiseResolve = function (C, x) {
-	  _anObject(C);
-	  if (_isObject(x) && x.constructor === C) return x;
-	  var promiseCapability = _newPromiseCapability.f(C);
-	  var resolve = promiseCapability.resolve;
-	  resolve(x);
-	  return promiseCapability.promise;
-	};
-
-	var _redefineAll = function (target, src, safe) {
-	  for (var key in src) _redefine(target, key, src[key], safe);
-	  return target;
-	};
-
-	var def = _objectDp.f;
-
-	var TAG$1 = _wks('toStringTag');
-
-	var _setToStringTag = function (it, tag, stat) {
-	  if (it && !_has(it = stat ? it : it.prototype, TAG$1)) def(it, TAG$1, { configurable: true, value: tag });
-	};
-
-	var SPECIES$1 = _wks('species');
-
-	var _setSpecies = function (KEY) {
-	  var C = _global[KEY];
-	  if (_descriptors && C && !C[SPECIES$1]) _objectDp.f(C, SPECIES$1, {
-	    configurable: true,
-	    get: function () { return this; }
-	  });
-	};
-
-	var ITERATOR$2 = _wks('iterator');
-	var SAFE_CLOSING = false;
-
-	try {
-	  var riter = [7][ITERATOR$2]();
-	  riter['return'] = function () { SAFE_CLOSING = true; };
-	} catch (e) { /* empty */ }
-
-	var _iterDetect = function (exec, skipClosing) {
-	  if (!skipClosing && !SAFE_CLOSING) return false;
-	  var safe = false;
-	  try {
-	    var arr = [7];
-	    var iter = arr[ITERATOR$2]();
-	    iter.next = function () { return { done: safe = true }; };
-	    arr[ITERATOR$2] = function () { return iter; };
-	    exec(arr);
-	  } catch (e) { /* empty */ }
-	  return safe;
-	};
-
-	var task = _task.set;
-	var microtask = _microtask();
-
-
-
-
-	var PROMISE = 'Promise';
-	var TypeError$1 = _global.TypeError;
-	var process$2 = _global.process;
-	var versions = process$2 && process$2.versions;
-	var v8 = versions && versions.v8 || '';
-	var $Promise = _global[PROMISE];
-	var isNode$1 = _classof(process$2) == 'process';
-	var empty = function () { /* empty */ };
-	var Internal, newGenericPromiseCapability, OwnPromiseCapability, Wrapper;
-	var newPromiseCapability = newGenericPromiseCapability = _newPromiseCapability.f;
-
-	var USE_NATIVE = !!function () {
-	  try {
-	    // correct subclassing with @@species support
-	    var promise = $Promise.resolve(1);
-	    var FakePromise = (promise.constructor = {})[_wks('species')] = function (exec) {
-	      exec(empty, empty);
-	    };
-	    // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-	    return (isNode$1 || typeof PromiseRejectionEvent == 'function')
-	      && promise.then(empty) instanceof FakePromise
-	      // v8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
-	      // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
-	      // we can't detect it synchronously, so just check versions
-	      && v8.indexOf('6.6') !== 0
-	      && _userAgent.indexOf('Chrome/66') === -1;
-	  } catch (e) { /* empty */ }
-	}();
-
-	// helpers
-	var isThenable = function (it) {
-	  var then;
-	  return _isObject(it) && typeof (then = it.then) == 'function' ? then : false;
-	};
-	var notify = function (promise, isReject) {
-	  if (promise._n) return;
-	  promise._n = true;
-	  var chain = promise._c;
-	  microtask(function () {
-	    var value = promise._v;
-	    var ok = promise._s == 1;
-	    var i = 0;
-	    var run = function (reaction) {
-	      var handler = ok ? reaction.ok : reaction.fail;
-	      var resolve = reaction.resolve;
-	      var reject = reaction.reject;
-	      var domain = reaction.domain;
-	      var result, then, exited;
-	      try {
-	        if (handler) {
-	          if (!ok) {
-	            if (promise._h == 2) onHandleUnhandled(promise);
-	            promise._h = 1;
-	          }
-	          if (handler === true) result = value;
-	          else {
-	            if (domain) domain.enter();
-	            result = handler(value); // may throw
-	            if (domain) {
-	              domain.exit();
-	              exited = true;
-	            }
-	          }
-	          if (result === reaction.promise) {
-	            reject(TypeError$1('Promise-chain cycle'));
-	          } else if (then = isThenable(result)) {
-	            then.call(result, resolve, reject);
-	          } else resolve(result);
-	        } else reject(value);
-	      } catch (e) {
-	        if (domain && !exited) domain.exit();
-	        reject(e);
-	      }
-	    };
-	    while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
-	    promise._c = [];
-	    promise._n = false;
-	    if (isReject && !promise._h) onUnhandled(promise);
-	  });
-	};
-	var onUnhandled = function (promise) {
-	  task.call(_global, function () {
-	    var value = promise._v;
-	    var unhandled = isUnhandled(promise);
-	    var result, handler, console;
-	    if (unhandled) {
-	      result = _perform(function () {
-	        if (isNode$1) {
-	          process$2.emit('unhandledRejection', value, promise);
-	        } else if (handler = _global.onunhandledrejection) {
-	          handler({ promise: promise, reason: value });
-	        } else if ((console = _global.console) && console.error) {
-	          console.error('Unhandled promise rejection', value);
-	        }
-	      });
-	      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
-	      promise._h = isNode$1 || isUnhandled(promise) ? 2 : 1;
-	    } promise._a = undefined;
-	    if (unhandled && result.e) throw result.v;
-	  });
-	};
-	var isUnhandled = function (promise) {
-	  return promise._h !== 1 && (promise._a || promise._c).length === 0;
-	};
-	var onHandleUnhandled = function (promise) {
-	  task.call(_global, function () {
-	    var handler;
-	    if (isNode$1) {
-	      process$2.emit('rejectionHandled', promise);
-	    } else if (handler = _global.onrejectionhandled) {
-	      handler({ promise: promise, reason: promise._v });
-	    }
-	  });
-	};
-	var $reject = function (value) {
-	  var promise = this;
-	  if (promise._d) return;
-	  promise._d = true;
-	  promise = promise._w || promise; // unwrap
-	  promise._v = value;
-	  promise._s = 2;
-	  if (!promise._a) promise._a = promise._c.slice();
-	  notify(promise, true);
-	};
-	var $resolve = function (value) {
-	  var promise = this;
-	  var then;
-	  if (promise._d) return;
-	  promise._d = true;
-	  promise = promise._w || promise; // unwrap
-	  try {
-	    if (promise === value) throw TypeError$1("Promise can't be resolved itself");
-	    if (then = isThenable(value)) {
-	      microtask(function () {
-	        var wrapper = { _w: promise, _d: false }; // wrap
-	        try {
-	          then.call(value, _ctx($resolve, wrapper, 1), _ctx($reject, wrapper, 1));
-	        } catch (e) {
-	          $reject.call(wrapper, e);
-	        }
-	      });
-	    } else {
-	      promise._v = value;
-	      promise._s = 1;
-	      notify(promise, false);
-	    }
-	  } catch (e) {
-	    $reject.call({ _w: promise, _d: false }, e); // wrap
-	  }
-	};
-
-	// constructor polyfill
-	if (!USE_NATIVE) {
-	  // 25.4.3.1 Promise(executor)
-	  $Promise = function Promise(executor) {
-	    _anInstance(this, $Promise, PROMISE, '_h');
-	    _aFunction(executor);
-	    Internal.call(this);
-	    try {
-	      executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
-	    } catch (err) {
-	      $reject.call(this, err);
-	    }
-	  };
-	  // eslint-disable-next-line no-unused-vars
-	  Internal = function Promise(executor) {
-	    this._c = [];             // <- awaiting reactions
-	    this._a = undefined;      // <- checked in isUnhandled reactions
-	    this._s = 0;              // <- state
-	    this._d = false;          // <- done
-	    this._v = undefined;      // <- value
-	    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
-	    this._n = false;          // <- notify
-	  };
-	  Internal.prototype = _redefineAll($Promise.prototype, {
-	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
-	    then: function then(onFulfilled, onRejected) {
-	      var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
-	      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
-	      reaction.fail = typeof onRejected == 'function' && onRejected;
-	      reaction.domain = isNode$1 ? process$2.domain : undefined;
-	      this._c.push(reaction);
-	      if (this._a) this._a.push(reaction);
-	      if (this._s) notify(this, false);
-	      return reaction.promise;
-	    },
-	    // 25.4.5.1 Promise.prototype.catch(onRejected)
-	    'catch': function (onRejected) {
-	      return this.then(undefined, onRejected);
-	    }
-	  });
-	  OwnPromiseCapability = function () {
-	    var promise = new Internal();
-	    this.promise = promise;
-	    this.resolve = _ctx($resolve, promise, 1);
-	    this.reject = _ctx($reject, promise, 1);
-	  };
-	  _newPromiseCapability.f = newPromiseCapability = function (C) {
-	    return C === $Promise || C === Wrapper
-	      ? new OwnPromiseCapability(C)
-	      : newGenericPromiseCapability(C);
-	  };
-	}
-
-	_export(_export.G + _export.W + _export.F * !USE_NATIVE, { Promise: $Promise });
-	_setToStringTag($Promise, PROMISE);
-	_setSpecies(PROMISE);
-	Wrapper = _core[PROMISE];
-
-	// statics
-	_export(_export.S + _export.F * !USE_NATIVE, PROMISE, {
-	  // 25.4.4.5 Promise.reject(r)
-	  reject: function reject(r) {
-	    var capability = newPromiseCapability(this);
-	    var $$reject = capability.reject;
-	    $$reject(r);
-	    return capability.promise;
-	  }
-	});
-	_export(_export.S + _export.F * (_library || !USE_NATIVE), PROMISE, {
-	  // 25.4.4.6 Promise.resolve(x)
-	  resolve: function resolve(x) {
-	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
-	  }
-	});
-	_export(_export.S + _export.F * !(USE_NATIVE && _iterDetect(function (iter) {
-	  $Promise.all(iter)['catch'](empty);
-	})), PROMISE, {
-	  // 25.4.4.1 Promise.all(iterable)
-	  all: function all(iterable) {
-	    var C = this;
-	    var capability = newPromiseCapability(C);
-	    var resolve = capability.resolve;
-	    var reject = capability.reject;
-	    var result = _perform(function () {
-	      var values = [];
-	      var index = 0;
-	      var remaining = 1;
-	      _forOf(iterable, false, function (promise) {
-	        var $index = index++;
-	        var alreadyCalled = false;
-	        values.push(undefined);
-	        remaining++;
-	        C.resolve(promise).then(function (value) {
-	          if (alreadyCalled) return;
-	          alreadyCalled = true;
-	          values[$index] = value;
-	          --remaining || resolve(values);
-	        }, reject);
-	      });
-	      --remaining || resolve(values);
-	    });
-	    if (result.e) reject(result.v);
-	    return capability.promise;
-	  },
-	  // 25.4.4.4 Promise.race(iterable)
-	  race: function race(iterable) {
-	    var C = this;
-	    var capability = newPromiseCapability(C);
-	    var reject = capability.reject;
-	    var result = _perform(function () {
-	      _forOf(iterable, false, function (promise) {
-	        C.resolve(promise).then(capability.resolve, reject);
-	      });
-	    });
-	    if (result.e) reject(result.v);
-	    return capability.promise;
-	  }
-	});
-
-	var f$2 = {}.propertyIsEnumerable;
-
-	var _objectPie = {
-		f: f$2
-	};
-
-	// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-	// eslint-disable-next-line no-prototype-builtins
-	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-	  return _cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-	var _toIobject = function (it) {
-	  return _iobject(_defined(it));
-	};
-
-	var gOPD = Object.getOwnPropertyDescriptor;
-
-	var f$3 = _descriptors ? gOPD : function getOwnPropertyDescriptor(O, P) {
-	  O = _toIobject(O);
-	  P = _toPrimitive(P, true);
-	  if (_ie8DomDefine) try {
-	    return gOPD(O, P);
-	  } catch (e) { /* empty */ }
-	  if (_has(O, P)) return _propertyDesc(!_objectPie.f.call(O, P), O[P]);
-	};
-
-	var _objectGopd = {
-		f: f$3
-	};
-
-	// Works with __proto__ only. Old v8 can't work with null proto objects.
-	/* eslint-disable no-proto */
-
-
-	var check = function (O, proto) {
-	  _anObject(O);
-	  if (!_isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
-	};
-	var _setProto = {
-	  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
-	    function (test, buggy, set) {
-	      try {
-	        set = _ctx(Function.call, _objectGopd.f(Object.prototype, '__proto__').set, 2);
-	        set(test, []);
-	        buggy = !(test instanceof Array);
-	      } catch (e) { buggy = true; }
-	      return function setPrototypeOf(O, proto) {
-	        check(O, proto);
-	        if (buggy) O.__proto__ = proto;
-	        else set(O, proto);
-	        return O;
-	      };
-	    }({}, false) : undefined),
-	  check: check
-	};
-
-	var setPrototypeOf = _setProto.set;
-	var _inheritIfRequired = function (that, target, C) {
-	  var S = target.constructor;
-	  var P;
-	  if (S !== C && typeof S == 'function' && (P = S.prototype) !== C.prototype && _isObject(P) && setPrototypeOf) {
-	    setPrototypeOf(that, P);
-	  } return that;
 	};
 
 	var max = Math.max;
@@ -1802,54 +537,46 @@ define(['exports'], function (exports) { 'use strict';
 	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 	).split(',');
 
-	// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-
-	var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
-
-	var f$4 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-	  return _objectKeysInternal(O, hiddenKeys);
-	};
-
-	var _objectGopn = {
-		f: f$4
-	};
-
-	var _stringWs = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
-	  '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
-
-	var space = '[' + _stringWs + ']';
-	var non = '\u200b\u0085';
-	var ltrim = RegExp('^' + space + space + '*');
-	var rtrim = RegExp(space + space + '*$');
-
-	var exporter = function (KEY, exec, ALIAS) {
-	  var exp = {};
-	  var FORCE = _fails(function () {
-	    return !!_stringWs[KEY]() || non[KEY]() != non;
-	  });
-	  var fn = exp[KEY] = FORCE ? exec(trim) : _stringWs[KEY];
-	  if (ALIAS) exp[ALIAS] = fn;
-	  _export(_export.P + _export.F * FORCE, 'String', exp);
-	};
-
-	// 1 -> String#trimLeft
-	// 2 -> String#trimRight
-	// 3 -> String#trim
-	var trim = exporter.trim = function (string, TYPE) {
-	  string = String(_defined(string));
-	  if (TYPE & 1) string = string.replace(ltrim, '');
-	  if (TYPE & 2) string = string.replace(rtrim, '');
-	  return string;
-	};
-
-	var _stringTrim = exporter;
-
 	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
 
 
 
 	var _objectKeys = Object.keys || function keys(O) {
 	  return _objectKeysInternal(O, _enumBugKeys);
+	};
+
+	var f$2 = Object.getOwnPropertySymbols;
+
+	var _objectGops = {
+		f: f$2
+	};
+
+	var f$3 = {}.propertyIsEnumerable;
+
+	var _objectPie = {
+		f: f$3
+	};
+
+	// all enumerable object keys, includes symbols
+
+
+
+	var _enumKeys = function (it) {
+	  var result = _objectKeys(it);
+	  var getSymbols = _objectGops.f;
+	  if (getSymbols) {
+	    var symbols = getSymbols(it);
+	    var isEnum = _objectPie.f;
+	    var i = 0;
+	    var key;
+	    while (symbols.length > i) if (isEnum.call(it, key = symbols[i++])) result.push(key);
+	  } return result;
+	};
+
+	// 7.2.2 IsArray(argument)
+
+	var _isArray = Array.isArray || function isArray(arg) {
+	  return _cof(arg) == 'Array';
 	};
 
 	var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
@@ -1861,6 +588,9 @@ define(['exports'], function (exports) { 'use strict';
 	  while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
 	  return O;
 	};
+
+	var document$2 = _global.document;
+	var _html = document$2 && document$2.documentElement;
 
 	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 
@@ -1904,394 +634,1430 @@ define(['exports'], function (exports) { 'use strict';
 	  return Properties === undefined ? result : _objectDps(result, Properties);
 	};
 
-	var gOPN = _objectGopn.f;
-	var gOPD$1 = _objectGopd.f;
-	var dP$2 = _objectDp.f;
-	var $trim = _stringTrim.trim;
-	var NUMBER = 'Number';
-	var $Number = _global[NUMBER];
-	var Base = $Number;
-	var proto = $Number.prototype;
-	// Opera ~12 has broken Object#toString
-	var BROKEN_COF = _cof(_objectCreate(proto)) == NUMBER;
-	var TRIM = 'trim' in String.prototype;
+	// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 
-	// 7.1.3 ToNumber(argument)
-	var toNumber = function (argument) {
-	  var it = _toPrimitive(argument, false);
-	  if (typeof it == 'string' && it.length > 2) {
-	    it = TRIM ? it.trim() : $trim(it, 3);
-	    var first = it.charCodeAt(0);
-	    var third, radix, maxCode;
-	    if (first === 43 || first === 45) {
-	      third = it.charCodeAt(2);
-	      if (third === 88 || third === 120) return NaN; // Number('+0x1') should be NaN, old V8 fix
-	    } else if (first === 48) {
-	      switch (it.charCodeAt(1)) {
-	        case 66: case 98: radix = 2; maxCode = 49; break; // fast equal /^0b[01]+$/i
-	        case 79: case 111: radix = 8; maxCode = 55; break; // fast equal /^0o[0-7]+$/i
-	        default: return +it;
-	      }
-	      for (var digits = it.slice(2), i = 0, l = digits.length, code; i < l; i++) {
-	        code = digits.charCodeAt(i);
-	        // parseInt parses a string to a first unavailable symbol
-	        // but ToNumber should return NaN if a string contains unavailable symbols
-	        if (code < 48 || code > maxCode) return NaN;
-	      } return parseInt(digits, radix);
-	    }
-	  } return +it;
+	var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
+
+	var f$4 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+	  return _objectKeysInternal(O, hiddenKeys);
 	};
 
-	if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
-	  $Number = function Number(value) {
-	    var it = arguments.length < 1 ? 0 : value;
-	    var that = this;
-	    return that instanceof $Number
-	      // check on 1..constructor(foo) case
-	      && (BROKEN_COF ? _fails(function () { proto.valueOf.call(that); }) : _cof(that) != NUMBER)
-	        ? _inheritIfRequired(new Base(toNumber(it)), that, $Number) : toNumber(it);
-	  };
-	  for (var keys = _descriptors ? gOPN(Base) : (
-	    // ES3:
-	    'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' +
-	    // ES6 (in case, if modules with ES6 Number statics required before):
-	    'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' +
-	    'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'
-	  ).split(','), j = 0, key; keys.length > j; j++) {
-	    if (_has(Base, key = keys[j]) && !_has($Number, key)) {
-	      dP$2($Number, key, gOPD$1(Base, key));
-	    }
+	var _objectGopn = {
+		f: f$4
+	};
+
+	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+
+	var gOPN = _objectGopn.f;
+	var toString$1 = {}.toString;
+
+	var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+	  ? Object.getOwnPropertyNames(window) : [];
+
+	var getWindowNames = function (it) {
+	  try {
+	    return gOPN(it);
+	  } catch (e) {
+	    return windowNames.slice();
 	  }
-	  $Number.prototype = proto;
-	  proto.constructor = $Number;
-	  _redefine(_global, NUMBER, $Number);
+	};
+
+	var f$5 = function getOwnPropertyNames(it) {
+	  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(_toIobject(it));
+	};
+
+	var _objectGopnExt = {
+		f: f$5
+	};
+
+	var gOPD = Object.getOwnPropertyDescriptor;
+
+	var f$6 = _descriptors ? gOPD : function getOwnPropertyDescriptor(O, P) {
+	  O = _toIobject(O);
+	  P = _toPrimitive(P, true);
+	  if (_ie8DomDefine) try {
+	    return gOPD(O, P);
+	  } catch (e) { /* empty */ }
+	  if (_has(O, P)) return _propertyDesc(!_objectPie.f.call(O, P), O[P]);
+	};
+
+	var _objectGopd = {
+		f: f$6
+	};
+
+	// ECMAScript 6 symbols shim
+
+
+
+
+
+	var META = _meta.KEY;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	var gOPD$1 = _objectGopd.f;
+	var dP$1 = _objectDp.f;
+	var gOPN$1 = _objectGopnExt.f;
+	var $Symbol = _global.Symbol;
+	var $JSON = _global.JSON;
+	var _stringify = $JSON && $JSON.stringify;
+	var PROTOTYPE$2 = 'prototype';
+	var HIDDEN = _wks('_hidden');
+	var TO_PRIMITIVE = _wks('toPrimitive');
+	var isEnum = {}.propertyIsEnumerable;
+	var SymbolRegistry = _shared('symbol-registry');
+	var AllSymbols = _shared('symbols');
+	var OPSymbols = _shared('op-symbols');
+	var ObjectProto = Object[PROTOTYPE$2];
+	var USE_NATIVE = typeof $Symbol == 'function';
+	var QObject = _global.QObject;
+	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+	var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
+
+	// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+	var setSymbolDesc = _descriptors && _fails(function () {
+	  return _objectCreate(dP$1({}, 'a', {
+	    get: function () { return dP$1(this, 'a', { value: 7 }).a; }
+	  })).a != 7;
+	}) ? function (it, key, D) {
+	  var protoDesc = gOPD$1(ObjectProto, key);
+	  if (protoDesc) delete ObjectProto[key];
+	  dP$1(it, key, D);
+	  if (protoDesc && it !== ObjectProto) dP$1(ObjectProto, key, protoDesc);
+	} : dP$1;
+
+	var wrap = function (tag) {
+	  var sym = AllSymbols[tag] = _objectCreate($Symbol[PROTOTYPE$2]);
+	  sym._k = tag;
+	  return sym;
+	};
+
+	var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function (it) {
+	  return typeof it == 'symbol';
+	} : function (it) {
+	  return it instanceof $Symbol;
+	};
+
+	var $defineProperty = function defineProperty(it, key, D) {
+	  if (it === ObjectProto) $defineProperty(OPSymbols, key, D);
+	  _anObject(it);
+	  key = _toPrimitive(key, true);
+	  _anObject(D);
+	  if (_has(AllSymbols, key)) {
+	    if (!D.enumerable) {
+	      if (!_has(it, HIDDEN)) dP$1(it, HIDDEN, _propertyDesc(1, {}));
+	      it[HIDDEN][key] = true;
+	    } else {
+	      if (_has(it, HIDDEN) && it[HIDDEN][key]) it[HIDDEN][key] = false;
+	      D = _objectCreate(D, { enumerable: _propertyDesc(0, false) });
+	    } return setSymbolDesc(it, key, D);
+	  } return dP$1(it, key, D);
+	};
+	var $defineProperties = function defineProperties(it, P) {
+	  _anObject(it);
+	  var keys = _enumKeys(P = _toIobject(P));
+	  var i = 0;
+	  var l = keys.length;
+	  var key;
+	  while (l > i) $defineProperty(it, key = keys[i++], P[key]);
+	  return it;
+	};
+	var $create = function create(it, P) {
+	  return P === undefined ? _objectCreate(it) : $defineProperties(_objectCreate(it), P);
+	};
+	var $propertyIsEnumerable = function propertyIsEnumerable(key) {
+	  var E = isEnum.call(this, key = _toPrimitive(key, true));
+	  if (this === ObjectProto && _has(AllSymbols, key) && !_has(OPSymbols, key)) return false;
+	  return E || !_has(this, key) || !_has(AllSymbols, key) || _has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+	};
+	var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key) {
+	  it = _toIobject(it);
+	  key = _toPrimitive(key, true);
+	  if (it === ObjectProto && _has(AllSymbols, key) && !_has(OPSymbols, key)) return;
+	  var D = gOPD$1(it, key);
+	  if (D && _has(AllSymbols, key) && !(_has(it, HIDDEN) && it[HIDDEN][key])) D.enumerable = true;
+	  return D;
+	};
+	var $getOwnPropertyNames = function getOwnPropertyNames(it) {
+	  var names = gOPN$1(_toIobject(it));
+	  var result = [];
+	  var i = 0;
+	  var key;
+	  while (names.length > i) {
+	    if (!_has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META) result.push(key);
+	  } return result;
+	};
+	var $getOwnPropertySymbols = function getOwnPropertySymbols(it) {
+	  var IS_OP = it === ObjectProto;
+	  var names = gOPN$1(IS_OP ? OPSymbols : _toIobject(it));
+	  var result = [];
+	  var i = 0;
+	  var key;
+	  while (names.length > i) {
+	    if (_has(AllSymbols, key = names[i++]) && (IS_OP ? _has(ObjectProto, key) : true)) result.push(AllSymbols[key]);
+	  } return result;
+	};
+
+	// 19.4.1.1 Symbol([description])
+	if (!USE_NATIVE) {
+	  $Symbol = function Symbol() {
+	    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor!');
+	    var tag = _uid(arguments.length > 0 ? arguments[0] : undefined);
+	    var $set = function (value) {
+	      if (this === ObjectProto) $set.call(OPSymbols, value);
+	      if (_has(this, HIDDEN) && _has(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
+	      setSymbolDesc(this, tag, _propertyDesc(1, value));
+	    };
+	    if (_descriptors && setter) setSymbolDesc(ObjectProto, tag, { configurable: true, set: $set });
+	    return wrap(tag);
+	  };
+	  _redefine($Symbol[PROTOTYPE$2], 'toString', function toString() {
+	    return this._k;
+	  });
+
+	  _objectGopd.f = $getOwnPropertyDescriptor;
+	  _objectDp.f = $defineProperty;
+	  _objectGopn.f = _objectGopnExt.f = $getOwnPropertyNames;
+	  _objectPie.f = $propertyIsEnumerable;
+	  _objectGops.f = $getOwnPropertySymbols;
+
+	  if (_descriptors && !_library) {
+	    _redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+	  }
+
+	  _wksExt.f = function (name) {
+	    return wrap(_wks(name));
+	  };
 	}
 
-	// @@search logic
-	_fixReWks('search', 1, function (defined, SEARCH, $search) {
-	  // 21.1.3.15 String.prototype.search(regexp)
-	  return [function search(regexp) {
-	    var O = defined(this);
-	    var fn = regexp == undefined ? undefined : regexp[SEARCH];
-	    return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
-	  }, $search];
+	_export(_export.G + _export.W + _export.F * !USE_NATIVE, { Symbol: $Symbol });
+
+	for (var es6Symbols = (
+	  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
+	  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
+	).split(','), j = 0; es6Symbols.length > j;)_wks(es6Symbols[j++]);
+
+	for (var wellKnownSymbols = _objectKeys(_wks.store), k = 0; wellKnownSymbols.length > k;) _wksDefine(wellKnownSymbols[k++]);
+
+	_export(_export.S + _export.F * !USE_NATIVE, 'Symbol', {
+	  // 19.4.2.1 Symbol.for(key)
+	  'for': function (key) {
+	    return _has(SymbolRegistry, key += '')
+	      ? SymbolRegistry[key]
+	      : SymbolRegistry[key] = $Symbol(key);
+	  },
+	  // 19.4.2.5 Symbol.keyFor(sym)
+	  keyFor: function keyFor(sym) {
+	    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol!');
+	    for (var key in SymbolRegistry) if (SymbolRegistry[key] === sym) return key;
+	  },
+	  useSetter: function () { setter = true; },
+	  useSimple: function () { setter = false; }
 	});
 
-	// @@replace logic
-	_fixReWks('replace', 2, function (defined, REPLACE, $replace) {
-	  // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
-	  return [function replace(searchValue, replaceValue) {
-	    var O = defined(this);
-	    var fn = searchValue == undefined ? undefined : searchValue[REPLACE];
-	    return fn !== undefined
-	      ? fn.call(searchValue, O, replaceValue)
-	      : $replace.call(String(O), searchValue, replaceValue);
-	  }, $replace];
+	_export(_export.S + _export.F * !USE_NATIVE, 'Object', {
+	  // 19.1.2.2 Object.create(O [, Properties])
+	  create: $create,
+	  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+	  defineProperty: $defineProperty,
+	  // 19.1.2.3 Object.defineProperties(O, Properties)
+	  defineProperties: $defineProperties,
+	  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+	  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+	  // 19.1.2.7 Object.getOwnPropertyNames(O)
+	  getOwnPropertyNames: $getOwnPropertyNames,
+	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+	  getOwnPropertySymbols: $getOwnPropertySymbols
 	});
 
-	// import work from 'webworkify-webpack'
+	// 24.3.2 JSON.stringify(value [, replacer [, space]])
+	$JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function () {
+	  var S = $Symbol();
+	  // MS Edge converts symbol values to JSON as {}
+	  // WebKit converts symbol values to JSON as null
+	  // V8 throws on boxed symbols
+	  return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
+	})), 'JSON', {
+	  stringify: function stringify(it) {
+	    var args = [it];
+	    var i = 1;
+	    var replacer, $replacer;
+	    while (arguments.length > i) args.push(arguments[i++]);
+	    $replacer = replacer = args[1];
+	    if (!_isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+	    if (!_isArray(replacer)) replacer = function (key, value) {
+	      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
+	      if (!isSymbol(value)) return value;
+	    };
+	    args[1] = replacer;
+	    return _stringify.apply($JSON, args);
+	  }
+	});
 
-	/**
-	 * Utils class
-	 */
-	var Utils =
-	/*#__PURE__*/
-	function () {
-	  function Utils() {
-	    classCallCheck(this, Utils);
+	// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
+	$Symbol[PROTOTYPE$2][TO_PRIMITIVE] || _hide($Symbol[PROTOTYPE$2], TO_PRIMITIVE, $Symbol[PROTOTYPE$2].valueOf);
+	// 19.4.3.5 Symbol.prototype[@@toStringTag]
+	_setToStringTag($Symbol, 'Symbol');
+	// 20.2.1.9 Math[@@toStringTag]
+	_setToStringTag(Math, 'Math', true);
+	// 24.3.3 JSON[@@toStringTag]
+	_setToStringTag(_global.JSON, 'JSON', true);
+
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = _wks('unscopables');
+	var ArrayProto = Array.prototype;
+	if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
+	var _addToUnscopables = function (key) {
+	  ArrayProto[UNSCOPABLES][key] = true;
+	};
+
+	var _iterStep = function (done, value) {
+	  return { value: value, done: !!done };
+	};
+
+	var _iterators = {};
+
+	var IteratorPrototype = {};
+
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
+
+	var _iterCreate = function (Constructor, NAME, next) {
+	  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
+	  _setToStringTag(Constructor, NAME + ' Iterator');
+	};
+
+	// 7.1.13 ToObject(argument)
+
+	var _toObject = function (it) {
+	  return Object(_defined(it));
+	};
+
+	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+
+
+	var IE_PROTO$2 = _sharedKey('IE_PROTO');
+	var ObjectProto$1 = Object.prototype;
+
+	var _objectGpo = Object.getPrototypeOf || function (O) {
+	  O = _toObject(O);
+	  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
+	  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+	    return O.constructor.prototype;
+	  } return O instanceof Object ? ObjectProto$1 : null;
+	};
+
+	var ITERATOR = _wks('iterator');
+	var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+	var FF_ITERATOR = '@@iterator';
+	var KEYS = 'keys';
+	var VALUES = 'values';
+
+	var returnThis = function () { return this; };
+
+	var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+	  _iterCreate(Constructor, NAME, next);
+	  var getMethod = function (kind) {
+	    if (!BUGGY && kind in proto) return proto[kind];
+	    switch (kind) {
+	      case KEYS: return function keys() { return new Constructor(this, kind); };
+	      case VALUES: return function values() { return new Constructor(this, kind); };
+	    } return function entries() { return new Constructor(this, kind); };
+	  };
+	  var TAG = NAME + ' Iterator';
+	  var DEF_VALUES = DEFAULT == VALUES;
+	  var VALUES_BUG = false;
+	  var proto = Base.prototype;
+	  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
+	  var $default = $native || getMethod(DEFAULT);
+	  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+	  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+	  var methods, key, IteratorPrototype;
+	  // Fix native
+	  if ($anyNative) {
+	    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
+	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+	      // Set @@toStringTag to native iterators
+	      _setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	    }
+	  }
+	  // fix Array#{values, @@iterator}.name in V8 / FF
+	  if (DEF_VALUES && $native && $native.name !== VALUES) {
+	    VALUES_BUG = true;
+	    $default = function values() { return $native.call(this); };
+	  }
+	  // Define iterator
+	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
+	    _hide(proto, ITERATOR, $default);
+	  }
+	  // Plug for library
+	  _iterators[NAME] = $default;
+	  _iterators[TAG] = returnThis;
+	  if (DEFAULT) {
+	    methods = {
+	      values: DEF_VALUES ? $default : getMethod(VALUES),
+	      keys: IS_SET ? $default : getMethod(KEYS),
+	      entries: $entries
+	    };
+	    if (FORCED) for (key in methods) {
+	      if (!(key in proto)) _redefine(proto, key, methods[key]);
+	    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
+	  }
+	  return methods;
+	};
+
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
+	  this._t = _toIobject(iterated); // target
+	  this._i = 0;                   // next index
+	  this._k = kind;                // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function () {
+	  var O = this._t;
+	  var kind = this._k;
+	  var index = this._i++;
+	  if (!O || index >= O.length) {
+	    this._t = undefined;
+	    return _iterStep(1);
+	  }
+	  if (kind == 'keys') return _iterStep(0, index);
+	  if (kind == 'values') return _iterStep(0, O[index]);
+	  return _iterStep(0, [index, O[index]]);
+	}, 'values');
+
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	_iterators.Arguments = _iterators.Array;
+
+	_addToUnscopables('keys');
+	_addToUnscopables('values');
+	_addToUnscopables('entries');
+
+	var ITERATOR$1 = _wks('iterator');
+	var TO_STRING_TAG = _wks('toStringTag');
+	var ArrayValues = _iterators.Array;
+
+	var DOMIterables = {
+	  CSSRuleList: true, // TODO: Not spec compliant, should be false.
+	  CSSStyleDeclaration: false,
+	  CSSValueList: false,
+	  ClientRectList: false,
+	  DOMRectList: false,
+	  DOMStringList: false,
+	  DOMTokenList: true,
+	  DataTransferItemList: false,
+	  FileList: false,
+	  HTMLAllCollection: false,
+	  HTMLCollection: false,
+	  HTMLFormElement: false,
+	  HTMLSelectElement: false,
+	  MediaList: true, // TODO: Not spec compliant, should be false.
+	  MimeTypeArray: false,
+	  NamedNodeMap: false,
+	  NodeList: true,
+	  PaintRequestList: false,
+	  Plugin: false,
+	  PluginArray: false,
+	  SVGLengthList: false,
+	  SVGNumberList: false,
+	  SVGPathSegList: false,
+	  SVGPointList: false,
+	  SVGStringList: false,
+	  SVGTransformList: false,
+	  SourceBufferList: false,
+	  StyleSheetList: true, // TODO: Not spec compliant, should be false.
+	  TextTrackCueList: false,
+	  TextTrackList: false,
+	  TouchList: false
+	};
+
+	for (var collections = _objectKeys(DOMIterables), i = 0; i < collections.length; i++) {
+	  var NAME = collections[i];
+	  var explicit = DOMIterables[NAME];
+	  var Collection = _global[NAME];
+	  var proto = Collection && Collection.prototype;
+	  var key;
+	  if (proto) {
+	    if (!proto[ITERATOR$1]) _hide(proto, ITERATOR$1, ArrayValues);
+	    if (!proto[TO_STRING_TAG]) _hide(proto, TO_STRING_TAG, NAME);
+	    _iterators[NAME] = ArrayValues;
+	    if (explicit) for (key in es6_array_iterator) if (!proto[key]) _redefine(proto, key, es6_array_iterator[key], true);
+	  }
+	}
+
+	var setPrototypeOf = createCommonjsModule(function (module) {
+	function _setPrototypeOf(o, p) {
+	  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+	    o.__proto__ = p;
+	    return o;
+	  };
+
+	  return _setPrototypeOf(o, p);
+	}
+
+	module.exports = _setPrototypeOf;
+	});
+
+	var construct = createCommonjsModule(function (module) {
+	function isNativeReflectConstruct() {
+	  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+	  if (Reflect.construct.sham) return false;
+	  if (typeof Proxy === "function") return true;
+
+	  try {
+	    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+	    return true;
+	  } catch (e) {
+	    return false;
+	  }
+	}
+
+	function _construct(Parent, args, Class) {
+	  if (isNativeReflectConstruct()) {
+	    module.exports = _construct = Reflect.construct;
+	  } else {
+	    module.exports = _construct = function _construct(Parent, args, Class) {
+	      var a = [null];
+	      a.push.apply(a, args);
+	      var Constructor = Function.bind.apply(Parent, a);
+	      var instance = new Constructor();
+	      if (Class) setPrototypeOf(instance, Class.prototype);
+	      return instance;
+	    };
 	  }
 
-	  createClass(Utils, null, [{
-	    key: "stripTrailingSlash",
+	  return _construct.apply(null, arguments);
+	}
 
-	    /**
-	     * @param  {String} str
-	     * @return {String}
-	     */
-	    value: function stripTrailingSlash(str) {
-	      if (str.substr(-1) === '/') {
-	        return str.substr(0, str.length - 1);
-	      }
+	module.exports = _construct;
+	});
 
-	      return str;
+	function _defineProperty(obj, key, value) {
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	}
+
+	var defineProperty$1 = _defineProperty;
+
+	function _objectSpread(target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i] != null ? arguments[i] : {};
+	    var ownKeys = Object.keys(source);
+
+	    if (typeof Object.getOwnPropertySymbols === 'function') {
+	      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+	        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+	      }));
 	    }
+
+	    ownKeys.forEach(function (key) {
+	      defineProperty$1(target, key, source[key]);
+	    });
+	  }
+
+	  return target;
+	}
+
+	var objectSpread = _objectSpread;
+
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	var classCallCheck = _classCallCheck;
+
+	function _defineProperties(target, props) {
+	  for (var i = 0; i < props.length; i++) {
+	    var descriptor = props[i];
+	    descriptor.enumerable = descriptor.enumerable || false;
+	    descriptor.configurable = true;
+	    if ("value" in descriptor) descriptor.writable = true;
+	    Object.defineProperty(target, descriptor.key, descriptor);
+	  }
+	}
+
+	function _createClass(Constructor, protoProps, staticProps) {
+	  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+	  if (staticProps) _defineProperties(Constructor, staticProps);
+	  return Constructor;
+	}
+
+	var createClass = _createClass;
+
+	var bottle = createCommonjsModule(function (module, exports) {
+	(function(undefined) {
 	    /**
-	     * Get port
+	     * BottleJS v1.7.1 - 2018-05-03
+	     * A powerful dependency injection micro container
 	     *
-	     * @param p
-	     * @returns {*}
+	     * Copyright (c) 2018 Stephen Young
+	     * Licensed MIT
 	     */
-
-	  }, {
-	    key: "getPort",
-	    value: function getPort(p) {
-	      var port = typeof p !== 'undefined' ? p : window.location.port;
-	      var protocol = window.location.protocol;
-
-	      if (port !== '') {
-	        return parseInt(port);
-	      }
-
-	      if (protocol === 'http:') {
-	        return 80;
-	      }
-
-	      if (protocol === 'https:') {
-	        return 443;
-	      }
-	    }
-	  }, {
-	    key: "cleanLink",
-	    value: function cleanLink(url) {
-	      return url.replace(/#.*/, '');
-	    }
+	    var Bottle;
+	    
 	    /**
-	     * Get current url
-	     *
-	     * @returns {string}
+	     * String constants
 	     */
-
-	  }, {
-	    key: "getCurrentUrl",
-	    value: function getCurrentUrl() {
-	      return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-	    }
+	    var DELIMITER = '.';
+	    var FUNCTION_TYPE = 'function';
+	    var STRING_TYPE = 'string';
+	    var GLOBAL_NAME = '__global__';
+	    var PROVIDER_SUFFIX = 'Provider';
+	    
 	    /**
-	     * Request timeout (in ms)
+	     * Unique id counter;
 	     *
-	     * @returns {number}
+	     * @type Number
 	     */
-
-	  }, {
-	    key: "requestTimeout",
-	    value: function requestTimeout() {
-	      return 10000;
-	    }
+	    var id = 0;
+	    
 	    /**
-	     * Start a fetch request
+	     * Local slice alias
 	     *
-	     * @param {String} url
-	     * @param {Worker|null} worker
-	     * @return {Promise}
+	     * @type Functions
 	     */
-
-	  }, {
-	    key: "request",
-	    value: function request(url, worker) {
-	      var dfd = Utils.deferred();
-	      var timeout = window.setTimeout(function () {
-	        window.clearTimeout(timeout);
-	        dfd.reject('timeout!');
-	      }, Utils.requestTimeout());
-
-	      if (window.Worker && worker) ; else {
-	        var headers = new window.Headers();
-	        headers.append('X-Starting-Blocks', 'yes');
-	        headers.append('X-Allow-Partial', 'yes');
-	        headers.append('X-Requested-With', 'XMLHttpRequest');
-	        window.fetch(url, {
-	          method: 'GET',
-	          headers: headers,
-	          cache: 'default',
-	          credentials: 'same-origin'
-	        }).then(function (res) {
-	          window.clearTimeout(timeout);
-
-	          if (res.status >= 200 && res.status < 300) {
-	            return dfd.resolve(res.text());
-	          }
-
-	          var err = new Error(res.statusText || res.status);
-	          return dfd.reject(err);
-	        }).catch(function (err) {
-	          window.clearTimeout(timeout);
-	          dfd.reject(err);
-	        });
-	      }
-
-	      return dfd.promise;
-	    }
+	    var slice = Array.prototype.slice;
+	    
 	    /**
-	     * Log credits to console for code lovers.
+	     * Iterator used to walk down a nested object.
 	     *
-	     * @param  {String} siteName
-	     * @param  {String} bgColor
-	     * @param  {Array}  creditsList
-	     * @param  {Array}  thanksList
-	     * @param  {String} textColor (optional)
+	     * If Bottle.config.strict is true, this method will throw an exception if it encounters an
+	     * undefined path
+	     *
+	     * @param Object obj
+	     * @param String prop
+	     * @return mixed
+	     * @throws Error if Bottle is unable to resolve the requested service.
 	     */
-
-	  }, {
-	    key: "logCredits",
-	    value: function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
-	      var color = '#fff';
-	      if (typeof textColor !== 'undefined') color = textColor;
-	      console.log('%c   ', 'font-size:3px;');
-	      console.log('%c' + siteName, 'background:' + bgColor + '; color: ' + color + '; font-size:14px; padding:5px 10px;');
-	      console.log('%c   ', 'font-size:3px;');
-
-	      if (creditsList !== null) {
-	        var creditsLength = creditsList.length;
-
-	        if (creditsLength) {
-	          for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
-	            console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
-	          }
+	    var getNested = function getNested(obj, prop) {
+	        var service = obj[prop];
+	        if (service === undefined && Bottle.config.strict) {
+	            throw new Error('Bottle was unable to resolve a service.  `' + prop + '` is undefined.');
 	        }
-	      }
-
-	      if (thanksList !== null) {
-	        var thanksLength = thanksList.length;
-
-	        if (thanksLength) {
-	          console.log('-');
-	          console.log('Thanks to');
-
-	          for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
-	            console.log(thanksList[indexThanks].name + ' (' + thanksList[indexThanks].website + ')');
-	          }
+	        return service;
+	    };
+	    
+	    /**
+	     * Get a nested bottle. Will set and return if not set.
+	     *
+	     * @param String name
+	     * @return Bottle
+	     */
+	    var getNestedBottle = function getNestedBottle(name) {
+	        var bottle;
+	        if (!this.nested[name]) {
+	            bottle = Bottle.pop();
+	            this.nested[name] = bottle;
+	            this.factory(name, function SubProviderFactory() {
+	                return bottle.container;
+	            });
 	        }
-	      }
-
-	      console.log('-');
-	      console.log(' ');
-	    }
+	        return this.nested[name];
+	    };
+	    
 	    /**
-	     * Get random number.
+	     * Get a service stored under a nested key
 	     *
-	     * @param  {Number} min [min value]
-	     * @param  {Number} max [max value]
-	     * @param  {Number} decimal
-	     * @return {Number}
+	     * @param String fullname
+	     * @return Service
 	     */
-
-	  }, {
-	    key: "getRandomNumber",
-	    value: function getRandomNumber(min, max, decimal) {
-	      var result = Math.random() * (max - min) + min;
-
-	      if (typeof decimal !== 'undefined') {
-	        return Number(result.toFixed(decimal));
-	      } else return result;
-	    }
+	    var getNestedService = function getNestedService(fullname) {
+	        return fullname.split(DELIMITER).reduce(getNested, this);
+	    };
+	    
 	    /**
-	     * Get random integer.
+	     * Function used by provider to set up middleware for each request.
 	     *
-	     * @param  {Number} min [min value]
-	     * @param  {Number} max [max value]
-	     * @return {Number}
+	     * @param Number id
+	     * @param String name
+	     * @param Object instance
+	     * @param Object container
+	     * @return void
 	     */
-
-	  }, {
-	    key: "getRandomInt",
-	    value: function getRandomInt(min, max) {
-	      return Math.floor(Math.random() * (max - min + 1)) + min;
-	    }
-	    /**
-	     * Send a GA page view event when context is AJAX.
-	     */
-
-	  }, {
-	    key: "trackGoogleAnalytics",
-	    value: function trackGoogleAnalytics() {
-	      if (typeof window.ga !== 'undefined') {
-	        console.debug('🚩 Push Analytics for: ' + window.location.pathname);
-	        window.ga('send', 'pageview', {
-	          'page': window.location.pathname,
-	          'title': document.title
-	        });
-	      }
-	    }
-	    /**
-	     * Match CSS media queries and JavaScript window width.
-	     *
-	     * @see http://stackoverflow.com/a/11310353
-	     * @return {Object}
-	     */
-
-	  }, {
-	    key: "getViewportSize",
-	    value: function getViewportSize() {
-	      var e = window;
-	      var a = 'inner';
-
-	      if (!('innerWidth' in window)) {
-	        a = 'client';
-	        e = document.documentElement || document.body;
-	      }
-
-	      return {
-	        width: e[a + 'Width'],
-	        height: e[a + 'Height']
-	      };
-	    }
-	    /**
-	     * Get a css property with the vendor prefix.
-	     *
-	     * @param  {String} property the css property
-	     * @return {String}          the prefixed property
-	     */
-
-	  }, {
-	    key: "prefixProperty",
-	    value: function prefixProperty(property) {
-	      var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
-	      var numPrefixes = prefixes.length;
-	      var tmp = document.createElement('div');
-
-	      for (var i = 0; i < numPrefixes; i++) {
-	        var prefix = prefixes[i];
-	        property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
-	        var prop = prefix + property;
-
-	        if (typeof tmp.style[prop] !== 'undefined') {
-	          return prop;
+	    var applyMiddleware = function applyMiddleware(middleware, name, instance, container) {
+	        var descriptor = {
+	            configurable : true,
+	            enumerable : true
+	        };
+	        if (middleware.length) {
+	            descriptor.get = function getWithMiddlewear() {
+	                var index = 0;
+	                var next = function nextMiddleware(err) {
+	                    if (err) {
+	                        throw err;
+	                    }
+	                    if (middleware[index]) {
+	                        middleware[index++](instance, next);
+	                    }
+	                };
+	                next();
+	                return instance;
+	            };
+	        } else {
+	            descriptor.value = instance;
+	            descriptor.writable = true;
 	        }
-	      }
-	    }
+	    
+	        Object.defineProperty(container, name, descriptor);
+	    
+	        return container[name];
+	    };
+	    
 	    /**
-	     * Gets normalized ratio of value inside range.
+	     * Register middleware.
 	     *
-	     * from https://github.com/mout/mout/blob/master/src/math/norm.js
-	     *
-	     * @param  {Number} val
-	     * @param  {Number} min
-	     * @param  {Number} max
-	     * @return {Number}
+	     * @param String name
+	     * @param Function func
+	     * @return Bottle
 	     */
-
-	  }, {
-	    key: "getNormRatio",
-	    value: function getNormRatio(val, min, max) {
-	      if (val < min) return 0;
-	      if (val > max) return 1;
-	      return val === max ? 1 : (val - min) / (max - min);
-	    }
+	    var middleware = function middleware(fullname, func) {
+	        var parts, name;
+	        if (typeof fullname === FUNCTION_TYPE) {
+	            func = fullname;
+	            fullname = GLOBAL_NAME;
+	        }
+	    
+	        parts = fullname.split(DELIMITER);
+	        name = parts.shift();
+	        if (parts.length) {
+	            getNestedBottle.call(this, name).middleware(parts.join(DELIMITER), func);
+	        } else {
+	            if (!this.middlewares[name]) {
+	                this.middlewares[name] = [];
+	            }
+	            this.middlewares[name].push(func);
+	        }
+	        return this;
+	    };
+	    
 	    /**
-	     * Return a new "Deferred" object
-	     * https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Deferred
+	     * Used to process decorators in the provider
 	     *
-	     * @return {Deferred}
+	     * @param Object instance
+	     * @param Function func
+	     * @return Mixed
 	     */
-
-	  }, {
-	    key: "deferred",
-	    value: function deferred() {
-	      return new function () {
-	        var _this = this;
-
-	        this.resolve = null;
-	        this.reject = null;
-	        this.promise = new Promise(function (resolve, reject) {
-	          _this.resolve = resolve;
-	          _this.reject = reject;
+	    var reducer = function reducer(instance, func) {
+	        return func(instance);
+	    };
+	    
+	    
+	    /**
+	     * Get decorators and middleware including globals
+	     *
+	     * @return array
+	     */
+	    var getWithGlobal = function getWithGlobal(collection, name) {
+	        return (collection[name] || []).concat(collection.__global__ || []);
+	    };
+	    
+	    
+	    /**
+	     * Create the provider properties on the container
+	     *
+	     * @param String name
+	     * @param Function Provider
+	     * @return Bottle
+	     */
+	    var createProvider = function createProvider(name, Provider) {
+	        var providerName, properties, container, id, decorators, middlewares;
+	    
+	        id = this.id;
+	        container = this.container;
+	        decorators = this.decorators;
+	        middlewares = this.middlewares;
+	        providerName = name + PROVIDER_SUFFIX;
+	    
+	        properties = Object.create(null);
+	        properties[providerName] = {
+	            configurable : true,
+	            enumerable : true,
+	            get : function getProvider() {
+	                var instance = new Provider();
+	                delete container[providerName];
+	                container[providerName] = instance;
+	                return instance;
+	            }
+	        };
+	    
+	        properties[name] = {
+	            configurable : true,
+	            enumerable : true,
+	            get : function getService() {
+	                var provider = container[providerName];
+	                var instance;
+	                if (provider) {
+	                    // filter through decorators
+	                    instance = getWithGlobal(decorators, name).reduce(reducer, provider.$get(container));
+	    
+	                    delete container[providerName];
+	                    delete container[name];
+	                }
+	                return instance === undefined ? instance : applyMiddleware(getWithGlobal(middlewares, name),
+	                    name, instance, container);
+	            }
+	        };
+	    
+	        Object.defineProperties(container, properties);
+	        return this;
+	    };
+	    
+	    
+	    /**
+	     * Register a provider.
+	     *
+	     * @param String fullname
+	     * @param Function Provider
+	     * @return Bottle
+	     */
+	    var provider = function provider(fullname, Provider) {
+	        var parts, name;
+	        parts = fullname.split(DELIMITER);
+	        if (this.providerMap[fullname] && parts.length === 1 && !this.container[fullname + PROVIDER_SUFFIX]) {
+	            return console.error(fullname + ' provider already instantiated.');
+	        }
+	        this.originalProviders[fullname] = Provider;
+	        this.providerMap[fullname] = true;
+	    
+	        name = parts.shift();
+	    
+	        if (parts.length) {
+	            getNestedBottle.call(this, name).provider(parts.join(DELIMITER), Provider);
+	            return this;
+	        }
+	        return createProvider.call(this, name, Provider);
+	    };
+	    
+	    /**
+	     * Register a factory inside a generic provider.
+	     *
+	     * @param String name
+	     * @param Function Factory
+	     * @return Bottle
+	     */
+	    var factory = function factory(name, Factory) {
+	        return provider.call(this, name, function GenericProvider() {
+	            this.$get = Factory;
 	        });
-	      }();
-	    }
-	  }]);
+	    };
+	    
+	    /**
+	     * Private helper for creating service and service factories.
+	     *
+	     * @param String name
+	     * @param Function Service
+	     * @return Bottle
+	     */
+	    var createService = function createService(name, Service, isClass) {
+	        var deps = arguments.length > 3 ? slice.call(arguments, 3) : [];
+	        var bottle = this;
+	        return factory.call(this, name, function GenericFactory() {
+	            var serviceFactory = Service; // alias for jshint
+	            var args = deps.map(getNestedService, bottle.container);
+	    
+	            if (!isClass) {
+	                return serviceFactory.apply(null, args);
+	            }
+	            return new (Service.bind.apply(Service, [null].concat(args)))();
+	        });
+	    };
+	    
+	    /**
+	     * Register a class service
+	     *
+	     * @param String name
+	     * @param Function Service
+	     * @return Bottle
+	     */
+	    var service = function service(name, Service) {
+	        return createService.apply(this, [name, Service, true].concat(slice.call(arguments, 2)));
+	    };
+	    
+	    /**
+	     * Register a function service
+	     */
+	    var serviceFactory = function serviceFactory(name, factoryService) {
+	        return createService.apply(this, [name, factoryService, false].concat(slice.call(arguments, 2)));
+	    };
+	    
+	    /**
+	     * Define a mutable property on the container.
+	     *
+	     * @param String name
+	     * @param mixed val
+	     * @return void
+	     * @scope container
+	     */
+	    var defineValue = function defineValue(name, val) {
+	        Object.defineProperty(this, name, {
+	            configurable : true,
+	            enumerable : true,
+	            value : val,
+	            writable : true
+	        });
+	    };
+	    
+	    /**
+	     * Iterator for setting a plain object literal via defineValue
+	     *
+	     * @param Object container
+	     * @param string name
+	     */
+	    var setValueObject = function setValueObject(container, name) {
+	        var nestedContainer = container[name];
+	        if (!nestedContainer) {
+	            nestedContainer = {};
+	            defineValue.call(container, name, nestedContainer);
+	        }
+	        return nestedContainer;
+	    };
+	    
+	    
+	    /**
+	     * Register a value
+	     *
+	     * @param String name
+	     * @param mixed val
+	     * @return Bottle
+	     */
+	    var value = function value(name, val) {
+	        var parts;
+	        parts = name.split(DELIMITER);
+	        name = parts.pop();
+	        defineValue.call(parts.reduce(setValueObject, this.container), name, val);
+	        return this;
+	    };
+	    
+	    /**
+	     * Define an enumerable, non-configurable, non-writable value.
+	     *
+	     * @param String name
+	     * @param mixed value
+	     * @return undefined
+	     */
+	    var defineConstant = function defineConstant(name, value) {
+	        Object.defineProperty(this, name, {
+	            configurable : false,
+	            enumerable : true,
+	            value : value,
+	            writable : false
+	        });
+	    };
+	    
+	    /**
+	     * Register a constant
+	     *
+	     * @param String name
+	     * @param mixed value
+	     * @return Bottle
+	     */
+	    var constant = function constant(name, value) {
+	        var parts = name.split(DELIMITER);
+	        name = parts.pop();
+	        defineConstant.call(parts.reduce(setValueObject, this.container), name, value);
+	        return this;
+	    };
+	    
+	    /**
+	     * Register decorator.
+	     *
+	     * @param String fullname
+	     * @param Function func
+	     * @return Bottle
+	     */
+	    var decorator = function decorator(fullname, func) {
+	        var parts, name;
+	        if (typeof fullname === FUNCTION_TYPE) {
+	            func = fullname;
+	            fullname = GLOBAL_NAME;
+	        }
+	    
+	        parts = fullname.split(DELIMITER);
+	        name = parts.shift();
+	        if (parts.length) {
+	            getNestedBottle.call(this, name).decorator(parts.join(DELIMITER), func);
+	        } else {
+	            if (!this.decorators[name]) {
+	                this.decorators[name] = [];
+	            }
+	            this.decorators[name].push(func);
+	        }
+	        return this;
+	    };
+	    
+	    /**
+	     * Register a function that will be executed when Bottle#resolve is called.
+	     *
+	     * @param Function func
+	     * @return Bottle
+	     */
+	    var defer = function defer(func) {
+	        this.deferred.push(func);
+	        return this;
+	    };
+	    
+	    
+	    /**
+	     * Immediately instantiates the provided list of services and returns them.
+	     *
+	     * @param Array services
+	     * @return Array Array of instances (in the order they were provided)
+	     */
+	    var digest = function digest(services) {
+	        return (services || []).map(getNestedService, this.container);
+	    };
+	    
+	    /**
+	     * Register an instance factory inside a generic factory.
+	     *
+	     * @param {String} name - The name of the service
+	     * @param {Function} Factory - The factory function, matches the signature required for the
+	     * `factory` method
+	     * @return Bottle
+	     */
+	    var instanceFactory = function instanceFactory(name, Factory) {
+	        return factory.call(this, name, function GenericInstanceFactory(container) {
+	            return {
+	                instance : Factory.bind(Factory, container)
+	            };
+	        });
+	    };
+	    
+	    /**
+	     * A filter function for removing bottle container methods and providers from a list of keys
+	     */
+	    var byMethod = function byMethod(name) {
+	        return !/^\$(?:decorator|register|list)$|Provider$/.test(name);
+	    };
+	    
+	    /**
+	     * List the services registered on the container.
+	     *
+	     * @param Object container
+	     * @return Array
+	     */
+	    var list = function list(container) {
+	        return Object.keys(container || this.container || {}).filter(byMethod);
+	    };
+	    
+	    /**
+	     * Named bottle instances
+	     *
+	     * @type Object
+	     */
+	    var bottles = {};
+	    
+	    /**
+	     * Get an instance of bottle.
+	     *
+	     * If a name is provided the instance will be stored in a local hash.  Calling Bottle.pop multiple
+	     * times with the same name will return the same instance.
+	     *
+	     * @param String name
+	     * @return Bottle
+	     */
+	    var pop = function pop(name) {
+	        var instance;
+	        if (typeof name === STRING_TYPE) {
+	            instance = bottles[name];
+	            if (!instance) {
+	                bottles[name] = instance = new Bottle();
+	                instance.constant('BOTTLE_NAME', name);
+	            }
+	            return instance;
+	        }
+	        return new Bottle();
+	    };
+	    
+	    /**
+	     * Clear all named bottles.
+	     */
+	    var clear = function clear(name) {
+	        if (typeof name === STRING_TYPE) {
+	            delete bottles[name];
+	        } else {
+	            bottles = {};
+	        }
+	    };
+	    
+	    /**
+	     * Register a service, factory, provider, or value based on properties on the object.
+	     *
+	     * properties:
+	     *  * Obj.$name   String required ex: `'Thing'`
+	     *  * Obj.$type   String optional 'service', 'factory', 'provider', 'value'.  Default: 'service'
+	     *  * Obj.$inject Mixed  optional only useful with $type 'service' name or array of names
+	     *  * Obj.$value  Mixed  optional Normally Obj is registered on the container.  However, if this
+	     *                       property is included, it's value will be registered on the container
+	     *                       instead of the object itsself.  Useful for registering objects on the
+	     *                       bottle container without modifying those objects with bottle specific keys.
+	     *
+	     * @param Function Obj
+	     * @return Bottle
+	     */
+	    var register = function register(Obj) {
+	        var value = Obj.$value === undefined ? Obj : Obj.$value;
+	        return this[Obj.$type || 'service'].apply(this, [Obj.$name, value].concat(Obj.$inject || []));
+	    };
+	    
+	    /**
+	     * Deletes providers from the map and container.
+	     *
+	     * @param String name
+	     * @return void
+	     */
+	    var removeProviderMap = function resetProvider(name) {
+	        delete this.providerMap[name];
+	        delete this.container[name];
+	        delete this.container[name + PROVIDER_SUFFIX];
+	    };
+	    
+	    /**
+	     * Resets providers on a bottle instance. If 'names' array is provided, only the named providers will be reset.
+	     *
+	     * @param Array names
+	     * @return void
+	     */
+	    var resetProviders = function resetProviders(names) {
+	        var tempProviders = this.originalProviders;
+	        var shouldFilter = Array.isArray(names);
+	    
+	        Object.keys(this.originalProviders).forEach(function resetProvider(originalProviderName) {
+	            if (shouldFilter && names.indexOf(originalProviderName) === -1) {
+	                return;
+	            }
+	            var parts = originalProviderName.split(DELIMITER);
+	            if (parts.length > 1) {
+	                parts.forEach(removeProviderMap, getNestedBottle.call(this, parts[0]));
+	            }
+	            removeProviderMap.call(this, originalProviderName);
+	            this.provider(originalProviderName, tempProviders[originalProviderName]);
+	        }, this);
+	    };
+	    
+	    
+	    /**
+	     * Execute any deferred functions
+	     *
+	     * @param Mixed data
+	     * @return Bottle
+	     */
+	    var resolve = function resolve(data) {
+	        this.deferred.forEach(function deferredIterator(func) {
+	            func(data);
+	        });
+	    
+	        return this;
+	    };
+	    
+	    
+	    /**
+	     * Bottle constructor
+	     *
+	     * @param String name Optional name for functional construction
+	     */
+	    Bottle = function Bottle(name) {
+	        if (!(this instanceof Bottle)) {
+	            return Bottle.pop(name);
+	        }
+	    
+	        this.id = id++;
+	    
+	        this.decorators = {};
+	        this.middlewares = {};
+	        this.nested = {};
+	        this.providerMap = {};
+	        this.originalProviders = {};
+	        this.deferred = [];
+	        this.container = {
+	            $decorator : decorator.bind(this),
+	            $register : register.bind(this),
+	            $list : list.bind(this)
+	        };
+	    };
+	    
+	    /**
+	     * Bottle prototype
+	     */
+	    Bottle.prototype = {
+	        constant : constant,
+	        decorator : decorator,
+	        defer : defer,
+	        digest : digest,
+	        factory : factory,
+	        instanceFactory: instanceFactory,
+	        list : list,
+	        middleware : middleware,
+	        provider : provider,
+	        resetProviders : resetProviders,
+	        register : register,
+	        resolve : resolve,
+	        service : service,
+	        serviceFactory : serviceFactory,
+	        value : value
+	    };
+	    
+	    /**
+	     * Bottle static
+	     */
+	    Bottle.pop = pop;
+	    Bottle.clear = clear;
+	    Bottle.list = list;
+	    
+	    /**
+	     * Global config
+	     */
+	    Bottle.config = {
+	        strict : false
+	    };
+	    
+	    /**
+	     * Exports script adapted from lodash v2.4.1 Modern Build
+	     *
+	     * @see http://lodash.com/
+	     */
+	    
+	    /**
+	     * Valid object type map
+	     *
+	     * @type Object
+	     */
+	    var objectTypes = {
+	        'function' : true,
+	        'object' : true
+	    };
+	    
+	    (function exportBottle(root) {
+	    
+	        /**
+	         * Free variable exports
+	         *
+	         * @type Function
+	         */
+	        var freeExports = exports && !exports.nodeType && exports;
+	    
+	        /**
+	         * Free variable module
+	         *
+	         * @type Object
+	         */
+	        var freeModule = module && !module.nodeType && module;
+	    
+	        /**
+	         * CommonJS module.exports
+	         *
+	         * @type Function
+	         */
+	        var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+	    
+	        /**
+	         * Free variable `global`
+	         *
+	         * @type Object
+	         */
+	        var freeGlobal = objectTypes[typeof commonjsGlobal] && commonjsGlobal;
+	        if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+	            root = freeGlobal;
+	        }
+	    
+	        /**
+	         * Export
+	         */
+	        if (typeof undefined === FUNCTION_TYPE && typeof undefined.amd === 'object' && undefined.amd) {
+	            root.Bottle = Bottle;
+	            undefined(function() { return Bottle; });
+	        } else if (freeExports && freeModule) {
+	            if (moduleExports) {
+	                (freeModule.exports = Bottle).Bottle = Bottle;
+	            } else {
+	                freeExports.Bottle = Bottle;
+	            }
+	        } else {
+	            root.Bottle = Bottle;
+	        }
+	    }((objectTypes[typeof window] && window) || this));
+	    
+	}.call(commonjsGlobal));
+	});
 
-	  return Utils;
-	}();
+	// fast apply, http://jsperf.lnkit.com/fast-apply/5
+	var _invoke = function (fn, args, that) {
+	  var un = that === undefined;
+	  switch (args.length) {
+	    case 0: return un ? fn()
+	                      : fn.call(that);
+	    case 1: return un ? fn(args[0])
+	                      : fn.call(that, args[0]);
+	    case 2: return un ? fn(args[0], args[1])
+	                      : fn.call(that, args[0], args[1]);
+	    case 3: return un ? fn(args[0], args[1], args[2])
+	                      : fn.call(that, args[0], args[1], args[2]);
+	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
+	                      : fn.call(that, args[0], args[1], args[2], args[3]);
+	  } return fn.apply(that, args);
+	};
+
+	var arraySlice = [].slice;
+	var factories = {};
+
+	var construct$1 = function (F, len, args) {
+	  if (!(len in factories)) {
+	    for (var n = [], i = 0; i < len; i++) n[i] = 'a[' + i + ']';
+	    // eslint-disable-next-line no-new-func
+	    factories[len] = Function('F,a', 'return new F(' + n.join(',') + ')');
+	  } return factories[len](F, args);
+	};
+
+	var _bind = Function.bind || function bind(that /* , ...args */) {
+	  var fn = _aFunction(this);
+	  var partArgs = arraySlice.call(arguments, 1);
+	  var bound = function (/* args... */) {
+	    var args = partArgs.concat(arraySlice.call(arguments));
+	    return this instanceof bound ? construct$1(fn, args.length, args) : _invoke(fn, args, that);
+	  };
+	  if (_isObject(fn.prototype)) bound.prototype = fn.prototype;
+	  return bound;
+	};
+
+	// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
+
+
+	_export(_export.P, 'Function', { bind: _bind });
+
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+	function _typeof(obj) {
+	  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return _typeof2(obj);
+	    };
+	  } else {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	module.exports = _typeof;
+	});
+
+	function _assertThisInitialized(self) {
+	  if (self === void 0) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+
+	  return self;
+	}
+
+	var assertThisInitialized = _assertThisInitialized;
+
+	function _possibleConstructorReturn(self, call) {
+	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
+	    return call;
+	  }
+
+	  return assertThisInitialized(self);
+	}
+
+	var possibleConstructorReturn = _possibleConstructorReturn;
+
+	var getPrototypeOf = createCommonjsModule(function (module) {
+	function _getPrototypeOf(o) {
+	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+	    return o.__proto__ || Object.getPrototypeOf(o);
+	  };
+	  return _getPrototypeOf(o);
+	}
+
+	module.exports = _getPrototypeOf;
+	});
+
+	function _superPropBase(object, property) {
+	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+	    object = getPrototypeOf(object);
+	    if (object === null) break;
+	  }
+
+	  return object;
+	}
+
+	var superPropBase = _superPropBase;
+
+	var get = createCommonjsModule(function (module) {
+	function _get(target, property, receiver) {
+	  if (typeof Reflect !== "undefined" && Reflect.get) {
+	    module.exports = _get = Reflect.get;
+	  } else {
+	    module.exports = _get = function _get(target, property, receiver) {
+	      var base = superPropBase(target, property);
+	      if (!base) return;
+	      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+	      if (desc.get) {
+	        return desc.get.call(receiver);
+	      }
+
+	      return desc.value;
+	    };
+	  }
+
+	  return _get(target, property, receiver || target);
+	}
+
+	module.exports = _get;
+	});
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function");
+	  }
+
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) setPrototypeOf(subClass, superClass);
+	}
+
+	var inherits = _inherits;
 
 	/**
 	 * Copyright © 2016, Ambroise Maupate
@@ -2314,836 +2080,293 @@ define(['exports'], function (exports) { 'use strict';
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 	 * IN THE SOFTWARE.
 	 *
-	 * @file History.js
-	 * @author Adrien Scholaert
+	 * @file Events.js
+	 * @author Ambroise Maupate
 	 */
 
 	/**
-	 * HistoryManager helps to keep track of the navigation.
-	 *
-	 * @type {Object}
+	 * Event dispatcher.
 	 */
-	var History =
+	var Dispatcher =
 	/*#__PURE__*/
 	function () {
-	  function History() {
-	    classCallCheck(this, History);
-
-	    /**
-	     * Keep track of the status in historic order.
-	     *
-	     * @readOnly
-	     * @type {Array}
-	     */
-	    this.history = [];
+	  function Dispatcher() {
+	    classCallCheck(this, Dispatcher);
 	  }
-	  /**
-	   * Add a new set of url and namespace.
-	   *
-	   * @param {String} url
-	   * @param {String} transitionName
-	   * @param {String} context (ajax, history)
-	   * @param {Object} data (optional data)
-	   *
-	   * @return {Object}
-	   */
 
-
-	  createClass(History, [{
-	    key: "add",
-	    value: function add(url, transitionName, context) {
-	      var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	      var state = {
-	        url: url,
-	        transitionName: transitionName,
-	        context: context,
-	        data: data
-	      };
-	      this.history.push(state);
-	      return state;
-	    }
-	    /**
-	     * Return information about the current status.
-	     *
-	     * @return {Object}
-	     */
-
-	  }, {
-	    key: "currentStatus",
-	    value: function currentStatus() {
-	      return this.history[this.history.length - 1];
-	    }
-	    /**
-	     * Return information about the previous status.
-	     *
-	     * @return {Object}
-	     */
-
-	  }, {
-	    key: "prevStatus",
-	    value: function prevStatus() {
-	      var history = this.history;
-
-	      if (history.length < 2) {
-	        return null;
-	      }
-
-	      return history[history.length - 2];
+	  createClass(Dispatcher, null, [{
+	    key: "commit",
+	    value: function commit(eventType, detail) {
+	      var event = new window.CustomEvent(eventType, {
+	        detail: detail
+	      });
+	      console.debug('🚩 Dispatched ' + eventType);
+	      window.dispatchEvent(event);
 	    }
 	  }]);
 
-	  return History;
+	  return Dispatcher;
 	}();
 
-	/**
-	 * Pjax.
+	function _isNativeFunction(fn) {
+	  return Function.toString.call(fn).indexOf("[native code]") !== -1;
+	}
+
+	var isNativeFunction = _isNativeFunction;
+
+	var wrapNativeSuper = createCommonjsModule(function (module) {
+	function _wrapNativeSuper(Class) {
+	  var _cache = typeof Map === "function" ? new Map() : undefined;
+
+	  module.exports = _wrapNativeSuper = function _wrapNativeSuper(Class) {
+	    if (Class === null || !isNativeFunction(Class)) return Class;
+
+	    if (typeof Class !== "function") {
+	      throw new TypeError("Super expression must either be null or a function");
+	    }
+
+	    if (typeof _cache !== "undefined") {
+	      if (_cache.has(Class)) return _cache.get(Class);
+
+	      _cache.set(Class, Wrapper);
+	    }
+
+	    function Wrapper() {
+	      return construct(Class, arguments, getPrototypeOf(this).constructor);
+	    }
+
+	    Wrapper.prototype = Object.create(Class.prototype, {
+	      constructor: {
+	        value: Wrapper,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	    return setPrototypeOf(Wrapper, Class);
+	  };
+
+	  return _wrapNativeSuper(Class);
+	}
+
+	module.exports = _wrapNativeSuper;
+	});
+
+	/*
+	 * Copyright © 2017, Rezo Zero
+	 *
+	 * @file UnknownServiceException.js
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
 	 */
-
-	var Pjax =
+	var UnknownServiceException =
 	/*#__PURE__*/
-	function () {
-	  /**
-	   * Constructor.
-	   *
-	   * @param {Object} options
-	   * @param {string} [options.noAjaxLinkClass=no-ajax-link] - The link class name to prevent ajax
-	   */
-	  function Pjax() {
-	    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	        _ref$noAjaxLinkClass = _ref.noAjaxLinkClass,
-	        noAjaxLinkClass = _ref$noAjaxLinkClass === void 0 ? 'no-ajax-link' : _ref$noAjaxLinkClass;
+	function (_Error) {
+	  inherits(UnknownServiceException, _Error);
 
-	    classCallCheck(this, Pjax);
+	  function UnknownServiceException(id) {
+	    var _this;
 
-	    /**
-	     * @type {string}
-	     */
-	    this.noAjaxLinkClass = noAjaxLinkClass;
-	    /**
-	     * @type {(Kernel|null)}
-	     */
+	    classCallCheck(this, UnknownServiceException);
 
-	    this._kernel = null;
-	    /**
-	     * @type {(History|null)}
-	     */
-
-	    this._history = null;
-	    /**
-	     * @type {(Dom|null)}
-	     */
-
-	    this._dom = null;
-	    /**
-	     * @type {(CacheProvider|null)}
-	     */
-
-	    this._cacheProvider = null;
-	    /**
-	     * @type {(TransitionFactory|null)}
-	     */
-
-	    this._transitionFactory = null;
-	    /**
-	     * @type {(GraphicLoader|null)}
-	     */
-
-	    this._graphicLoader = null;
-	    /**
-	     * @type {(Worker|null)}
-	     */
-
-	    this._worker = null;
-	    /**
-	     * Indicate if there is an animation in progress.
-	     *
-	     * @readOnly
-	     * @type {Boolean}
-	     */
-
-	    this.transitionProgress = false; // Bind methods
-
-	    this.onNewPageLoaded = this.onNewPageLoaded.bind(this);
-	    this.onTransitionEnd = this.onTransitionEnd.bind(this);
-	    this.onLinkClick = this.onLinkClick.bind(this);
-	    this.onStateChange = this.onStateChange.bind(this);
+	    _this = possibleConstructorReturn(this, getPrototypeOf(UnknownServiceException).call(this, "Service \"".concat(id, "\" is not defined")));
+	    _this.name = "UnknownServiceException";
+	    return _this;
 	  }
 
-	  createClass(Pjax, [{
+	  return UnknownServiceException;
+	}(wrapNativeSuper(Error));
+
+	/*
+	 * Copyright © 2017, Rezo Zero
+	 *
+	 * @file DependencyNotFulfilledException.js
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
+	 */
+	var DependencyNotFulfilledException =
+	/*#__PURE__*/
+	function (_Error) {
+	  inherits(DependencyNotFulfilledException, _Error);
+
+	  function DependencyNotFulfilledException(firstServiceName, secondeServiceName) {
+	    var _this;
+
+	    classCallCheck(this, DependencyNotFulfilledException);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(DependencyNotFulfilledException).call(this, "Object of type \"".concat(firstServiceName, "\" needs \"").concat(secondeServiceName, "\" service")));
+	    _this.name = "DependencyNotFulfilledException";
+	    return _this;
+	  }
+
+	  return DependencyNotFulfilledException;
+	}(wrapNativeSuper(Error));
+
+	var AbstractService =
+	/*#__PURE__*/
+	function () {
+	  function AbstractService() {
+	    var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractService';
+	    var dependencies = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['Config'];
+
+	    classCallCheck(this, AbstractService);
+
+	    this.container = container;
+	    this.serviceName = serviceName;
+	    console.debug("".concat(serviceName, " awake"));
+	    this.checkDependencies(dependencies);
+	  }
+
+	  createClass(AbstractService, [{
 	    key: "init",
-
-	    /**
-	     * Init the events.
-	     *
-	     * @private
-	     */
-	    value: function init() {
-	      this._history = new History();
-
-	      var wrapper = this._dom.getWrapper();
-
-	      wrapper.setAttribute('aria-live', 'polite');
-	      this.currentState = this._history.add(this.getCurrentUrl(), null, 'static');
-	      this.bindEvents();
-	    }
-	    /**
-	     * Attach event listeners.
-	     *
-	     * @private
-	     */
-
+	    value: function init() {}
 	  }, {
-	    key: "bindEvents",
-	    value: function bindEvents() {
-	      document.addEventListener('click', this.onLinkClick);
-	      window.addEventListener('popstate', this.onStateChange);
+	    key: "hasService",
+	    value: function hasService(serviceName) {
+	      return this.container.hasOwnProperty(serviceName);
 	    }
-	    /**
-	     * Return the currentURL cleaned.
-	     *
-	     * @return {String} currentUrl
-	     */
-
 	  }, {
-	    key: "getCurrentUrl",
-	    value: function getCurrentUrl() {
-	      // TODO, clean from what? currenturl do not takes hash..
-	      return Utils.cleanLink(Utils.getCurrentUrl());
-	    }
-	    /**
-	     * Change the URL with push state and trigger the state change.
-	     *
-	     * @param {String} url
-	     * @param {String} transitionName
-	     */
+	    key: "checkDependencies",
+	    value: function checkDependencies() {
+	      var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
 
-	  }, {
-	    key: "goTo",
-	    value: function goTo(url, transitionName) {
-	      var currentPosition = window.scrollY;
-	      window.history.pushState(null, null, url);
-	      window.scrollTo(0, currentPosition);
-	      this.onStateChange(transitionName, true);
-	    }
-	    /**
-	     * Force the browser to go to a certain url.
-	     *
-	     * @param {String} url
-	     * @private
-	     */
+	      try {
+	        for (var _iterator = dependencies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var serviceName = _step.value;
 
-	  }, {
-	    key: "forceGoTo",
-	    value: function forceGoTo(url) {
-	      window.location = url;
-	    }
-	    /**
-	     * Load an url, will start an ajax request or load from the cache.
-	     *
-	     * @private
-	     * @param  {String} url
-	     * @return {Promise}
-	     */
-
-	  }, {
-	    key: "load",
-	    value: function load(url) {
-	      var _this = this;
-
-	      var deferred = Utils.deferred(); // Show loader
-
-	      if (this._graphicLoader) {
-	        this._graphicLoader.show();
-	      } // Check cache
-
-
-	      var request = null;
-
-	      if (this._cacheProvider) {
-	        request = this._cacheProvider.get(url);
-	      } // If no cache, make request
-
-
-	      if (!request) {
-	        request = Utils.request(url, this._worker); // If cache provider, cache the request
-
-	        if (this._cacheProvider) {
-	          this._cacheProvider.set(url, request);
+	          if (!this.hasService(serviceName)) {
+	            throw new DependencyNotFulfilledException(this.serviceName, serviceName);
+	          }
 	        }
-	      } // When data are loaded
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }, {
+	    key: "getService",
+	    value: function getService(serviceName) {
+	      if (!this.hasService(serviceName)) {
+	        throw new UnknownServiceException(serviceName);
+	      }
 
+	      return this.container[serviceName];
+	    }
+	  }]);
 
-	      request.then(function (data) {
-	        var container = _this._dom.parseResponse(data); // Dispatch an event
+	  return AbstractService;
+	}();
 
+	var AbstractBootableService =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(AbstractBootableService, _AbstractService);
 
-	        Dispatcher.commit(AFTER_PAGE_LOAD, {
-	          container: container,
-	          currentHTML: _this._dom.currentHTML
-	        }); // Add new container to the DOM
+	  function AbstractBootableService() {
+	    classCallCheck(this, AbstractBootableService);
 
-	        _this._dom.putContainer(container); // Dispatch an event
+	    return possibleConstructorReturn(this, getPrototypeOf(AbstractBootableService).apply(this, arguments));
+	  }
 
+	  createClass(AbstractBootableService, [{
+	    key: "boot",
+	    value: function boot() {
+	      console.debug("".concat(this.serviceName, " boot"));
+	    }
+	  }]);
 
-	        Dispatcher.commit(AFTER_DOM_APPENDED, {
-	          container: container,
-	          currentHTML: _this._dom.currentHTML
-	        }); // Build page
+	  return AbstractBootableService;
+	}(AbstractService);
 
-	        var page = _this._kernel.buildPage(container);
+	/**
+	 * PageBuilder.
+	 */
 
-	        deferred.resolve(page);
-	      }).catch(function (err) {
-	        console.error(err);
+	var PageBuilder =
+	/*#__PURE__*/
+	function (_AbstractBootableServ) {
+	  inherits(PageBuilder, _AbstractBootableServ);
 
-	        _this.forceGoTo(url);
+	  function PageBuilder(container) {
+	    var _this;
 
-	        deferred.reject();
-	      });
-	      return deferred.promise;
+	    classCallCheck(this, PageBuilder);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(PageBuilder).call(this, container, 'PageBuilder', ['Dom']));
+
+	    if (!window.location.origin) {
+	      window.location.origin = window.location.protocol + '//' + window.location.host;
 	    }
 	    /**
-	     * Get the .href parameter out of a link element
+	     * Page instance
+	     * @type {(AbstractPage|null)}
+	     */
+
+
+	    _this.page = null; // Bind methods
+
+	    _this.buildPage = _this.buildPage.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    return _this;
+	  }
+
+	  createClass(PageBuilder, [{
+	    key: "boot",
+	    value: function boot() {
+	      get(getPrototypeOf(PageBuilder.prototype), "boot", this).call(this); // Build first page with static context
+
+
+	      this.buildPage(this.getService('Dom').getContainer(), 'static');
+	    }
+	    /**
+	     * Build a new page instance.
 	     *
-	     * @private
-	     * @param  {HTMLElement} el
-	     * @return {String|undefined} href
+	     * @param {HTMLElement} container
+	     * @param {String} context
+	     * @returns {AbstractPage|null}
 	     */
 
 	  }, {
-	    key: "getHref",
-	    value: function getHref(el) {
-	      if (!el) {
-	        return undefined;
-	      } // Check if has a href and if it's a link element
+	    key: "buildPage",
+	    value: function buildPage(rootElement) {
+	      var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ajax';
+	      var nodeTypeName = this.getService('Dom').getNodeType(rootElement);
 
-
-	      if (typeof el.href === 'string' && el.tagName.toUpperCase() === 'A') {
-	        return el.href;
-	      }
-
-	      return undefined;
-	    }
-	    /**
-	     * Get transition name from HTMLElement attribute (data-transition).
-	     *
-	     * @param {HTMLElement} el
-	     * @returns {String|undefined} The transition name
-	     */
-
-	  }, {
-	    key: "getTransitionName",
-	    value: function getTransitionName(el) {
-	      if (!el) {
-	        return null;
-	      }
-
-	      if (el.getAttribute && typeof el.getAttribute('data-transition') === 'string') {
-	        return el.getAttribute('data-transition');
-	      }
-
-	      return null;
-	    }
-	    /**
-	     * Callback called from click event.
-	     *
-	     * @private
-	     * @param {MouseEvent} evt
-	     */
-
-	  }, {
-	    key: "onLinkClick",
-	    value: function onLinkClick(evt) {
-	      /**
-	       * @type {HTMLElement|Node|EventTarget}
-	       */
-	      var el = evt.target; // Go up in the node list until we
-	      // find something with an href
-
-	      while (el && !this.getHref(el)) {
-	        el = el.parentNode;
-	      }
-
-	      if (this.preventCheck(evt, el)) {
-	        evt.preventDefault();
-	        this.linkHash = el.hash.split('#')[1];
-	        var href = this.getHref(el);
-	        var transitionName = this.getTransitionName(el);
-	        this.goTo(href, transitionName);
-	      }
-	    }
-	    /**
-	     * Determine if the link should be followed.
-	     *
-	     * @param  {MouseEvent} evt
-	     * @param  {HTMLElement} element
-	     * @return {Boolean}
-	     */
-
-	  }, {
-	    key: "preventCheck",
-	    value: function preventCheck(evt, element) {
-	      if (!window.history.pushState) {
-	        return false;
-	      }
-
-	      var href = this.getHref(element); // User
-
-	      if (!element || !href) {
-	        return false;
-	      } // Middle click, cmd click, and ctrl click
-
-
-	      if (evt.which > 1 || evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) {
-	        return false;
-	      } // Ignore target with _blank target
-
-
-	      if (element.target && element.target === '_blank') {
-	        return false;
-	      } // Check if it's the same domain
-
-
-	      if (window.location.protocol !== element.protocol || window.location.hostname !== element.hostname) {
-	        return false;
-	      } // Check if the port is the same
-
-
-	      if (Utils.getPort() !== Utils.getPort(element.port)) {
-	        return false;
-	      } // Ignore case when a hash is being tacked on the current URL
-	      // if (href.indexOf('#') > -1)
-	      //   return false;
-	      // Ignore case where there is download attribute
-
-
-	      if (element.getAttribute && typeof element.getAttribute('download') === 'string') {
-	        return false;
-	      } // In case you're trying to load the same page
-
-
-	      if (Utils.cleanLink(href) === Utils.cleanLink(window.location.href)) {
-	        return false;
-	      }
-
-	      return !element.classList.contains(this.noAjaxLinkClass);
-	    }
-	    /**
-	     * Return a transition object.
-	     *
-	     * @param  {object} prev historyManager
-	     * @param  {object} current historyManager
-	     * @return {AbstractTransition} Transition object
-	     */
-
-	  }, {
-	    key: "getTransition",
-	    value: function getTransition(prev, current) {
-	      return this._transitionFactory.getTransition(prev, current);
-	    }
-	    /**
-	     * Method called after a 'popstate' or from .goTo().
-	     *
-	     * @private
-	     */
-
-	  }, {
-	    key: "onStateChange",
-	    value: function onStateChange() {
-	      var transitionName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-	      var isAjax = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-	      var newUrl = this.getCurrentUrl();
-
-	      if (this.transitionProgress) {
-	        this.forceGoTo(newUrl);
-	      }
-
-	      if (this._history.currentStatus().url === newUrl) {
-	        return false;
-	      } // If transition name is a string, a link have been click
-	      // Otherwise back/forward buttons have been pressed
-
-
-	      if (typeof transitionName === 'string' || isAjax) {
-	        this.currentState = this._history.add(newUrl, transitionName, 'ajax');
+	      if (this.hasService(nodeTypeName)) {
+	        this.page = this.getService(nodeTypeName).instance();
 	      } else {
-	        this.currentState = this._history.add(newUrl, null, '_history');
-	      } // Dispatch an event to inform that the page is being load
+	        nodeTypeName = 'AbstractPage';
+	        this.page = this.getService('AbstractPage').instance();
+	      } // Set some values
 
 
-	      Dispatcher.commit(BEFORE_PAGE_LOAD, {
-	        currentStatus: this._history.currentStatus(),
-	        prevStatus: this._history.prevStatus()
-	      }); // Load the page with the new url (promise is return)
+	      this.page.type = nodeTypeName;
+	      this.page.context = context;
+	      this.page.id = rootElement.id;
+	      this.page.rootElement = rootElement;
+	      this.page.name = rootElement.hasAttribute('data-node-name') ? rootElement.getAttribute('data-node-name') : '';
+	      this.page.metaTitle = rootElement.hasAttribute('data-meta-title') ? rootElement.getAttribute('data-meta-title') : '';
+	      this.page.isHome = rootElement.getAttribute('data-is-home') === '1';
+	      this.page.init(); // Dispatch an event to inform that the new page is ready
 
-	      var newPagePromise = this.load(newUrl); // Get the page transition instance (from prev and current state)
-
-	      var transition = this.getTransition(this._history.prevStatus(), this._history.currentStatus());
-	      this.transitionProgress = true; // Dispatch an event that the transition is started
-
-	      Dispatcher.commit(TRANSITION_START, {
-	        transition: transition,
-	        currentStatus: this._history.currentStatus(),
-	        prevStatus: this._history.prevStatus()
-	      }); // Start the transition (with the current page, and the new page load promise)
-
-	      var transitionPromise = transition.init(this._kernel.page, newPagePromise);
-	      newPagePromise.then(this.onNewPageLoaded);
-	      transitionPromise.then(this.onTransitionEnd);
-	    }
-	    /**
-	     * Function called as soon the new page is ready.
-	     *
-	     * @private
-	     * @param {AbstractPage} page
-	     */
-
-	  }, {
-	    key: "onNewPageLoaded",
-	    value: function onNewPageLoaded(page) {
-	      var currentStatus = this._history.currentStatus();
-
-	      if (this._graphicLoader) {
-	        this._graphicLoader.hide();
-	      } // Update body attributes (class, id, data-attributes
-
-
-	      this._dom.updateBodyAttributes(page); // Update the page title
-
-
-	      this._dom.updatePageTitle(page); // Send google analytic data
-
-
-	      Utils.trackGoogleAnalytics(); // Update the current state
-
-	      if (this.currentState && page) {
-	        if (!this.currentState.data.title && page.metaTitle) {
-	          this.currentState.data.title = page.metaTitle;
-	        }
-	      }
-
-	      Dispatcher.commit(CONTAINER_READY, {
-	        currentStatus: currentStatus,
-	        prevStatus: this._history.prevStatus(),
-	        currentHTML: this._dom.currentHTML,
-	        page: page
-	      });
-	    }
-	    /**
-	     * Function called as soon the transition is finished.
-	     *
-	     * @private
-	     */
-
-	  }, {
-	    key: "onTransitionEnd",
-	    value: function onTransitionEnd() {
-	      this.transitionProgress = false;
-
-	      if (this.linkHash) {
-	        window.location.hash = '';
-	        window.location.hash = this.linkHash;
-	        this.linkHash = null;
-	      }
-
-	      Dispatcher.commit(TRANSITION_COMPLETE, {
-	        currentStatus: this._history.currentStatus(),
-	        prevStatus: this._history.prevStatus()
-	      });
-	    }
-	  }, {
-	    key: "kernel",
-	    set: function set(value) {
-	      this._kernel = value;
-	    }
-	  }, {
-	    key: "history",
-	    set: function set(value) {
-	      this._history = value;
-	    }
-	  }, {
-	    key: "dom",
-	    set: function set(value) {
-	      this._dom = value;
-	    }
-	  }, {
-	    key: "cacheProvider",
-	    set: function set(value) {
-	      this._cacheProvider = value;
-	    }
-	  }, {
-	    key: "graphicLoader",
-	    set: function set(value) {
-	      this._graphicLoader = value;
-	    }
-	  }, {
-	    key: "worker",
-	    set: function set(value) {
-	      this._worker = value;
-	    }
-	  }, {
-	    key: "transitionFactory",
-	    set: function set(value) {
-	      this._transitionFactory = value;
+	      Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
+	      return this.page;
 	    }
 	  }]);
 
-	  return Pjax;
-	}();
-
-	/**
-	 * Prefetch.
-	 *
-	 * @type {Object}
-	 */
-
-	var Prefetch =
-	/*#__PURE__*/
-	function () {
-	  function Prefetch() {
-	    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	        _ref$noPrefetchClass = _ref.noPrefetchClass,
-	        noPrefetchClass = _ref$noPrefetchClass === void 0 ? 'no-prefetch' : _ref$noPrefetchClass;
-
-	    classCallCheck(this, Prefetch);
-
-	    /**
-	     * Class name used to ignore prefetch on links.
-	     *
-	     * @type {string}
-	     * @default
-	     */
-	    this.noPrefetchClass = noPrefetchClass;
-	    /**
-	     * @type {(Worker|null)}
-	     */
-
-	    this._worker = null;
-	    /**
-	     * @type {(Pjax|null)}
-	     */
-
-	    this._pjax = null;
-	    /**
-	     * @type {(CacheProvider|null)}
-	     */
-
-	    this._cacheProvider = null;
-	  }
-
-	  createClass(Prefetch, [{
-	    key: "init",
-	    value: function init() {
-	      if (!window.history.pushState) {
-	        return false;
-	      }
-
-	      document.body.addEventListener('mouseover', this.onLinkEnter.bind(this));
-	      document.body.addEventListener('touchstart', this.onLinkEnter.bind(this));
-	    }
-	  }, {
-	    key: "onLinkEnter",
-	    value: function onLinkEnter(evt) {
-	      var el = evt.target;
-
-	      while (el && !this._pjax.getHref(el)) {
-	        el = el.parentNode;
-	      }
-
-	      if (!el || el.classList.contains(this.noPrefetchClass)) {
-	        return;
-	      }
-
-	      var url = this._pjax.getHref(el); // Check if the link is eligible for Pjax
-
-
-	      if (this._pjax.preventCheck(evt, el) && this._cacheProvider && !this._cacheProvider.get(url)) {
-	        var xhr = Utils.request(url, this._worker);
-
-	        if (this._cacheProvider) {
-	          this._cacheProvider.set(url, xhr);
-	        }
-	      }
-	    }
-	  }, {
-	    key: "worker",
-	    set: function set(value) {
-	      this._worker = value;
-	    }
-	  }, {
-	    key: "pjax",
-	    set: function set(value) {
-	      this._pjax = value;
-	    }
-	  }, {
-	    key: "cacheProvider",
-	    set: function set(value) {
-	      this._cacheProvider = value;
-	    }
-	  }]);
-
-	  return Prefetch;
-	}();
-
-	/**
-	 * Copyright © 2016, Ambroise Maupate
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * @file CacheProvider.js
-	 * @author Ambroise Maupate
-	 * @author Adrien Scholaert
-	 */
-
-	/**
-	 * Cache provider class.
-	 *
-	 * This class stores Ajax response in memory.
-	 */
-	var CacheProvider =
-	/*#__PURE__*/
-	function () {
-	  function CacheProvider() {
-	    classCallCheck(this, CacheProvider);
-
-	    this.data = {};
-	  }
-	  /**
-	   * @param  {String} key
-	   * @return {Boolean}
-	   */
-
-
-	  createClass(CacheProvider, [{
-	    key: "exists",
-	    value: function exists(key) {
-	      return key in this.data;
-	    }
-	    /**
-	     * @param  {String} href
-	     * @return {Object}
-	     */
-
-	  }, {
-	    key: "get",
-	    value: function get(href) {
-	      return this.data[href];
-	    }
-	    /**
-	     * @param  {String} key
-	     * @param  {Object} data
-	     * @return {CacheProvider}  this
-	     */
-
-	  }, {
-	    key: "set",
-	    value: function set(key, data) {
-	      this.data[key] = data;
-	      return this;
-	    }
-	    /**
-	     * Flush the cache
-	     */
-
-	  }, {
-	    key: "reset",
-	    value: function reset() {
-	      this.data = {};
-	    }
-	  }]);
-
-	  return CacheProvider;
-	}();
-
-	/**
-	 * Copyright © 2016, Ambroise Maupate
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * @file GraphicLoader.js
-	 * @author Ambroise Maupate
-	 */
-
-	/**
-	 * Handle your application main loader animation.
-	 *
-	 * **Do not instanciate this class directly, create a sub-class**.
-	 */
-	var GraphicLoader =
-	/*#__PURE__*/
-	function () {
-	  /**
-	   * Interface for a graphic loader element.
-	   *
-	   * Any child implementations must implements
-	   * show and hide methods.
-	   *
-	   * @abstract
-	   */
-	  function GraphicLoader() {
-	    classCallCheck(this, GraphicLoader);
-
-	    console.debug('🌀 Construct loader');
-	  }
-	  /**
-	   * Show loader.
-	   *
-	   * @abstract
-	   */
-
-
-	  createClass(GraphicLoader, [{
-	    key: "show",
-	    value: function show() {
-	      console.debug('🌀 Show loader');
-	    }
-	    /**
-	     * Hide loader.
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "hide",
-	    value: function hide() {
-	      console.debug('🌀 Hide loader');
-	    }
-	  }]);
-
-	  return GraphicLoader;
-	}();
+	  return PageBuilder;
+	}(AbstractBootableService);
 
 	var runtime = createCommonjsModule(function (module) {
 	/**
@@ -3905,36 +3128,6 @@ define(['exports'], function (exports) { 'use strict';
 	}
 
 	var regenerator = runtimeModule;
-
-	function _arrayWithoutHoles(arr) {
-	  if (Array.isArray(arr)) {
-	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-	      arr2[i] = arr[i];
-	    }
-
-	    return arr2;
-	  }
-	}
-
-	var arrayWithoutHoles = _arrayWithoutHoles;
-
-	function _iterableToArray(iter) {
-	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-	}
-
-	var iterableToArray = _iterableToArray;
-
-	function _nonIterableSpread() {
-	  throw new TypeError("Invalid attempt to spread non-iterable instance");
-	}
-
-	var nonIterableSpread = _nonIterableSpread;
-
-	function _toConsumableArray(arr) {
-	  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-	}
-
-	var toConsumableArray = _toConsumableArray;
 
 	var runtime$1 = createCommonjsModule(function (module) {
 	/**
@@ -4701,6 +3894,1612 @@ define(['exports'], function (exports) { 'use strict';
 
 	var asyncToGenerator = _asyncToGenerator;
 
+	var AbstractBlockBuilder =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(AbstractBlockBuilder, _AbstractService);
+
+	  function AbstractBlockBuilder() {
+	    classCallCheck(this, AbstractBlockBuilder);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(AbstractBlockBuilder).apply(this, arguments));
+	  }
+
+	  createClass(AbstractBlockBuilder, [{
+	    key: "getBlockInstance",
+
+	    /**
+	     * Returns an `AbstractBlock` child class instance
+	     * according to the nodeTypeName or an AbstractBlock as default.
+	     *
+	     * Comment out the default case if you don’t want a default block to be instantiated
+	     * for each block.
+	     *
+	     * @param  {String} blockType
+	     * @return {AbstractBlock|null}
+	     */
+	    value: function () {
+	      var _getBlockInstance = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee(blockType) {
+	        return regenerator.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                return _context.abrupt("return", null);
+
+	              case 1:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      return function getBlockInstance(_x) {
+	        return _getBlockInstance.apply(this, arguments);
+	      };
+	    }()
+	  }]);
+
+	  return AbstractBlockBuilder;
+	}(AbstractService);
+
+	var BlockBuilder =
+	/*#__PURE__*/
+	function (_AbstractBlockBuilder) {
+	  inherits(BlockBuilder, _AbstractBlockBuilder);
+
+	  function BlockBuilder(container) {
+	    classCallCheck(this, BlockBuilder);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(BlockBuilder).call(this, container, 'BlockBuilder'));
+	  }
+	  /**
+	   * Returns an `AbstractBlock` child class instance
+	   * according to the nodeTypeName or an AbstractBlock as default.
+	   *
+	   * Comment out the default case if you don’t want a default block to be instantiated
+	   * for each block.
+	   *
+	   * @param  {String} blockType
+	   * @return {AbstractBlock}
+	   */
+
+
+	  createClass(BlockBuilder, [{
+	    key: "getBlockInstance",
+	    value: function () {
+	      var _getBlockInstance = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee(blockType) {
+	        return regenerator.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                if (!this.hasService(blockType)) {
+	                  _context.next = 2;
+	                  break;
+	                }
+
+	                return _context.abrupt("return", this.getService(blockType));
+
+	              case 2:
+	                return _context.abrupt("return", null);
+
+	              case 3:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      return function getBlockInstance(_x) {
+	        return _getBlockInstance.apply(this, arguments);
+	      };
+	    }()
+	  }]);
+
+	  return BlockBuilder;
+	}(AbstractBlockBuilder);
+
+	var dP$2 = _objectDp.f;
+	var FProto = Function.prototype;
+	var nameRE = /^\s*function ([^ (]*)/;
+	var NAME$1 = 'name';
+
+	// 19.2.4.2 name
+	NAME$1 in FProto || _descriptors && dP$2(FProto, NAME$1, {
+	  configurable: true,
+	  get: function () {
+	    try {
+	      return ('' + this).match(nameRE)[1];
+	    } catch (e) {
+	      return '';
+	    }
+	  }
+	});
+
+	/**
+	 * Class that is going to deal with DOM parsing/manipulation.
+	 */
+
+	var Dom =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(Dom, _AbstractService);
+
+	  /**
+	   * Constructor.
+	   *
+	   * @param {object} container
+	   */
+	  function Dom(container) {
+	    var _this;
+
+	    classCallCheck(this, Dom);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Dom).call(this, container, 'Dom'));
+	    /**
+	     * Full HTML String of the current page.
+	     * By default is the innerHTML of the initial loaded page.
+	     *
+	     * Each time a new page is loaded, the value is the response of the ajax call.
+	     *
+	     * @type {String}
+	     * @default
+	     */
+
+	    _this.currentHTML = document.documentElement.innerHTML;
+	    return _this;
+	  }
+	  /**
+	   * Parse the responseText obtained from the ajax call.
+	   *
+	   * @param  {String} responseText
+	   * @return {HTMLElement}
+	   */
+
+
+	  createClass(Dom, [{
+	    key: "parseResponse",
+	    value: function parseResponse(responseText) {
+	      this.currentHTML = responseText;
+	      var wrapper = document.createElement('div');
+	      wrapper.innerHTML = responseText;
+	      return this.getContainer(wrapper);
+	    }
+	    /**
+	     * Get the main wrapper by the ID `wrapperId`.
+	     *
+	     * @return {HTMLElement} element
+	     */
+
+	  }, {
+	    key: "getWrapper",
+	    value: function getWrapper() {
+	      var wrapper = document.getElementById(this.getService('Config').wrapperId);
+
+	      if (!wrapper) {
+	        throw new Error('Starting Blocks: Wrapper not found!');
+	      }
+
+	      return wrapper;
+	    }
+	    /**
+	     * Return node type.
+	     *
+	     * @param container
+	     * @returns {string}
+	     */
+
+	  }, {
+	    key: "getNodeType",
+	    value: function getNodeType(container) {
+	      return container.getAttribute(this.getService('Config').objectTypeAttr);
+	    }
+	    /**
+	     * Get the container on the current DOM,
+	     * or from an HTMLElement passed via argument.
+	     *
+	     * @param  {HTMLElement|null} element
+	     * @return {HTMLElement}
+	     */
+
+	  }, {
+	    key: "getContainer",
+	    value: function getContainer() {
+	      var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+	      if (!element) {
+	        element = document.body;
+	      }
+
+	      if (!element) {
+	        throw new Error('Starting Blocks: DOM not ready!');
+	      }
+
+	      var container = this.parseContainer(element);
+
+	      if (!container) {
+	        throw new Error("Starting Blocks: container not found! Did you use at least\n            one dom element with \".".concat(this.getService('Config').pageClass, "\" class and \"data-node-type\" attribute?"));
+	      }
+
+	      return container;
+	    }
+	    /**
+	     * Put the container on the page.
+	     *
+	     * @param  {HTMLElement} element
+	     */
+
+	  }, {
+	    key: "putContainer",
+	    value: function putContainer(element) {
+	      element.style.visibility = 'hidden';
+	      var wrapper = this.getWrapper();
+	      wrapper.appendChild(element);
+	    }
+	    /**
+	     * Get container selector.
+	     *
+	     * @param  {HTMLElement} element
+	     * @return {HTMLElement} element
+	     */
+
+	  }, {
+	    key: "parseContainer",
+	    value: function parseContainer(element) {
+	      return element.querySelector(".".concat(this.getService('Config').pageClass, "[data-node-type]"));
+	    }
+	    /**
+	     * Update body attributes.
+	     *
+	     * @param {AbstractPage} page
+	     */
+
+	  }, {
+	    key: "updateBodyAttributes",
+	    value: function updateBodyAttributes(page) {
+	      // Change body class and id
+	      if (page.name) {
+	        document.body.id = page.name;
+	        document.body.classList.add(page.name);
+	      }
+
+	      document.body.classList.add(page.type);
+
+	      if (page.isHome) {
+	        document.body.setAttribute('data-is-home', '1');
+	      } else {
+	        document.body.setAttribute('data-is-home', '0');
+	      }
+	    }
+	    /**
+	     * Update page title.
+	     *
+	     * @param {AbstractPage} page
+	     */
+
+	  }, {
+	    key: "updatePageTitle",
+	    value: function updatePageTitle(page) {
+	      if (page.metaTitle) {
+	        document.title = page.metaTitle;
+	      }
+	    }
+	  }]);
+
+	  return Dom;
+	}(AbstractService);
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+
+	var TAG$1 = _wks('toStringTag');
+	// ES3 wrong here
+	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
+
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function (it, key) {
+	  try {
+	    return it[key];
+	  } catch (e) { /* empty */ }
+	};
+
+	var _classof = function (it) {
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? _cof(O)
+	    // ES3 arguments fallback
+	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+	var _anInstance = function (it, Constructor, name, forbiddenField) {
+	  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
+	    throw TypeError(name + ': incorrect invocation!');
+	  } return it;
+	};
+
+	// call something on iterator step with safe closing on error
+
+	var _iterCall = function (iterator, fn, value, entries) {
+	  try {
+	    return entries ? fn(_anObject(value)[0], value[1]) : fn(value);
+	  // 7.4.6 IteratorClose(iterator, completion)
+	  } catch (e) {
+	    var ret = iterator['return'];
+	    if (ret !== undefined) _anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+	// check on default Array iterator
+
+	var ITERATOR$2 = _wks('iterator');
+	var ArrayProto$1 = Array.prototype;
+
+	var _isArrayIter = function (it) {
+	  return it !== undefined && (_iterators.Array === it || ArrayProto$1[ITERATOR$2] === it);
+	};
+
+	var ITERATOR$3 = _wks('iterator');
+
+	var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
+	  if (it != undefined) return it[ITERATOR$3]
+	    || it['@@iterator']
+	    || _iterators[_classof(it)];
+	};
+
+	var _forOf = createCommonjsModule(function (module) {
+	var BREAK = {};
+	var RETURN = {};
+	var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
+	  var iterFn = ITERATOR ? function () { return iterable; } : core_getIteratorMethod(iterable);
+	  var f = _ctx(fn, that, entries ? 2 : 1);
+	  var index = 0;
+	  var length, step, iterator, result;
+	  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
+	  // fast case for arrays with default iterator
+	  if (_isArrayIter(iterFn)) for (length = _toLength(iterable.length); length > index; index++) {
+	    result = entries ? f(_anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+	    if (result === BREAK || result === RETURN) return result;
+	  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
+	    result = _iterCall(iterator, f, step.value, entries);
+	    if (result === BREAK || result === RETURN) return result;
+	  }
+	};
+	exports.BREAK = BREAK;
+	exports.RETURN = RETURN;
+	});
+
+	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
+
+
+	var SPECIES = _wks('species');
+	var _speciesConstructor = function (O, D) {
+	  var C = _anObject(O).constructor;
+	  var S;
+	  return C === undefined || (S = _anObject(C)[SPECIES]) == undefined ? D : _aFunction(S);
+	};
+
+	var process = _global.process;
+	var setTask = _global.setImmediate;
+	var clearTask = _global.clearImmediate;
+	var MessageChannel = _global.MessageChannel;
+	var Dispatch = _global.Dispatch;
+	var counter = 0;
+	var queue = {};
+	var ONREADYSTATECHANGE = 'onreadystatechange';
+	var defer, channel, port;
+	var run = function () {
+	  var id = +this;
+	  // eslint-disable-next-line no-prototype-builtins
+	  if (queue.hasOwnProperty(id)) {
+	    var fn = queue[id];
+	    delete queue[id];
+	    fn();
+	  }
+	};
+	var listener = function (event) {
+	  run.call(event.data);
+	};
+	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+	if (!setTask || !clearTask) {
+	  setTask = function setImmediate(fn) {
+	    var args = [];
+	    var i = 1;
+	    while (arguments.length > i) args.push(arguments[i++]);
+	    queue[++counter] = function () {
+	      // eslint-disable-next-line no-new-func
+	      _invoke(typeof fn == 'function' ? fn : Function(fn), args);
+	    };
+	    defer(counter);
+	    return counter;
+	  };
+	  clearTask = function clearImmediate(id) {
+	    delete queue[id];
+	  };
+	  // Node.js 0.8-
+	  if (_cof(process) == 'process') {
+	    defer = function (id) {
+	      process.nextTick(_ctx(run, id, 1));
+	    };
+	  // Sphere (JS game engine) Dispatch API
+	  } else if (Dispatch && Dispatch.now) {
+	    defer = function (id) {
+	      Dispatch.now(_ctx(run, id, 1));
+	    };
+	  // Browsers with MessageChannel, includes WebWorkers
+	  } else if (MessageChannel) {
+	    channel = new MessageChannel();
+	    port = channel.port2;
+	    channel.port1.onmessage = listener;
+	    defer = _ctx(port.postMessage, port, 1);
+	  // Browsers with postMessage, skip WebWorkers
+	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+	  } else if (_global.addEventListener && typeof postMessage == 'function' && !_global.importScripts) {
+	    defer = function (id) {
+	      _global.postMessage(id + '', '*');
+	    };
+	    _global.addEventListener('message', listener, false);
+	  // IE8-
+	  } else if (ONREADYSTATECHANGE in _domCreate('script')) {
+	    defer = function (id) {
+	      _html.appendChild(_domCreate('script'))[ONREADYSTATECHANGE] = function () {
+	        _html.removeChild(this);
+	        run.call(id);
+	      };
+	    };
+	  // Rest old browsers
+	  } else {
+	    defer = function (id) {
+	      setTimeout(_ctx(run, id, 1), 0);
+	    };
+	  }
+	}
+	var _task = {
+	  set: setTask,
+	  clear: clearTask
+	};
+
+	var macrotask = _task.set;
+	var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
+	var process$1 = _global.process;
+	var Promise$1 = _global.Promise;
+	var isNode = _cof(process$1) == 'process';
+
+	var _microtask = function () {
+	  var head, last, notify;
+
+	  var flush = function () {
+	    var parent, fn;
+	    if (isNode && (parent = process$1.domain)) parent.exit();
+	    while (head) {
+	      fn = head.fn;
+	      head = head.next;
+	      try {
+	        fn();
+	      } catch (e) {
+	        if (head) notify();
+	        else last = undefined;
+	        throw e;
+	      }
+	    } last = undefined;
+	    if (parent) parent.enter();
+	  };
+
+	  // Node.js
+	  if (isNode) {
+	    notify = function () {
+	      process$1.nextTick(flush);
+	    };
+	  // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
+	  } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
+	    var toggle = true;
+	    var node = document.createTextNode('');
+	    new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
+	    notify = function () {
+	      node.data = toggle = !toggle;
+	    };
+	  // environments with maybe non-completely correct, but existent Promise
+	  } else if (Promise$1 && Promise$1.resolve) {
+	    // Promise.resolve without an argument throws an error in LG WebOS 2
+	    var promise = Promise$1.resolve(undefined);
+	    notify = function () {
+	      promise.then(flush);
+	    };
+	  // for other environments - macrotask based on:
+	  // - setImmediate
+	  // - MessageChannel
+	  // - window.postMessag
+	  // - onreadystatechange
+	  // - setTimeout
+	  } else {
+	    notify = function () {
+	      // strange IE + webpack dev server bug - use .call(global)
+	      macrotask.call(_global, flush);
+	    };
+	  }
+
+	  return function (fn) {
+	    var task = { fn: fn, next: undefined };
+	    if (last) last.next = task;
+	    if (!head) {
+	      head = task;
+	      notify();
+	    } last = task;
+	  };
+	};
+
+	// 25.4.1.5 NewPromiseCapability(C)
+
+
+	function PromiseCapability(C) {
+	  var resolve, reject;
+	  this.promise = new C(function ($$resolve, $$reject) {
+	    if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+	    resolve = $$resolve;
+	    reject = $$reject;
+	  });
+	  this.resolve = _aFunction(resolve);
+	  this.reject = _aFunction(reject);
+	}
+
+	var f$7 = function (C) {
+	  return new PromiseCapability(C);
+	};
+
+	var _newPromiseCapability = {
+		f: f$7
+	};
+
+	var _perform = function (exec) {
+	  try {
+	    return { e: false, v: exec() };
+	  } catch (e) {
+	    return { e: true, v: e };
+	  }
+	};
+
+	var navigator$1 = _global.navigator;
+
+	var _userAgent = navigator$1 && navigator$1.userAgent || '';
+
+	var _promiseResolve = function (C, x) {
+	  _anObject(C);
+	  if (_isObject(x) && x.constructor === C) return x;
+	  var promiseCapability = _newPromiseCapability.f(C);
+	  var resolve = promiseCapability.resolve;
+	  resolve(x);
+	  return promiseCapability.promise;
+	};
+
+	var _redefineAll = function (target, src, safe) {
+	  for (var key in src) _redefine(target, key, src[key], safe);
+	  return target;
+	};
+
+	var SPECIES$1 = _wks('species');
+
+	var _setSpecies = function (KEY) {
+	  var C = _global[KEY];
+	  if (_descriptors && C && !C[SPECIES$1]) _objectDp.f(C, SPECIES$1, {
+	    configurable: true,
+	    get: function () { return this; }
+	  });
+	};
+
+	var ITERATOR$4 = _wks('iterator');
+	var SAFE_CLOSING = false;
+
+	try {
+	  var riter = [7][ITERATOR$4]();
+	  riter['return'] = function () { SAFE_CLOSING = true; };
+	} catch (e) { /* empty */ }
+
+	var _iterDetect = function (exec, skipClosing) {
+	  if (!skipClosing && !SAFE_CLOSING) return false;
+	  var safe = false;
+	  try {
+	    var arr = [7];
+	    var iter = arr[ITERATOR$4]();
+	    iter.next = function () { return { done: safe = true }; };
+	    arr[ITERATOR$4] = function () { return iter; };
+	    exec(arr);
+	  } catch (e) { /* empty */ }
+	  return safe;
+	};
+
+	var task = _task.set;
+	var microtask = _microtask();
+
+
+
+
+	var PROMISE = 'Promise';
+	var TypeError$1 = _global.TypeError;
+	var process$2 = _global.process;
+	var versions = process$2 && process$2.versions;
+	var v8 = versions && versions.v8 || '';
+	var $Promise = _global[PROMISE];
+	var isNode$1 = _classof(process$2) == 'process';
+	var empty = function () { /* empty */ };
+	var Internal, newGenericPromiseCapability, OwnPromiseCapability, Wrapper;
+	var newPromiseCapability = newGenericPromiseCapability = _newPromiseCapability.f;
+
+	var USE_NATIVE$1 = !!function () {
+	  try {
+	    // correct subclassing with @@species support
+	    var promise = $Promise.resolve(1);
+	    var FakePromise = (promise.constructor = {})[_wks('species')] = function (exec) {
+	      exec(empty, empty);
+	    };
+	    // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+	    return (isNode$1 || typeof PromiseRejectionEvent == 'function')
+	      && promise.then(empty) instanceof FakePromise
+	      // v8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+	      // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
+	      // we can't detect it synchronously, so just check versions
+	      && v8.indexOf('6.6') !== 0
+	      && _userAgent.indexOf('Chrome/66') === -1;
+	  } catch (e) { /* empty */ }
+	}();
+
+	// helpers
+	var isThenable = function (it) {
+	  var then;
+	  return _isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+	};
+	var notify = function (promise, isReject) {
+	  if (promise._n) return;
+	  promise._n = true;
+	  var chain = promise._c;
+	  microtask(function () {
+	    var value = promise._v;
+	    var ok = promise._s == 1;
+	    var i = 0;
+	    var run = function (reaction) {
+	      var handler = ok ? reaction.ok : reaction.fail;
+	      var resolve = reaction.resolve;
+	      var reject = reaction.reject;
+	      var domain = reaction.domain;
+	      var result, then, exited;
+	      try {
+	        if (handler) {
+	          if (!ok) {
+	            if (promise._h == 2) onHandleUnhandled(promise);
+	            promise._h = 1;
+	          }
+	          if (handler === true) result = value;
+	          else {
+	            if (domain) domain.enter();
+	            result = handler(value); // may throw
+	            if (domain) {
+	              domain.exit();
+	              exited = true;
+	            }
+	          }
+	          if (result === reaction.promise) {
+	            reject(TypeError$1('Promise-chain cycle'));
+	          } else if (then = isThenable(result)) {
+	            then.call(result, resolve, reject);
+	          } else resolve(result);
+	        } else reject(value);
+	      } catch (e) {
+	        if (domain && !exited) domain.exit();
+	        reject(e);
+	      }
+	    };
+	    while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
+	    promise._c = [];
+	    promise._n = false;
+	    if (isReject && !promise._h) onUnhandled(promise);
+	  });
+	};
+	var onUnhandled = function (promise) {
+	  task.call(_global, function () {
+	    var value = promise._v;
+	    var unhandled = isUnhandled(promise);
+	    var result, handler, console;
+	    if (unhandled) {
+	      result = _perform(function () {
+	        if (isNode$1) {
+	          process$2.emit('unhandledRejection', value, promise);
+	        } else if (handler = _global.onunhandledrejection) {
+	          handler({ promise: promise, reason: value });
+	        } else if ((console = _global.console) && console.error) {
+	          console.error('Unhandled promise rejection', value);
+	        }
+	      });
+	      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
+	      promise._h = isNode$1 || isUnhandled(promise) ? 2 : 1;
+	    } promise._a = undefined;
+	    if (unhandled && result.e) throw result.v;
+	  });
+	};
+	var isUnhandled = function (promise) {
+	  return promise._h !== 1 && (promise._a || promise._c).length === 0;
+	};
+	var onHandleUnhandled = function (promise) {
+	  task.call(_global, function () {
+	    var handler;
+	    if (isNode$1) {
+	      process$2.emit('rejectionHandled', promise);
+	    } else if (handler = _global.onrejectionhandled) {
+	      handler({ promise: promise, reason: promise._v });
+	    }
+	  });
+	};
+	var $reject = function (value) {
+	  var promise = this;
+	  if (promise._d) return;
+	  promise._d = true;
+	  promise = promise._w || promise; // unwrap
+	  promise._v = value;
+	  promise._s = 2;
+	  if (!promise._a) promise._a = promise._c.slice();
+	  notify(promise, true);
+	};
+	var $resolve = function (value) {
+	  var promise = this;
+	  var then;
+	  if (promise._d) return;
+	  promise._d = true;
+	  promise = promise._w || promise; // unwrap
+	  try {
+	    if (promise === value) throw TypeError$1("Promise can't be resolved itself");
+	    if (then = isThenable(value)) {
+	      microtask(function () {
+	        var wrapper = { _w: promise, _d: false }; // wrap
+	        try {
+	          then.call(value, _ctx($resolve, wrapper, 1), _ctx($reject, wrapper, 1));
+	        } catch (e) {
+	          $reject.call(wrapper, e);
+	        }
+	      });
+	    } else {
+	      promise._v = value;
+	      promise._s = 1;
+	      notify(promise, false);
+	    }
+	  } catch (e) {
+	    $reject.call({ _w: promise, _d: false }, e); // wrap
+	  }
+	};
+
+	// constructor polyfill
+	if (!USE_NATIVE$1) {
+	  // 25.4.3.1 Promise(executor)
+	  $Promise = function Promise(executor) {
+	    _anInstance(this, $Promise, PROMISE, '_h');
+	    _aFunction(executor);
+	    Internal.call(this);
+	    try {
+	      executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
+	    } catch (err) {
+	      $reject.call(this, err);
+	    }
+	  };
+	  // eslint-disable-next-line no-unused-vars
+	  Internal = function Promise(executor) {
+	    this._c = [];             // <- awaiting reactions
+	    this._a = undefined;      // <- checked in isUnhandled reactions
+	    this._s = 0;              // <- state
+	    this._d = false;          // <- done
+	    this._v = undefined;      // <- value
+	    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
+	    this._n = false;          // <- notify
+	  };
+	  Internal.prototype = _redefineAll($Promise.prototype, {
+	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+	    then: function then(onFulfilled, onRejected) {
+	      var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
+	      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
+	      reaction.fail = typeof onRejected == 'function' && onRejected;
+	      reaction.domain = isNode$1 ? process$2.domain : undefined;
+	      this._c.push(reaction);
+	      if (this._a) this._a.push(reaction);
+	      if (this._s) notify(this, false);
+	      return reaction.promise;
+	    },
+	    // 25.4.5.1 Promise.prototype.catch(onRejected)
+	    'catch': function (onRejected) {
+	      return this.then(undefined, onRejected);
+	    }
+	  });
+	  OwnPromiseCapability = function () {
+	    var promise = new Internal();
+	    this.promise = promise;
+	    this.resolve = _ctx($resolve, promise, 1);
+	    this.reject = _ctx($reject, promise, 1);
+	  };
+	  _newPromiseCapability.f = newPromiseCapability = function (C) {
+	    return C === $Promise || C === Wrapper
+	      ? new OwnPromiseCapability(C)
+	      : newGenericPromiseCapability(C);
+	  };
+	}
+
+	_export(_export.G + _export.W + _export.F * !USE_NATIVE$1, { Promise: $Promise });
+	_setToStringTag($Promise, PROMISE);
+	_setSpecies(PROMISE);
+	Wrapper = _core[PROMISE];
+
+	// statics
+	_export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
+	  // 25.4.4.5 Promise.reject(r)
+	  reject: function reject(r) {
+	    var capability = newPromiseCapability(this);
+	    var $$reject = capability.reject;
+	    $$reject(r);
+	    return capability.promise;
+	  }
+	});
+	_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
+	  // 25.4.4.6 Promise.resolve(x)
+	  resolve: function resolve(x) {
+	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
+	  }
+	});
+	_export(_export.S + _export.F * !(USE_NATIVE$1 && _iterDetect(function (iter) {
+	  $Promise.all(iter)['catch'](empty);
+	})), PROMISE, {
+	  // 25.4.4.1 Promise.all(iterable)
+	  all: function all(iterable) {
+	    var C = this;
+	    var capability = newPromiseCapability(C);
+	    var resolve = capability.resolve;
+	    var reject = capability.reject;
+	    var result = _perform(function () {
+	      var values = [];
+	      var index = 0;
+	      var remaining = 1;
+	      _forOf(iterable, false, function (promise) {
+	        var $index = index++;
+	        var alreadyCalled = false;
+	        values.push(undefined);
+	        remaining++;
+	        C.resolve(promise).then(function (value) {
+	          if (alreadyCalled) return;
+	          alreadyCalled = true;
+	          values[$index] = value;
+	          --remaining || resolve(values);
+	        }, reject);
+	      });
+	      --remaining || resolve(values);
+	    });
+	    if (result.e) reject(result.v);
+	    return capability.promise;
+	  },
+	  // 25.4.4.4 Promise.race(iterable)
+	  race: function race(iterable) {
+	    var C = this;
+	    var capability = newPromiseCapability(C);
+	    var reject = capability.reject;
+	    var result = _perform(function () {
+	      _forOf(iterable, false, function (promise) {
+	        C.resolve(promise).then(capability.resolve, reject);
+	      });
+	    });
+	    if (result.e) reject(result.v);
+	    return capability.promise;
+	  }
+	});
+
+	// true  -> String#at
+	// false -> String#codePointAt
+	var _stringAt = function (TO_STRING) {
+	  return function (that, pos) {
+	    var s = String(_defined(that));
+	    var i = _toInteger(pos);
+	    var l = s.length;
+	    var a, b;
+	    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+	    a = s.charCodeAt(i);
+	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+	      ? TO_STRING ? s.charAt(i) : a
+	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+	  };
+	};
+
+	var $at = _stringAt(true);
+
+	// 21.1.3.27 String.prototype[@@iterator]()
+	_iterDefine(String, 'String', function (iterated) {
+	  this._t = String(iterated); // target
+	  this._i = 0;                // next index
+	// 21.1.5.2.1 %StringIteratorPrototype%.next()
+	}, function () {
+	  var O = this._t;
+	  var index = this._i;
+	  var point;
+	  if (index >= O.length) return { value: undefined, done: true };
+	  point = $at(O, index);
+	  this._i += point.length;
+	  return { value: point, done: false };
+	});
+
+	// Works with __proto__ only. Old v8 can't work with null proto objects.
+	/* eslint-disable no-proto */
+
+
+	var check = function (O, proto) {
+	  _anObject(O);
+	  if (!_isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
+	};
+	var _setProto = {
+	  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+	    function (test, buggy, set) {
+	      try {
+	        set = _ctx(Function.call, _objectGopd.f(Object.prototype, '__proto__').set, 2);
+	        set(test, []);
+	        buggy = !(test instanceof Array);
+	      } catch (e) { buggy = true; }
+	      return function setPrototypeOf(O, proto) {
+	        check(O, proto);
+	        if (buggy) O.__proto__ = proto;
+	        else set(O, proto);
+	        return O;
+	      };
+	    }({}, false) : undefined),
+	  check: check
+	};
+
+	var setPrototypeOf$1 = _setProto.set;
+	var _inheritIfRequired = function (that, target, C) {
+	  var S = target.constructor;
+	  var P;
+	  if (S !== C && typeof S == 'function' && (P = S.prototype) !== C.prototype && _isObject(P) && setPrototypeOf$1) {
+	    setPrototypeOf$1(that, P);
+	  } return that;
+	};
+
+	var _stringWs = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
+	  '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
+
+	var space = '[' + _stringWs + ']';
+	var non = '\u200b\u0085';
+	var ltrim = RegExp('^' + space + space + '*');
+	var rtrim = RegExp(space + space + '*$');
+
+	var exporter = function (KEY, exec, ALIAS) {
+	  var exp = {};
+	  var FORCE = _fails(function () {
+	    return !!_stringWs[KEY]() || non[KEY]() != non;
+	  });
+	  var fn = exp[KEY] = FORCE ? exec(trim) : _stringWs[KEY];
+	  if (ALIAS) exp[ALIAS] = fn;
+	  _export(_export.P + _export.F * FORCE, 'String', exp);
+	};
+
+	// 1 -> String#trimLeft
+	// 2 -> String#trimRight
+	// 3 -> String#trim
+	var trim = exporter.trim = function (string, TYPE) {
+	  string = String(_defined(string));
+	  if (TYPE & 1) string = string.replace(ltrim, '');
+	  if (TYPE & 2) string = string.replace(rtrim, '');
+	  return string;
+	};
+
+	var _stringTrim = exporter;
+
+	var gOPN$2 = _objectGopn.f;
+	var gOPD$2 = _objectGopd.f;
+	var dP$3 = _objectDp.f;
+	var $trim = _stringTrim.trim;
+	var NUMBER = 'Number';
+	var $Number = _global[NUMBER];
+	var Base = $Number;
+	var proto$1 = $Number.prototype;
+	// Opera ~12 has broken Object#toString
+	var BROKEN_COF = _cof(_objectCreate(proto$1)) == NUMBER;
+	var TRIM = 'trim' in String.prototype;
+
+	// 7.1.3 ToNumber(argument)
+	var toNumber = function (argument) {
+	  var it = _toPrimitive(argument, false);
+	  if (typeof it == 'string' && it.length > 2) {
+	    it = TRIM ? it.trim() : $trim(it, 3);
+	    var first = it.charCodeAt(0);
+	    var third, radix, maxCode;
+	    if (first === 43 || first === 45) {
+	      third = it.charCodeAt(2);
+	      if (third === 88 || third === 120) return NaN; // Number('+0x1') should be NaN, old V8 fix
+	    } else if (first === 48) {
+	      switch (it.charCodeAt(1)) {
+	        case 66: case 98: radix = 2; maxCode = 49; break; // fast equal /^0b[01]+$/i
+	        case 79: case 111: radix = 8; maxCode = 55; break; // fast equal /^0o[0-7]+$/i
+	        default: return +it;
+	      }
+	      for (var digits = it.slice(2), i = 0, l = digits.length, code; i < l; i++) {
+	        code = digits.charCodeAt(i);
+	        // parseInt parses a string to a first unavailable symbol
+	        // but ToNumber should return NaN if a string contains unavailable symbols
+	        if (code < 48 || code > maxCode) return NaN;
+	      } return parseInt(digits, radix);
+	    }
+	  } return +it;
+	};
+
+	if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
+	  $Number = function Number(value) {
+	    var it = arguments.length < 1 ? 0 : value;
+	    var that = this;
+	    return that instanceof $Number
+	      // check on 1..constructor(foo) case
+	      && (BROKEN_COF ? _fails(function () { proto$1.valueOf.call(that); }) : _cof(that) != NUMBER)
+	        ? _inheritIfRequired(new Base(toNumber(it)), that, $Number) : toNumber(it);
+	  };
+	  for (var keys = _descriptors ? gOPN$2(Base) : (
+	    // ES3:
+	    'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' +
+	    // ES6 (in case, if modules with ES6 Number statics required before):
+	    'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' +
+	    'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'
+	  ).split(','), j$1 = 0, key$1; keys.length > j$1; j$1++) {
+	    if (_has(Base, key$1 = keys[j$1]) && !_has($Number, key$1)) {
+	      dP$3($Number, key$1, gOPD$2(Base, key$1));
+	    }
+	  }
+	  $Number.prototype = proto$1;
+	  proto$1.constructor = $Number;
+	  _redefine(_global, NUMBER, $Number);
+	}
+
+	var _fixReWks = function (KEY, length, exec) {
+	  var SYMBOL = _wks(KEY);
+	  var fns = exec(_defined, SYMBOL, ''[KEY]);
+	  var strfn = fns[0];
+	  var rxfn = fns[1];
+	  if (_fails(function () {
+	    var O = {};
+	    O[SYMBOL] = function () { return 7; };
+	    return ''[KEY](O) != 7;
+	  })) {
+	    _redefine(String.prototype, KEY, strfn);
+	    _hide(RegExp.prototype, SYMBOL, length == 2
+	      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
+	      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
+	      ? function (string, arg) { return rxfn.call(string, this, arg); }
+	      // 21.2.5.6 RegExp.prototype[@@match](string)
+	      // 21.2.5.9 RegExp.prototype[@@search](string)
+	      : function (string) { return rxfn.call(string, this); }
+	    );
+	  }
+	};
+
+	// @@search logic
+	_fixReWks('search', 1, function (defined, SEARCH, $search) {
+	  // 21.1.3.15 String.prototype.search(regexp)
+	  return [function search(regexp) {
+	    var O = defined(this);
+	    var fn = regexp == undefined ? undefined : regexp[SEARCH];
+	    return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
+	  }, $search];
+	});
+
+	// @@replace logic
+	_fixReWks('replace', 2, function (defined, REPLACE, $replace) {
+	  // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
+	  return [function replace(searchValue, replaceValue) {
+	    var O = defined(this);
+	    var fn = searchValue == undefined ? undefined : searchValue[REPLACE];
+	    return fn !== undefined
+	      ? fn.call(searchValue, O, replaceValue)
+	      : $replace.call(String(O), searchValue, replaceValue);
+	  }, $replace];
+	});
+
+	// import work from 'webworkify-webpack'
+
+	/**
+	 * Utils class
+	 */
+	var Utils =
+	/*#__PURE__*/
+	function () {
+	  function Utils() {
+	    classCallCheck(this, Utils);
+	  }
+
+	  createClass(Utils, null, [{
+	    key: "stripTrailingSlash",
+
+	    /**
+	     * @param  {String} str
+	     * @return {String}
+	     */
+	    value: function stripTrailingSlash(str) {
+	      if (str.substr(-1) === '/') {
+	        return str.substr(0, str.length - 1);
+	      }
+
+	      return str;
+	    }
+	    /**
+	     * Get port
+	     *
+	     * @param p
+	     * @returns {*}
+	     */
+
+	  }, {
+	    key: "getPort",
+	    value: function getPort(p) {
+	      var port = typeof p !== 'undefined' ? p : window.location.port;
+	      var protocol = window.location.protocol;
+
+	      if (port !== '') {
+	        return parseInt(port);
+	      }
+
+	      if (protocol === 'http:') {
+	        return 80;
+	      }
+
+	      if (protocol === 'https:') {
+	        return 443;
+	      }
+	    }
+	  }, {
+	    key: "cleanLink",
+	    value: function cleanLink(url) {
+	      return url.replace(/#.*/, '');
+	    }
+	    /**
+	     * Get current url
+	     *
+	     * @returns {string}
+	     */
+
+	  }, {
+	    key: "getCurrentUrl",
+	    value: function getCurrentUrl() {
+	      return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+	    }
+	    /**
+	     * Request timeout (in ms)
+	     *
+	     * @returns {number}
+	     */
+
+	  }, {
+	    key: "requestTimeout",
+	    value: function requestTimeout() {
+	      return 10000;
+	    }
+	    /**
+	     * Start a fetch request
+	     *
+	     * @param {String} url
+	     * @param {Worker|null} worker
+	     * @return {Promise}
+	     */
+
+	  }, {
+	    key: "request",
+	    value: function request(url, worker) {
+	      var dfd = Utils.deferred();
+	      var timeout = window.setTimeout(function () {
+	        window.clearTimeout(timeout);
+	        dfd.reject('timeout!');
+	      }, Utils.requestTimeout());
+
+	      if (window.Worker && worker) ; else {
+	        var headers = new window.Headers();
+	        headers.append('X-Starting-Blocks', 'yes');
+	        headers.append('X-Allow-Partial', 'yes');
+	        headers.append('X-Requested-With', 'XMLHttpRequest');
+	        window.fetch(url, {
+	          method: 'GET',
+	          headers: headers,
+	          cache: 'default',
+	          credentials: 'same-origin'
+	        }).then(function (res) {
+	          window.clearTimeout(timeout);
+
+	          if (res.status >= 200 && res.status < 300) {
+	            return dfd.resolve(res.text());
+	          }
+
+	          var err = new Error(res.statusText || res.status);
+	          return dfd.reject(err);
+	        }).catch(function (err) {
+	          window.clearTimeout(timeout);
+	          dfd.reject(err);
+	        });
+	      }
+
+	      return dfd.promise;
+	    }
+	    /**
+	     * Log credits to console for code lovers.
+	     *
+	     * @param  {String} siteName
+	     * @param  {String} bgColor
+	     * @param  {Array}  creditsList
+	     * @param  {Array}  thanksList
+	     * @param  {String} textColor (optional)
+	     */
+
+	  }, {
+	    key: "logCredits",
+	    value: function logCredits(siteName, bgColor, creditsList, thanksList, textColor) {
+	      var color = '#fff';
+	      if (typeof textColor !== 'undefined') color = textColor;
+	      console.log('%c   ', 'font-size:3px;');
+	      console.log('%c' + siteName, 'background:' + bgColor + '; color: ' + color + '; font-size:14px; padding:5px 10px;');
+	      console.log('%c   ', 'font-size:3px;');
+
+	      if (creditsList !== null) {
+	        var creditsLength = creditsList.length;
+
+	        if (creditsLength) {
+	          for (var indexCredit = 0; indexCredit < creditsLength; indexCredit++) {
+	            console.log(creditsList[indexCredit].name + ' - ' + creditsList[indexCredit].website);
+	          }
+	        }
+	      }
+
+	      if (thanksList !== null) {
+	        var thanksLength = thanksList.length;
+
+	        if (thanksLength) {
+	          console.log('-');
+	          console.log('Thanks to');
+
+	          for (var indexThanks = 0; indexThanks < thanksLength; indexThanks++) {
+	            console.log(thanksList[indexThanks].name + ' (' + thanksList[indexThanks].website + ')');
+	          }
+	        }
+	      }
+
+	      console.log('-');
+	      console.log(' ');
+	    }
+	    /**
+	     * Get random number.
+	     *
+	     * @param  {Number} min [min value]
+	     * @param  {Number} max [max value]
+	     * @param  {Number} decimal
+	     * @return {Number}
+	     */
+
+	  }, {
+	    key: "getRandomNumber",
+	    value: function getRandomNumber(min, max, decimal) {
+	      var result = Math.random() * (max - min) + min;
+
+	      if (typeof decimal !== 'undefined') {
+	        return Number(result.toFixed(decimal));
+	      } else return result;
+	    }
+	    /**
+	     * Get random integer.
+	     *
+	     * @param  {Number} min [min value]
+	     * @param  {Number} max [max value]
+	     * @return {Number}
+	     */
+
+	  }, {
+	    key: "getRandomInt",
+	    value: function getRandomInt(min, max) {
+	      return Math.floor(Math.random() * (max - min + 1)) + min;
+	    }
+	    /**
+	     * Send a GA page view event when context is AJAX.
+	     */
+
+	  }, {
+	    key: "trackGoogleAnalytics",
+	    value: function trackGoogleAnalytics() {
+	      if (typeof window.ga !== 'undefined') {
+	        console.debug('🚩 Push Analytics for: ' + window.location.pathname);
+	        window.ga('send', 'pageview', {
+	          'page': window.location.pathname,
+	          'title': document.title
+	        });
+	      }
+	    }
+	    /**
+	     * Match CSS media queries and JavaScript window width.
+	     *
+	     * @see http://stackoverflow.com/a/11310353
+	     * @return {Object}
+	     */
+
+	  }, {
+	    key: "getViewportSize",
+	    value: function getViewportSize() {
+	      var e = window;
+	      var a = 'inner';
+
+	      if (!('innerWidth' in window)) {
+	        a = 'client';
+	        e = document.documentElement || document.body;
+	      }
+
+	      return {
+	        width: e[a + 'Width'],
+	        height: e[a + 'Height']
+	      };
+	    }
+	    /**
+	     * Get a css property with the vendor prefix.
+	     *
+	     * @param  {String} property the css property
+	     * @return {String}          the prefixed property
+	     */
+
+	  }, {
+	    key: "prefixProperty",
+	    value: function prefixProperty(property) {
+	      var prefixes = ['', 'ms', 'Webkit', 'Moz', 'O'];
+	      var numPrefixes = prefixes.length;
+	      var tmp = document.createElement('div');
+
+	      for (var i = 0; i < numPrefixes; i++) {
+	        var prefix = prefixes[i];
+	        property = prefix === '' ? property : property.charAt(0).toUpperCase() + property.substring(1).toLowerCase();
+	        var prop = prefix + property;
+
+	        if (typeof tmp.style[prop] !== 'undefined') {
+	          return prop;
+	        }
+	      }
+	    }
+	    /**
+	     * Gets normalized ratio of value inside range.
+	     *
+	     * from https://github.com/mout/mout/blob/master/src/math/norm.js
+	     *
+	     * @param  {Number} val
+	     * @param  {Number} min
+	     * @param  {Number} max
+	     * @return {Number}
+	     */
+
+	  }, {
+	    key: "getNormRatio",
+	    value: function getNormRatio(val, min, max) {
+	      if (val < min) return 0;
+	      if (val > max) return 1;
+	      return val === max ? 1 : (val - min) / (max - min);
+	    }
+	    /**
+	     * Return a new "Deferred" object
+	     * https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Deferred
+	     *
+	     * @return {Deferred}
+	     */
+
+	  }, {
+	    key: "deferred",
+	    value: function deferred() {
+	      return new function () {
+	        var _this = this;
+
+	        this.resolve = null;
+	        this.reject = null;
+	        this.promise = new Promise(function (resolve, reject) {
+	          _this.resolve = resolve;
+	          _this.reject = reject;
+	        });
+	      }();
+	    }
+	  }]);
+
+	  return Utils;
+	}();
+
+	/**
+	 * Base class for creating transition.
+	 *
+	 * @abstract
+	 */
+
+	var AbstractTransition =
+	/*#__PURE__*/
+	function () {
+	  /**
+	   * Constructor.
+	   * Do not override this method.
+	   *
+	   * @constructor
+	   */
+	  function AbstractTransition() {
+	    classCallCheck(this, AbstractTransition);
+
+	    /**
+	     * @type {AbstractPage|null} old Page instance
+	     */
+	    this.oldPage = null;
+	    /**
+	     * @type {AbstractPage|null}
+	     */
+
+	    this.newPage = null;
+	    /**
+	     * @type {Promise|null}
+	     */
+
+	    this.newPageLoading = null;
+	  }
+	  /**
+	   * Initialize transition.
+	   * Do not override this method.
+	   *
+	   * @param {AbstractPage} oldPage
+	   * @param {Promise} newPagePromise
+	   * @returns {Promise}
+	   */
+
+
+	  createClass(AbstractTransition, [{
+	    key: "init",
+	    value: function init(oldPage, newPagePromise) {
+	      var _this = this;
+
+	      this.oldPage = oldPage;
+	      this._newPagePromise = newPagePromise;
+	      this.deferred = Utils.deferred();
+	      this.newPageReady = Utils.deferred();
+	      this.newPageLoading = this.newPageReady.promise;
+	      this.start();
+
+	      this._newPagePromise.then(function (newPage) {
+	        _this.newPage = newPage;
+
+	        _this.newPageReady.resolve();
+	      });
+
+	      return this.deferred.promise;
+	    }
+	    /**
+	     * Call this function when the Transition is finished.
+	     */
+
+	  }, {
+	    key: "done",
+	    value: function done() {
+	      this.oldPage.destroy();
+	      this.newPage.rootElement.style.visibility = 'visible';
+	      this.newPage.updateLazyload();
+	      this.deferred.resolve();
+	    }
+	    /**
+	     * Entry point to create a custom Transition.
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "start",
+	    value: function start() {}
+	  }]);
+
+	  return AbstractTransition;
+	}();
+
+	/**
+	 * Default Transition. Show / Hide content.
+	 *
+	 * @extends {AbstractTransition}
+	 */
+
+	var DefaultTransition =
+	/*#__PURE__*/
+	function (_AbstractTransition) {
+	  inherits(DefaultTransition, _AbstractTransition);
+
+	  function DefaultTransition() {
+	    classCallCheck(this, DefaultTransition);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
+	  }
+
+	  createClass(DefaultTransition, [{
+	    key: "start",
+	    value: function start() {
+	      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+	    }
+	  }, {
+	    key: "finish",
+	    value: function finish() {
+	      document.body.scrollTop = 0;
+	      this.done();
+	    }
+	  }]);
+
+	  return DefaultTransition;
+	}(AbstractTransition);
+
+	/**
+	 * Transition mapper class.
+	 *
+	 * This class maps your `data-transition` with your *ES6* classes.
+	 *
+	 * **You must define your own ClassFactory for each of your projects.**.
+	 */
+
+	var TransitionFactory =
+	/*#__PURE__*/
+	function () {
+	  function TransitionFactory() {
+	    classCallCheck(this, TransitionFactory);
+	  }
+
+	  createClass(TransitionFactory, [{
+	    key: "getTransition",
+
+	    /**
+	     * Get Transition
+	     *
+	     * @param {Object} previousState
+	     * @param {Object} state
+	     * @returns {AbstractTransition}
+	     */
+	    value: function getTransition(previousState, state) {
+	      /**
+	       * You can customise transition logic with the previousState and the new state
+	       *
+	       * Ex: when back or prev button its pressed we use FadeTransition
+	       */
+	      if (state && state.context === 'history') {
+	        return new DefaultTransition();
+	      }
+
+	      var transition;
+
+	      switch (state.transitionName) {
+	        default:
+	          transition = new DefaultTransition();
+	          break;
+	      }
+
+	      return transition;
+	    }
+	  }]);
+
+	  return TransitionFactory;
+	}();
+
+	function _arrayWithoutHoles(arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+	      arr2[i] = arr[i];
+	    }
+
+	    return arr2;
+	  }
+	}
+
+	var arrayWithoutHoles = _arrayWithoutHoles;
+
+	function _iterableToArray(iter) {
+	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+	}
+
+	var iterableToArray = _iterableToArray;
+
+	function _nonIterableSpread() {
+	  throw new TypeError("Invalid attempt to spread non-iterable instance");
+	}
+
+	var nonIterableSpread = _nonIterableSpread;
+
+	function _toConsumableArray(arr) {
+	  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+	}
+
+	var toConsumableArray = _toConsumableArray;
+
 	/**
 	 * Returns a function, that, as long as it continues to be invoked, will not
 	 * be triggered.
@@ -4742,64 +5541,65 @@ define(['exports'], function (exports) { 'use strict';
 
 	var AbstractBlock =
 	/*#__PURE__*/
-	function () {
+	function (_AbstractService) {
+	  inherits(AbstractBlock, _AbstractService);
+
 	  /**
 	   * Abstract block constructor.
 	   *
 	   * It‘s better to extend this class by using `init` method instead
 	   * of extending `constructor`.
 	   *
-	   * @param  {AbstractPage} page
-	   * @param  {HTMLElement} container
-	   * @param  {String} type
+	   * @param  {Object} container
 	   *
 	   * @constructor
 	   */
-	  function AbstractBlock(page, container, type) {
+	  function AbstractBlock(container) {
+	    var _this;
+
 	    classCallCheck(this, AbstractBlock);
 
-	    type = type || 'block';
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractBlock).call(this, container));
+	    /**
+	     * Node Type block name type
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.type = null;
 	    /**
 	     * Current page instance
 	     *
-	     * @type {AbstractPage}
+	     * @type {AbstractPage|null}
 	     */
 
-	    this.page = page;
+	    _this.page = null;
 	    /**
 	     * Container
 	     * Root container HTMLElement for current block.
 	     *
-	     * @type {HTMLElement}
+	     * @type {HTMLElement|null}
 	     */
 
-	    this.container = container;
+	    _this.rootElement = null;
 	    /**
 	     * Block id
 	     *
-	     * @type {String}
+	     * @type {String|null}
 	     */
 
-	    this.id = this.container.id;
-	    /**
-	     * Block type
-	     *
-	     * @type {String}
-	     */
-
-	    this.type = type;
+	    _this.id = null;
 	    /**
 	     * Node name
 	     *
 	     * @type {String}
 	     */
 
-	    this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : ''; // Binded methods
+	    _this.name = null; // Bind methods
 
-	    this.onResize = this.onResize.bind(this);
-	    this.onResizeDebounce = debounce(this.onResize, 50, false); // Debugs
-
-	    console.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey');
+	    _this.onResize = _this.onResize.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onResizeDebounce = debounce(_this.onResize, 50, false);
+	    return _this;
 	  }
 	  /**
 	   * Basic members initialization for children classes.
@@ -4811,7 +5611,9 @@ define(['exports'], function (exports) { 'use strict';
 
 	  createClass(AbstractBlock, [{
 	    key: "init",
-	    value: function init() {}
+	    value: function init() {
+	      console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+	    }
 	    /**
 	     * Bind load and resize events for this specific block.
 	     *
@@ -4834,7 +5636,7 @@ define(['exports'], function (exports) { 'use strict';
 	  }, {
 	    key: "destroy",
 	    value: function destroy() {
-	      console.debug('\t🗑 #' + this.id);
+	      console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
 	      this.destroyEvents();
 	    }
 	    /**
@@ -4874,7 +5676,7 @@ define(['exports'], function (exports) { 'use strict';
 	  }]);
 
 	  return AbstractBlock;
-	}();
+	}(AbstractService);
 
 	/**
 	 * Base class for creating page implementations.
@@ -4886,115 +5688,82 @@ define(['exports'], function (exports) { 'use strict';
 
 	var AbstractPage =
 	/*#__PURE__*/
-	function () {
+	function (_AbstractService) {
+	  inherits(AbstractPage, _AbstractService);
+
 	  /**
 	   * Base constructor for Pages.
-	   *
-	   * Do not override this method, override `init` method instead.
-	   *
-	   * @param  {Kernel}  kernel
-	   * @param  {HTMLElement}  container
-	   * @param  {String}  context
-	   * @param  {String}  type
-	   *
 	   * @constructor
 	   */
-	  function AbstractPage(kernel, container, context, type) {
+	  function AbstractPage(container) {
+	    var _this;
+
 	    classCallCheck(this, AbstractPage);
 
-	    type = type || 'page';
-
-	    if (!container) {
-	      throw new Error('AbstractPage need a container (HTMLElement) to be defined.');
-	    }
-
-	    if (!kernel) {
-	      throw new Error('AbstractPage need a Kernel instance to be defined.');
-	    }
-	    /**
-	     * Kernel
-	     *
-	     * @type {Kernel}
-	     */
-
-
-	    this.kernel = kernel;
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractPage).call(this, container, 'AbstractPage'));
 	    /**
 	     * Container element
 	     *
 	     * @type {HTMLElement}
 	     */
 
-	    this.container = container;
-
-	    if (!this.container) {
-	      throw new Error("AbstractPage: container not found!");
-	    }
+	    _this.rootElement = null;
 	    /**
 	     * Page id
 	     *
-	     * @type {String}
+	     * @type {String|null}
 	     */
 
-
-	    this.id = this.container.id;
-
-	    if (!this.id) {
-	      throw new Error("AbstractPage: container have no id!");
-	    }
+	    _this.id = null;
 	    /**
 	     * Page context (static or ajax)
 	     *
-	     * @type {String}
+	     * @type {String|null}
 	     */
 
-
-	    this.context = context;
+	    _this.context = null;
 	    /**
 	     * Page type
 	     *
-	     * @type {String}
+	     * @type {String|null}
 	     */
 
-	    this.type = type;
+	    _this.type = null;
 	    /**
 	     * Is home ?
 	     *
 	     * @type {boolean}
 	     */
 
-	    this.isHome = this.container.getAttribute('data-is-home') === '1';
-	    /**
-	     * Lazyload instance
-	     *
-	     * @type {Lazyload|null}
-	     */
-
-	    this.lazyload = null;
+	    _this.isHome = null;
 	    /**
 	     * AbstractBlock collection.
 	     *
 	     * @type {Array<AbstractBlock>}
 	     */
 
-	    this.blocks = [];
+	    _this.blocks = [];
 	    /**
 	     * Node name
 	     *
-	     * @type {String}
+	     * @type {String|null}
 	     */
 
-	    this.name = this.container.hasAttribute('data-node-name') ? this.container.getAttribute('data-node-name') : '';
-	    this.metaTitle = this.container.hasAttribute('data-meta-title') ? this.container.getAttribute('data-meta-title') : ''; // Binded methods
+	    _this.name = null;
+	    /**
+	     * Meta title
+	     * @type {String|null}
+	     */
 
-	    this.onResize = this.onResize.bind(this);
-	    this.onResizeDebounce = debounce(this.onResize, 50, false);
-	    this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false);
-	    this.onLazyImageSet = this.onLazyImageSet.bind(this);
-	    this.onLazyImageLoad = this.onLazyImageLoad.bind(this);
-	    this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this); // Debug
+	    _this.metaTitle = null; // Bind methods
 
-	    console.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey');
+	    _this.onResize = _this.onResize.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onResizeDebounce = debounce(_this.onResize, 50, false);
+	    _this.bindedUpdateBlocks = debounce(_this.updateBlocks.bind(assertThisInitialized(assertThisInitialized(_this))), 50, false);
+	    _this.onLazyImageSet = _this.onLazyImageSet.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onLazyImageLoad = _this.onLazyImageLoad.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onLazyImageProcessed = _this.onLazyImageProcessed.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    return _this;
 	  }
 	  /**
 	   * Initialize page.
@@ -5014,12 +5783,15 @@ define(['exports'], function (exports) { 'use strict';
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
+	                // Debug
+	                console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
 	                /**
 	                 * HTMLElement blocks collection.
 	                 *
 	                 * @type {Array}
 	                 */
-	                this.blockElements = toConsumableArray(this.container.querySelectorAll(".".concat(this.kernel.options.pageBlockClass)));
+
+	                this.blockElements = toConsumableArray(this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass)));
 	                /**
 	                 * @type {Number}
 	                 */
@@ -5027,27 +5799,27 @@ define(['exports'], function (exports) { 'use strict';
 	                this.blockLength = this.blockElements.length;
 
 	                if (!this.blockLength) {
-	                  _context.next = 5;
+	                  _context.next = 6;
 	                  break;
 	                }
 
-	                _context.next = 5;
+	                _context.next = 6;
 	                return this.initBlocks();
 
-	              case 5:
+	              case 6:
 	                // Context
-	                if (this.kernel.options.ajaxEnabled && this.context === 'ajax') {
+	                if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
 	                  this.initAjax();
 	                } // Lazyload
 
 
-	                if (this.kernel.options.lazyloadEnabled) {
+	                if (this.getService('Config').lazyloadEnabled) {
 	                  this.initLazyload();
 	                }
 
 	                this.initEvents();
 
-	              case 8:
+	              case 9:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -5066,16 +5838,16 @@ define(['exports'], function (exports) { 'use strict';
 	  }, {
 	    key: "destroy",
 	    value: function destroy() {
-	      console.debug('🗑 #' + this.id);
-	      this.container.parentNode.removeChild(this.container);
+	      console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+	      this.rootElement.parentNode.removeChild(this.rootElement);
 	      this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
 
-	      if (this.kernel.page !== null && this.kernel.page.name !== this.name) {
+	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
 	        document.body.classList.remove(this.name);
 	      } // Do not remove type class on body if destroyed page is the same as current one.
 
 
-	      if (this.kernel.page !== null && this.kernel.page.type !== this.type) {
+	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
 	        document.body.classList.remove(this.type);
 	      } // Blocks
 
@@ -5087,12 +5859,11 @@ define(['exports'], function (exports) { 'use strict';
 	          }
 	        }
 	      } // Remove Lazyload instance and listeners
+	      // if (this.lazyload !== null) {
+	      //     this.lazyload.destroy()
+	      //     this.lazyload = null
+	      // }
 
-
-	      if (this.lazyload !== null) {
-	        this.lazyload.destroy();
-	        this.lazyload = null;
-	      }
 	    }
 	    /**
 	     * Initialize basic events.
@@ -5103,7 +5874,7 @@ define(['exports'], function (exports) { 'use strict';
 	    value: function initEvents() {
 	      window.addEventListener('resize', this.onResizeDebounce);
 	      this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
-	      this.domObserver.observe(this.container, {
+	      this.domObserver.observe(this.rootElement, {
 	        childList: true,
 	        attributes: false,
 	        characterData: false,
@@ -5130,11 +5901,11 @@ define(['exports'], function (exports) { 'use strict';
 	    key: "initLazyload",
 	    value: function initLazyload() {
 	      this.beforeLazyload(); // this.lazyload = new Lazyload({
-	      //     threshold: this.kernel.options.lazyloadThreshold,
-	      //     throttle: this.kernel.options.lazyloadThrottle,
-	      //     elements_selector: '.' + this.kernel.options.lazyloadClass,
-	      //     data_src: this.kernel.options.lazyloadSrcAttr.replace('data-', ''),
-	      //     data_srcset: this.kernel.options.lazyloadSrcSetAttr.replace('data-', ''),
+	      //     threshold: this.pageBuilder.options.lazyloadThreshold,
+	      //     throttle: this.pageBuilder.options.lazyloadThrottle,
+	      //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
+	      //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
+	      //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
 	      //     callback_set: this.onLazyImageSet,
 	      //     callback_load: this.onLazyImageLoad,
 	      //     callback_processed: this.onLazyImageProcessed
@@ -5142,11 +5913,10 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  }, {
 	    key: "updateLazyload",
-	    value: function updateLazyload() {
-	      if (this.lazyload) {
-	        this.lazyload.update();
-	      }
-	    }
+	    value: function updateLazyload() {} // if (this.lazyload) {
+	    //     this.lazyload.update()
+	    // }
+
 	    /**
 	     * @param {Function} onShow
 	     */
@@ -5155,9 +5925,9 @@ define(['exports'], function (exports) { 'use strict';
 	    key: "show",
 	    value: function show(onShow) {
 	      console.debug('▶️ #' + this.id);
-	      this.container.style.opacity = '1';
+	      this.rootElement.style.opacity = '1';
 	      if (typeof onShow !== 'undefined') onShow();
-	      this.container.classList.remove(this.kernel.options.pageClass + '-transitioning');
+	      this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
 	      Dispatcher.commit(AFTER_PAGE_SHOW, this);
 	    }
 	    /**
@@ -5169,14 +5939,14 @@ define(['exports'], function (exports) { 'use strict';
 	    value: function hide(onHidden) {
 	      Dispatcher.commit(BEFORE_PAGE_HIDE, this);
 	      console.debug('◀️ #' + this.id);
-	      this.container.style.opacity = '0';
+	      this.rootElement.style.opacity = '0';
 	      if (typeof onHidden !== 'undefined') onHidden();
 	      Dispatcher.commit(AFTER_PAGE_HIDE, this);
 	    }
 	  }, {
 	    key: "initAjax",
 	    value: function initAjax() {
-	      this.container.classList.add(this.kernel.options.pageClass + '-transitioning');
+	      this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
 	    }
 	    /**
 	     * Initialize page blocks on page.
@@ -5206,8 +5976,11 @@ define(['exports'], function (exports) { 'use strict';
 
 	              case 4:
 	                block = _context2.sent;
+
 	                // Prevent undefined blocks to be appended to block collection.
-	                this.blocks.push(block);
+	                if (block) {
+	                  this.blocks.push(block);
+	                }
 
 	              case 6:
 	                blockIndex++;
@@ -5251,20 +6024,20 @@ define(['exports'], function (exports) { 'use strict';
 
 	                this.updateLazyload(); // Create new blocks
 
-	                this.blockElements = this.container.querySelectorAll(".".concat(this.kernel.options.pageBlockClass));
+	                this.blockElements = this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass));
 	                this.blockLength = this.blockElements.length;
 	                blockIndex = 0;
 
 	              case 5:
 	                if (!(blockIndex < this.blockLength)) {
-	                  _context3.next = 22;
+	                  _context3.next = 21;
 	                  break;
 	                }
 
 	                blockElement = this.blockElements[blockIndex];
 
 	                if (this.getBlockById(blockElement.id)) {
-	                  _context3.next = 19;
+	                  _context3.next = 18;
 	                  break;
 	                }
 
@@ -5274,27 +6047,31 @@ define(['exports'], function (exports) { 'use strict';
 
 	              case 11:
 	                block = _context3.sent;
-	                this.blocks.push(block);
-	                block.onPageReady();
-	                _context3.next = 19;
+
+	                if (block) {
+	                  this.blocks.push(block);
+	                  block.onPageReady();
+	                }
+
+	                _context3.next = 18;
 	                break;
 
-	              case 16:
-	                _context3.prev = 16;
+	              case 15:
+	                _context3.prev = 15;
 	                _context3.t0 = _context3["catch"](8);
 	                console.info(_context3.t0.message);
 
-	              case 19:
+	              case 18:
 	                blockIndex++;
 	                _context3.next = 5;
 	                break;
 
-	              case 22:
+	              case 21:
 	              case "end":
 	                return _context3.stop();
 	            }
 	          }
-	        }, _callee3, this, [[8, 16]]);
+	        }, _callee3, this, [[8, 15]]);
 	      }));
 
 	      return function updateBlocks() {
@@ -5312,14 +6089,14 @@ define(['exports'], function (exports) { 'use strict';
 	      var _initSingleBlock = asyncToGenerator(
 	      /*#__PURE__*/
 	      regenerator.mark(function _callee4(blockElement) {
-	        var type, blockInstance;
+	        var blockType, blockInstance;
 	        return regenerator.wrap(function _callee4$(_context4) {
 	          while (1) {
 	            switch (_context4.prev = _context4.next) {
 	              case 0:
-	                type = blockElement.getAttribute(this.kernel.options.objectTypeAttr);
+	                blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
 	                _context4.next = 3;
-	                return this.kernel.classFactory.getBlockInstance(this, blockElement, type);
+	                return this.getService('BlockBuilder').getBlockInstance(blockType);
 
 	              case 3:
 	                blockInstance = _context4.sent;
@@ -5329,14 +6106,21 @@ define(['exports'], function (exports) { 'use strict';
 	                  break;
 	                }
 
-	                return _context4.abrupt("return", new AbstractBlock(this, blockElement, type));
+	                return _context4.abrupt("return", null);
 
 	              case 6:
+	                // Set values
+	                blockInstance.type = blockType;
+	                blockInstance.page = this;
+	                blockInstance.rootElement = blockElement;
+	                blockInstance.id = blockElement.id;
+	                blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
+
 	                blockInstance.init();
 	                blockInstance.initEvents();
 	                return _context4.abrupt("return", blockInstance);
 
-	              case 9:
+	              case 14:
 	              case "end":
 	                return _context4.stop();
 	            }
@@ -5476,426 +6260,916 @@ define(['exports'], function (exports) { 'use strict';
 	  }]);
 
 	  return AbstractPage;
-	}();
+	}(AbstractService);
 
 	/**
-	 * Base class for creating transition.
-	 *
-	 * @abstract
+	 * @namespace
+	 * @type {Object} defaults                      - Default config
+	 * @property {String} defaults.wrapperId        - Id of the main wrapper
+	 * @property {String} defaults.pageBlockClass
+	 * @property {String} defaults.pageClass        - Class name used to identify the containers
+	 * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
+	 * @property {String} defaults.noAjaxLinkClass
+	 * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+	 * @const
+	 * @default
 	 */
 
-	var AbstractTransition =
+	var CONFIG = {
+	  defaults: {
+	    wrapperId: 'sb-wrapper',
+	    pageBlockClass: 'page-block',
+	    pageClass: 'page-content',
+	    objectTypeAttr: 'data-node-type',
+	    noAjaxLinkClass: 'no-ajax-link',
+	    noPrefetchClass: 'no-prefetch'
+	  }
+	};
+
+	var StartingBlocks =
 	/*#__PURE__*/
 	function () {
-	  /**
-	   * Constructor.
-	   * Do not override this method.
-	   *
-	   * @constructor
-	   */
-	  function AbstractTransition() {
-	    classCallCheck(this, AbstractTransition);
+	  function StartingBlocks() {
+	    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+	    classCallCheck(this, StartingBlocks);
+
+	    this.bottle = new bottle();
+	    this.bootables = [];
+	    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
+	    this.provider('Dom', Dom);
+	    this.provider('BlockBuilder', BlockBuilder);
+	    this.instanceFactory('AbstractPage', function (c) {
+	      return new AbstractPage(c);
+	    });
+	    this.bootableProvider('PageBuilder', PageBuilder);
+	  }
+
+	  createClass(StartingBlocks, [{
+	    key: "provider",
+	    value: function provider(id, ClassName) {
+	      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	        args[_key - 2] = arguments[_key];
+	      }
+
+	      if (!id || !ClassName) {
+	        throw new Error('A parameter is missing');
+	      }
+
+	      this.bottle.provider(id, function () {
+	        this.$get = function (container) {
+	          return construct(ClassName, [container].concat(args));
+	        };
+	      });
+	    }
+	  }, {
+	    key: "factory",
+	    value: function factory(id, f) {
+	      this.bottle.factory(id, f);
+	    }
+	  }, {
+	    key: "instanceFactory",
+	    value: function instanceFactory(id, f) {
+	      this.bottle.instanceFactory(id, f);
+	    }
+	  }, {
+	    key: "bootableProvider",
+	    value: function bootableProvider(id, ClassName) {
+	      for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	        args[_key2 - 2] = arguments[_key2];
+	      }
+
+	      this.provider.apply(this, [id, ClassName].concat(args));
+	      this.bootables.push(id);
+	    }
+	  }, {
+	    key: "boot",
+	    value: function boot() {
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = this.bootables[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var serviceName = _step.value;
+
+	          if (this.bottle.container.hasOwnProperty(serviceName)) {
+	            this.bottle.container[serviceName].boot();
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }]);
+
+	  return StartingBlocks;
+	}();
+
+	// 7.2.8 IsRegExp(argument)
+
+
+	var MATCH = _wks('match');
+	var _isRegexp = function (it) {
+	  var isRegExp;
+	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	};
+
+	// @@split logic
+	_fixReWks('split', 2, function (defined, SPLIT, $split) {
+	  var isRegExp = _isRegexp;
+	  var _split = $split;
+	  var $push = [].push;
+	  var $SPLIT = 'split';
+	  var LENGTH = 'length';
+	  var LAST_INDEX = 'lastIndex';
+	  if (
+	    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
+	    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
+	    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
+	    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
+	    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
+	    ''[$SPLIT](/.?/)[LENGTH]
+	  ) {
+	    var NPCG = /()??/.exec('')[1] === undefined; // nonparticipating capturing group
+	    // based on es5-shim implementation, need to rework it
+	    $split = function (separator, limit) {
+	      var string = String(this);
+	      if (separator === undefined && limit === 0) return [];
+	      // If `separator` is not a regex, use native split
+	      if (!isRegExp(separator)) return _split.call(string, separator, limit);
+	      var output = [];
+	      var flags = (separator.ignoreCase ? 'i' : '') +
+	                  (separator.multiline ? 'm' : '') +
+	                  (separator.unicode ? 'u' : '') +
+	                  (separator.sticky ? 'y' : '');
+	      var lastLastIndex = 0;
+	      var splitLimit = limit === undefined ? 4294967295 : limit >>> 0;
+	      // Make `global` and avoid `lastIndex` issues by working with a copy
+	      var separatorCopy = new RegExp(separator.source, flags + 'g');
+	      var separator2, match, lastIndex, lastLength, i;
+	      // Doesn't need flags gy, but they don't hurt
+	      if (!NPCG) separator2 = new RegExp('^' + separatorCopy.source + '$(?!\\s)', flags);
+	      while (match = separatorCopy.exec(string)) {
+	        // `separatorCopy.lastIndex` is not reliable cross-browser
+	        lastIndex = match.index + match[0][LENGTH];
+	        if (lastIndex > lastLastIndex) {
+	          output.push(string.slice(lastLastIndex, match.index));
+	          // Fix browsers whose `exec` methods don't consistently return `undefined` for NPCG
+	          // eslint-disable-next-line no-loop-func
+	          if (!NPCG && match[LENGTH] > 1) match[0].replace(separator2, function () {
+	            for (i = 1; i < arguments[LENGTH] - 2; i++) if (arguments[i] === undefined) match[i] = undefined;
+	          });
+	          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
+	          lastLength = match[0][LENGTH];
+	          lastLastIndex = lastIndex;
+	          if (output[LENGTH] >= splitLimit) break;
+	        }
+	        if (separatorCopy[LAST_INDEX] === match.index) separatorCopy[LAST_INDEX]++; // Avoid an infinite loop
+	      }
+	      if (lastLastIndex === string[LENGTH]) {
+	        if (lastLength || !separatorCopy.test('')) output.push('');
+	      } else output.push(string.slice(lastLastIndex));
+	      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
+	    };
+	  // Chakra, V8
+	  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
+	    $split = function (separator, limit) {
+	      return separator === undefined && limit === 0 ? [] : _split.call(this, separator, limit);
+	    };
+	  }
+	  // 21.1.3.17 String.prototype.split(separator, limit)
+	  return [function split(separator, limit) {
+	    var O = defined(this);
+	    var fn = separator == undefined ? undefined : separator[SPLIT];
+	    return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
+	  }, $split];
+	});
+
+	/**
+	 * Pjax.
+	 */
+
+	var Pjax =
+	/*#__PURE__*/
+	function (_AbstractBootableServ) {
+	  inherits(Pjax, _AbstractBootableServ);
+
+	  function Pjax(container) {
+	    var _this;
+
+	    classCallCheck(this, Pjax);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Pjax).call(this, container, 'Pjax', ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']));
 	    /**
-	     * @type {AbstractPage} old Page instance
-	     */
-	    this.oldPage = undefined;
-	    /**
-	     * @type {AbstractPage}
+	     * Indicate if there is an animation in progress.
+	     *
+	     * @readOnly
+	     * @type {Boolean}
 	     */
 
-	    this.newPage = undefined;
-	    /**
-	     * @type {Promise}
-	     */
+	    _this.transitionProgress = false; // Bind methods
 
-	    this.newPageLoading = undefined;
+	    _this.onNewPageLoaded = _this.onNewPageLoaded.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onTransitionEnd = _this.onTransitionEnd.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onLinkClick = _this.onLinkClick.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onStateChange = _this.onStateChange.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    return _this;
 	  }
 	  /**
-	   * Initialize transition.
-	   * Do not override this method.
+	   * Init the events.
 	   *
-	   * @param {AbstractPage} oldPage
-	   * @param {Promise} newPagePromise
-	   * @returns {Promise}
+	   * @private
 	   */
 
 
-	  createClass(AbstractTransition, [{
-	    key: "init",
-	    value: function init(oldPage, newPagePromise) {
-	      var _this = this;
+	  createClass(Pjax, [{
+	    key: "boot",
+	    value: function boot() {
+	      get(getPrototypeOf(Pjax.prototype), "boot", this).call(this);
 
-	      this.oldPage = oldPage;
-	      this._newPagePromise = newPagePromise;
-	      this.deferred = Utils.deferred();
-	      this.newPageReady = Utils.deferred();
-	      this.newPageLoading = this.newPageReady.promise;
-	      this.start();
-
-	      this._newPagePromise.then(function (newPage) {
-	        _this.newPage = newPage;
-
-	        _this.newPageReady.resolve();
-	      });
-
-	      return this.deferred.promise;
+	      var wrapper = this.getService('Dom').getWrapper();
+	      wrapper.setAttribute('aria-live', 'polite');
+	      this.currentState = this.getService('History').add(this.getCurrentUrl(), null, 'static');
+	      this.bindEvents();
 	    }
 	    /**
-	     * Call this function when the Transition is finished.
+	     * Attach event listeners.
+	     *
+	     * @private
 	     */
 
 	  }, {
-	    key: "done",
-	    value: function done() {
-	      this.oldPage.destroy();
-	      this.newPage.container.style.visibility = 'visible';
-	      this.newPage.updateLazyload();
-	      this.deferred.resolve();
+	    key: "bindEvents",
+	    value: function bindEvents() {
+	      document.addEventListener('click', this.onLinkClick);
+	      window.addEventListener('popstate', this.onStateChange);
 	    }
 	    /**
-	     * Entry point to create a custom Transition.
+	     * Return the currentURL cleaned.
+	     *
+	     * @return {String} currentUrl
+	     */
+
+	  }, {
+	    key: "getCurrentUrl",
+	    value: function getCurrentUrl() {
+	      // TODO, clean from what? currenturl do not takes hash..
+	      return Utils.cleanLink(Utils.getCurrentUrl());
+	    }
+	    /**
+	     * Change the URL with push state and trigger the state change.
+	     *
+	     * @param {String} url
+	     * @param {String} transitionName
+	     */
+
+	  }, {
+	    key: "goTo",
+	    value: function goTo(url, transitionName) {
+	      var currentPosition = window.scrollY;
+	      window.history.pushState(null, null, url);
+	      window.scrollTo(0, currentPosition);
+	      this.onStateChange(transitionName, true);
+	    }
+	    /**
+	     * Force the browser to go to a certain url.
+	     *
+	     * @param {String} url
+	     * @private
+	     */
+
+	  }, {
+	    key: "forceGoTo",
+	    value: function forceGoTo(url) {
+	      window.location = url;
+	    }
+	    /**
+	     * Load an url, will start an ajax request or load from the cache.
+	     *
+	     * @private
+	     * @param  {String} url
+	     * @return {Promise}
+	     */
+
+	  }, {
+	    key: "load",
+	    value: function load(url) {
+	      var _this2 = this;
+
+	      var deferred = Utils.deferred(); // Show loader
+
+	      if (this.hasService('GraphicLoader')) {
+	        this.getService('GraphicLoader').show();
+	      } // Check cache
+
+
+	      var request = null;
+
+	      if (this.hasService('CacheProvider')) {
+	        request = this.getService('CacheProvider').get(url);
+	      } // If no cache, make request
+
+
+	      if (!request) {
+	        var serviceWorker = null;
+
+	        if (this.hasService('Worker')) {
+	          serviceWorker = this.getService('Worker');
+	        }
+
+	        request = Utils.request(url, serviceWorker); // If cache provider, cache the request
+
+	        if (this.hasService('CacheProvider')) {
+	          this.getService('CacheProvider').set(url, request);
+	        }
+	      } // When data are loaded
+
+
+	      request.then(function (data) {
+	        var container = _this2.getService('Dom').parseResponse(data); // Dispatch an event
+
+
+	        Dispatcher.commit(AFTER_PAGE_LOAD, {
+	          container: container,
+	          currentHTML: _this2.getService('Dom').currentHTML
+	        }); // Add new container to the DOM
+
+	        _this2.getService('Dom').putContainer(container); // Dispatch an event
+
+
+	        Dispatcher.commit(AFTER_DOM_APPENDED, {
+	          container: container,
+	          currentHTML: _this2.getService('Dom').currentHTML
+	        }); // Build page
+
+	        var page = _this2.getService('PageBuilder').buildPage(container);
+
+	        deferred.resolve(page);
+	      }).catch(function (err) {
+	        console.error(err);
+
+	        _this2.forceGoTo(url);
+
+	        deferred.reject();
+	      });
+	      return deferred.promise;
+	    }
+	    /**
+	     * Get the .href parameter out of a link element
+	     *
+	     * @private
+	     * @param  {HTMLElement} el
+	     * @return {String|undefined} href
+	     */
+
+	  }, {
+	    key: "getHref",
+	    value: function getHref(el) {
+	      if (!el) {
+	        return undefined;
+	      } // Check if has a href and if it's a link element
+
+
+	      if (typeof el.href === 'string' && el.tagName.toUpperCase() === 'A') {
+	        return el.href;
+	      }
+
+	      return undefined;
+	    }
+	    /**
+	     * Get transition name from HTMLElement attribute (data-transition).
+	     *
+	     * @param {HTMLElement} el
+	     * @returns {String|undefined} The transition name
+	     */
+
+	  }, {
+	    key: "getTransitionName",
+	    value: function getTransitionName(el) {
+	      if (!el) {
+	        return null;
+	      }
+
+	      if (el.getAttribute && typeof el.getAttribute('data-transition') === 'string') {
+	        return el.getAttribute('data-transition');
+	      }
+
+	      return null;
+	    }
+	    /**
+	     * Callback called from click event.
+	     *
+	     * @private
+	     * @param {MouseEvent} evt
+	     */
+
+	  }, {
+	    key: "onLinkClick",
+	    value: function onLinkClick(evt) {
+	      /**
+	       * @type {HTMLElement|Node|EventTarget}
+	       */
+	      var el = evt.target; // Go up in the node list until we
+	      // find something with an href
+
+	      while (el && !this.getHref(el)) {
+	        el = el.parentNode;
+	      }
+
+	      if (this.preventCheck(evt, el)) {
+	        evt.preventDefault();
+	        this.linkHash = el.hash.split('#')[1];
+	        var href = this.getHref(el);
+	        var transitionName = this.getTransitionName(el);
+	        this.goTo(href, transitionName);
+	      }
+	    }
+	    /**
+	     * Determine if the link should be followed.
+	     *
+	     * @param  {MouseEvent} evt
+	     * @param  {HTMLElement} element
+	     * @return {Boolean}
+	     */
+
+	  }, {
+	    key: "preventCheck",
+	    value: function preventCheck(evt, element) {
+	      if (!window.history.pushState) {
+	        return false;
+	      }
+
+	      var href = this.getHref(element); // User
+
+	      if (!element || !href) {
+	        return false;
+	      } // Middle click, cmd click, and ctrl click
+
+
+	      if (evt.which > 1 || evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) {
+	        return false;
+	      } // Ignore target with _blank target
+
+
+	      if (element.target && element.target === '_blank') {
+	        return false;
+	      } // Check if it's the same domain
+
+
+	      if (window.location.protocol !== element.protocol || window.location.hostname !== element.hostname) {
+	        return false;
+	      } // Check if the port is the same
+
+
+	      if (Utils.getPort() !== Utils.getPort(element.port)) {
+	        return false;
+	      } // Ignore case when a hash is being tacked on the current URL
+	      // if (href.indexOf('#') > -1)
+	      //   return false;
+	      // Ignore case where there is download attribute
+
+
+	      if (element.getAttribute && typeof element.getAttribute('download') === 'string') {
+	        return false;
+	      } // In case you're trying to load the same page
+
+
+	      if (Utils.cleanLink(href) === Utils.cleanLink(window.location.href)) {
+	        return false;
+	      }
+
+	      return !element.classList.contains(this.getService('Config').noAjaxLinkClass);
+	    }
+	    /**
+	     * Return a transition object.
+	     *
+	     * @param  {object} prev historyManager
+	     * @param  {object} current historyManager
+	     * @return {AbstractTransition} Transition object
+	     */
+
+	  }, {
+	    key: "getTransition",
+	    value: function getTransition(prev, current) {
+	      return this.getService('TransitionFactory').getTransition(prev, current);
+	    }
+	    /**
+	     * Method called after a 'popstate' or from .goTo().
+	     *
+	     * @private
+	     */
+
+	  }, {
+	    key: "onStateChange",
+	    value: function onStateChange() {
+	      var transitionName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	      var isAjax = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	      var newUrl = this.getCurrentUrl();
+
+	      if (this.transitionProgress) {
+	        this.forceGoTo(newUrl);
+	      }
+
+	      if (this.getService('History').currentStatus().url === newUrl) {
+	        return false;
+	      } // If transition name is a string, a link have been click
+	      // Otherwise back/forward buttons have been pressed
+
+
+	      if (typeof transitionName === 'string' || isAjax) {
+	        this.currentState = this.getService('History').add(newUrl, transitionName, 'ajax');
+	      } else {
+	        this.currentState = this.getService('History').add(newUrl, null, '_history');
+	      } // Dispatch an event to inform that the page is being load
+
+
+	      Dispatcher.commit(BEFORE_PAGE_LOAD, {
+	        currentStatus: this.getService('History').currentStatus(),
+	        prevStatus: this.getService('History').prevStatus()
+	      }); // Load the page with the new url (promise is return)
+
+	      var newPagePromise = this.load(newUrl); // Get the page transition instance (from prev and current state)
+
+	      var transition = this.getTransition(this.getService('History').prevStatus(), this.getService('History').currentStatus());
+	      this.transitionProgress = true; // Dispatch an event that the transition is started
+
+	      Dispatcher.commit(TRANSITION_START, {
+	        transition: transition,
+	        currentStatus: this.getService('History').currentStatus(),
+	        prevStatus: this.getService('History').prevStatus()
+	      }); // Start the transition (with the current page, and the new page load promise)
+
+	      var transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise);
+	      newPagePromise.then(this.onNewPageLoaded);
+	      transitionPromise.then(this.onTransitionEnd);
+	    }
+	    /**
+	     * Function called as soon the new page is ready.
+	     *
+	     * @private
+	     * @param {AbstractPage} page
+	     */
+
+	  }, {
+	    key: "onNewPageLoaded",
+	    value: function onNewPageLoaded(page) {
+	      var currentStatus = this.getService('History').currentStatus();
+
+	      if (this.hasService('GraphicLoader')) {
+	        this.getService('GraphicLoader').hide();
+	      } // Update body attributes (class, id, data-attributes
+
+
+	      this.getService('Dom').updateBodyAttributes(page); // Update the page title
+
+	      this.getService('Dom').updatePageTitle(page); // Send google analytic data
+
+	      Utils.trackGoogleAnalytics(); // Update the current state
+
+	      if (this.currentState && page) {
+	        if (!this.currentState.data.title && page.metaTitle) {
+	          this.currentState.data.title = page.metaTitle;
+	        }
+	      }
+
+	      Dispatcher.commit(CONTAINER_READY, {
+	        currentStatus: currentStatus,
+	        prevStatus: this.getService('History').prevStatus(),
+	        currentHTML: this.getService('Dom').currentHTML,
+	        page: page
+	      });
+	    }
+	    /**
+	     * Function called as soon the transition is finished.
+	     *
+	     * @private
+	     */
+
+	  }, {
+	    key: "onTransitionEnd",
+	    value: function onTransitionEnd() {
+	      this.transitionProgress = false;
+
+	      if (this.linkHash) {
+	        window.location.hash = '';
+	        window.location.hash = this.linkHash;
+	        this.linkHash = null;
+	      }
+
+	      Dispatcher.commit(TRANSITION_COMPLETE, {
+	        currentStatus: this.getService('History').currentStatus(),
+	        prevStatus: this.getService('History').prevStatus()
+	      });
+	    }
+	  }]);
+
+	  return Pjax;
+	}(AbstractBootableService);
+
+	/**
+	 * HistoryManager helps to keep track of the navigation.
+	 *
+	 * @type {Object}
+	 */
+
+	var History =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(History, _AbstractService);
+
+	  function History(container) {
+	    var _this;
+
+	    classCallCheck(this, History);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(History).call(this, container, 'History'));
+	    /**
+	     * Keep track of the status in historic order.
+	     *
+	     * @readOnly
+	     * @type {Array}
+	     */
+
+	    _this.history = [];
+	    return _this;
+	  }
+	  /**
+	   * Add a new set of url and namespace.
+	   *
+	   * @param {String} url
+	   * @param {String} transitionName
+	   * @param {String} context (ajax, history)
+	   * @param {Object} data (optional data)
+	   *
+	   * @return {Object}
+	   */
+
+
+	  createClass(History, [{
+	    key: "add",
+	    value: function add(url, transitionName, context) {
+	      var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+	      var state = {
+	        url: url,
+	        transitionName: transitionName,
+	        context: context,
+	        data: data
+	      };
+	      this.history.push(state);
+	      return state;
+	    }
+	    /**
+	     * Return information about the current status.
+	     *
+	     * @return {Object}
+	     */
+
+	  }, {
+	    key: "currentStatus",
+	    value: function currentStatus() {
+	      return this.history[this.history.length - 1];
+	    }
+	    /**
+	     * Return information about the previous status.
+	     *
+	     * @return {Object}
+	     */
+
+	  }, {
+	    key: "prevStatus",
+	    value: function prevStatus() {
+	      var history = this.history;
+
+	      if (history.length < 2) {
+	        return null;
+	      }
+
+	      return history[history.length - 2];
+	    }
+	  }]);
+
+	  return History;
+	}(AbstractService);
+
+	/**
+	 * Prefetch.
+	 *
+	 * @type {Object}
+	 */
+
+	var Prefetch =
+	/*#__PURE__*/
+	function (_AbstractBootableServ) {
+	  inherits(Prefetch, _AbstractBootableServ);
+
+	  function Prefetch(container) {
+	    classCallCheck(this, Prefetch);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(Prefetch).call(this, container, 'Prefetch', ['Pjax', 'Config']));
+	  }
+
+	  createClass(Prefetch, [{
+	    key: "boot",
+	    value: function boot() {
+	      get(getPrototypeOf(Prefetch.prototype), "boot", this).call(this);
+
+	      if (!window.history.pushState) {
+	        return false;
+	      }
+
+	      document.body.addEventListener('mouseover', this.onLinkEnter.bind(this));
+	      document.body.addEventListener('touchstart', this.onLinkEnter.bind(this));
+	    }
+	  }, {
+	    key: "onLinkEnter",
+	    value: function onLinkEnter(evt) {
+	      var el = evt.target;
+
+	      while (el && !this.getService('Pjax').getHref(el)) {
+	        el = el.parentNode;
+	      }
+
+	      if (!el || el.classList.contains(this.getService('Config').noPrefetchClass)) {
+	        return;
+	      }
+
+	      var url = this.getService('Pjax').getHref(el); // Check if the link is eligible for Pjax
+
+	      if (this.getService('Pjax').preventCheck(evt, el)) {
+	        if (this.hasService('CacheProvider') && this.getService('CacheProvider').get(url)) {
+	          return;
+	        }
+
+	        var serviceWorker = null;
+
+	        if (this.hasService('Worker')) {
+	          serviceWorker = this.getService('Worker');
+	        }
+
+	        var xhr = Utils.request(url, serviceWorker);
+
+	        if (this.hasService('CacheProvider')) {
+	          this.getService('CacheProvider').set(url, xhr);
+	        }
+	      }
+	    }
+	  }]);
+
+	  return Prefetch;
+	}(AbstractBootableService);
+
+	/**
+	 * Cache provider class.
+	 *
+	 * This class stores Ajax response in memory.
+	 */
+
+	var CacheProvider =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(CacheProvider, _AbstractService);
+
+	  function CacheProvider(container) {
+	    var _this;
+
+	    classCallCheck(this, CacheProvider);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(CacheProvider).call(this, container, 'CacheProvider'));
+	    _this.data = {};
+	    return _this;
+	  }
+	  /**
+	   * @param  {String} key
+	   * @return {Boolean}
+	   */
+
+
+	  createClass(CacheProvider, [{
+	    key: "exists",
+	    value: function exists(key) {
+	      return key in this.data;
+	    }
+	    /**
+	     * @param  {String} href
+	     * @return {Object}
+	     */
+
+	  }, {
+	    key: "get",
+	    value: function get(href) {
+	      return this.data[href];
+	    }
+	    /**
+	     * @param  {String} key
+	     * @param  {Object} data
+	     * @return {CacheProvider}  this
+	     */
+
+	  }, {
+	    key: "set",
+	    value: function set(key, data) {
+	      this.data[key] = data;
+	      return this;
+	    }
+	    /**
+	     * Flush the cache
+	     */
+
+	  }, {
+	    key: "reset",
+	    value: function reset() {
+	      this.data = {};
+	    }
+	  }]);
+
+	  return CacheProvider;
+	}(AbstractService);
+
+	/**
+	 * Copyright © 2016, Ambroise Maupate
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is furnished
+	 * to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in all
+	 * copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+	 * IN THE SOFTWARE.
+	 *
+	 * @file GraphicLoader.js
+	 * @author Ambroise Maupate
+	 */
+
+	/**
+	 * Handle your application main loader animation.
+	 *
+	 * **Do not instanciate this class directly, create a sub-class**.
+	 */
+	var GraphicLoader =
+	/*#__PURE__*/
+	function () {
+	  /**
+	   * Interface for a graphic loader element.
+	   *
+	   * Any child implementations must implements
+	   * show and hide methods.
+	   *
+	   * @abstract
+	   */
+	  function GraphicLoader() {
+	    classCallCheck(this, GraphicLoader);
+
+	    console.debug('🌀 Construct loader');
+	  }
+	  /**
+	   * Show loader.
+	   *
+	   * @abstract
+	   */
+
+
+	  createClass(GraphicLoader, [{
+	    key: "show",
+	    value: function show() {
+	      console.debug('🌀 Show loader');
+	    }
+	    /**
+	     * Hide loader.
+	     *
 	     * @abstract
 	     */
 
 	  }, {
-	    key: "start",
-	    value: function start() {}
+	    key: "hide",
+	    value: function hide() {
+	      console.debug('🌀 Hide loader');
+	    }
 	  }]);
 
-	  return AbstractTransition;
+	  return GraphicLoader;
 	}();
-
-	// 22.1.3.31 Array.prototype[@@unscopables]
-	var UNSCOPABLES = _wks('unscopables');
-	var ArrayProto$1 = Array.prototype;
-	if (ArrayProto$1[UNSCOPABLES] == undefined) _hide(ArrayProto$1, UNSCOPABLES, {});
-	var _addToUnscopables = function (key) {
-	  ArrayProto$1[UNSCOPABLES][key] = true;
-	};
-
-	var _iterStep = function (done, value) {
-	  return { value: value, done: !!done };
-	};
-
-	var IteratorPrototype = {};
-
-	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-	_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
-
-	var _iterCreate = function (Constructor, NAME, next) {
-	  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
-	  _setToStringTag(Constructor, NAME + ' Iterator');
-	};
-
-	// 7.1.13 ToObject(argument)
-
-	var _toObject = function (it) {
-	  return Object(_defined(it));
-	};
-
-	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-
-
-	var IE_PROTO$2 = _sharedKey('IE_PROTO');
-	var ObjectProto = Object.prototype;
-
-	var _objectGpo = Object.getPrototypeOf || function (O) {
-	  O = _toObject(O);
-	  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
-	  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
-	    return O.constructor.prototype;
-	  } return O instanceof Object ? ObjectProto : null;
-	};
-
-	var ITERATOR$3 = _wks('iterator');
-	var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-	var FF_ITERATOR = '@@iterator';
-	var KEYS = 'keys';
-	var VALUES = 'values';
-
-	var returnThis = function () { return this; };
-
-	var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
-	  _iterCreate(Constructor, NAME, next);
-	  var getMethod = function (kind) {
-	    if (!BUGGY && kind in proto) return proto[kind];
-	    switch (kind) {
-	      case KEYS: return function keys() { return new Constructor(this, kind); };
-	      case VALUES: return function values() { return new Constructor(this, kind); };
-	    } return function entries() { return new Constructor(this, kind); };
-	  };
-	  var TAG = NAME + ' Iterator';
-	  var DEF_VALUES = DEFAULT == VALUES;
-	  var VALUES_BUG = false;
-	  var proto = Base.prototype;
-	  var $native = proto[ITERATOR$3] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-	  var $default = $native || getMethod(DEFAULT);
-	  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-	  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-	  var methods, key, IteratorPrototype;
-	  // Fix native
-	  if ($anyNative) {
-	    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
-	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
-	      // Set @@toStringTag to native iterators
-	      _setToStringTag(IteratorPrototype, TAG, true);
-	      // fix for some old engines
-	      if (typeof IteratorPrototype[ITERATOR$3] != 'function') _hide(IteratorPrototype, ITERATOR$3, returnThis);
-	    }
-	  }
-	  // fix Array#{values, @@iterator}.name in V8 / FF
-	  if (DEF_VALUES && $native && $native.name !== VALUES) {
-	    VALUES_BUG = true;
-	    $default = function values() { return $native.call(this); };
-	  }
-	  // Define iterator
-	  if (BUGGY || VALUES_BUG || !proto[ITERATOR$3]) {
-	    _hide(proto, ITERATOR$3, $default);
-	  }
-	  // Plug for library
-	  _iterators[NAME] = $default;
-	  _iterators[TAG] = returnThis;
-	  if (DEFAULT) {
-	    methods = {
-	      values: DEF_VALUES ? $default : getMethod(VALUES),
-	      keys: IS_SET ? $default : getMethod(KEYS),
-	      entries: $entries
-	    };
-	    if (FORCED) for (key in methods) {
-	      if (!(key in proto)) _redefine(proto, key, methods[key]);
-	    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
-	  }
-	  return methods;
-	};
-
-	// 22.1.3.4 Array.prototype.entries()
-	// 22.1.3.13 Array.prototype.keys()
-	// 22.1.3.29 Array.prototype.values()
-	// 22.1.3.30 Array.prototype[@@iterator]()
-	var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
-	  this._t = _toIobject(iterated); // target
-	  this._i = 0;                   // next index
-	  this._k = kind;                // kind
-	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var kind = this._k;
-	  var index = this._i++;
-	  if (!O || index >= O.length) {
-	    this._t = undefined;
-	    return _iterStep(1);
-	  }
-	  if (kind == 'keys') return _iterStep(0, index);
-	  if (kind == 'values') return _iterStep(0, O[index]);
-	  return _iterStep(0, [index, O[index]]);
-	}, 'values');
-
-	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-	_iterators.Arguments = _iterators.Array;
-
-	_addToUnscopables('keys');
-	_addToUnscopables('values');
-	_addToUnscopables('entries');
-
-	var ITERATOR$4 = _wks('iterator');
-	var TO_STRING_TAG = _wks('toStringTag');
-	var ArrayValues = _iterators.Array;
-
-	var DOMIterables = {
-	  CSSRuleList: true, // TODO: Not spec compliant, should be false.
-	  CSSStyleDeclaration: false,
-	  CSSValueList: false,
-	  ClientRectList: false,
-	  DOMRectList: false,
-	  DOMStringList: false,
-	  DOMTokenList: true,
-	  DataTransferItemList: false,
-	  FileList: false,
-	  HTMLAllCollection: false,
-	  HTMLCollection: false,
-	  HTMLFormElement: false,
-	  HTMLSelectElement: false,
-	  MediaList: true, // TODO: Not spec compliant, should be false.
-	  MimeTypeArray: false,
-	  NamedNodeMap: false,
-	  NodeList: true,
-	  PaintRequestList: false,
-	  Plugin: false,
-	  PluginArray: false,
-	  SVGLengthList: false,
-	  SVGNumberList: false,
-	  SVGPathSegList: false,
-	  SVGPointList: false,
-	  SVGStringList: false,
-	  SVGTransformList: false,
-	  SourceBufferList: false,
-	  StyleSheetList: true, // TODO: Not spec compliant, should be false.
-	  TextTrackCueList: false,
-	  TextTrackList: false,
-	  TouchList: false
-	};
-
-	for (var collections = _objectKeys(DOMIterables), i = 0; i < collections.length; i++) {
-	  var NAME$1 = collections[i];
-	  var explicit = DOMIterables[NAME$1];
-	  var Collection = _global[NAME$1];
-	  var proto$1 = Collection && Collection.prototype;
-	  var key$1;
-	  if (proto$1) {
-	    if (!proto$1[ITERATOR$4]) _hide(proto$1, ITERATOR$4, ArrayValues);
-	    if (!proto$1[TO_STRING_TAG]) _hide(proto$1, TO_STRING_TAG, NAME$1);
-	    _iterators[NAME$1] = ArrayValues;
-	    if (explicit) for (key$1 in es6_array_iterator) if (!proto$1[key$1]) _redefine(proto$1, key$1, es6_array_iterator[key$1], true);
-	  }
-	}
-
-	// true  -> String#at
-	// false -> String#codePointAt
-	var _stringAt = function (TO_STRING) {
-	  return function (that, pos) {
-	    var s = String(_defined(that));
-	    var i = _toInteger(pos);
-	    var l = s.length;
-	    var a, b;
-	    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
-	    a = s.charCodeAt(i);
-	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
-	      ? TO_STRING ? s.charAt(i) : a
-	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-	  };
-	};
-
-	var $at = _stringAt(true);
-
-	// 21.1.3.27 String.prototype[@@iterator]()
-	_iterDefine(String, 'String', function (iterated) {
-	  this._t = String(iterated); // target
-	  this._i = 0;                // next index
-	// 21.1.5.2.1 %StringIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var index = this._i;
-	  var point;
-	  if (index >= O.length) return { value: undefined, done: true };
-	  point = $at(O, index);
-	  this._i += point.length;
-	  return { value: point, done: false };
-	});
-
-	var _typeof_1 = createCommonjsModule(function (module) {
-	function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-	function _typeof(obj) {
-	  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return _typeof2(obj);
-	    };
-	  } else {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	module.exports = _typeof;
-	});
-
-	function _assertThisInitialized(self) {
-	  if (self === void 0) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-
-	  return self;
-	}
-
-	var assertThisInitialized = _assertThisInitialized;
-
-	function _possibleConstructorReturn(self, call) {
-	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
-	    return call;
-	  }
-
-	  return assertThisInitialized(self);
-	}
-
-	var possibleConstructorReturn = _possibleConstructorReturn;
-
-	var getPrototypeOf = createCommonjsModule(function (module) {
-	function _getPrototypeOf(o) {
-	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-	    return o.__proto__ || Object.getPrototypeOf(o);
-	  };
-	  return _getPrototypeOf(o);
-	}
-
-	module.exports = _getPrototypeOf;
-	});
-
-	var setPrototypeOf$1 = createCommonjsModule(function (module) {
-	function _setPrototypeOf(o, p) {
-	  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-	    o.__proto__ = p;
-	    return o;
-	  };
-
-	  return _setPrototypeOf(o, p);
-	}
-
-	module.exports = _setPrototypeOf;
-	});
-
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function");
-	  }
-
-	  subClass.prototype = Object.create(superClass && superClass.prototype, {
-	    constructor: {
-	      value: subClass,
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-	  if (superClass) setPrototypeOf$1(subClass, superClass);
-	}
-
-	var inherits = _inherits;
-
-	/**
-	 * Default Transition. Show / Hide content.
-	 *
-	 * @extends {AbstractTransition}
-	 */
-
-	var DefaultTransition =
-	/*#__PURE__*/
-	function (_AbstractTransition) {
-	  inherits(DefaultTransition, _AbstractTransition);
-
-	  function DefaultTransition() {
-	    classCallCheck(this, DefaultTransition);
-
-	    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
-	  }
-
-	  createClass(DefaultTransition, [{
-	    key: "start",
-	    value: function start() {
-	      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-	    }
-	  }, {
-	    key: "finish",
-	    value: function finish() {
-	      document.body.scrollTop = 0;
-	      this.done();
-	    }
-	  }]);
-
-	  return DefaultTransition;
-	}(AbstractTransition);
 
 	/**
 	 * Copyright © 2016, Ambroise Maupate
@@ -6015,12 +7289,6 @@ define(['exports'], function (exports) { 'use strict';
 
 	  return Scroll;
 	}();
-
-	// 7.2.2 IsArray(argument)
-
-	var _isArray = Array.isArray || function isArray(arg) {
-	  return _cof(arg) == 'Array';
-	};
 
 	var SPECIES$2 = _wks('species');
 
@@ -6408,7 +7676,9 @@ define(['exports'], function (exports) { 'use strict';
 	}();
 
 	exports.EventTypes = EventTypes;
-	exports.Kernel = Kernel;
+	exports.default = StartingBlocks;
+	exports.PageBuilder = PageBuilder;
+	exports.BlockBuilder = BlockBuilder;
 	exports.Pjax = Pjax;
 	exports.History = History;
 	exports.Prefetch = Prefetch;
@@ -6417,6 +7687,8 @@ define(['exports'], function (exports) { 'use strict';
 	exports.AbstractPage = AbstractPage;
 	exports.AbstractBlock = AbstractBlock;
 	exports.AbstractTransition = AbstractTransition;
+	exports.AbstractBlockBuilder = AbstractBlockBuilder;
+	exports.AbstractService = AbstractService;
 	exports.DefaultTransition = DefaultTransition;
 	exports.Utils = Utils;
 	exports.Scroll = Scroll;

@@ -25,21 +25,21 @@
  */
 
 /**
- * Before Kernel initialize XHR request to load new page.
+ * Before initialize XHR request to load new page.
  *
  * @type {String}
  */
 export const BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD'
 
 /**
- * After Kernel XHR request succeeded.
+ * After XHR request succeeded.
  *
  * @type {String}
  */
 export const AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD'
 
 /**
- * After Kernel appended new page DOM to page-container.
+ * After Dom service appended new page DOM to page-container.
  *
  * @type {String}
  */
@@ -53,7 +53,7 @@ export const AFTER_DOM_APPENDED = 'SB_AFTER_DOM_APPENDED'
 export const CONTAINER_READY = 'SB_CONTAINER_READY'
 
 /**
- * After Kernel create new page instance.
+ * After PageBuilder create new page instance.
  *
  * @type {String}
  */
