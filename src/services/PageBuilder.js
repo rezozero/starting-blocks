@@ -39,7 +39,7 @@ export default class PageBuilder extends AbstractBootableService {
     /**
      * Build a new page instance.
      *
-     * @param {HTMLElement} container
+     * @param {HTMLElement} rootElement
      * @param {String} context
      * @returns {AbstractPage|null}
      */
