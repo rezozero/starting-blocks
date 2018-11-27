@@ -33,6 +33,11 @@ export default class AbstractInViewBlock extends AbstractBlock {
         this.observer.observe(this.rootElement)
     }
 
+    destroyEvents () {
+        super.destroyEvents()
+        this.unobserve()
+    }
+
     onIntersectionCallback (entries) {
         for (const entry of entries) {
             if (entry.intersectionRatio > 0) {
