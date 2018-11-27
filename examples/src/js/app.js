@@ -62,7 +62,9 @@ startingBlocks.instanceFactory('home', c => {
 })
 
 // If you want to use standard block import
-// startingBlocks.provider('UsersBlock', UsersBlock)
+// startingBlocks.instanceFactory('UsersBlock', c => {
+//     return new UsersBlock(c)
+// })
 
 nav.init()
 startingBlocks.boot()

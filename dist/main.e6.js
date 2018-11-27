@@ -1010,7 +1010,7 @@ class PageBuilder extends AbstractBootableService {
   /**
    * Build a new page instance.
    *
-   * @param {HTMLElement} container
+   * @param {HTMLElement} rootElement
    * @param {String} context
    * @returns {AbstractPage|null}
    */
@@ -1794,8 +1794,8 @@ class AbstractBlock extends AbstractService {
    * It‘s better to extend this class by using `init` method instead
    * of extending `constructor`.
    *
-   * @param  {Object} container
-   *
+   * @param {Object} container
+   * @param {String} blockName
    * @constructor
    */
   constructor(container, blockName = 'AbstractBlock') {
@@ -2199,8 +2199,9 @@ class AbstractPage extends AbstractService {
 
     for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
       let blockElement = this.blockElements[blockIndex];
+      const existingBlock = this.getBlockById(blockElement.id);
 
-      if (!this.getBlockById(blockElement.id)) {
+      if (existingBlock === null) {
         try {
           let block = await this.initSingleBlock(this.blockElements[blockIndex]);
 
@@ -2248,10 +2249,10 @@ class AbstractPage extends AbstractService {
 
 
   getBlockById(id) {
-    const index = this.getBlockIndexById(id);
-
-    if (this.blocks[index]) {
-      return this.blocks[index];
+    for (const block of this.blocks) {
+      if (block.id && block.id === id) {
+        return block;
+      }
     }
 
     return null;
@@ -2265,11 +2266,11 @@ class AbstractPage extends AbstractService {
 
 
   getBlockIndexById(id) {
-    for (let i in this.blocks) {
-      if (this.blocks.hasOwnProperty(i)) {
-        if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id === id) {
-          return i;
-        }
+    const l = this.blocks.length;
+
+    for (let i = 0; i < l; i++) {
+      if (this.blocks[i].id && this.blocks[i].id === id) {
+        return i;
       }
     }
 
@@ -2301,11 +2302,11 @@ class AbstractPage extends AbstractService {
 
 
   getFirstBlockIndexByType(type) {
-    for (let i in this.blocks) {
-      if (this.blocks.hasOwnProperty(i)) {
-        if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type === type) {
-          return i;
-        }
+    const l = this.blocks.length;
+
+    for (let i = 0; i < l; i++) {
+      if (this.blocks[i].type && this.blocks[i].type === type) {
+        return i;
       }
     }
 
@@ -3152,6 +3153,54 @@ class GraphicLoader {
 
 }
 
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file AbstractInViewBlock.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class AbstractInViewBlock extends AbstractBlock {
+  constructor(container, blockName = 'AbstractInViewBlock') {
+    super(container, blockName); // Values
+
+    this.observer = null;
+    this.observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0 // Bind method
+
+    };
+    this.onIntersectionCallback = this.onIntersectionCallback.bind(this);
+  }
+
+  init() {
+    super.init(); // Create an observer
+
+    this.observer = new window.IntersectionObserver(this.onIntersectionCallback, this.observerOptions); // Add block rootElement in the observer
+
+    this.observer.observe(this.rootElement);
+  }
+
+  onIntersectionCallback(entries) {
+    for (const entry of entries) {
+      if (entry.intersectionRatio > 0) {
+        this.onScreen(entry);
+      } else {
+        this.offScreen(entry);
+      }
+    }
+  }
+
+  onScreen(entry) {}
+
+  offScreen(entry) {}
+
+  unobserve() {
+    this.observer.unobserve(this.rootElement);
+  }
+
+}
+
 /**
  * Copyright © 2016, Ambroise Maupate
  *
@@ -3510,4 +3559,4 @@ class BootstrapMedia {
 }
 
 export default StartingBlocks;
-export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };
+export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, GraphicLoader, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };

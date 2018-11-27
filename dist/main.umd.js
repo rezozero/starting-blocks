@@ -251,7 +251,7 @@
 
 	var defineProperty = _objectDp.f;
 	var _wksDefine = function (name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: _wksExt.f(name) });
 	};
 
@@ -2336,7 +2336,7 @@
 	    /**
 	     * Build a new page instance.
 	     *
-	     * @param {HTMLElement} container
+	     * @param {HTMLElement} rootElement
 	     * @param {String} context
 	     * @returns {AbstractPage|null}
 	     */
@@ -4743,10 +4743,10 @@
 	    return capability.promise;
 	  }
 	});
-	_export(_export.S + _export.F * (!USE_NATIVE$1), PROMISE, {
+	_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
 	  // 25.4.4.6 Promise.resolve(x)
 	  resolve: function resolve(x) {
-	    return _promiseResolve(this, x);
+	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
 	  }
 	});
 	_export(_export.S + _export.F * !(USE_NATIVE$1 && _iterDetect(function (iter) {
@@ -5554,8 +5554,8 @@
 	   * It‘s better to extend this class by using `init` method instead
 	   * of extending `constructor`.
 	   *
-	   * @param  {Object} container
-	   *
+	   * @param {Object} container
+	   * @param {String} blockName
 	   * @constructor
 	   */
 	  function AbstractBlock(container) {
@@ -6021,7 +6021,7 @@
 	      var _updateBlocks = asyncToGenerator(
 	      /*#__PURE__*/
 	      regenerator.mark(function _callee3() {
-	        var blockIndex, blockElement, block;
+	        var blockIndex, blockElement, existingBlock, block;
 	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
@@ -6036,22 +6036,23 @@
 
 	              case 5:
 	                if (!(blockIndex < this.blockLength)) {
-	                  _context3.next = 21;
+	                  _context3.next = 22;
 	                  break;
 	                }
 
 	                blockElement = this.blockElements[blockIndex];
+	                existingBlock = this.getBlockById(blockElement.id);
 
-	                if (this.getBlockById(blockElement.id)) {
-	                  _context3.next = 18;
+	                if (!(existingBlock === null)) {
+	                  _context3.next = 19;
 	                  break;
 	                }
 
-	                _context3.prev = 8;
-	                _context3.next = 11;
+	                _context3.prev = 9;
+	                _context3.next = 12;
 	                return this.initSingleBlock(this.blockElements[blockIndex]);
 
-	              case 11:
+	              case 12:
 	                block = _context3.sent;
 
 	                if (block) {
@@ -6059,25 +6060,25 @@
 	                  block.onPageReady();
 	                }
 
-	                _context3.next = 18;
+	                _context3.next = 19;
 	                break;
 
-	              case 15:
-	                _context3.prev = 15;
-	                _context3.t0 = _context3["catch"](8);
+	              case 16:
+	                _context3.prev = 16;
+	                _context3.t0 = _context3["catch"](9);
 	                console.info(_context3.t0.message);
 
-	              case 18:
+	              case 19:
 	                blockIndex++;
 	                _context3.next = 5;
 	                break;
 
-	              case 21:
+	              case 22:
 	              case "end":
 	                return _context3.stop();
 	            }
 	          }
-	        }, _callee3, this, [[8, 15]]);
+	        }, _callee3, this, [[9, 16]]);
 	      }));
 
 	      return function updateBlocks() {
@@ -6148,10 +6149,31 @@
 	  }, {
 	    key: "getBlockById",
 	    value: function getBlockById(id) {
-	      var index = this.getBlockIndexById(id);
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
 
-	      if (this.blocks[index]) {
-	        return this.blocks[index];
+	      try {
+	        for (var _iterator = this.blocks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var block = _step.value;
+
+	          if (block.id && block.id === id) {
+	            return block;
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
 	      }
 
 	      return null;
@@ -6166,11 +6188,11 @@
 	  }, {
 	    key: "getBlockIndexById",
 	    value: function getBlockIndexById(id) {
-	      for (var i in this.blocks) {
-	        if (this.blocks.hasOwnProperty(i)) {
-	          if (this.blocks[i] && this.blocks[i].id && this.blocks[i].id === id) {
-	            return i;
-	          }
+	      var l = this.blocks.length;
+
+	      for (var i = 0; i < l; i++) {
+	        if (this.blocks[i].id && this.blocks[i].id === id) {
+	          return i;
 	        }
 	      }
 
@@ -6204,11 +6226,11 @@
 	  }, {
 	    key: "getFirstBlockIndexByType",
 	    value: function getFirstBlockIndexByType(type) {
-	      for (var i in this.blocks) {
-	        if (this.blocks.hasOwnProperty(i)) {
-	          if (this.blocks[i] && this.blocks[i].type && this.blocks[i].type === type) {
-	            return i;
-	          }
+	      var l = this.blocks.length;
+
+	      for (var i = 0; i < l; i++) {
+	        if (this.blocks[i].type && this.blocks[i].type === type) {
+	          return i;
 	        }
 	      }
 
@@ -7177,6 +7199,89 @@
 	  return GraphicLoader;
 	}();
 
+	var AbstractInViewBlock =
+	/*#__PURE__*/
+	function (_AbstractBlock) {
+	  inherits(AbstractInViewBlock, _AbstractBlock);
+
+	  function AbstractInViewBlock(container) {
+	    var _this;
+
+	    var blockName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractInViewBlock';
+
+	    classCallCheck(this, AbstractInViewBlock);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractInViewBlock).call(this, container, blockName)); // Values
+
+	    _this.observer = null;
+	    _this.observerOptions = {
+	      root: null,
+	      rootMargin: '0px',
+	      threshold: 0 // Bind method
+
+	    };
+	    _this.onIntersectionCallback = _this.onIntersectionCallback.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    return _this;
+	  }
+
+	  createClass(AbstractInViewBlock, [{
+	    key: "init",
+	    value: function init() {
+	      get(getPrototypeOf(AbstractInViewBlock.prototype), "init", this).call(this); // Create an observer
+
+
+	      this.observer = new window.IntersectionObserver(this.onIntersectionCallback, this.observerOptions); // Add block rootElement in the observer
+
+	      this.observer.observe(this.rootElement);
+	    }
+	  }, {
+	    key: "onIntersectionCallback",
+	    value: function onIntersectionCallback(entries) {
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = entries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var entry = _step.value;
+
+	          if (entry.intersectionRatio > 0) {
+	            this.onScreen(entry);
+	          } else {
+	            this.offScreen(entry);
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }, {
+	    key: "onScreen",
+	    value: function onScreen(entry) {}
+	  }, {
+	    key: "offScreen",
+	    value: function offScreen(entry) {}
+	  }, {
+	    key: "unobserve",
+	    value: function unobserve() {
+	      this.observer.unobserve(this.rootElement);
+	    }
+	  }]);
+
+	  return AbstractInViewBlock;
+	}(AbstractBlock);
+
 	/**
 	 * Copyright © 2016, Ambroise Maupate
 	 *
@@ -7692,6 +7797,7 @@
 	exports.GraphicLoader = GraphicLoader;
 	exports.AbstractPage = AbstractPage;
 	exports.AbstractBlock = AbstractBlock;
+	exports.AbstractInViewBlock = AbstractInViewBlock;
 	exports.AbstractTransition = AbstractTransition;
 	exports.AbstractBlockBuilder = AbstractBlockBuilder;
 	exports.AbstractService = AbstractService;

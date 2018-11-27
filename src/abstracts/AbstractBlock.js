@@ -41,8 +41,8 @@ export default class AbstractBlock extends AbstractService {
      * It‘s better to extend this class by using `init` method instead
      * of extending `constructor`.
      *
-     * @param  {Object} container
-     *
+     * @param {Object} container
+     * @param {String} blockName
      * @constructor
      */
     constructor (container, blockName = 'AbstractBlock') {

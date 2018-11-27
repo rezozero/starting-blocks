@@ -300,8 +300,9 @@ export default class AbstractPage extends AbstractService {
 
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
             let blockElement = this.blockElements[blockIndex]
+            const existingBlock = this.getBlockById(blockElement.id)
 
-            if (!this.getBlockById(blockElement.id)) {
+            if (existingBlock === null) {
                 try {
                     let block = await this.initSingleBlock(this.blockElements[blockIndex])
 
@@ -349,9 +350,10 @@ export default class AbstractPage extends AbstractService {
      * @return {AbstractBlock|null}
      */
     getBlockById (id) {
-        const index = this.getBlockIndexById(id)
-        if (this.blocks[index]) {
-            return this.blocks[index]
+        for (const block of this.blocks) {
+            if (block.id && block.id === id) {
+                return block
+            }
         }
 
         return null
@@ -364,13 +366,11 @@ export default class AbstractPage extends AbstractService {
      * @return {*|null}
      */
     getBlockIndexById (id) {
-        for (let i in this.blocks) {
-            if (this.blocks.hasOwnProperty(i)) {
-                if (this.blocks[i] &&
-                    this.blocks[i].id &&
-                    this.blocks[i].id === id) {
-                    return i
-                }
+        const l = this.blocks.length
+
+        for (let i = 0; i < l; i++) {
+            if (this.blocks[i].id && this.blocks[i].id === id) {
+                return i
             }
         }
 
@@ -399,13 +399,11 @@ export default class AbstractPage extends AbstractService {
      * @return {*|null}
      */
     getFirstBlockIndexByType (type) {
-        for (let i in this.blocks) {
-            if (this.blocks.hasOwnProperty(i)) {
-                if (this.blocks[i] &&
-                    this.blocks[i].type &&
-                    this.blocks[i].type === type) {
-                    return i
-                }
+        const l = this.blocks.length
+
+        for (let i = 0; i < l; i++) {
+            if (this.blocks[i].type && this.blocks[i].type === type) {
+                return i
             }
         }
 

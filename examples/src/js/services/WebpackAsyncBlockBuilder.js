@@ -16,14 +16,14 @@ export default class WebpackAsyncBlockBuilder extends AbstractBlockBuilder {
             if (!this.hasService(nodeTypeName)) {
                 this.container.$register({
                     $name: nodeTypeName,
-                    $type: 'factory',
+                    $type: 'instanceFactory',
                     $value: c => {
                         return new Block(c)
                     }
                 })
             }
 
-            return this.getService(nodeTypeName)
+            return this.getService(nodeTypeName).instance()
         } catch (e) {
             console.error(e.message)
             return null
