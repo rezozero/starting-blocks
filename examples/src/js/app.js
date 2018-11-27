@@ -11,6 +11,7 @@ import StartingBlocks, {
     History,
     Prefetch,
     CacheProvider,
+    Lazyload,
     polyfills
 } from 'starting-blocks'
 import WebpackAsyncBlockBuilder from './services/WebpackAsyncBlockBuilder'
@@ -55,6 +56,7 @@ startingBlocks.provider('BlockBuilder', WebpackAsyncBlockBuilder)
 // Add bootable services
 startingBlocks.bootableProvider('Prefetch', Prefetch)
 startingBlocks.bootableProvider('Pjax', Pjax)
+startingBlocks.bootableProvider('Lazyload', Lazyload)
 
 // Register pages
 startingBlocks.instanceFactory('home', c => {

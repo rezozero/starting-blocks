@@ -24,7 +24,6 @@
  * @author Adrien Scholaert
  */
 
-// import Lazyload from 'vanilla-lazyload/dist/lazyload.min'
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
 import AbstractBlock from './AbstractBlock'
@@ -109,9 +108,6 @@ export default class AbstractPage extends AbstractService {
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
         this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
-        this.onLazyImageSet = this.onLazyImageSet.bind(this)
-        this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
-        this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
     }
 
     /**
@@ -145,11 +141,6 @@ export default class AbstractPage extends AbstractService {
             this.initAjax()
         }
 
-        // Lazyload
-        if (this.getService('Config').lazyloadEnabled) {
-            this.initLazyload()
-        }
-
         this.initEvents()
     }
 
@@ -179,12 +170,6 @@ export default class AbstractPage extends AbstractService {
                 }
             }
         }
-
-        // Remove Lazyload instance and listeners
-        // if (this.lazyload !== null) {
-        //     this.lazyload.destroy()
-        //     this.lazyload = null
-        // }
     }
 
     /**
@@ -208,31 +193,6 @@ export default class AbstractPage extends AbstractService {
     destroyEvents () {
         window.removeEventListener('resize', this.onResizeDebounce)
         this.domObserver.disconnect()
-    }
-
-    /**
-     * Init lazyload
-     *
-     * @private
-     */
-    initLazyload () {
-        this.beforeLazyload()
-        // this.lazyload = new Lazyload({
-        //     threshold: this.pageBuilder.options.lazyloadThreshold,
-        //     throttle: this.pageBuilder.options.lazyloadThrottle,
-        //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
-        //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
-        //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
-        //     callback_set: this.onLazyImageSet,
-        //     callback_load: this.onLazyImageLoad,
-        //     callback_processed: this.onLazyImageProcessed
-        // })
-    }
-
-    updateLazyload () {
-        // if (this.lazyload) {
-        //     this.lazyload.update()
-        // }
     }
 
     /**
@@ -290,9 +250,6 @@ export default class AbstractPage extends AbstractService {
      */
     async updateBlocks () {
         console.debug('\t📯 Page DOM changed…')
-
-        // Update lazy load if init.
-        this.updateLazyload()
 
         // Create new blocks
         this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)
@@ -415,39 +372,5 @@ export default class AbstractPage extends AbstractService {
      */
     onResize () {
 
-    }
-
-    /**
-     * Called before init lazyload images.
-     */
-    beforeLazyload () {}
-
-    /**
-     * After image src switched.
-     *
-     * @abstract
-     * @param {HTMLImageElement} element
-     */
-    onLazyImageSet (element) {
-        console.debug('\t🖼 «' + element.id + '» set')
-    }
-
-    /**
-     * After lazyload image loaded.
-     *
-     * @abstract
-     * @param {HTMLImageElement} element
-     */
-    onLazyImageLoad (element) {
-        console.debug('\t🖼 «' + element.id + '» load')
-    }
-
-    /**
-     * Before lazyload.
-     *
-     * @abstract
-     */
-    onLazyImageProcessed (index) {
-        console.debug('\t🖼 Lazy load processed')
     }
 }

@@ -32,6 +32,7 @@
         "@babel/polyfill": "^7.0.0",
         "axios": "^0.18.0",
         "bottlejs": "^1.7.1",
+        "lazysizes": "^4.1.4",
         "vanilla-lazyload": "^10.17.0"
     },
     "devDependencies": {

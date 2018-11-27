@@ -3,10 +3,11 @@
  * @author Adrien Scholaert
  */
 
-export default class Lazyload {
-    static options = {
-        lazyloadSrcAttr: 'data-src',
-        lazyloadClass: 'lazyload',
-        lazyloadSrcSetAttr: 'data-srcset'
+import AbstractBootableService from '../abstracts/AbstractBootableService'
+import 'lazysizes'
+
+export default class Lazyload extends AbstractBootableService {
+    constructor (container) {
+        super(container, 'LazyLoad')
     }
 }

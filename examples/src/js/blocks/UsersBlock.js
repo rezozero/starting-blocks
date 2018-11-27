@@ -101,8 +101,6 @@ export default class UsersBlock extends AbstractBlock {
 
             this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl)
         }
-
-        this.page.updateLazyload()
     }
 
     async setAvatar () {
