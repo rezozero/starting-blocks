@@ -104,6 +104,27 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 	var TRANSITION_COMPLETE = 'SB_TRANSITION_COMPLETE';
+	/**
+	 * Before splashscreen begin to hide.
+	 *
+	 * @type {String}
+	 */
+
+	var BEFORE_SPLASHSCREEN_HIDE = 'SB_BEFORE_SPLASHSCREEN_HIDE';
+	/**
+	 * When splashscreen start to hide.
+	 *
+	 * @type {String}
+	 */
+
+	var START_SPLASHSCREEN_HIDE = 'SB_START_SPLASHSCREEN_HIDE';
+	/**
+	 * After splashscreen hiding animation.
+	 *
+	 * @type {String}
+	 */
+
+	var AFTER_SPLASHSCREEN_HIDE = 'SB_AFTER_SPLASHSCREEN_HIDE';
 
 	var EventTypes = /*#__PURE__*/Object.freeze({
 		BEFORE_PAGE_LOAD: BEFORE_PAGE_LOAD,
@@ -116,7 +137,10 @@ define(['exports'], function (exports) { 'use strict';
 		BEFORE_PAGE_HIDE: BEFORE_PAGE_HIDE,
 		AFTER_PAGE_HIDE: AFTER_PAGE_HIDE,
 		TRANSITION_START: TRANSITION_START,
-		TRANSITION_COMPLETE: TRANSITION_COMPLETE
+		TRANSITION_COMPLETE: TRANSITION_COMPLETE,
+		BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
+		START_SPLASHSCREEN_HIDE: START_SPLASHSCREEN_HIDE,
+		AFTER_SPLASHSCREEN_HIDE: AFTER_SPLASHSCREEN_HIDE
 	});
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -1912,462 +1936,6 @@ define(['exports'], function (exports) { 'use strict';
 	}.call(commonjsGlobal));
 	});
 
-	// fast apply, http://jsperf.lnkit.com/fast-apply/5
-	var _invoke = function (fn, args, that) {
-	  var un = that === undefined;
-	  switch (args.length) {
-	    case 0: return un ? fn()
-	                      : fn.call(that);
-	    case 1: return un ? fn(args[0])
-	                      : fn.call(that, args[0]);
-	    case 2: return un ? fn(args[0], args[1])
-	                      : fn.call(that, args[0], args[1]);
-	    case 3: return un ? fn(args[0], args[1], args[2])
-	                      : fn.call(that, args[0], args[1], args[2]);
-	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
-	                      : fn.call(that, args[0], args[1], args[2], args[3]);
-	  } return fn.apply(that, args);
-	};
-
-	var arraySlice = [].slice;
-	var factories = {};
-
-	var construct$1 = function (F, len, args) {
-	  if (!(len in factories)) {
-	    for (var n = [], i = 0; i < len; i++) n[i] = 'a[' + i + ']';
-	    // eslint-disable-next-line no-new-func
-	    factories[len] = Function('F,a', 'return new F(' + n.join(',') + ')');
-	  } return factories[len](F, args);
-	};
-
-	var _bind = Function.bind || function bind(that /* , ...args */) {
-	  var fn = _aFunction(this);
-	  var partArgs = arraySlice.call(arguments, 1);
-	  var bound = function (/* args... */) {
-	    var args = partArgs.concat(arraySlice.call(arguments));
-	    return this instanceof bound ? construct$1(fn, args.length, args) : _invoke(fn, args, that);
-	  };
-	  if (_isObject(fn.prototype)) bound.prototype = fn.prototype;
-	  return bound;
-	};
-
-	// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
-
-
-	_export(_export.P, 'Function', { bind: _bind });
-
-	var _typeof_1 = createCommonjsModule(function (module) {
-	function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-	function _typeof(obj) {
-	  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return _typeof2(obj);
-	    };
-	  } else {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	module.exports = _typeof;
-	});
-
-	function _assertThisInitialized(self) {
-	  if (self === void 0) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-
-	  return self;
-	}
-
-	var assertThisInitialized = _assertThisInitialized;
-
-	function _possibleConstructorReturn(self, call) {
-	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
-	    return call;
-	  }
-
-	  return assertThisInitialized(self);
-	}
-
-	var possibleConstructorReturn = _possibleConstructorReturn;
-
-	var getPrototypeOf = createCommonjsModule(function (module) {
-	function _getPrototypeOf(o) {
-	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-	    return o.__proto__ || Object.getPrototypeOf(o);
-	  };
-	  return _getPrototypeOf(o);
-	}
-
-	module.exports = _getPrototypeOf;
-	});
-
-	function _superPropBase(object, property) {
-	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
-	    object = getPrototypeOf(object);
-	    if (object === null) break;
-	  }
-
-	  return object;
-	}
-
-	var superPropBase = _superPropBase;
-
-	var get = createCommonjsModule(function (module) {
-	function _get(target, property, receiver) {
-	  if (typeof Reflect !== "undefined" && Reflect.get) {
-	    module.exports = _get = Reflect.get;
-	  } else {
-	    module.exports = _get = function _get(target, property, receiver) {
-	      var base = superPropBase(target, property);
-	      if (!base) return;
-	      var desc = Object.getOwnPropertyDescriptor(base, property);
-
-	      if (desc.get) {
-	        return desc.get.call(receiver);
-	      }
-
-	      return desc.value;
-	    };
-	  }
-
-	  return _get(target, property, receiver || target);
-	}
-
-	module.exports = _get;
-	});
-
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function");
-	  }
-
-	  subClass.prototype = Object.create(superClass && superClass.prototype, {
-	    constructor: {
-	      value: subClass,
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-	  if (superClass) setPrototypeOf(subClass, superClass);
-	}
-
-	var inherits = _inherits;
-
-	/**
-	 * Copyright © 2016, Ambroise Maupate
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * @file Events.js
-	 * @author Ambroise Maupate
-	 */
-
-	/**
-	 * Event dispatcher.
-	 */
-	var Dispatcher =
-	/*#__PURE__*/
-	function () {
-	  function Dispatcher() {
-	    classCallCheck(this, Dispatcher);
-	  }
-
-	  createClass(Dispatcher, null, [{
-	    key: "commit",
-	    value: function commit(eventType, detail) {
-	      var event = new window.CustomEvent(eventType, {
-	        detail: detail
-	      });
-	      console.debug('🚩 Dispatched ' + eventType);
-	      window.dispatchEvent(event);
-	    }
-	  }]);
-
-	  return Dispatcher;
-	}();
-
-	function _isNativeFunction(fn) {
-	  return Function.toString.call(fn).indexOf("[native code]") !== -1;
-	}
-
-	var isNativeFunction = _isNativeFunction;
-
-	var wrapNativeSuper = createCommonjsModule(function (module) {
-	function _wrapNativeSuper(Class) {
-	  var _cache = typeof Map === "function" ? new Map() : undefined;
-
-	  module.exports = _wrapNativeSuper = function _wrapNativeSuper(Class) {
-	    if (Class === null || !isNativeFunction(Class)) return Class;
-
-	    if (typeof Class !== "function") {
-	      throw new TypeError("Super expression must either be null or a function");
-	    }
-
-	    if (typeof _cache !== "undefined") {
-	      if (_cache.has(Class)) return _cache.get(Class);
-
-	      _cache.set(Class, Wrapper);
-	    }
-
-	    function Wrapper() {
-	      return construct(Class, arguments, getPrototypeOf(this).constructor);
-	    }
-
-	    Wrapper.prototype = Object.create(Class.prototype, {
-	      constructor: {
-	        value: Wrapper,
-	        enumerable: false,
-	        writable: true,
-	        configurable: true
-	      }
-	    });
-	    return setPrototypeOf(Wrapper, Class);
-	  };
-
-	  return _wrapNativeSuper(Class);
-	}
-
-	module.exports = _wrapNativeSuper;
-	});
-
-	/*
-	 * Copyright © 2017, Rezo Zero
-	 *
-	 * @file UnknownServiceException.js
-	 * @author Adrien Scholaert <adrien@rezo-zero.com>
-	 */
-	var UnknownServiceException =
-	/*#__PURE__*/
-	function (_Error) {
-	  inherits(UnknownServiceException, _Error);
-
-	  function UnknownServiceException(id) {
-	    var _this;
-
-	    classCallCheck(this, UnknownServiceException);
-
-	    _this = possibleConstructorReturn(this, getPrototypeOf(UnknownServiceException).call(this, "Service \"".concat(id, "\" is not defined")));
-	    _this.name = "UnknownServiceException";
-	    return _this;
-	  }
-
-	  return UnknownServiceException;
-	}(wrapNativeSuper(Error));
-
-	/*
-	 * Copyright © 2017, Rezo Zero
-	 *
-	 * @file DependencyNotFulfilledException.js
-	 * @author Adrien Scholaert <adrien@rezo-zero.com>
-	 */
-	var DependencyNotFulfilledException =
-	/*#__PURE__*/
-	function (_Error) {
-	  inherits(DependencyNotFulfilledException, _Error);
-
-	  function DependencyNotFulfilledException(firstServiceName, secondeServiceName) {
-	    var _this;
-
-	    classCallCheck(this, DependencyNotFulfilledException);
-
-	    _this = possibleConstructorReturn(this, getPrototypeOf(DependencyNotFulfilledException).call(this, "Object of type \"".concat(firstServiceName, "\" needs \"").concat(secondeServiceName, "\" service")));
-	    _this.name = "DependencyNotFulfilledException";
-	    return _this;
-	  }
-
-	  return DependencyNotFulfilledException;
-	}(wrapNativeSuper(Error));
-
-	var AbstractService =
-	/*#__PURE__*/
-	function () {
-	  function AbstractService() {
-	    var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractService';
-	    var dependencies = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['Config'];
-
-	    classCallCheck(this, AbstractService);
-
-	    this.container = container;
-	    this.serviceName = serviceName;
-	    console.debug("".concat(serviceName, " awake"));
-	    this.checkDependencies(dependencies);
-	  }
-
-	  createClass(AbstractService, [{
-	    key: "init",
-	    value: function init() {}
-	  }, {
-	    key: "hasService",
-	    value: function hasService(serviceName) {
-	      return this.container.hasOwnProperty(serviceName);
-	    }
-	  }, {
-	    key: "checkDependencies",
-	    value: function checkDependencies() {
-	      var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = dependencies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var serviceName = _step.value;
-
-	          if (!this.hasService(serviceName)) {
-	            throw new DependencyNotFulfilledException(this.serviceName, serviceName);
-	          }
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return != null) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-	    }
-	  }, {
-	    key: "getService",
-	    value: function getService(serviceName) {
-	      if (!this.hasService(serviceName)) {
-	        throw new UnknownServiceException(serviceName);
-	      }
-
-	      return this.container[serviceName];
-	    }
-	  }]);
-
-	  return AbstractService;
-	}();
-
-	var AbstractBootableService =
-	/*#__PURE__*/
-	function (_AbstractService) {
-	  inherits(AbstractBootableService, _AbstractService);
-
-	  function AbstractBootableService() {
-	    classCallCheck(this, AbstractBootableService);
-
-	    return possibleConstructorReturn(this, getPrototypeOf(AbstractBootableService).apply(this, arguments));
-	  }
-
-	  createClass(AbstractBootableService, [{
-	    key: "boot",
-	    value: function boot() {
-	      console.debug("".concat(this.serviceName, " boot"));
-	    }
-	  }]);
-
-	  return AbstractBootableService;
-	}(AbstractService);
-
-	/**
-	 * PageBuilder.
-	 */
-
-	var PageBuilder =
-	/*#__PURE__*/
-	function (_AbstractBootableServ) {
-	  inherits(PageBuilder, _AbstractBootableServ);
-
-	  function PageBuilder(container) {
-	    var _this;
-
-	    classCallCheck(this, PageBuilder);
-
-	    _this = possibleConstructorReturn(this, getPrototypeOf(PageBuilder).call(this, container, 'PageBuilder', ['Dom']));
-
-	    if (!window.location.origin) {
-	      window.location.origin = window.location.protocol + '//' + window.location.host;
-	    }
-	    /**
-	     * Page instance
-	     * @type {(AbstractPage|null)}
-	     */
-
-
-	    _this.page = null; // Bind methods
-
-	    _this.buildPage = _this.buildPage.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    return _this;
-	  }
-
-	  createClass(PageBuilder, [{
-	    key: "boot",
-	    value: function boot() {
-	      get(getPrototypeOf(PageBuilder.prototype), "boot", this).call(this); // Build first page with static context
-
-
-	      this.buildPage(this.getService('Dom').getContainer(), 'static');
-	    }
-	    /**
-	     * Build a new page instance.
-	     *
-	     * @param {HTMLElement} rootElement
-	     * @param {String} context
-	     * @returns {AbstractPage|null}
-	     */
-
-	  }, {
-	    key: "buildPage",
-	    value: function buildPage(rootElement) {
-	      var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ajax';
-	      var nodeTypeName = this.getService('Dom').getNodeType(rootElement);
-
-	      if (this.hasService(nodeTypeName)) {
-	        this.page = this.getService(nodeTypeName).instance();
-	      } else {
-	        nodeTypeName = 'AbstractPage';
-	        this.page = this.getService('AbstractPage').instance();
-	      } // Set some values
-
-
-	      this.page.type = nodeTypeName;
-	      this.page.context = context;
-	      this.page.id = rootElement.id;
-	      this.page.rootElement = rootElement;
-	      this.page.name = rootElement.hasAttribute('data-node-name') ? rootElement.getAttribute('data-node-name') : '';
-	      this.page.metaTitle = rootElement.hasAttribute('data-meta-title') ? rootElement.getAttribute('data-meta-title') : '';
-	      this.page.isHome = rootElement.getAttribute('data-is-home') === '1';
-	      this.page.init(); // Dispatch an event to inform that the new page is ready
-
-	      Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
-	      return this.page;
-	    }
-	  }]);
-
-	  return PageBuilder;
-	}(AbstractBootableService);
-
 	var runtime = createCommonjsModule(function (module) {
 	/**
 	 * Copyright (c) 2014-present, Facebook, Inc.
@@ -3894,6 +3462,499 @@ define(['exports'], function (exports) { 'use strict';
 
 	var asyncToGenerator = _asyncToGenerator;
 
+	// fast apply, http://jsperf.lnkit.com/fast-apply/5
+	var _invoke = function (fn, args, that) {
+	  var un = that === undefined;
+	  switch (args.length) {
+	    case 0: return un ? fn()
+	                      : fn.call(that);
+	    case 1: return un ? fn(args[0])
+	                      : fn.call(that, args[0]);
+	    case 2: return un ? fn(args[0], args[1])
+	                      : fn.call(that, args[0], args[1]);
+	    case 3: return un ? fn(args[0], args[1], args[2])
+	                      : fn.call(that, args[0], args[1], args[2]);
+	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
+	                      : fn.call(that, args[0], args[1], args[2], args[3]);
+	  } return fn.apply(that, args);
+	};
+
+	var arraySlice = [].slice;
+	var factories = {};
+
+	var construct$1 = function (F, len, args) {
+	  if (!(len in factories)) {
+	    for (var n = [], i = 0; i < len; i++) n[i] = 'a[' + i + ']';
+	    // eslint-disable-next-line no-new-func
+	    factories[len] = Function('F,a', 'return new F(' + n.join(',') + ')');
+	  } return factories[len](F, args);
+	};
+
+	var _bind = Function.bind || function bind(that /* , ...args */) {
+	  var fn = _aFunction(this);
+	  var partArgs = arraySlice.call(arguments, 1);
+	  var bound = function (/* args... */) {
+	    var args = partArgs.concat(arraySlice.call(arguments));
+	    return this instanceof bound ? construct$1(fn, args.length, args) : _invoke(fn, args, that);
+	  };
+	  if (_isObject(fn.prototype)) bound.prototype = fn.prototype;
+	  return bound;
+	};
+
+	// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
+
+
+	_export(_export.P, 'Function', { bind: _bind });
+
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+	function _typeof(obj) {
+	  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return _typeof2(obj);
+	    };
+	  } else {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	module.exports = _typeof;
+	});
+
+	function _assertThisInitialized(self) {
+	  if (self === void 0) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+
+	  return self;
+	}
+
+	var assertThisInitialized = _assertThisInitialized;
+
+	function _possibleConstructorReturn(self, call) {
+	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
+	    return call;
+	  }
+
+	  return assertThisInitialized(self);
+	}
+
+	var possibleConstructorReturn = _possibleConstructorReturn;
+
+	var getPrototypeOf = createCommonjsModule(function (module) {
+	function _getPrototypeOf(o) {
+	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+	    return o.__proto__ || Object.getPrototypeOf(o);
+	  };
+	  return _getPrototypeOf(o);
+	}
+
+	module.exports = _getPrototypeOf;
+	});
+
+	function _superPropBase(object, property) {
+	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+	    object = getPrototypeOf(object);
+	    if (object === null) break;
+	  }
+
+	  return object;
+	}
+
+	var superPropBase = _superPropBase;
+
+	var get = createCommonjsModule(function (module) {
+	function _get(target, property, receiver) {
+	  if (typeof Reflect !== "undefined" && Reflect.get) {
+	    module.exports = _get = Reflect.get;
+	  } else {
+	    module.exports = _get = function _get(target, property, receiver) {
+	      var base = superPropBase(target, property);
+	      if (!base) return;
+	      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+	      if (desc.get) {
+	        return desc.get.call(receiver);
+	      }
+
+	      return desc.value;
+	    };
+	  }
+
+	  return _get(target, property, receiver || target);
+	}
+
+	module.exports = _get;
+	});
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function");
+	  }
+
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) setPrototypeOf(subClass, superClass);
+	}
+
+	var inherits = _inherits;
+
+	/*
+	 * Copyright © 2017, Rezo Zero
+	 *
+	 * @file debug.js
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
+	 */
+	function debug(message) {
+	  var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+	  if (window.startingBlocksDebugLevel === 1) {
+	    console.debug("%c[SB] %c".concat(message), 'color:#749f73', 'color:debug', color);
+	  }
+	}
+	function warn() {
+	  if (window.startingBlocksDebugLevel === 1) {
+	    var _console3;
+
+	    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	      args[_key3] = arguments[_key3];
+	    }
+
+	    (_console3 = console).warn.apply(_console3, ['[SB]'].concat(args));
+	  }
+	}
+
+	/**
+	 * Event dispatcher.
+	 */
+
+	var Dispatcher =
+	/*#__PURE__*/
+	function () {
+	  function Dispatcher() {
+	    classCallCheck(this, Dispatcher);
+	  }
+
+	  createClass(Dispatcher, null, [{
+	    key: "commit",
+	    value: function commit(eventType, detail) {
+	      var event = new window.CustomEvent(eventType, {
+	        detail: detail
+	      });
+	      debug('🚩 Dispatched ' + eventType);
+	      window.dispatchEvent(event);
+	    }
+	  }]);
+
+	  return Dispatcher;
+	}();
+
+	function _isNativeFunction(fn) {
+	  return Function.toString.call(fn).indexOf("[native code]") !== -1;
+	}
+
+	var isNativeFunction = _isNativeFunction;
+
+	var wrapNativeSuper = createCommonjsModule(function (module) {
+	function _wrapNativeSuper(Class) {
+	  var _cache = typeof Map === "function" ? new Map() : undefined;
+
+	  module.exports = _wrapNativeSuper = function _wrapNativeSuper(Class) {
+	    if (Class === null || !isNativeFunction(Class)) return Class;
+
+	    if (typeof Class !== "function") {
+	      throw new TypeError("Super expression must either be null or a function");
+	    }
+
+	    if (typeof _cache !== "undefined") {
+	      if (_cache.has(Class)) return _cache.get(Class);
+
+	      _cache.set(Class, Wrapper);
+	    }
+
+	    function Wrapper() {
+	      return construct(Class, arguments, getPrototypeOf(this).constructor);
+	    }
+
+	    Wrapper.prototype = Object.create(Class.prototype, {
+	      constructor: {
+	        value: Wrapper,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	    return setPrototypeOf(Wrapper, Class);
+	  };
+
+	  return _wrapNativeSuper(Class);
+	}
+
+	module.exports = _wrapNativeSuper;
+	});
+
+	/*
+	 * Copyright © 2017, Rezo Zero
+	 *
+	 * @file UnknownServiceException.js
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
+	 */
+	var UnknownServiceException =
+	/*#__PURE__*/
+	function (_Error) {
+	  inherits(UnknownServiceException, _Error);
+
+	  function UnknownServiceException(id) {
+	    var _this;
+
+	    classCallCheck(this, UnknownServiceException);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(UnknownServiceException).call(this, "Service \"".concat(id, "\" is not defined")));
+	    _this.name = "UnknownServiceException";
+	    return _this;
+	  }
+
+	  return UnknownServiceException;
+	}(wrapNativeSuper(Error));
+
+	/*
+	 * Copyright © 2017, Rezo Zero
+	 *
+	 * @file DependencyNotFulfilledException.js
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
+	 */
+	var DependencyNotFulfilledException =
+	/*#__PURE__*/
+	function (_Error) {
+	  inherits(DependencyNotFulfilledException, _Error);
+
+	  function DependencyNotFulfilledException(firstServiceName, secondeServiceName) {
+	    var _this;
+
+	    classCallCheck(this, DependencyNotFulfilledException);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(DependencyNotFulfilledException).call(this, "Object of type \"".concat(firstServiceName, "\" needs \"").concat(secondeServiceName, "\" service")));
+	    _this.name = "DependencyNotFulfilledException";
+	    return _this;
+	  }
+
+	  return DependencyNotFulfilledException;
+	}(wrapNativeSuper(Error));
+
+	var AbstractService =
+	/*#__PURE__*/
+	function () {
+	  function AbstractService() {
+	    var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractService';
+	    var dependencies = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['Config'];
+
+	    classCallCheck(this, AbstractService);
+
+	    this.container = container;
+	    this.serviceName = serviceName;
+	    this.checkDependencies(dependencies);
+	  }
+
+	  createClass(AbstractService, [{
+	    key: "init",
+	    value: function init() {}
+	  }, {
+	    key: "hasService",
+	    value: function hasService(serviceName) {
+	      return this.container.hasOwnProperty(serviceName);
+	    }
+	  }, {
+	    key: "checkDependencies",
+	    value: function checkDependencies() {
+	      var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = dependencies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var serviceName = _step.value;
+
+	          if (!this.hasService(serviceName)) {
+	            throw new DependencyNotFulfilledException(this.serviceName, serviceName);
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }, {
+	    key: "getService",
+	    value: function getService(serviceName) {
+	      if (!this.hasService(serviceName)) {
+	        throw new UnknownServiceException(serviceName);
+	      }
+
+	      return this.container[serviceName];
+	    }
+	  }]);
+
+	  return AbstractService;
+	}();
+
+	var AbstractBootableService =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(AbstractBootableService, _AbstractService);
+
+	  function AbstractBootableService() {
+	    classCallCheck(this, AbstractBootableService);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(AbstractBootableService).apply(this, arguments));
+	  }
+
+	  createClass(AbstractBootableService, [{
+	    key: "boot",
+	    value: function boot() {}
+	  }]);
+
+	  return AbstractBootableService;
+	}(AbstractService);
+
+	/**
+	 * PageBuilder.
+	 */
+
+	var PageBuilder =
+	/*#__PURE__*/
+	function (_AbstractBootableServ) {
+	  inherits(PageBuilder, _AbstractBootableServ);
+
+	  function PageBuilder(container) {
+	    var _this;
+
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'PageBuilder';
+
+	    classCallCheck(this, PageBuilder);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(PageBuilder).call(this, container, serviceName, ['Dom']));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
+
+	    if (!window.location.origin) {
+	      window.location.origin = window.location.protocol + '//' + window.location.host;
+	    }
+	    /**
+	     * Page instance
+	     * @type {(AbstractPage|null)}
+	     */
+
+
+	    _this.page = null; // Bind methods
+
+	    _this.buildPage = _this.buildPage.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    return _this;
+	  }
+
+	  createClass(PageBuilder, [{
+	    key: "boot",
+	    value: function boot() {
+	      get(getPrototypeOf(PageBuilder.prototype), "boot", this).call(this); // Build first page with static context
+
+
+	      this.buildPage(this.getService('Dom').getContainer(), 'static');
+	    }
+	    /**
+	     * Build a new page instance.
+	     *
+	     * @param {HTMLElement} rootElement
+	     * @param {String} context
+	     * @returns {AbstractPage|null}
+	     */
+
+	  }, {
+	    key: "buildPage",
+	    value: function () {
+	      var _buildPage = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee(rootElement) {
+	        var _this2 = this;
+
+	        var context,
+	            nodeTypeName,
+	            _args = arguments;
+	        return regenerator.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                context = _args.length > 1 && _args[1] !== undefined ? _args[1] : 'ajax';
+	                nodeTypeName = this.getService('Dom').getNodeType(rootElement);
+
+	                if (this.hasService(nodeTypeName)) {
+	                  this.page = this.getService(nodeTypeName).instance();
+	                } else {
+	                  nodeTypeName = 'AbstractPage';
+	                  this.page = this.getService('AbstractPage').instance();
+	                } // Set some values
+
+
+	                this.page.type = nodeTypeName;
+	                this.page.context = context;
+	                this.page.id = rootElement.id;
+	                this.page.rootElement = rootElement;
+	                this.page.name = rootElement.hasAttribute('data-node-name') ? rootElement.getAttribute('data-node-name') : '';
+	                this.page.metaTitle = rootElement.hasAttribute('data-meta-title') ? rootElement.getAttribute('data-meta-title') : '';
+	                this.page.isHome = rootElement.getAttribute('data-is-home') === '1';
+	                _context.next = 12;
+	                return this.page.init();
+
+	              case 12:
+	                // Dispatch an event to inform that the new page is ready
+	                Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
+
+	                if (this.hasService('Splashscreen') && !this.getService('Splashscreen').splashscreenHidden) {
+	                  Dispatcher.commit(BEFORE_SPLASHSCREEN_HIDE, this.page);
+	                  this.getService('Splashscreen').hide().then(function () {
+	                    Dispatcher.commit(AFTER_SPLASHSCREEN_HIDE, _this2.page);
+	                    _this2.getService('Splashscreen').splashscreenHidden = true;
+	                  });
+	                }
+
+	                return _context.abrupt("return", this.page);
+
+	              case 15:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      return function buildPage(_x) {
+	        return _buildPage.apply(this, arguments);
+	      };
+	    }()
+	  }]);
+
+	  return PageBuilder;
+	}(AbstractBootableService);
+
 	var AbstractBlockBuilder =
 	/*#__PURE__*/
 	function (_AbstractService) {
@@ -3951,9 +4012,15 @@ define(['exports'], function (exports) { 'use strict';
 	  inherits(BlockBuilder, _AbstractBlockBuilder);
 
 	  function BlockBuilder(container) {
+	    var _this;
+
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'BlockBuilder';
+
 	    classCallCheck(this, BlockBuilder);
 
-	    return possibleConstructorReturn(this, getPrototypeOf(BlockBuilder).call(this, container, 'BlockBuilder'));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(BlockBuilder).call(this, container, serviceName));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
+	    return _this;
 	  }
 	  /**
 	   * Returns an `AbstractBlock` child class instance
@@ -4033,14 +4100,18 @@ define(['exports'], function (exports) { 'use strict';
 	  /**
 	   * Constructor.
 	   *
-	   * @param {object} container
+	   * @param {Object} container
+	   * @param {String} serviceName
 	   */
 	  function Dom(container) {
 	    var _this;
 
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Dom';
+
 	    classCallCheck(this, Dom);
 
-	    _this = possibleConstructorReturn(this, getPrototypeOf(Dom).call(this, container, 'Dom'));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Dom).call(this, container, serviceName));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
 	    /**
 	     * Full HTML String of the current page.
 	     * By default is the innerHTML of the initial loaded page.
@@ -4193,6 +4264,833 @@ define(['exports'], function (exports) { 'use strict';
 
 	  return Dom;
 	}(AbstractService);
+
+	function _arrayWithoutHoles(arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+	      arr2[i] = arr[i];
+	    }
+
+	    return arr2;
+	  }
+	}
+
+	var arrayWithoutHoles = _arrayWithoutHoles;
+
+	function _iterableToArray(iter) {
+	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+	}
+
+	var iterableToArray = _iterableToArray;
+
+	function _nonIterableSpread() {
+	  throw new TypeError("Invalid attempt to spread non-iterable instance");
+	}
+
+	var nonIterableSpread = _nonIterableSpread;
+
+	function _toConsumableArray(arr) {
+	  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+	}
+
+	var toConsumableArray = _toConsumableArray;
+
+	/**
+	 * Returns a function, that, as long as it continues to be invoked, will not
+	 * be triggered.
+	 *
+	 * The function will be called after it stops being called for
+	 * N milliseconds. If `immediate` is passed, trigger the function on the
+	 * leading edge, instead of the trailing.
+	 *
+	 * @see   http://davidwalsh.name/javascript-debounce-function
+	 * @param {Function} func     [function to debounce]
+	 * @param {Number} wait       [time to wait]
+	 * @param {Boolean} immediate []
+	 */
+	function debounce(func, wait, immediate) {
+	  var timeout;
+	  return function () {
+	    var context = this;
+	    var args = arguments;
+
+	    var later = function later() {
+	      timeout = null;
+	      if (!immediate) func.apply(context, args);
+	    };
+
+	    var callNow = immediate && !timeout;
+	    clearTimeout(timeout);
+	    timeout = setTimeout(later, wait);
+	    if (callNow) func.apply(context, args);
+	  };
+	}
+
+	/**
+	 * Base class for creating page implementations.
+	 *
+	 * **Do not instanciate this class directly, create a sub-class**.
+	 *
+	 * @abstract
+	 */
+
+	var AbstractPage =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(AbstractPage, _AbstractService);
+
+	  /**
+	   * Base constructor for Pages.
+	   * @constructor
+	   */
+	  function AbstractPage(container) {
+	    var _this;
+
+	    classCallCheck(this, AbstractPage);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractPage).call(this, container, 'AbstractPage'));
+	    /**
+	     * Container element
+	     *
+	     * @type {HTMLElement}
+	     */
+
+	    _this.rootElement = null;
+	    /**
+	     * Page id
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.id = null;
+	    /**
+	     * Page context (static or ajax)
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.context = null;
+	    /**
+	     * Page type
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.type = null;
+	    /**
+	     * Is home ?
+	     *
+	     * @type {boolean}
+	     */
+
+	    _this.isHome = null;
+	    /**
+	     * AbstractBlock collection.
+	     *
+	     * @type {Array<AbstractBlock>}
+	     */
+
+	    _this.blocks = [];
+	    /**
+	     * Node name
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.name = null;
+	    /**
+	     * Meta title
+	     * @type {String|null}
+	     */
+
+	    _this.metaTitle = null; // Bind methods
+
+	    _this.onResize = _this.onResize.bind(assertThisInitialized(assertThisInitialized(_this)));
+	    _this.onResizeDebounce = debounce(_this.onResize, 50, false);
+	    _this.bindedUpdateBlocks = debounce(_this.updateBlocks.bind(assertThisInitialized(assertThisInitialized(_this))), 50, false);
+	    return _this;
+	  }
+	  /**
+	   * Initialize page.
+	   *
+	   * You should always extends this method in your child implementations instead
+	   * of extending page constructor.
+	   */
+
+
+	  createClass(AbstractPage, [{
+	    key: "init",
+	    value: function () {
+	      var _init = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee() {
+	        return regenerator.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                // Debug
+	                debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
+	                /**
+	                 * HTMLElement blocks collection.
+	                 *
+	                 * @type {Array}
+	                 */
+
+	                this.blockElements = toConsumableArray(this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass)));
+	                /**
+	                 * @type {Number}
+	                 */
+
+	                this.blockLength = this.blockElements.length;
+
+	                if (!this.blockLength) {
+	                  _context.next = 6;
+	                  break;
+	                }
+
+	                _context.next = 6;
+	                return this.initBlocks();
+
+	              case 6:
+	                // Context
+	                if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
+	                  this.initAjax();
+	                }
+
+	                this.initEvents();
+
+	              case 8:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      return function init() {
+	        return _init.apply(this, arguments);
+	      };
+	    }()
+	    /**
+	     * Destroy current page and all its blocks.
+	     */
+
+	  }, {
+	    key: "destroy",
+	    value: function destroy() {
+	      debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+	      this.rootElement.parentNode.removeChild(this.rootElement);
+	      this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
+
+	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
+	        document.body.classList.remove(this.name);
+	      } // Do not remove type class on body if destroyed page is the same as current one.
+
+
+	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
+	        document.body.classList.remove(this.type);
+	      } // Blocks
+
+
+	      if (this.blocks !== null) {
+	        for (var blockIndex in this.blocks) {
+	          if (this.blocks.hasOwnProperty(blockIndex)) {
+	            this.blocks[blockIndex].destroy();
+	          }
+	        }
+	      }
+	    }
+	    /**
+	     * Initialize basic events.
+	     */
+
+	  }, {
+	    key: "initEvents",
+	    value: function initEvents() {
+	      window.addEventListener('resize', this.onResizeDebounce);
+	      this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
+	      this.domObserver.observe(this.rootElement, {
+	        childList: true,
+	        attributes: false,
+	        characterData: false,
+	        subtree: true
+	      });
+	    }
+	    /**
+	     * Destroy events
+	     */
+
+	  }, {
+	    key: "destroyEvents",
+	    value: function destroyEvents() {
+	      window.removeEventListener('resize', this.onResizeDebounce);
+	      this.domObserver.disconnect();
+	    }
+	    /**
+	     * @param {Function} onShow
+	     */
+
+	  }, {
+	    key: "show",
+	    value: function show(onShow) {
+	      debug('▶️ #' + this.id);
+	      this.rootElement.style.opacity = '1';
+	      if (typeof onShow !== 'undefined') onShow();
+	      this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
+	      Dispatcher.commit(AFTER_PAGE_SHOW, this);
+	    }
+	    /**
+	     * @param {Function} onHidden
+	     */
+
+	  }, {
+	    key: "hide",
+	    value: function hide(onHidden) {
+	      Dispatcher.commit(BEFORE_PAGE_HIDE, this);
+	      debug('◀️ #' + this.id);
+	      this.rootElement.style.opacity = '0';
+	      if (typeof onHidden !== 'undefined') onHidden();
+	      Dispatcher.commit(AFTER_PAGE_HIDE, this);
+	    }
+	  }, {
+	    key: "initAjax",
+	    value: function initAjax() {
+	      this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
+	    }
+	    /**
+	     * Initialize page blocks on page.
+	     */
+
+	  }, {
+	    key: "initBlocks",
+	    value: function () {
+	      var _initBlocks = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee2() {
+	        var blockIndex, block, i;
+	        return regenerator.wrap(function _callee2$(_context2) {
+	          while (1) {
+	            switch (_context2.prev = _context2.next) {
+	              case 0:
+	                blockIndex = 0;
+
+	              case 1:
+	                if (!(blockIndex < this.blockLength)) {
+	                  _context2.next = 9;
+	                  break;
+	                }
+
+	                _context2.next = 4;
+	                return this.initSingleBlock(this.blockElements[blockIndex]);
+
+	              case 4:
+	                block = _context2.sent;
+
+	                // Prevent undefined blocks to be appended to block collection.
+	                if (block) {
+	                  this.blocks.push(block);
+	                }
+
+	              case 6:
+	                blockIndex++;
+	                _context2.next = 1;
+	                break;
+
+	              case 9:
+	                // Notify all blocks that page init is over.
+	                for (i = this.blocks.length - 1; i >= 0; i--) {
+	                  if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
+	                }
+
+	              case 10:
+	              case "end":
+	                return _context2.stop();
+	            }
+	          }
+	        }, _callee2, this);
+	      }));
+
+	      return function initBlocks() {
+	        return _initBlocks.apply(this, arguments);
+	      };
+	    }()
+	    /**
+	     * Append new blocks which were not present at init.
+	     */
+
+	  }, {
+	    key: "updateBlocks",
+	    value: function () {
+	      var _updateBlocks = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee3() {
+	        var blockIndex, blockElement, existingBlock, block;
+	        return regenerator.wrap(function _callee3$(_context3) {
+	          while (1) {
+	            switch (_context3.prev = _context3.next) {
+	              case 0:
+	                debug('\t📯 Page DOM changed…'); // Create new blocks
+
+	                this.blockElements = this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass));
+	                this.blockLength = this.blockElements.length;
+	                blockIndex = 0;
+
+	              case 4:
+	                if (!(blockIndex < this.blockLength)) {
+	                  _context3.next = 21;
+	                  break;
+	                }
+
+	                blockElement = this.blockElements[blockIndex];
+	                existingBlock = this.getBlockById(blockElement.id);
+
+	                if (!(existingBlock === null)) {
+	                  _context3.next = 18;
+	                  break;
+	                }
+
+	                _context3.prev = 8;
+	                _context3.next = 11;
+	                return this.initSingleBlock(this.blockElements[blockIndex]);
+
+	              case 11:
+	                block = _context3.sent;
+
+	                if (block) {
+	                  this.blocks.push(block);
+	                  block.onPageReady();
+	                }
+
+	                _context3.next = 18;
+	                break;
+
+	              case 15:
+	                _context3.prev = 15;
+	                _context3.t0 = _context3["catch"](8);
+	                warn(_context3.t0.message);
+
+	              case 18:
+	                blockIndex++;
+	                _context3.next = 4;
+	                break;
+
+	              case 21:
+	              case "end":
+	                return _context3.stop();
+	            }
+	          }
+	        }, _callee3, this, [[8, 15]]);
+	      }));
+
+	      return function updateBlocks() {
+	        return _updateBlocks.apply(this, arguments);
+	      };
+	    }()
+	    /**
+	     * @param {HTMLElement} blockElement
+	     * @return {AbstractBlock}
+	     */
+
+	  }, {
+	    key: "initSingleBlock",
+	    value: function () {
+	      var _initSingleBlock = asyncToGenerator(
+	      /*#__PURE__*/
+	      regenerator.mark(function _callee4(blockElement) {
+	        var blockType, blockInstance;
+	        return regenerator.wrap(function _callee4$(_context4) {
+	          while (1) {
+	            switch (_context4.prev = _context4.next) {
+	              case 0:
+	                blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
+	                _context4.next = 3;
+	                return this.getService('BlockBuilder').getBlockInstance(blockType);
+
+	              case 3:
+	                blockInstance = _context4.sent;
+
+	                if (blockInstance) {
+	                  _context4.next = 6;
+	                  break;
+	                }
+
+	                return _context4.abrupt("return", null);
+
+	              case 6:
+	                // Set values
+	                blockInstance.type = blockType;
+	                blockInstance.page = this;
+	                blockInstance.rootElement = blockElement;
+	                blockInstance.id = blockElement.id;
+	                blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
+
+	                blockInstance.init();
+	                blockInstance.initEvents();
+	                return _context4.abrupt("return", blockInstance);
+
+	              case 14:
+	              case "end":
+	                return _context4.stop();
+	            }
+	          }
+	        }, _callee4, this);
+	      }));
+
+	      return function initSingleBlock(_x) {
+	        return _initSingleBlock.apply(this, arguments);
+	      };
+	    }()
+	    /**
+	     * Get a page block instance from its `id`.
+	     *
+	     * @param  {String} id
+	     * @return {AbstractBlock|null}
+	     */
+
+	  }, {
+	    key: "getBlockById",
+	    value: function getBlockById(id) {
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = this.blocks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var block = _step.value;
+
+	          if (block.id && block.id === id) {
+	            return block;
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+
+	      return null;
+	    }
+	    /**
+	     * Get a page block index from its `id`.
+	     *
+	     * @param  {String} id
+	     * @return {*|null}
+	     */
+
+	  }, {
+	    key: "getBlockIndexById",
+	    value: function getBlockIndexById(id) {
+	      var l = this.blocks.length;
+
+	      for (var i = 0; i < l; i++) {
+	        if (this.blocks[i].id && this.blocks[i].id === id) {
+	          return i;
+	        }
+	      }
+
+	      return null;
+	    }
+	    /**
+	     * Get the first page block instance from its `type`.
+	     *
+	     * @param  {String} type
+	     * @return {AbstractBlock|null}
+	     */
+
+	  }, {
+	    key: "getFirstBlockByType",
+	    value: function getFirstBlockByType(type) {
+	      var index = this.getFirstBlockIndexByType(type);
+
+	      if (this.blocks[index]) {
+	        return this.blocks[index];
+	      }
+
+	      return null;
+	    }
+	    /**
+	     * Get the first page block index from its `type`.
+	     *
+	     * @param  {String} type
+	     * @return {*|null}
+	     */
+
+	  }, {
+	    key: "getFirstBlockIndexByType",
+	    value: function getFirstBlockIndexByType(type) {
+	      var l = this.blocks.length;
+
+	      for (var i = 0; i < l; i++) {
+	        if (this.blocks[i].type && this.blocks[i].type === type) {
+	          return i;
+	        }
+	      }
+
+	      return null;
+	    }
+	    /**
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "onResize",
+	    value: function onResize() {
+	      var _iteratorNormalCompletion2 = true;
+	      var _didIteratorError2 = false;
+	      var _iteratorError2 = undefined;
+
+	      try {
+	        for (var _iterator2 = this.blocks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	          var block = _step2.value;
+	          block.onResize();
+	        }
+	      } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+	            _iterator2.return();
+	          }
+	        } finally {
+	          if (_didIteratorError2) {
+	            throw _iteratorError2;
+	          }
+	        }
+	      }
+	    }
+	  }]);
+
+	  return AbstractPage;
+	}(AbstractService);
+
+	/**
+	 * @namespace
+	 * @type {Object} defaults                      - Default config
+	 * @property {String} defaults.wrapperId        - Id of the main wrapper
+	 * @property {String} defaults.pageBlockClass
+	 * @property {String} defaults.pageClass        - Class name used to identify the containers
+	 * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
+	 * @property {String} defaults.noAjaxLinkClass
+	 * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+	 * @const
+	 * @default
+	 */
+
+	var CONFIG = {
+	  defaults: {
+	    wrapperId: 'sb-wrapper',
+	    pageBlockClass: 'page-block',
+	    pageClass: 'page-content',
+	    objectTypeAttr: 'data-node-type',
+	    noAjaxLinkClass: 'no-ajax-link',
+	    noPrefetchClass: 'no-prefetch',
+	    debug: 0
+	  }
+	};
+
+	var StartingBlocks =
+	/*#__PURE__*/
+	function () {
+	  function StartingBlocks() {
+	    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+	    classCallCheck(this, StartingBlocks);
+
+	    this.bottle = new bottle();
+	    this.bootables = [];
+	    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
+	    window.startingBlocksDebugLevel = this.bottle.container.Config.debug;
+	    this.provider('Dom', Dom);
+	    this.provider('BlockBuilder', BlockBuilder);
+	    this.instanceFactory('AbstractPage', function (c) {
+	      return new AbstractPage(c);
+	    });
+	  }
+
+	  createClass(StartingBlocks, [{
+	    key: "provider",
+	    value: function provider(id, ClassName) {
+	      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	        args[_key - 2] = arguments[_key];
+	      }
+
+	      if (!id || !ClassName) {
+	        throw new Error('A parameter is missing');
+	      }
+
+	      this.bottle.provider(id, function () {
+	        this.$get = function (container) {
+	          return construct(ClassName, [container].concat(args));
+	        };
+	      });
+	    }
+	  }, {
+	    key: "factory",
+	    value: function factory(id, f) {
+	      this.bottle.factory(id, f);
+	    }
+	  }, {
+	    key: "instanceFactory",
+	    value: function instanceFactory(id, f) {
+	      this.bottle.instanceFactory(id, f);
+	    }
+	  }, {
+	    key: "bootableProvider",
+	    value: function bootableProvider(id, ClassName) {
+	      for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	        args[_key2 - 2] = arguments[_key2];
+	      }
+
+	      this.provider.apply(this, [id, ClassName].concat(args));
+	      this.bootables.push(id);
+	    }
+	  }, {
+	    key: "boot",
+	    value: function boot() {
+	      this.bootableProvider('PageBuilder', PageBuilder);
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = this.bootables[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var serviceName = _step.value;
+
+	          if (this.bottle.container.hasOwnProperty(serviceName)) {
+	            this.bottle.container[serviceName].boot();
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return != null) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }]);
+
+	  return StartingBlocks;
+	}();
+
+	var _fixReWks = function (KEY, length, exec) {
+	  var SYMBOL = _wks(KEY);
+	  var fns = exec(_defined, SYMBOL, ''[KEY]);
+	  var strfn = fns[0];
+	  var rxfn = fns[1];
+	  if (_fails(function () {
+	    var O = {};
+	    O[SYMBOL] = function () { return 7; };
+	    return ''[KEY](O) != 7;
+	  })) {
+	    _redefine(String.prototype, KEY, strfn);
+	    _hide(RegExp.prototype, SYMBOL, length == 2
+	      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
+	      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
+	      ? function (string, arg) { return rxfn.call(string, this, arg); }
+	      // 21.2.5.6 RegExp.prototype[@@match](string)
+	      // 21.2.5.9 RegExp.prototype[@@search](string)
+	      : function (string) { return rxfn.call(string, this); }
+	    );
+	  }
+	};
+
+	// 7.2.8 IsRegExp(argument)
+
+
+	var MATCH = _wks('match');
+	var _isRegexp = function (it) {
+	  var isRegExp;
+	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	};
+
+	// @@split logic
+	_fixReWks('split', 2, function (defined, SPLIT, $split) {
+	  var isRegExp = _isRegexp;
+	  var _split = $split;
+	  var $push = [].push;
+	  var $SPLIT = 'split';
+	  var LENGTH = 'length';
+	  var LAST_INDEX = 'lastIndex';
+	  if (
+	    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
+	    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
+	    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
+	    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
+	    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
+	    ''[$SPLIT](/.?/)[LENGTH]
+	  ) {
+	    var NPCG = /()??/.exec('')[1] === undefined; // nonparticipating capturing group
+	    // based on es5-shim implementation, need to rework it
+	    $split = function (separator, limit) {
+	      var string = String(this);
+	      if (separator === undefined && limit === 0) return [];
+	      // If `separator` is not a regex, use native split
+	      if (!isRegExp(separator)) return _split.call(string, separator, limit);
+	      var output = [];
+	      var flags = (separator.ignoreCase ? 'i' : '') +
+	                  (separator.multiline ? 'm' : '') +
+	                  (separator.unicode ? 'u' : '') +
+	                  (separator.sticky ? 'y' : '');
+	      var lastLastIndex = 0;
+	      var splitLimit = limit === undefined ? 4294967295 : limit >>> 0;
+	      // Make `global` and avoid `lastIndex` issues by working with a copy
+	      var separatorCopy = new RegExp(separator.source, flags + 'g');
+	      var separator2, match, lastIndex, lastLength, i;
+	      // Doesn't need flags gy, but they don't hurt
+	      if (!NPCG) separator2 = new RegExp('^' + separatorCopy.source + '$(?!\\s)', flags);
+	      while (match = separatorCopy.exec(string)) {
+	        // `separatorCopy.lastIndex` is not reliable cross-browser
+	        lastIndex = match.index + match[0][LENGTH];
+	        if (lastIndex > lastLastIndex) {
+	          output.push(string.slice(lastLastIndex, match.index));
+	          // Fix browsers whose `exec` methods don't consistently return `undefined` for NPCG
+	          // eslint-disable-next-line no-loop-func
+	          if (!NPCG && match[LENGTH] > 1) match[0].replace(separator2, function () {
+	            for (i = 1; i < arguments[LENGTH] - 2; i++) if (arguments[i] === undefined) match[i] = undefined;
+	          });
+	          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
+	          lastLength = match[0][LENGTH];
+	          lastLastIndex = lastIndex;
+	          if (output[LENGTH] >= splitLimit) break;
+	        }
+	        if (separatorCopy[LAST_INDEX] === match.index) separatorCopy[LAST_INDEX]++; // Avoid an infinite loop
+	      }
+	      if (lastLastIndex === string[LENGTH]) {
+	        if (lastLength || !separatorCopy.test('')) output.push('');
+	      } else output.push(string.slice(lastLastIndex));
+	      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
+	    };
+	  // Chakra, V8
+	  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
+	    $split = function (separator, limit) {
+	      return separator === undefined && limit === 0 ? [] : _split.call(this, separator, limit);
+	    };
+	  }
+	  // 21.1.3.17 String.prototype.split(separator, limit)
+	  return [function split(separator, limit) {
+	    var O = defined(this);
+	    var fn = separator == undefined ? undefined : separator[SPLIT];
+	    return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
+	  }, $split];
+	});
 
 	// getting tag from 19.1.3.6 Object.prototype.toString()
 
@@ -4790,39 +5688,6 @@ define(['exports'], function (exports) { 'use strict';
 	  }
 	});
 
-	// true  -> String#at
-	// false -> String#codePointAt
-	var _stringAt = function (TO_STRING) {
-	  return function (that, pos) {
-	    var s = String(_defined(that));
-	    var i = _toInteger(pos);
-	    var l = s.length;
-	    var a, b;
-	    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
-	    a = s.charCodeAt(i);
-	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
-	      ? TO_STRING ? s.charAt(i) : a
-	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-	  };
-	};
-
-	var $at = _stringAt(true);
-
-	// 21.1.3.27 String.prototype[@@iterator]()
-	_iterDefine(String, 'String', function (iterated) {
-	  this._t = String(iterated); // target
-	  this._i = 0;                // next index
-	// 21.1.5.2.1 %StringIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var index = this._i;
-	  var point;
-	  if (index >= O.length) return { value: undefined, done: true };
-	  point = $at(O, index);
-	  this._i += point.length;
-	  return { value: point, done: false };
-	});
-
 	// Works with __proto__ only. Old v8 can't work with null proto objects.
 	/* eslint-disable no-proto */
 
@@ -4951,28 +5816,6 @@ define(['exports'], function (exports) { 'use strict';
 	  _redefine(_global, NUMBER, $Number);
 	}
 
-	var _fixReWks = function (KEY, length, exec) {
-	  var SYMBOL = _wks(KEY);
-	  var fns = exec(_defined, SYMBOL, ''[KEY]);
-	  var strfn = fns[0];
-	  var rxfn = fns[1];
-	  if (_fails(function () {
-	    var O = {};
-	    O[SYMBOL] = function () { return 7; };
-	    return ''[KEY](O) != 7;
-	  })) {
-	    _redefine(String.prototype, KEY, strfn);
-	    _hide(RegExp.prototype, SYMBOL, length == 2
-	      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
-	      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
-	      ? function (string, arg) { return rxfn.call(string, this, arg); }
-	      // 21.2.5.6 RegExp.prototype[@@match](string)
-	      // 21.2.5.9 RegExp.prototype[@@search](string)
-	      : function (string) { return rxfn.call(string, this); }
-	    );
-	  }
-	};
-
 	// @@search logic
 	_fixReWks('search', 1, function (defined, SEARCH, $search) {
 	  // 21.1.3.15 String.prototype.search(regexp)
@@ -4995,11 +5838,10 @@ define(['exports'], function (exports) { 'use strict';
 	  }, $replace];
 	});
 
-	// import work from 'webworkify-webpack'
-
 	/**
 	 * Utils class
 	 */
+
 	var Utils =
 	/*#__PURE__*/
 	function () {
@@ -5201,7 +6043,7 @@ define(['exports'], function (exports) { 'use strict';
 	    key: "trackGoogleAnalytics",
 	    value: function trackGoogleAnalytics() {
 	      if (typeof window.ga !== 'undefined') {
-	        console.debug('🚩 Push Analytics for: ' + window.location.pathname);
+	        debug('🚩 Push Analytics for: ' + window.location.pathname);
 	        window.ga('send', 'pageview', {
 	          'page': window.location.pathname,
 	          'title': document.title
@@ -5300,1188 +6142,6 @@ define(['exports'], function (exports) { 'use strict';
 	}();
 
 	/**
-	 * Base class for creating transition.
-	 *
-	 * @abstract
-	 */
-
-	var AbstractTransition =
-	/*#__PURE__*/
-	function () {
-	  /**
-	   * Constructor.
-	   * Do not override this method.
-	   *
-	   * @constructor
-	   */
-	  function AbstractTransition() {
-	    classCallCheck(this, AbstractTransition);
-
-	    /**
-	     * @type {AbstractPage|null} old Page instance
-	     */
-	    this.oldPage = null;
-	    /**
-	     * @type {AbstractPage|null}
-	     */
-
-	    this.newPage = null;
-	    /**
-	     * @type {Promise|null}
-	     */
-
-	    this.newPageLoading = null;
-	  }
-	  /**
-	   * Initialize transition.
-	   * Do not override this method.
-	   *
-	   * @param {AbstractPage} oldPage
-	   * @param {Promise} newPagePromise
-	   * @returns {Promise}
-	   */
-
-
-	  createClass(AbstractTransition, [{
-	    key: "init",
-	    value: function init(oldPage, newPagePromise) {
-	      var _this = this;
-
-	      this.oldPage = oldPage;
-	      this._newPagePromise = newPagePromise;
-	      this.deferred = Utils.deferred();
-	      this.newPageReady = Utils.deferred();
-	      this.newPageLoading = this.newPageReady.promise;
-	      this.start();
-
-	      this._newPagePromise.then(function (newPage) {
-	        _this.newPage = newPage;
-
-	        _this.newPageReady.resolve();
-	      });
-
-	      return this.deferred.promise;
-	    }
-	    /**
-	     * Call this function when the Transition is finished.
-	     */
-
-	  }, {
-	    key: "done",
-	    value: function done() {
-	      this.oldPage.destroy();
-	      this.newPage.rootElement.style.visibility = 'visible';
-	      this.newPage.updateLazyload();
-	      this.deferred.resolve();
-	    }
-	    /**
-	     * Entry point to create a custom Transition.
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "start",
-	    value: function start() {}
-	  }]);
-
-	  return AbstractTransition;
-	}();
-
-	/**
-	 * Default Transition. Show / Hide content.
-	 *
-	 * @extends {AbstractTransition}
-	 */
-
-	var DefaultTransition =
-	/*#__PURE__*/
-	function (_AbstractTransition) {
-	  inherits(DefaultTransition, _AbstractTransition);
-
-	  function DefaultTransition() {
-	    classCallCheck(this, DefaultTransition);
-
-	    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
-	  }
-
-	  createClass(DefaultTransition, [{
-	    key: "start",
-	    value: function start() {
-	      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-	    }
-	  }, {
-	    key: "finish",
-	    value: function finish() {
-	      document.body.scrollTop = 0;
-	      this.done();
-	    }
-	  }]);
-
-	  return DefaultTransition;
-	}(AbstractTransition);
-
-	/**
-	 * Transition mapper class.
-	 *
-	 * This class maps your `data-transition` with your *ES6* classes.
-	 *
-	 * **You must define your own ClassFactory for each of your projects.**.
-	 */
-
-	var TransitionFactory =
-	/*#__PURE__*/
-	function () {
-	  function TransitionFactory() {
-	    classCallCheck(this, TransitionFactory);
-	  }
-
-	  createClass(TransitionFactory, [{
-	    key: "getTransition",
-
-	    /**
-	     * Get Transition
-	     *
-	     * @param {Object} previousState
-	     * @param {Object} state
-	     * @returns {AbstractTransition}
-	     */
-	    value: function getTransition(previousState, state) {
-	      /**
-	       * You can customise transition logic with the previousState and the new state
-	       *
-	       * Ex: when back or prev button its pressed we use FadeTransition
-	       */
-	      if (state && state.context === 'history') {
-	        return new DefaultTransition();
-	      }
-
-	      var transition;
-
-	      switch (state.transitionName) {
-	        default:
-	          transition = new DefaultTransition();
-	          break;
-	      }
-
-	      return transition;
-	    }
-	  }]);
-
-	  return TransitionFactory;
-	}();
-
-	function _arrayWithoutHoles(arr) {
-	  if (Array.isArray(arr)) {
-	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-	      arr2[i] = arr[i];
-	    }
-
-	    return arr2;
-	  }
-	}
-
-	var arrayWithoutHoles = _arrayWithoutHoles;
-
-	function _iterableToArray(iter) {
-	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-	}
-
-	var iterableToArray = _iterableToArray;
-
-	function _nonIterableSpread() {
-	  throw new TypeError("Invalid attempt to spread non-iterable instance");
-	}
-
-	var nonIterableSpread = _nonIterableSpread;
-
-	function _toConsumableArray(arr) {
-	  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-	}
-
-	var toConsumableArray = _toConsumableArray;
-
-	/**
-	 * Returns a function, that, as long as it continues to be invoked, will not
-	 * be triggered.
-	 *
-	 * The function will be called after it stops being called for
-	 * N milliseconds. If `immediate` is passed, trigger the function on the
-	 * leading edge, instead of the trailing.
-	 *
-	 * @see   http://davidwalsh.name/javascript-debounce-function
-	 * @param {Function} func     [function to debounce]
-	 * @param {Number} wait       [time to wait]
-	 * @param {Boolean} immediate []
-	 */
-	function debounce(func, wait, immediate) {
-	  var timeout;
-	  return function () {
-	    var context = this;
-	    var args = arguments;
-
-	    var later = function later() {
-	      timeout = null;
-	      if (!immediate) func.apply(context, args);
-	    };
-
-	    var callNow = immediate && !timeout;
-	    clearTimeout(timeout);
-	    timeout = setTimeout(later, wait);
-	    if (callNow) func.apply(context, args);
-	  };
-	}
-
-	/**
-	 * Base class for creating block implementations.
-	 *
-	 * **Do not instanciate this class directly, create a sub-class**.
-	 *
-	 * @abstract
-	 */
-
-	var AbstractBlock =
-	/*#__PURE__*/
-	function (_AbstractService) {
-	  inherits(AbstractBlock, _AbstractService);
-
-	  /**
-	   * Abstract block constructor.
-	   *
-	   * It‘s better to extend this class by using `init` method instead
-	   * of extending `constructor`.
-	   *
-	   * @param {Object} container
-	   * @param {String} blockName
-	   * @constructor
-	   */
-	  function AbstractBlock(container) {
-	    var _this;
-
-	    var blockName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractBlock';
-
-	    classCallCheck(this, AbstractBlock);
-
-	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractBlock).call(this, container, blockName));
-	    /**
-	     * Node Type block name type
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.type = null;
-	    /**
-	     * Current page instance
-	     *
-	     * @type {AbstractPage|null}
-	     */
-
-	    _this.page = null;
-	    /**
-	     * Container
-	     * Root container HTMLElement for current block.
-	     *
-	     * @type {HTMLElement|null}
-	     */
-
-	    _this.rootElement = null;
-	    /**
-	     * Block id
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.id = null;
-	    /**
-	     * Node name
-	     *
-	     * @type {String}
-	     */
-
-	    _this.name = null; // Bind methods
-
-	    _this.onResize = _this.onResize.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    _this.onResizeDebounce = debounce(_this.onResize, 50, false);
-	    return _this;
-	  }
-	  /**
-	   * Basic members initialization for children classes.
-	   * Do not search for page blocks here, use `onPageReady` method instead
-	   *
-	   * @abstract
-	   */
-
-
-	  createClass(AbstractBlock, [{
-	    key: "init",
-	    value: function init() {
-	      console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-	    }
-	    /**
-	     * Bind load and resize events for this specific block.
-	     *
-	     * Do not forget to call `super.initEvents();` while extending this method.
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "initEvents",
-	    value: function initEvents() {
-	      window.addEventListener('resize', this.onResizeDebounce);
-	    }
-	    /**
-	     * Destroy current block.
-	     *
-	     * Do not forget to call `super.destroy();` while extending this method.
-	     */
-
-	  }, {
-	    key: "destroy",
-	    value: function destroy() {
-	      console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-	      this.destroyEvents();
-	    }
-	    /**
-	     * Unbind event block events.
-	     *
-	     * Make sure you’ve used binded methods to be able to
-	     * `off` them correctly.
-	     *
-	     * Do not forget to call `super.destroyEvents();` while extending this method.
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "destroyEvents",
-	    value: function destroyEvents() {
-	      window.removeEventListener('resize', this.onResizeDebounce);
-	    }
-	    /**
-	     * Called on window resize
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "onResize",
-	    value: function onResize() {}
-	    /**
-	     * Called once all page blocks have been created.
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "onPageReady",
-	    value: function onPageReady() {}
-	  }]);
-
-	  return AbstractBlock;
-	}(AbstractService);
-
-	/**
-	 * Base class for creating page implementations.
-	 *
-	 * **Do not instanciate this class directly, create a sub-class**.
-	 *
-	 * @abstract
-	 */
-
-	var AbstractPage =
-	/*#__PURE__*/
-	function (_AbstractService) {
-	  inherits(AbstractPage, _AbstractService);
-
-	  /**
-	   * Base constructor for Pages.
-	   * @constructor
-	   */
-	  function AbstractPage(container) {
-	    var _this;
-
-	    classCallCheck(this, AbstractPage);
-
-	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractPage).call(this, container, 'AbstractPage'));
-	    /**
-	     * Container element
-	     *
-	     * @type {HTMLElement}
-	     */
-
-	    _this.rootElement = null;
-	    /**
-	     * Page id
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.id = null;
-	    /**
-	     * Page context (static or ajax)
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.context = null;
-	    /**
-	     * Page type
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.type = null;
-	    /**
-	     * Is home ?
-	     *
-	     * @type {boolean}
-	     */
-
-	    _this.isHome = null;
-	    /**
-	     * AbstractBlock collection.
-	     *
-	     * @type {Array<AbstractBlock>}
-	     */
-
-	    _this.blocks = [];
-	    /**
-	     * Node name
-	     *
-	     * @type {String|null}
-	     */
-
-	    _this.name = null;
-	    /**
-	     * Meta title
-	     * @type {String|null}
-	     */
-
-	    _this.metaTitle = null; // Bind methods
-
-	    _this.onResize = _this.onResize.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    _this.onResizeDebounce = debounce(_this.onResize, 50, false);
-	    _this.bindedUpdateBlocks = debounce(_this.updateBlocks.bind(assertThisInitialized(assertThisInitialized(_this))), 50, false);
-	    _this.onLazyImageSet = _this.onLazyImageSet.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    _this.onLazyImageLoad = _this.onLazyImageLoad.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    _this.onLazyImageProcessed = _this.onLazyImageProcessed.bind(assertThisInitialized(assertThisInitialized(_this)));
-	    return _this;
-	  }
-	  /**
-	   * Initialize page.
-	   *
-	   * You should always extends this method in your child implementations instead
-	   * of extending page constructor.
-	   */
-
-
-	  createClass(AbstractPage, [{
-	    key: "init",
-	    value: function () {
-	      var _init = asyncToGenerator(
-	      /*#__PURE__*/
-	      regenerator.mark(function _callee() {
-	        return regenerator.wrap(function _callee$(_context) {
-	          while (1) {
-	            switch (_context.prev = _context.next) {
-	              case 0:
-	                // Debug
-	                console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
-	                /**
-	                 * HTMLElement blocks collection.
-	                 *
-	                 * @type {Array}
-	                 */
-
-	                this.blockElements = toConsumableArray(this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass)));
-	                /**
-	                 * @type {Number}
-	                 */
-
-	                this.blockLength = this.blockElements.length;
-
-	                if (!this.blockLength) {
-	                  _context.next = 6;
-	                  break;
-	                }
-
-	                _context.next = 6;
-	                return this.initBlocks();
-
-	              case 6:
-	                // Context
-	                if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
-	                  this.initAjax();
-	                } // Lazyload
-
-
-	                if (this.getService('Config').lazyloadEnabled) {
-	                  this.initLazyload();
-	                }
-
-	                this.initEvents();
-
-	              case 9:
-	              case "end":
-	                return _context.stop();
-	            }
-	          }
-	        }, _callee, this);
-	      }));
-
-	      return function init() {
-	        return _init.apply(this, arguments);
-	      };
-	    }()
-	    /**
-	     * Destroy current page and all its blocks.
-	     */
-
-	  }, {
-	    key: "destroy",
-	    value: function destroy() {
-	      console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-	      this.rootElement.parentNode.removeChild(this.rootElement);
-	      this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
-
-	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
-	        document.body.classList.remove(this.name);
-	      } // Do not remove type class on body if destroyed page is the same as current one.
-
-
-	      if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
-	        document.body.classList.remove(this.type);
-	      } // Blocks
-
-
-	      if (this.blocks !== null) {
-	        for (var blockIndex in this.blocks) {
-	          if (this.blocks.hasOwnProperty(blockIndex)) {
-	            this.blocks[blockIndex].destroy();
-	          }
-	        }
-	      } // Remove Lazyload instance and listeners
-	      // if (this.lazyload !== null) {
-	      //     this.lazyload.destroy()
-	      //     this.lazyload = null
-	      // }
-
-	    }
-	    /**
-	     * Initialize basic events.
-	     */
-
-	  }, {
-	    key: "initEvents",
-	    value: function initEvents() {
-	      window.addEventListener('resize', this.onResizeDebounce);
-	      this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
-	      this.domObserver.observe(this.rootElement, {
-	        childList: true,
-	        attributes: false,
-	        characterData: false,
-	        subtree: true
-	      });
-	    }
-	    /**
-	     * Destroy events
-	     */
-
-	  }, {
-	    key: "destroyEvents",
-	    value: function destroyEvents() {
-	      window.removeEventListener('resize', this.onResizeDebounce);
-	      this.domObserver.disconnect();
-	    }
-	    /**
-	     * Init lazyload
-	     *
-	     * @private
-	     */
-
-	  }, {
-	    key: "initLazyload",
-	    value: function initLazyload() {
-	      this.beforeLazyload(); // this.lazyload = new Lazyload({
-	      //     threshold: this.pageBuilder.options.lazyloadThreshold,
-	      //     throttle: this.pageBuilder.options.lazyloadThrottle,
-	      //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
-	      //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
-	      //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
-	      //     callback_set: this.onLazyImageSet,
-	      //     callback_load: this.onLazyImageLoad,
-	      //     callback_processed: this.onLazyImageProcessed
-	      // })
-	    }
-	  }, {
-	    key: "updateLazyload",
-	    value: function updateLazyload() {} // if (this.lazyload) {
-	    //     this.lazyload.update()
-	    // }
-
-	    /**
-	     * @param {Function} onShow
-	     */
-
-	  }, {
-	    key: "show",
-	    value: function show(onShow) {
-	      console.debug('▶️ #' + this.id);
-	      this.rootElement.style.opacity = '1';
-	      if (typeof onShow !== 'undefined') onShow();
-	      this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
-	      Dispatcher.commit(AFTER_PAGE_SHOW, this);
-	    }
-	    /**
-	     * @param {Function} onHidden
-	     */
-
-	  }, {
-	    key: "hide",
-	    value: function hide(onHidden) {
-	      Dispatcher.commit(BEFORE_PAGE_HIDE, this);
-	      console.debug('◀️ #' + this.id);
-	      this.rootElement.style.opacity = '0';
-	      if (typeof onHidden !== 'undefined') onHidden();
-	      Dispatcher.commit(AFTER_PAGE_HIDE, this);
-	    }
-	  }, {
-	    key: "initAjax",
-	    value: function initAjax() {
-	      this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
-	    }
-	    /**
-	     * Initialize page blocks on page.
-	     */
-
-	  }, {
-	    key: "initBlocks",
-	    value: function () {
-	      var _initBlocks = asyncToGenerator(
-	      /*#__PURE__*/
-	      regenerator.mark(function _callee2() {
-	        var blockIndex, block, i;
-	        return regenerator.wrap(function _callee2$(_context2) {
-	          while (1) {
-	            switch (_context2.prev = _context2.next) {
-	              case 0:
-	                blockIndex = 0;
-
-	              case 1:
-	                if (!(blockIndex < this.blockLength)) {
-	                  _context2.next = 9;
-	                  break;
-	                }
-
-	                _context2.next = 4;
-	                return this.initSingleBlock(this.blockElements[blockIndex]);
-
-	              case 4:
-	                block = _context2.sent;
-
-	                // Prevent undefined blocks to be appended to block collection.
-	                if (block) {
-	                  this.blocks.push(block);
-	                }
-
-	              case 6:
-	                blockIndex++;
-	                _context2.next = 1;
-	                break;
-
-	              case 9:
-	                // Notify all blocks that page init is over.
-	                for (i = this.blocks.length - 1; i >= 0; i--) {
-	                  if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
-	                }
-
-	              case 10:
-	              case "end":
-	                return _context2.stop();
-	            }
-	          }
-	        }, _callee2, this);
-	      }));
-
-	      return function initBlocks() {
-	        return _initBlocks.apply(this, arguments);
-	      };
-	    }()
-	    /**
-	     * Append new blocks which were not present at init.
-	     */
-
-	  }, {
-	    key: "updateBlocks",
-	    value: function () {
-	      var _updateBlocks = asyncToGenerator(
-	      /*#__PURE__*/
-	      regenerator.mark(function _callee3() {
-	        var blockIndex, blockElement, existingBlock, block;
-	        return regenerator.wrap(function _callee3$(_context3) {
-	          while (1) {
-	            switch (_context3.prev = _context3.next) {
-	              case 0:
-	                console.debug('\t📯 Page DOM changed…'); // Update lazy load if init.
-
-	                this.updateLazyload(); // Create new blocks
-
-	                this.blockElements = this.rootElement.querySelectorAll(".".concat(this.getService('Config').pageBlockClass));
-	                this.blockLength = this.blockElements.length;
-	                blockIndex = 0;
-
-	              case 5:
-	                if (!(blockIndex < this.blockLength)) {
-	                  _context3.next = 22;
-	                  break;
-	                }
-
-	                blockElement = this.blockElements[blockIndex];
-	                existingBlock = this.getBlockById(blockElement.id);
-
-	                if (!(existingBlock === null)) {
-	                  _context3.next = 19;
-	                  break;
-	                }
-
-	                _context3.prev = 9;
-	                _context3.next = 12;
-	                return this.initSingleBlock(this.blockElements[blockIndex]);
-
-	              case 12:
-	                block = _context3.sent;
-
-	                if (block) {
-	                  this.blocks.push(block);
-	                  block.onPageReady();
-	                }
-
-	                _context3.next = 19;
-	                break;
-
-	              case 16:
-	                _context3.prev = 16;
-	                _context3.t0 = _context3["catch"](9);
-	                console.info(_context3.t0.message);
-
-	              case 19:
-	                blockIndex++;
-	                _context3.next = 5;
-	                break;
-
-	              case 22:
-	              case "end":
-	                return _context3.stop();
-	            }
-	          }
-	        }, _callee3, this, [[9, 16]]);
-	      }));
-
-	      return function updateBlocks() {
-	        return _updateBlocks.apply(this, arguments);
-	      };
-	    }()
-	    /**
-	     * @param {HTMLElement} blockElement
-	     * @return {AbstractBlock}
-	     */
-
-	  }, {
-	    key: "initSingleBlock",
-	    value: function () {
-	      var _initSingleBlock = asyncToGenerator(
-	      /*#__PURE__*/
-	      regenerator.mark(function _callee4(blockElement) {
-	        var blockType, blockInstance;
-	        return regenerator.wrap(function _callee4$(_context4) {
-	          while (1) {
-	            switch (_context4.prev = _context4.next) {
-	              case 0:
-	                blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
-	                _context4.next = 3;
-	                return this.getService('BlockBuilder').getBlockInstance(blockType);
-
-	              case 3:
-	                blockInstance = _context4.sent;
-
-	                if (blockInstance) {
-	                  _context4.next = 6;
-	                  break;
-	                }
-
-	                return _context4.abrupt("return", null);
-
-	              case 6:
-	                // Set values
-	                blockInstance.type = blockType;
-	                blockInstance.page = this;
-	                blockInstance.rootElement = blockElement;
-	                blockInstance.id = blockElement.id;
-	                blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
-
-	                blockInstance.init();
-	                blockInstance.initEvents();
-	                return _context4.abrupt("return", blockInstance);
-
-	              case 14:
-	              case "end":
-	                return _context4.stop();
-	            }
-	          }
-	        }, _callee4, this);
-	      }));
-
-	      return function initSingleBlock(_x) {
-	        return _initSingleBlock.apply(this, arguments);
-	      };
-	    }()
-	    /**
-	     * Get a page block instance from its `id`.
-	     *
-	     * @param  {String} id
-	     * @return {AbstractBlock|null}
-	     */
-
-	  }, {
-	    key: "getBlockById",
-	    value: function getBlockById(id) {
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = this.blocks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var block = _step.value;
-
-	          if (block.id && block.id === id) {
-	            return block;
-	          }
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return != null) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-
-	      return null;
-	    }
-	    /**
-	     * Get a page block index from its `id`.
-	     *
-	     * @param  {String} id
-	     * @return {*|null}
-	     */
-
-	  }, {
-	    key: "getBlockIndexById",
-	    value: function getBlockIndexById(id) {
-	      var l = this.blocks.length;
-
-	      for (var i = 0; i < l; i++) {
-	        if (this.blocks[i].id && this.blocks[i].id === id) {
-	          return i;
-	        }
-	      }
-
-	      return null;
-	    }
-	    /**
-	     * Get the first page block instance from its `type`.
-	     *
-	     * @param  {String} type
-	     * @return {AbstractBlock|null}
-	     */
-
-	  }, {
-	    key: "getFirstBlockByType",
-	    value: function getFirstBlockByType(type) {
-	      var index = this.getFirstBlockIndexByType(type);
-
-	      if (this.blocks[index]) {
-	        return this.blocks[index];
-	      }
-
-	      return null;
-	    }
-	    /**
-	     * Get the first page block index from its `type`.
-	     *
-	     * @param  {String} type
-	     * @return {*|null}
-	     */
-
-	  }, {
-	    key: "getFirstBlockIndexByType",
-	    value: function getFirstBlockIndexByType(type) {
-	      var l = this.blocks.length;
-
-	      for (var i = 0; i < l; i++) {
-	        if (this.blocks[i].type && this.blocks[i].type === type) {
-	          return i;
-	        }
-	      }
-
-	      return null;
-	    }
-	    /**
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "onResize",
-	    value: function onResize() {}
-	    /**
-	     * Called before init lazyload images.
-	     */
-
-	  }, {
-	    key: "beforeLazyload",
-	    value: function beforeLazyload() {}
-	    /**
-	     * After image src switched.
-	     *
-	     * @abstract
-	     * @param {HTMLImageElement} element
-	     */
-
-	  }, {
-	    key: "onLazyImageSet",
-	    value: function onLazyImageSet(element) {
-	      console.debug('\t🖼 «' + element.id + '» set');
-	    }
-	    /**
-	     * After lazyload image loaded.
-	     *
-	     * @abstract
-	     * @param {HTMLImageElement} element
-	     */
-
-	  }, {
-	    key: "onLazyImageLoad",
-	    value: function onLazyImageLoad(element) {
-	      console.debug('\t🖼 «' + element.id + '» load');
-	    }
-	    /**
-	     * Before lazyload.
-	     *
-	     * @abstract
-	     */
-
-	  }, {
-	    key: "onLazyImageProcessed",
-	    value: function onLazyImageProcessed(index) {
-	      console.debug('\t🖼 Lazy load processed');
-	    }
-	  }]);
-
-	  return AbstractPage;
-	}(AbstractService);
-
-	/**
-	 * @namespace
-	 * @type {Object} defaults                      - Default config
-	 * @property {String} defaults.wrapperId        - Id of the main wrapper
-	 * @property {String} defaults.pageBlockClass
-	 * @property {String} defaults.pageClass        - Class name used to identify the containers
-	 * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
-	 * @property {String} defaults.noAjaxLinkClass
-	 * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
-	 * @const
-	 * @default
-	 */
-
-	var CONFIG = {
-	  defaults: {
-	    wrapperId: 'sb-wrapper',
-	    pageBlockClass: 'page-block',
-	    pageClass: 'page-content',
-	    objectTypeAttr: 'data-node-type',
-	    noAjaxLinkClass: 'no-ajax-link',
-	    noPrefetchClass: 'no-prefetch'
-	  }
-	};
-
-	var StartingBlocks =
-	/*#__PURE__*/
-	function () {
-	  function StartingBlocks() {
-	    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-	    classCallCheck(this, StartingBlocks);
-
-	    this.bottle = new bottle();
-	    this.bootables = [];
-	    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
-	    this.provider('Dom', Dom);
-	    this.provider('BlockBuilder', BlockBuilder);
-	    this.instanceFactory('AbstractPage', function (c) {
-	      return new AbstractPage(c);
-	    });
-	    this.bootableProvider('PageBuilder', PageBuilder);
-	  }
-
-	  createClass(StartingBlocks, [{
-	    key: "provider",
-	    value: function provider(id, ClassName) {
-	      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-	        args[_key - 2] = arguments[_key];
-	      }
-
-	      if (!id || !ClassName) {
-	        throw new Error('A parameter is missing');
-	      }
-
-	      this.bottle.provider(id, function () {
-	        this.$get = function (container) {
-	          return construct(ClassName, [container].concat(args));
-	        };
-	      });
-	    }
-	  }, {
-	    key: "factory",
-	    value: function factory(id, f) {
-	      this.bottle.factory(id, f);
-	    }
-	  }, {
-	    key: "instanceFactory",
-	    value: function instanceFactory(id, f) {
-	      this.bottle.instanceFactory(id, f);
-	    }
-	  }, {
-	    key: "bootableProvider",
-	    value: function bootableProvider(id, ClassName) {
-	      for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-	        args[_key2 - 2] = arguments[_key2];
-	      }
-
-	      this.provider.apply(this, [id, ClassName].concat(args));
-	      this.bootables.push(id);
-	    }
-	  }, {
-	    key: "boot",
-	    value: function boot() {
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = this.bootables[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var serviceName = _step.value;
-
-	          if (this.bottle.container.hasOwnProperty(serviceName)) {
-	            this.bottle.container[serviceName].boot();
-	          }
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return != null) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-	    }
-	  }]);
-
-	  return StartingBlocks;
-	}();
-
-	// 7.2.8 IsRegExp(argument)
-
-
-	var MATCH = _wks('match');
-	var _isRegexp = function (it) {
-	  var isRegExp;
-	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
-	};
-
-	// @@split logic
-	_fixReWks('split', 2, function (defined, SPLIT, $split) {
-	  var isRegExp = _isRegexp;
-	  var _split = $split;
-	  var $push = [].push;
-	  var $SPLIT = 'split';
-	  var LENGTH = 'length';
-	  var LAST_INDEX = 'lastIndex';
-	  if (
-	    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
-	    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
-	    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
-	    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
-	    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
-	    ''[$SPLIT](/.?/)[LENGTH]
-	  ) {
-	    var NPCG = /()??/.exec('')[1] === undefined; // nonparticipating capturing group
-	    // based on es5-shim implementation, need to rework it
-	    $split = function (separator, limit) {
-	      var string = String(this);
-	      if (separator === undefined && limit === 0) return [];
-	      // If `separator` is not a regex, use native split
-	      if (!isRegExp(separator)) return _split.call(string, separator, limit);
-	      var output = [];
-	      var flags = (separator.ignoreCase ? 'i' : '') +
-	                  (separator.multiline ? 'm' : '') +
-	                  (separator.unicode ? 'u' : '') +
-	                  (separator.sticky ? 'y' : '');
-	      var lastLastIndex = 0;
-	      var splitLimit = limit === undefined ? 4294967295 : limit >>> 0;
-	      // Make `global` and avoid `lastIndex` issues by working with a copy
-	      var separatorCopy = new RegExp(separator.source, flags + 'g');
-	      var separator2, match, lastIndex, lastLength, i;
-	      // Doesn't need flags gy, but they don't hurt
-	      if (!NPCG) separator2 = new RegExp('^' + separatorCopy.source + '$(?!\\s)', flags);
-	      while (match = separatorCopy.exec(string)) {
-	        // `separatorCopy.lastIndex` is not reliable cross-browser
-	        lastIndex = match.index + match[0][LENGTH];
-	        if (lastIndex > lastLastIndex) {
-	          output.push(string.slice(lastLastIndex, match.index));
-	          // Fix browsers whose `exec` methods don't consistently return `undefined` for NPCG
-	          // eslint-disable-next-line no-loop-func
-	          if (!NPCG && match[LENGTH] > 1) match[0].replace(separator2, function () {
-	            for (i = 1; i < arguments[LENGTH] - 2; i++) if (arguments[i] === undefined) match[i] = undefined;
-	          });
-	          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
-	          lastLength = match[0][LENGTH];
-	          lastLastIndex = lastIndex;
-	          if (output[LENGTH] >= splitLimit) break;
-	        }
-	        if (separatorCopy[LAST_INDEX] === match.index) separatorCopy[LAST_INDEX]++; // Avoid an infinite loop
-	      }
-	      if (lastLastIndex === string[LENGTH]) {
-	        if (lastLength || !separatorCopy.test('')) output.push('');
-	      } else output.push(string.slice(lastLastIndex));
-	      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
-	    };
-	  // Chakra, V8
-	  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
-	    $split = function (separator, limit) {
-	      return separator === undefined && limit === 0 ? [] : _split.call(this, separator, limit);
-	    };
-	  }
-	  // 21.1.3.17 String.prototype.split(separator, limit)
-	  return [function split(separator, limit) {
-	    var O = defined(this);
-	    var fn = separator == undefined ? undefined : separator[SPLIT];
-	    return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
-	  }, $split];
-	});
-
-	/**
 	 * Pjax.
 	 */
 
@@ -6493,9 +6153,12 @@ define(['exports'], function (exports) { 'use strict';
 	  function Pjax(container) {
 	    var _this;
 
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Pjax';
+
 	    classCallCheck(this, Pjax);
 
-	    _this = possibleConstructorReturn(this, getPrototypeOf(Pjax).call(this, container, 'Pjax', ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Pjax).call(this, container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
 	    /**
 	     * Indicate if there is an animation in progress.
 	     *
@@ -6592,12 +6255,7 @@ define(['exports'], function (exports) { 'use strict';
 	    value: function load(url) {
 	      var _this2 = this;
 
-	      var deferred = Utils.deferred(); // Show loader
-
-	      if (this.hasService('GraphicLoader')) {
-	        this.getService('GraphicLoader').show();
-	      } // Check cache
-
+	      var deferred = Utils.deferred(); // Check cache
 
 	      var request = null;
 
@@ -6849,12 +6507,7 @@ define(['exports'], function (exports) { 'use strict';
 	  }, {
 	    key: "onNewPageLoaded",
 	    value: function onNewPageLoaded(page) {
-	      var currentStatus = this.getService('History').currentStatus();
-
-	      if (this.hasService('GraphicLoader')) {
-	        this.getService('GraphicLoader').hide();
-	      } // Update body attributes (class, id, data-attributes
-
+	      var currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
 
 	      this.getService('Dom').updateBodyAttributes(page); // Update the page title
 
@@ -6916,9 +6569,12 @@ define(['exports'], function (exports) { 'use strict';
 	  function History(container) {
 	    var _this;
 
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'History';
+
 	    classCallCheck(this, History);
 
-	    _this = possibleConstructorReturn(this, getPrototypeOf(History).call(this, container, 'History'));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(History).call(this, container, serviceName));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
 	    /**
 	     * Keep track of the status in historic order.
 	     *
@@ -6999,9 +6655,15 @@ define(['exports'], function (exports) { 'use strict';
 	  inherits(Prefetch, _AbstractBootableServ);
 
 	  function Prefetch(container) {
+	    var _this;
+
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Prefetch';
+
 	    classCallCheck(this, Prefetch);
 
-	    return possibleConstructorReturn(this, getPrototypeOf(Prefetch).call(this, container, 'Prefetch', ['Pjax', 'Config']));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Prefetch).call(this, container, serviceName, ['Pjax', 'Config']));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
+	    return _this;
 	  }
 
 	  createClass(Prefetch, [{
@@ -7068,9 +6730,12 @@ define(['exports'], function (exports) { 'use strict';
 	  function CacheProvider(container) {
 	    var _this;
 
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'CacheProvider';
+
 	    classCallCheck(this, CacheProvider);
 
-	    _this = possibleConstructorReturn(this, getPrototypeOf(CacheProvider).call(this, container, 'CacheProvider'));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(CacheProvider).call(this, container, serviceName));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
 	    _this.data = {};
 	    return _this;
 	  }
@@ -7832,87 +7497,161 @@ define(['exports'], function (exports) { 'use strict';
 	  inherits(Lazyload, _AbstractBootableServ);
 
 	  function Lazyload(container) {
+	    var _this;
+
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'LazyLoad';
+
 	    classCallCheck(this, Lazyload);
 
-	    return possibleConstructorReturn(this, getPrototypeOf(Lazyload).call(this, container, 'LazyLoad'));
+	    _this = possibleConstructorReturn(this, getPrototypeOf(Lazyload).call(this, container, serviceName));
+	    debug("\u2615\uFE0F ".concat(serviceName, " awake"));
+	    return _this;
 	  }
 
 	  return Lazyload;
 	}(AbstractBootableService);
 
 	/**
-	 * Copyright © 2016, Ambroise Maupate
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is furnished
-	 * to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-	 * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-	 * IN THE SOFTWARE.
-	 *
-	 * @file GraphicLoader.js
-	 * @author Ambroise Maupate
-	 */
-
-	/**
-	 * Handle your application main loader animation.
+	 * Base class for creating block implementations.
 	 *
 	 * **Do not instanciate this class directly, create a sub-class**.
+	 *
+	 * @abstract
 	 */
-	var GraphicLoader =
-	/*#__PURE__*/
-	function () {
-	  /**
-	   * Interface for a graphic loader element.
-	   *
-	   * Any child implementations must implements
-	   * show and hide methods.
-	   *
-	   * @abstract
-	   */
-	  function GraphicLoader() {
-	    classCallCheck(this, GraphicLoader);
 
-	    console.debug('🌀 Construct loader');
+	var AbstractBlock =
+	/*#__PURE__*/
+	function (_AbstractService) {
+	  inherits(AbstractBlock, _AbstractService);
+
+	  /**
+	   * Abstract block constructor.
+	   *
+	   * It‘s better to extend this class by using `init` method instead
+	   * of extending `constructor`.
+	   *
+	   * @param {Object} container
+	   * @param {String} blockName
+	   * @constructor
+	   */
+	  function AbstractBlock(container) {
+	    var _this;
+
+	    var blockName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractBlock';
+
+	    classCallCheck(this, AbstractBlock);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractBlock).call(this, container, blockName));
+	    /**
+	     * Node Type block name type
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.type = null;
+	    /**
+	     * Current page instance
+	     *
+	     * @type {AbstractPage|null}
+	     */
+
+	    _this.page = null;
+	    /**
+	     * Container
+	     * Root container HTMLElement for current block.
+	     *
+	     * @type {HTMLElement|null}
+	     */
+
+	    _this.rootElement = null;
+	    /**
+	     * Block id
+	     *
+	     * @type {String|null}
+	     */
+
+	    _this.id = null;
+	    /**
+	     * Node name
+	     *
+	     * @type {String}
+	     */
+
+	    _this.name = null;
+	    return _this;
 	  }
 	  /**
-	   * Show loader.
+	   * Basic members initialization for children classes.
+	   * Do not search for page blocks here, use `onPageReady` method instead
 	   *
 	   * @abstract
 	   */
 
 
-	  createClass(GraphicLoader, [{
-	    key: "show",
-	    value: function show() {
-	      console.debug('🌀 Show loader');
+	  createClass(AbstractBlock, [{
+	    key: "init",
+	    value: function init() {
+	      debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
 	    }
 	    /**
-	     * Hide loader.
+	     * Bind load and resize events for this specific block.
+	     *
+	     * Do not forget to call `super.initEvents();` while extending this method.
 	     *
 	     * @abstract
 	     */
 
 	  }, {
-	    key: "hide",
-	    value: function hide() {
-	      console.debug('🌀 Hide loader');
+	    key: "initEvents",
+	    value: function initEvents() {}
+	    /**
+	     * Destroy current block.
+	     *
+	     * Do not forget to call `super.destroy();` while extending this method.
+	     */
+
+	  }, {
+	    key: "destroy",
+	    value: function destroy() {
+	      debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+	      this.destroyEvents();
 	    }
+	    /**
+	     * Unbind event block events.
+	     *
+	     * Make sure you’ve used binded methods to be able to
+	     * `off` them correctly.
+	     *
+	     * Do not forget to call `super.destroyEvents();` while extending this method.
+	     *
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "destroyEvents",
+	    value: function destroyEvents() {}
+	    /**
+	     * Called on window resize
+	     *
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "onResize",
+	    value: function onResize() {}
+	    /**
+	     * Called once all page blocks have been created.
+	     *
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "onPageReady",
+	    value: function onPageReady() {}
 	  }]);
 
-	  return GraphicLoader;
-	}();
+	  return AbstractBlock;
+	}(AbstractService);
 
 	var AbstractInViewBlock =
 	/*#__PURE__*/
@@ -7948,6 +7687,13 @@ define(['exports'], function (exports) { 'use strict';
 	      this.observer = new window.IntersectionObserver(this.onIntersectionCallback, this.observerOptions); // Add block rootElement in the observer
 
 	      this.observer.observe(this.rootElement);
+	    }
+	  }, {
+	    key: "destroyEvents",
+	    value: function destroyEvents() {
+	      get(getPrototypeOf(AbstractInViewBlock.prototype), "destroyEvents", this).call(this);
+
+	      this.unobserve();
 	    }
 	  }, {
 	    key: "onIntersectionCallback",
@@ -7996,6 +7742,194 @@ define(['exports'], function (exports) { 'use strict';
 
 	  return AbstractInViewBlock;
 	}(AbstractBlock);
+
+	/**
+	 * Base class for creating transition.
+	 *
+	 * @abstract
+	 */
+
+	var AbstractTransition =
+	/*#__PURE__*/
+	function () {
+	  /**
+	   * Constructor.
+	   * Do not override this method.
+	   *
+	   * @constructor
+	   */
+	  function AbstractTransition() {
+	    classCallCheck(this, AbstractTransition);
+
+	    /**
+	     * @type {AbstractPage|null} old Page instance
+	     */
+	    this.oldPage = null;
+	    /**
+	     * @type {AbstractPage|null}
+	     */
+
+	    this.newPage = null;
+	    /**
+	     * @type {Promise|null}
+	     */
+
+	    this.newPageLoading = null;
+	  }
+	  /**
+	   * Initialize transition.
+	   * Do not override this method.
+	   *
+	   * @param {AbstractPage} oldPage
+	   * @param {Promise} newPagePromise
+	   * @returns {Promise}
+	   */
+
+
+	  createClass(AbstractTransition, [{
+	    key: "init",
+	    value: function init(oldPage, newPagePromise) {
+	      var _this = this;
+
+	      this.oldPage = oldPage;
+	      this._newPagePromise = newPagePromise;
+	      this.deferred = Utils.deferred();
+	      this.newPageReady = Utils.deferred();
+	      this.newPageLoading = this.newPageReady.promise;
+	      this.start();
+
+	      this._newPagePromise.then(function (newPage) {
+	        _this.newPage = newPage;
+
+	        _this.newPageReady.resolve();
+	      });
+
+	      return this.deferred.promise;
+	    }
+	    /**
+	     * Call this function when the Transition is finished.
+	     */
+
+	  }, {
+	    key: "done",
+	    value: function done() {
+	      this.oldPage.destroy();
+	      this.newPage.rootElement.style.visibility = 'visible';
+	      this.deferred.resolve();
+	    }
+	    /**
+	     * Entry point to create a custom Transition.
+	     * @abstract
+	     */
+
+	  }, {
+	    key: "start",
+	    value: function start() {}
+	  }]);
+
+	  return AbstractTransition;
+	}();
+
+	var AbstractSplashscreen =
+	/*#__PURE__*/
+	function (_AbstractBootableServ) {
+	  inherits(AbstractSplashscreen, _AbstractBootableServ);
+
+	  function AbstractSplashscreen(container) {
+	    var _this;
+
+	    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AbstractSplashscreen';
+
+	    classCallCheck(this, AbstractSplashscreen);
+
+	    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractSplashscreen).call(this, container, serviceName));
+	    _this._splashscreenHidden = false;
+	    return _this;
+	  }
+
+	  createClass(AbstractSplashscreen, [{
+	    key: "hide",
+	    value: function hide() {
+	      return Promise.resolve();
+	    }
+	  }, {
+	    key: "splashscreenHidden",
+	    set: function set(value) {
+	      this._splashscreenHidden = value;
+	    },
+	    get: function get() {
+	      return this._splashscreenHidden;
+	    }
+	  }]);
+
+	  return AbstractSplashscreen;
+	}(AbstractBootableService);
+
+	// true  -> String#at
+	// false -> String#codePointAt
+	var _stringAt = function (TO_STRING) {
+	  return function (that, pos) {
+	    var s = String(_defined(that));
+	    var i = _toInteger(pos);
+	    var l = s.length;
+	    var a, b;
+	    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+	    a = s.charCodeAt(i);
+	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+	      ? TO_STRING ? s.charAt(i) : a
+	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+	  };
+	};
+
+	var $at = _stringAt(true);
+
+	// 21.1.3.27 String.prototype[@@iterator]()
+	_iterDefine(String, 'String', function (iterated) {
+	  this._t = String(iterated); // target
+	  this._i = 0;                // next index
+	// 21.1.5.2.1 %StringIteratorPrototype%.next()
+	}, function () {
+	  var O = this._t;
+	  var index = this._i;
+	  var point;
+	  if (index >= O.length) return { value: undefined, done: true };
+	  point = $at(O, index);
+	  this._i += point.length;
+	  return { value: point, done: false };
+	});
+
+	/**
+	 * Default Transition. Show / Hide content.
+	 *
+	 * @extends {AbstractTransition}
+	 */
+
+	var DefaultTransition =
+	/*#__PURE__*/
+	function (_AbstractTransition) {
+	  inherits(DefaultTransition, _AbstractTransition);
+
+	  function DefaultTransition() {
+	    classCallCheck(this, DefaultTransition);
+
+	    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
+	  }
+
+	  createClass(DefaultTransition, [{
+	    key: "start",
+	    value: function start() {
+	      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+	    }
+	  }, {
+	    key: "finish",
+	    value: function finish() {
+	      document.body.scrollTop = 0;
+	      this.done();
+	    }
+	  }]);
+
+	  return DefaultTransition;
+	}(AbstractTransition);
 
 	/**
 	 * Copyright © 2016, Ambroise Maupate
@@ -8501,6 +8435,15 @@ define(['exports'], function (exports) { 'use strict';
 	  return BootstrapMedia;
 	}();
 
+	/*!
+	 * @name Starting Blocks
+	 * @license MIT
+	 * @copyright Copyright © 2018, Rezo Zero
+	 * @version 5.0.0
+	 * @author Adrien Scholaert <adrien@rezo-zero.com>
+	 * @author Ambroise Maupate <ambroise@rezo-zero.com>
+	 */
+
 	exports.EventTypes = EventTypes;
 	exports.default = StartingBlocks;
 	exports.PageBuilder = PageBuilder;
@@ -8510,13 +8453,13 @@ define(['exports'], function (exports) { 'use strict';
 	exports.Prefetch = Prefetch;
 	exports.CacheProvider = CacheProvider;
 	exports.Lazyload = Lazyload;
-	exports.GraphicLoader = GraphicLoader;
 	exports.AbstractPage = AbstractPage;
 	exports.AbstractBlock = AbstractBlock;
 	exports.AbstractInViewBlock = AbstractInViewBlock;
 	exports.AbstractTransition = AbstractTransition;
 	exports.AbstractBlockBuilder = AbstractBlockBuilder;
 	exports.AbstractService = AbstractService;
+	exports.AbstractSplashscreen = AbstractSplashscreen;
 	exports.DefaultTransition = DefaultTransition;
 	exports.Utils = Utils;
 	exports.Scroll = Scroll;

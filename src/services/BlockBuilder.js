@@ -6,10 +6,13 @@
  */
 
 import AbstractBlockBuilder from '../abstracts/AbstractBlockBuilder'
+import { debug } from '../utils/Logger'
 
 export default class BlockBuilder extends AbstractBlockBuilder {
-    constructor (container) {
-        super(container, 'BlockBuilder')
+    constructor (container, serviceName = 'BlockBuilder') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
     }
 
     /**

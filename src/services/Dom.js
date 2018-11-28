@@ -27,6 +27,7 @@
  */
 
 import AbstractService from '../abstracts/AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
  * Class that is going to deal with DOM parsing/manipulation.
@@ -35,10 +36,13 @@ export default class Dom extends AbstractService {
     /**
      * Constructor.
      *
-     * @param {object} container
+     * @param {Object} container
+     * @param {String} serviceName
      */
-    constructor (container) {
-        super(container, 'Dom')
+    constructor (container, serviceName = 'Dom') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
 
         /**
          * Full HTML String of the current page.

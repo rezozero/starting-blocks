@@ -5,9 +5,12 @@
 
 import AbstractBootableService from '../abstracts/AbstractBootableService'
 import 'lazysizes'
+import { debug } from '../utils/Logger'
 
 export default class Lazyload extends AbstractBootableService {
-    constructor (container) {
-        super(container, 'LazyLoad')
+    constructor (container, serviceName = 'LazyLoad') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
     }
 }

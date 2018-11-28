@@ -29,7 +29,8 @@ const CONFIG = {
         pageClass: 'page-content',
         objectTypeAttr: 'data-node-type',
         noAjaxLinkClass: 'no-ajax-link',
-        noPrefetchClass: 'no-prefetch'
+        noPrefetchClass: 'no-prefetch',
+        debug: 0
     }
 }
 
@@ -42,6 +43,8 @@ export default class StartingBlocks {
             ...CONFIG.defaults,
             ...config
         })
+
+        window.startingBlocksDebugLevel = this.bottle.container.Config.debug
 
         this.provider('Dom', Dom)
         this.provider('BlockBuilder', BlockBuilder)

@@ -18,7 +18,7 @@ export default class Splashscreen extends AbstractSplashscreen {
         this.bgEl = this.rootElement.querySelector('.splashscreen-bg')
 
         // Values
-        this.minimalDuration = 3000 // ms
+        this.minimalDuration = 2000 // ms
         this.minimalDurationPromise = new Promise(resolve => {
             window.setTimeout(() => {
                 resolve()
@@ -36,11 +36,11 @@ export default class Splashscreen extends AbstractSplashscreen {
         return new Promise(resolve => {
             Dispatcher.commit(EventTypes.START_SPLASHSCREEN_HIDE)
 
-            TweenMax.to(this.innerEl, 0.75, {
+            TweenMax.to(this.innerEl, 0.5, {
                 alpha: 0
             })
 
-            TweenMax.to(this.bgEl, 1.2, {
+            TweenMax.to(this.rootElement, 1.2, {
                 yPercent: 100,
                 ease: Power3.easeInOut,
                 onComplete: () => {

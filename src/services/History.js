@@ -24,6 +24,7 @@
  */
 
 import AbstractService from '../abstracts/AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
  * HistoryManager helps to keep track of the navigation.
@@ -31,8 +32,10 @@ import AbstractService from '../abstracts/AbstractService'
  * @type {Object}
  */
 export default class History extends AbstractService {
-    constructor (container) {
-        super(container, 'History')
+    constructor (container, serviceName = 'History') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
 
         /**
          * Keep track of the status in historic order.

@@ -32,6 +32,7 @@ import {
     AFTER_PAGE_HIDE
 } from '../types/EventTypes'
 import AbstractService from './AbstractService'
+import { debug, warn } from '../utils/Logger'
 
 /**
  * Base class for creating page implementations.
@@ -117,7 +118,7 @@ export default class AbstractPage extends AbstractService {
      */
     async init () {
         // Debug
-        console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey')
+        debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey')
 
         /**
          * HTMLElement blocks collection.
@@ -147,7 +148,7 @@ export default class AbstractPage extends AbstractService {
      * Destroy current page and all its blocks.
      */
     destroy () {
-        console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+        debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
         this.rootElement.parentNode.removeChild(this.rootElement)
         this.destroyEvents()
 
@@ -198,7 +199,7 @@ export default class AbstractPage extends AbstractService {
      * @param {Function} onShow
      */
     show (onShow) {
-        console.debug('▶️ #' + this.id)
+        debug('▶️ #' + this.id)
         this.rootElement.style.opacity = '1'
         if (typeof onShow !== 'undefined') onShow()
         this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning')
@@ -210,7 +211,7 @@ export default class AbstractPage extends AbstractService {
      */
     hide (onHidden) {
         Dispatcher.commit(BEFORE_PAGE_HIDE, this)
-        console.debug('◀️ #' + this.id)
+        debug('◀️ #' + this.id)
         this.rootElement.style.opacity = '0'
         if (typeof onHidden !== 'undefined') onHidden()
         Dispatcher.commit(AFTER_PAGE_HIDE, this)
@@ -248,7 +249,7 @@ export default class AbstractPage extends AbstractService {
      * Append new blocks which were not present at init.
      */
     async updateBlocks () {
-        console.debug('\t📯 Page DOM changed…')
+        debug('\t📯 Page DOM changed…')
 
         // Create new blocks
         this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)
@@ -267,7 +268,7 @@ export default class AbstractPage extends AbstractService {
                         block.onPageReady()
                     }
                 } catch (e) {
-                    console.info(e.message)
+                    warn(e.message)
                 }
             }
         }

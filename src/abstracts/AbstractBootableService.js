@@ -8,7 +8,5 @@
 import AbstractService from './AbstractService'
 
 export default class AbstractBootableService extends AbstractService {
-    boot () {
-        console.debug(`${this.serviceName} boot`)
-    }
+    boot () {}
 }

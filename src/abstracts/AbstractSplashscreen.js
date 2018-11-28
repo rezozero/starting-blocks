@@ -11,7 +11,15 @@ export default class AbstractSplashscreen extends AbstractBootableService {
     constructor (container, serviceName = 'AbstractSplashscreen') {
         super(container, serviceName)
 
-        this.splashscreenHidden = false
+        this._splashscreenHidden = false
+    }
+
+    set splashscreenHidden (value) {
+        this._splashscreenHidden = value
+    }
+
+    get splashscreenHidden () {
+        return this._splashscreenHidden
     }
 
     hide () {

@@ -10,14 +10,29 @@ import { TweenMax, Power4 } from 'gsap'
 
 export default class InViewBlock extends AbstractInViewBlock {
     constructor (container) {
-        super(container)
+        super(container, 'InViewBlock')
 
         // Prepare values
         this.imgs = []
+        this.direction = 'right'
+        this.xPercent = 30
+
+        this.observerOptions = {
+            ...this.observerOptions,
+            threshold: 0.1
+        }
     }
 
     init () {
         super.init()
+
+        if (this.rootElement.hasAttribute('data-direction')) {
+            this.direction = this.rootElement.getAttribute('data-direction')
+        }
+
+        if (this.direction === 'left') {
+            this.xPercent = -this.xPercent
+        }
 
         // Find elements
         this.imgs = [...this.rootElement.querySelectorAll('img')]
@@ -36,6 +51,7 @@ export default class InViewBlock extends AbstractInViewBlock {
     onScreen (entry) {
         TweenMax.to(this.rootElement, 1.5, {
             xPercent: 0,
+            alpha: 1,
             delay: 0.15,
             ease: Power4.easeOut
         })
@@ -43,7 +59,8 @@ export default class InViewBlock extends AbstractInViewBlock {
 
     offScreen () {
         TweenMax.set(this.rootElement, {
-            xPercent: 30
+            xPercent: this.xPercent,
+            alpha: 0
         })
     }
 }

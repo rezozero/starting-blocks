@@ -1,3 +1,12 @@
+/*!
+ * @name Starting Blocks
+ * @license MIT
+ * @copyright Copyright © 2018, Rezo Zero
+ * @version 5.0.0
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ * @author Ambroise Maupate <ambroise@rezo-zero.com>
+ */
+
 import * as EventTypes from './types/EventTypes'
 import StartingBlocks from './StartingBlocks'
 
@@ -8,7 +17,6 @@ export { default as History } from './services/History'
 export { default as Prefetch } from './services/Prefetch'
 export { default as CacheProvider } from './services/CacheProvider'
 export { default as Lazyload } from './services/Lazyload'
-export { default as GraphicLoader } from './utils/GraphicLoader'
 export { default as AbstractPage } from './abstracts/AbstractPage'
 export { default as AbstractBlock } from './abstracts/AbstractBlock'
 export { default as AbstractInViewBlock } from './abstracts/AbstractInViewBlock'

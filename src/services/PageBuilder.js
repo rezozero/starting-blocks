@@ -11,13 +11,16 @@ import {
     AFTER_SPLASHSCREEN_HIDE
 } from '../types/EventTypes'
 import AbstractBootableService from '../abstracts/AbstractBootableService'
+import { debug } from '../utils/Logger'
 
 /**
  * PageBuilder.
  */
 export default class PageBuilder extends AbstractBootableService {
-    constructor (container) {
-        super(container, 'PageBuilder', ['Dom'])
+    constructor (container, serviceName = 'PageBuilder') {
+        super(container, serviceName, ['Dom'])
+
+        debug(`☕️ ${serviceName} awake`)
 
         if (!window.location.origin) {
             window.location.origin = window.location.protocol + '//' + window.location.host

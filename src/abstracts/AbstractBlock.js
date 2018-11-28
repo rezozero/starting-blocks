@@ -25,6 +25,7 @@
  */
 
 import AbstractService from './AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
  * Base class for creating block implementations.
@@ -91,7 +92,7 @@ export default class AbstractBlock extends AbstractService {
      * @abstract
      */
     init () {
-        console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+        debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
     }
 
     /**
@@ -109,7 +110,7 @@ export default class AbstractBlock extends AbstractService {
      * Do not forget to call `super.destroy();` while extending this method.
      */
     destroy () {
-        console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+        debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
         this.destroyEvents()
     }
 

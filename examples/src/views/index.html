@@ -184,7 +184,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="inview-00"
+                         data-direction="left"
+                         data-node-type="InViewBlock"
+                         class="card my-3 border-light rounded box-shadow page-block">
                         <img id="first-image"
                              width="700"
                              class="card-img-top img-fluid"
@@ -196,15 +199,21 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
-                        <img class="card-img-top lazyload img-fluid"
-                             id="snd-image1"
-                             width="700"
-                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
-                             data-src="/img/test2.jpg"
-                             alt="Lazyloaded img">
+                    <div id="inview-01"
+                         data-direction="right"
+                         data-node-type="InViewBlock"
+                         class="card my-3 border-light rounded box-shadow page-block">
+                        <picture>
+                            <source data-srcset="/img/test2.webp" type="image/webp" />
+                            <img class="card-img-top img-fluid lazyload"
+                                 id="snd-image1"
+                                 width="700"
+                                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
+                                 data-src="/img/test2.jpg"
+                                 alt="Lazyloaded img">
+                        </picture>
                         <div class="card-body">
-                            <p class="card-text">Lazyloaded image.</p>
+                            <p class="card-text">Lazyloaded picture with webp (for chrome).</p>
                         </div>
                     </div>
                 </div>
@@ -341,7 +350,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="in-view-block-1"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="left"
+                         data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="3-image"
                              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
@@ -354,7 +366,10 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="in-view-block-2"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="right"
+                         data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="4-image"
                              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
@@ -365,7 +380,9 @@
                             <p class="card-text">Lazyloaded image.</p>
                         </div>
                     </div>
-                    <div id="in-view-block-1" class="card my-3 border-light rounded box-shadow page-block"
+                    <div id="in-view-block-3"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="right"
                          data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="5-image"

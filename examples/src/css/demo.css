@@ -49,6 +49,12 @@ body {
     justify-content: center;
 }
 
+.splashscreen-inner {
+    position: relative;
+    z-index: 11;
+    display: block;
+}
+
 .splashscreen-bg {
     position: absolute;
     z-index: 10;

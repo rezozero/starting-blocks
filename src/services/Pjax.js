@@ -34,13 +34,16 @@ import {
     BEFORE_PAGE_LOAD
 } from '../types/EventTypes'
 import AbstractBootableService from '../abstracts/AbstractBootableService'
+import { debug } from '../utils/Logger'
 
 /**
  * Pjax.
  */
 export default class Pjax extends AbstractBootableService {
-    constructor (container) {
-        super(container, 'Pjax', ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory'])
+    constructor (container, serviceName = 'Pjax') {
+        super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory'])
+
+        debug(`☕️ ${serviceName} awake`)
 
         /**
          * Indicate if there is an animation in progress.
@@ -125,11 +128,6 @@ export default class Pjax extends AbstractBootableService {
      */
     load (url) {
         const deferred = Utils.deferred()
-
-        // Show loader
-        if (this.hasService('GraphicLoader')) {
-            this.getService('GraphicLoader').show()
-        }
 
         // Check cache
         let request = null
@@ -368,10 +366,6 @@ export default class Pjax extends AbstractBootableService {
      */
     onNewPageLoaded (page) {
         const currentStatus = this.getService('History').currentStatus()
-
-        if (this.hasService('GraphicLoader')) {
-            this.getService('GraphicLoader').hide()
-        }
 
         // Update body attributes (class, id, data-attributes
         this.getService('Dom').updateBodyAttributes(page)

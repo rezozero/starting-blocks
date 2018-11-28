@@ -74,6 +74,7 @@ export default class HomePage extends AbstractPage {
     show () {
         TweenMax.staggerTo(this.elements, 1.2, {
             alpha: 1,
+            delay: 0.2,
             ease: Power3.easeOut,
             y: 0
         }, 0.2)

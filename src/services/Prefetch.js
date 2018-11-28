@@ -25,6 +25,7 @@
 
 import Utils from '../utils/Utils'
 import AbstractBootableService from '../abstracts/AbstractBootableService'
+import { debug } from '../utils/Logger'
 
 /**
  * Prefetch.
@@ -32,8 +33,10 @@ import AbstractBootableService from '../abstracts/AbstractBootableService'
  * @type {Object}
  */
 export default class Prefetch extends AbstractBootableService {
-    constructor (container) {
-        super(container, 'Prefetch', ['Pjax', 'Config'])
+    constructor (container, serviceName = 'Prefetch') {
+        super(container, serviceName, ['Pjax', 'Config'])
+
+        debug(`☕️ ${serviceName} awake`)
     }
 
     boot () {

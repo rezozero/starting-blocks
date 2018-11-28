@@ -102,6 +102,27 @@ const TRANSITION_START = 'SB_TRANSITION_START';
  */
 
 const TRANSITION_COMPLETE = 'SB_TRANSITION_COMPLETE';
+/**
+ * Before splashscreen begin to hide.
+ *
+ * @type {String}
+ */
+
+const BEFORE_SPLASHSCREEN_HIDE = 'SB_BEFORE_SPLASHSCREEN_HIDE';
+/**
+ * When splashscreen start to hide.
+ *
+ * @type {String}
+ */
+
+const START_SPLASHSCREEN_HIDE = 'SB_START_SPLASHSCREEN_HIDE';
+/**
+ * After splashscreen hiding animation.
+ *
+ * @type {String}
+ */
+
+const AFTER_SPLASHSCREEN_HIDE = 'SB_AFTER_SPLASHSCREEN_HIDE';
 
 var EventTypes = /*#__PURE__*/Object.freeze({
   BEFORE_PAGE_LOAD: BEFORE_PAGE_LOAD,
@@ -114,7 +135,10 @@ var EventTypes = /*#__PURE__*/Object.freeze({
   BEFORE_PAGE_HIDE: BEFORE_PAGE_HIDE,
   AFTER_PAGE_HIDE: AFTER_PAGE_HIDE,
   TRANSITION_START: TRANSITION_START,
-  TRANSITION_COMPLETE: TRANSITION_COMPLETE
+  TRANSITION_COMPLETE: TRANSITION_COMPLETE,
+  BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
+  START_SPLASHSCREEN_HIDE: START_SPLASHSCREEN_HIDE,
+  AFTER_SPLASHSCREEN_HIDE: AFTER_SPLASHSCREEN_HIDE
 });
 
 function _defineProperty(obj, key, value) {
@@ -857,6 +881,23 @@ var bottle = createCommonjsModule(function (module, exports) {
 }.call(commonjsGlobal));
 });
 
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file debug.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+function debug(message, color = '') {
+  if (window.startingBlocksDebugLevel === 1) {
+    console.debug(`%c[SB] %c${message}`, 'color:#749f73', 'color:debug', color);
+  }
+}
+function warn(...args) {
+  if (window.startingBlocksDebugLevel === 1) {
+    console.warn('[SB]', ...args);
+  }
+}
+
 /**
  * Copyright © 2016, Ambroise Maupate
  *
@@ -881,16 +922,16 @@ var bottle = createCommonjsModule(function (module, exports) {
  * @file Events.js
  * @author Ambroise Maupate
  */
-
 /**
  * Event dispatcher.
  */
+
 class Dispatcher {
   static commit(eventType, detail) {
     const event = new window.CustomEvent(eventType, {
       detail
     });
-    console.debug('🚩 Dispatched ' + eventType);
+    debug('🚩 Dispatched ' + eventType);
     window.dispatchEvent(event);
   }
 
@@ -934,7 +975,6 @@ class AbstractService {
   constructor(container = {}, serviceName = 'AbstractService', dependencies = ['Config']) {
     this.container = container;
     this.serviceName = serviceName;
-    console.debug(`${serviceName} awake`);
     this.checkDependencies(dependencies);
   }
 
@@ -969,9 +1009,7 @@ class AbstractService {
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 class AbstractBootableService extends AbstractService {
-  boot() {
-    console.debug(`${this.serviceName} boot`);
-  }
+  boot() {}
 
 }
 
@@ -985,8 +1023,9 @@ class AbstractBootableService extends AbstractService {
  */
 
 class PageBuilder extends AbstractBootableService {
-  constructor(container) {
-    super(container, 'PageBuilder', ['Dom']);
+  constructor(container, serviceName = 'PageBuilder') {
+    super(container, serviceName, ['Dom']);
+    debug(`☕️ ${serviceName} awake`);
 
     if (!window.location.origin) {
       window.location.origin = window.location.protocol + '//' + window.location.host;
@@ -1016,7 +1055,7 @@ class PageBuilder extends AbstractBootableService {
    */
 
 
-  buildPage(rootElement, context = 'ajax') {
+  async buildPage(rootElement, context = 'ajax') {
     let nodeTypeName = this.getService('Dom').getNodeType(rootElement);
 
     if (this.hasService(nodeTypeName)) {
@@ -1034,9 +1073,18 @@ class PageBuilder extends AbstractBootableService {
     this.page.name = rootElement.hasAttribute('data-node-name') ? rootElement.getAttribute('data-node-name') : '';
     this.page.metaTitle = rootElement.hasAttribute('data-meta-title') ? rootElement.getAttribute('data-meta-title') : '';
     this.page.isHome = rootElement.getAttribute('data-is-home') === '1';
-    this.page.init(); // Dispatch an event to inform that the new page is ready
+    await this.page.init(); // Dispatch an event to inform that the new page is ready
 
     Dispatcher.commit(AFTER_PAGE_BOOT, this.page);
+
+    if (this.hasService('Splashscreen') && !this.getService('Splashscreen').splashscreenHidden) {
+      Dispatcher.commit(BEFORE_SPLASHSCREEN_HIDE, this.page);
+      this.getService('Splashscreen').hide().then(() => {
+        Dispatcher.commit(AFTER_SPLASHSCREEN_HIDE, this.page);
+        this.getService('Splashscreen').splashscreenHidden = true;
+      });
+    }
+
     return this.page;
   }
 
@@ -1072,8 +1120,9 @@ class AbstractBlockBuilder extends AbstractService {
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 class BlockBuilder extends AbstractBlockBuilder {
-  constructor(container) {
-    super(container, 'BlockBuilder');
+  constructor(container, serviceName = 'BlockBuilder') {
+    super(container, serviceName);
+    debug(`☕️ ${serviceName} awake`);
   }
   /**
    * Returns an `AbstractBlock` child class instance
@@ -1132,10 +1181,12 @@ class Dom extends AbstractService {
   /**
    * Constructor.
    *
-   * @param {object} container
+   * @param {Object} container
+   * @param {String} serviceName
    */
-  constructor(container) {
-    super(container, 'Dom');
+  constructor(container, serviceName = 'Dom') {
+    super(container, serviceName);
+    debug(`☕️ ${serviceName} awake`);
     /**
      * Full HTML String of the current page.
      * By default is the innerHTML of the initial loaded page.
@@ -1276,11 +1327,494 @@ class Dom extends AbstractService {
 
 }
 
-// import work from 'webworkify-webpack'
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered.
+ *
+ * The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @see   http://davidwalsh.name/javascript-debounce-function
+ * @param {Function} func     [function to debounce]
+ * @param {Number} wait       [time to wait]
+ * @param {Boolean} immediate []
+ */
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function () {
+    let context = this;
+    let args = arguments;
 
+    let later = function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file AbstractPage.js
+ * @author Ambroise Maupate
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating page implementations.
+ *
+ * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
+ */
+
+class AbstractPage extends AbstractService {
+  /**
+   * Base constructor for Pages.
+   * @constructor
+   */
+  constructor(container) {
+    super(container, 'AbstractPage');
+    /**
+     * Container element
+     *
+     * @type {HTMLElement}
+     */
+
+    this.rootElement = null;
+    /**
+     * Page id
+     *
+     * @type {String|null}
+     */
+
+    this.id = null;
+    /**
+     * Page context (static or ajax)
+     *
+     * @type {String|null}
+     */
+
+    this.context = null;
+    /**
+     * Page type
+     *
+     * @type {String|null}
+     */
+
+    this.type = null;
+    /**
+     * Is home ?
+     *
+     * @type {boolean}
+     */
+
+    this.isHome = null;
+    /**
+     * AbstractBlock collection.
+     *
+     * @type {Array<AbstractBlock>}
+     */
+
+    this.blocks = [];
+    /**
+     * Node name
+     *
+     * @type {String|null}
+     */
+
+    this.name = null;
+    /**
+     * Meta title
+     * @type {String|null}
+     */
+
+    this.metaTitle = null; // Bind methods
+
+    this.onResize = this.onResize.bind(this);
+    this.onResizeDebounce = debounce(this.onResize, 50, false);
+    this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false);
+  }
+  /**
+   * Initialize page.
+   *
+   * You should always extends this method in your child implementations instead
+   * of extending page constructor.
+   */
+
+
+  async init() {
+    // Debug
+    debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
+    /**
+     * HTMLElement blocks collection.
+     *
+     * @type {Array}
+     */
+
+    this.blockElements = [...this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)];
+    /**
+     * @type {Number}
+     */
+
+    this.blockLength = this.blockElements.length;
+
+    if (this.blockLength) {
+      await this.initBlocks();
+    } // Context
+
+
+    if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
+      this.initAjax();
+    }
+
+    this.initEvents();
+  }
+  /**
+   * Destroy current page and all its blocks.
+   */
+
+
+  destroy() {
+    debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+    this.rootElement.parentNode.removeChild(this.rootElement);
+    this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
+
+    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
+      document.body.classList.remove(this.name);
+    } // Do not remove type class on body if destroyed page is the same as current one.
+
+
+    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
+      document.body.classList.remove(this.type);
+    } // Blocks
+
+
+    if (this.blocks !== null) {
+      for (let blockIndex in this.blocks) {
+        if (this.blocks.hasOwnProperty(blockIndex)) {
+          this.blocks[blockIndex].destroy();
+        }
+      }
+    }
+  }
+  /**
+   * Initialize basic events.
+   */
+
+
+  initEvents() {
+    window.addEventListener('resize', this.onResizeDebounce);
+    this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
+    this.domObserver.observe(this.rootElement, {
+      childList: true,
+      attributes: false,
+      characterData: false,
+      subtree: true
+    });
+  }
+  /**
+   * Destroy events
+   */
+
+
+  destroyEvents() {
+    window.removeEventListener('resize', this.onResizeDebounce);
+    this.domObserver.disconnect();
+  }
+  /**
+   * @param {Function} onShow
+   */
+
+
+  show(onShow) {
+    debug('▶️ #' + this.id);
+    this.rootElement.style.opacity = '1';
+    if (typeof onShow !== 'undefined') onShow();
+    this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
+    Dispatcher.commit(AFTER_PAGE_SHOW, this);
+  }
+  /**
+   * @param {Function} onHidden
+   */
+
+
+  hide(onHidden) {
+    Dispatcher.commit(BEFORE_PAGE_HIDE, this);
+    debug('◀️ #' + this.id);
+    this.rootElement.style.opacity = '0';
+    if (typeof onHidden !== 'undefined') onHidden();
+    Dispatcher.commit(AFTER_PAGE_HIDE, this);
+  }
+
+  initAjax() {
+    this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
+  }
+  /**
+   * Initialize page blocks on page.
+   */
+
+
+  async initBlocks() {
+    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+      /**
+       * New Block.
+       *
+       * @type {AbstractBlock}
+       */
+      let block = await this.initSingleBlock(this.blockElements[blockIndex]); // Prevent undefined blocks to be appended to block collection.
+
+      if (block) {
+        this.blocks.push(block);
+      }
+    } // Notify all blocks that page init is over.
+
+
+    for (let i = this.blocks.length - 1; i >= 0; i--) {
+      if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
+    }
+  }
+  /**
+   * Append new blocks which were not present at init.
+   */
+
+
+  async updateBlocks() {
+    debug('\t📯 Page DOM changed…'); // Create new blocks
+
+    this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`);
+    this.blockLength = this.blockElements.length;
+
+    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
+      let blockElement = this.blockElements[blockIndex];
+      const existingBlock = this.getBlockById(blockElement.id);
+
+      if (existingBlock === null) {
+        try {
+          let block = await this.initSingleBlock(this.blockElements[blockIndex]);
+
+          if (block) {
+            this.blocks.push(block);
+            block.onPageReady();
+          }
+        } catch (e) {
+          warn(e.message);
+        }
+      }
+    }
+  }
+  /**
+   * @param {HTMLElement} blockElement
+   * @return {AbstractBlock}
+   */
+
+
+  async initSingleBlock(blockElement) {
+    let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
+    let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType);
+
+    if (!blockInstance) {
+      return null;
+    } // Set values
+
+
+    blockInstance.type = blockType;
+    blockInstance.page = this;
+    blockInstance.rootElement = blockElement;
+    blockInstance.id = blockElement.id;
+    blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
+
+    blockInstance.init();
+    blockInstance.initEvents();
+    return blockInstance;
+  }
+  /**
+   * Get a page block instance from its `id`.
+   *
+   * @param  {String} id
+   * @return {AbstractBlock|null}
+   */
+
+
+  getBlockById(id) {
+    for (const block of this.blocks) {
+      if (block.id && block.id === id) {
+        return block;
+      }
+    }
+
+    return null;
+  }
+  /**
+   * Get a page block index from its `id`.
+   *
+   * @param  {String} id
+   * @return {*|null}
+   */
+
+
+  getBlockIndexById(id) {
+    const l = this.blocks.length;
+
+    for (let i = 0; i < l; i++) {
+      if (this.blocks[i].id && this.blocks[i].id === id) {
+        return i;
+      }
+    }
+
+    return null;
+  }
+  /**
+   * Get the first page block instance from its `type`.
+   *
+   * @param  {String} type
+   * @return {AbstractBlock|null}
+   */
+
+
+  getFirstBlockByType(type) {
+    const index = this.getFirstBlockIndexByType(type);
+
+    if (this.blocks[index]) {
+      return this.blocks[index];
+    }
+
+    return null;
+  }
+  /**
+   * Get the first page block index from its `type`.
+   *
+   * @param  {String} type
+   * @return {*|null}
+   */
+
+
+  getFirstBlockIndexByType(type) {
+    const l = this.blocks.length;
+
+    for (let i = 0; i < l; i++) {
+      if (this.blocks[i].type && this.blocks[i].type === type) {
+        return i;
+      }
+    }
+
+    return null;
+  }
+  /**
+   * @abstract
+   */
+
+
+  onResize() {
+    for (const block of this.blocks) {
+      block.onResize();
+    }
+  }
+
+}
+
+/**
+ * @namespace
+ * @type {Object} defaults                      - Default config
+ * @property {String} defaults.wrapperId        - Id of the main wrapper
+ * @property {String} defaults.pageBlockClass
+ * @property {String} defaults.pageClass        - Class name used to identify the containers
+ * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
+ * @property {String} defaults.noAjaxLinkClass
+ * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+ * @const
+ * @default
+ */
+
+const CONFIG = {
+  defaults: {
+    wrapperId: 'sb-wrapper',
+    pageBlockClass: 'page-block',
+    pageClass: 'page-content',
+    objectTypeAttr: 'data-node-type',
+    noAjaxLinkClass: 'no-ajax-link',
+    noPrefetchClass: 'no-prefetch',
+    debug: 0
+  }
+};
+class StartingBlocks {
+  constructor(config = {}) {
+    this.bottle = new bottle();
+    this.bootables = [];
+    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
+    window.startingBlocksDebugLevel = this.bottle.container.Config.debug;
+    this.provider('Dom', Dom);
+    this.provider('BlockBuilder', BlockBuilder);
+    this.instanceFactory('AbstractPage', c => {
+      return new AbstractPage(c);
+    });
+  }
+
+  provider(id, ClassName, ...args) {
+    if (!id || !ClassName) {
+      throw new Error('A parameter is missing');
+    }
+
+    this.bottle.provider(id, function () {
+      this.$get = container => {
+        return new ClassName(container, ...args);
+      };
+    });
+  }
+
+  factory(id, f) {
+    this.bottle.factory(id, f);
+  }
+
+  instanceFactory(id, f) {
+    this.bottle.instanceFactory(id, f);
+  }
+
+  bootableProvider(id, ClassName, ...args) {
+    this.provider(id, ClassName, ...args);
+    this.bootables.push(id);
+  }
+
+  boot() {
+    this.bootableProvider('PageBuilder', PageBuilder);
+
+    for (const serviceName of this.bootables) {
+      if (this.bottle.container.hasOwnProperty(serviceName)) {
+        this.bottle.container[serviceName].boot();
+      }
+    }
+  }
+
+}
+
+// import work from 'webworkify-webpack'
 /**
  * Utils class
  */
+
 class Utils {
   /**
    * @param  {String} str
@@ -1464,7 +1998,7 @@ class Utils {
 
   static trackGoogleAnalytics() {
     if (typeof window.ga !== 'undefined') {
-      console.debug('🚩 Push Analytics for: ' + window.location.pathname);
+      debug('🚩 Push Analytics for: ' + window.location.pathname);
       window.ga('send', 'pageview', {
         'page': window.location.pathname,
         'title': document.title
@@ -1555,882 +2089,6 @@ class Utils {
 }
 
 /**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating transition.
- *
- * @abstract
- */
-
-class AbstractTransition {
-  /**
-   * Constructor.
-   * Do not override this method.
-   *
-   * @constructor
-   */
-  constructor() {
-    /**
-     * @type {AbstractPage|null} old Page instance
-     */
-    this.oldPage = null;
-    /**
-     * @type {AbstractPage|null}
-     */
-
-    this.newPage = null;
-    /**
-     * @type {Promise|null}
-     */
-
-    this.newPageLoading = null;
-  }
-  /**
-   * Initialize transition.
-   * Do not override this method.
-   *
-   * @param {AbstractPage} oldPage
-   * @param {Promise} newPagePromise
-   * @returns {Promise}
-   */
-
-
-  init(oldPage, newPagePromise) {
-    this.oldPage = oldPage;
-    this._newPagePromise = newPagePromise;
-    this.deferred = Utils.deferred();
-    this.newPageReady = Utils.deferred();
-    this.newPageLoading = this.newPageReady.promise;
-    this.start();
-
-    this._newPagePromise.then(newPage => {
-      this.newPage = newPage;
-      this.newPageReady.resolve();
-    });
-
-    return this.deferred.promise;
-  }
-  /**
-   * Call this function when the Transition is finished.
-   */
-
-
-  done() {
-    this.oldPage.destroy();
-    this.newPage.rootElement.style.visibility = 'visible';
-    this.newPage.updateLazyload();
-    this.deferred.resolve();
-  }
-  /**
-   * Entry point to create a custom Transition.
-   * @abstract
-   */
-
-
-  start() {}
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-/**
- * Default Transition. Show / Hide content.
- *
- * @extends {AbstractTransition}
- */
-
-class DefaultTransition extends AbstractTransition {
-  start() {
-    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-  }
-
-  finish() {
-    document.body.scrollTop = 0;
-    this.done();
-  }
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file TransitionFactory.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-
-/**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered.
- *
- * The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
- *
- * @see   http://davidwalsh.name/javascript-debounce-function
- * @param {Function} func     [function to debounce]
- * @param {Number} wait       [time to wait]
- * @param {Boolean} immediate []
- */
-function debounce(func, wait, immediate) {
-  let timeout;
-  return function () {
-    let context = this;
-    let args = arguments;
-
-    let later = function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractBlock.js
- * @author Ambroise Maupate
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating block implementations.
- *
- * **Do not instanciate this class directly, create a sub-class**.
- *
- * @abstract
- */
-
-class AbstractBlock extends AbstractService {
-  /**
-   * Abstract block constructor.
-   *
-   * It‘s better to extend this class by using `init` method instead
-   * of extending `constructor`.
-   *
-   * @param {Object} container
-   * @param {String} blockName
-   * @constructor
-   */
-  constructor(container, blockName = 'AbstractBlock') {
-    super(container, blockName);
-    /**
-     * Node Type block name type
-     *
-     * @type {String|null}
-     */
-
-    this.type = null;
-    /**
-     * Current page instance
-     *
-     * @type {AbstractPage|null}
-     */
-
-    this.page = null;
-    /**
-     * Container
-     * Root container HTMLElement for current block.
-     *
-     * @type {HTMLElement|null}
-     */
-
-    this.rootElement = null;
-    /**
-     * Block id
-     *
-     * @type {String|null}
-     */
-
-    this.id = null;
-    /**
-     * Node name
-     *
-     * @type {String}
-     */
-
-    this.name = null; // Bind methods
-
-    this.onResize = this.onResize.bind(this);
-    this.onResizeDebounce = debounce(this.onResize, 50, false);
-  }
-  /**
-   * Basic members initialization for children classes.
-   * Do not search for page blocks here, use `onPageReady` method instead
-   *
-   * @abstract
-   */
-
-
-  init() {
-    console.debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-  }
-  /**
-   * Bind load and resize events for this specific block.
-   *
-   * Do not forget to call `super.initEvents();` while extending this method.
-   *
-   * @abstract
-   */
-
-
-  initEvents() {
-    window.addEventListener('resize', this.onResizeDebounce);
-  }
-  /**
-   * Destroy current block.
-   *
-   * Do not forget to call `super.destroy();` while extending this method.
-   */
-
-
-  destroy() {
-    console.debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-    this.destroyEvents();
-  }
-  /**
-   * Unbind event block events.
-   *
-   * Make sure you’ve used binded methods to be able to
-   * `off` them correctly.
-   *
-   * Do not forget to call `super.destroyEvents();` while extending this method.
-   *
-   * @abstract
-   */
-
-
-  destroyEvents() {
-    window.removeEventListener('resize', this.onResizeDebounce);
-  }
-  /**
-   * Called on window resize
-   *
-   * @abstract
-   */
-
-
-  onResize() {}
-  /**
-   * Called once all page blocks have been created.
-   *
-   * @abstract
-   */
-
-
-  onPageReady() {}
-
-}
-
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractPage.js
- * @author Ambroise Maupate
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating page implementations.
- *
- * **Do not instanciate this class directly, create a sub-class**.
- *
- * @abstract
- */
-
-class AbstractPage extends AbstractService {
-  /**
-   * Base constructor for Pages.
-   * @constructor
-   */
-  constructor(container) {
-    super(container, 'AbstractPage');
-    /**
-     * Container element
-     *
-     * @type {HTMLElement}
-     */
-
-    this.rootElement = null;
-    /**
-     * Page id
-     *
-     * @type {String|null}
-     */
-
-    this.id = null;
-    /**
-     * Page context (static or ajax)
-     *
-     * @type {String|null}
-     */
-
-    this.context = null;
-    /**
-     * Page type
-     *
-     * @type {String|null}
-     */
-
-    this.type = null;
-    /**
-     * Is home ?
-     *
-     * @type {boolean}
-     */
-
-    this.isHome = null;
-    /**
-     * AbstractBlock collection.
-     *
-     * @type {Array<AbstractBlock>}
-     */
-
-    this.blocks = [];
-    /**
-     * Node name
-     *
-     * @type {String|null}
-     */
-
-    this.name = null;
-    /**
-     * Meta title
-     * @type {String|null}
-     */
-
-    this.metaTitle = null; // Bind methods
-
-    this.onResize = this.onResize.bind(this);
-    this.onResizeDebounce = debounce(this.onResize, 50, false);
-    this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false);
-    this.onLazyImageSet = this.onLazyImageSet.bind(this);
-    this.onLazyImageLoad = this.onLazyImageLoad.bind(this);
-    this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this);
-  }
-  /**
-   * Initialize page.
-   *
-   * You should always extends this method in your child implementations instead
-   * of extending page constructor.
-   */
-
-
-  async init() {
-    // Debug
-    console.debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey');
-    /**
-     * HTMLElement blocks collection.
-     *
-     * @type {Array}
-     */
-
-    this.blockElements = [...this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)];
-    /**
-     * @type {Number}
-     */
-
-    this.blockLength = this.blockElements.length;
-
-    if (this.blockLength) {
-      await this.initBlocks();
-    } // Context
-
-
-    if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
-      this.initAjax();
-    } // Lazyload
-
-
-    if (this.getService('Config').lazyloadEnabled) {
-      this.initLazyload();
-    }
-
-    this.initEvents();
-  }
-  /**
-   * Destroy current page and all its blocks.
-   */
-
-
-  destroy() {
-    console.debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
-    this.rootElement.parentNode.removeChild(this.rootElement);
-    this.destroyEvents(); // Do not remove name class on body if destroyed page is the same as current one.
-
-    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
-      document.body.classList.remove(this.name);
-    } // Do not remove type class on body if destroyed page is the same as current one.
-
-
-    if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
-      document.body.classList.remove(this.type);
-    } // Blocks
-
-
-    if (this.blocks !== null) {
-      for (let blockIndex in this.blocks) {
-        if (this.blocks.hasOwnProperty(blockIndex)) {
-          this.blocks[blockIndex].destroy();
-        }
-      }
-    } // Remove Lazyload instance and listeners
-    // if (this.lazyload !== null) {
-    //     this.lazyload.destroy()
-    //     this.lazyload = null
-    // }
-
-  }
-  /**
-   * Initialize basic events.
-   */
-
-
-  initEvents() {
-    window.addEventListener('resize', this.onResizeDebounce);
-    this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks);
-    this.domObserver.observe(this.rootElement, {
-      childList: true,
-      attributes: false,
-      characterData: false,
-      subtree: true
-    });
-  }
-  /**
-   * Destroy events
-   */
-
-
-  destroyEvents() {
-    window.removeEventListener('resize', this.onResizeDebounce);
-    this.domObserver.disconnect();
-  }
-  /**
-   * Init lazyload
-   *
-   * @private
-   */
-
-
-  initLazyload() {
-    this.beforeLazyload(); // this.lazyload = new Lazyload({
-    //     threshold: this.pageBuilder.options.lazyloadThreshold,
-    //     throttle: this.pageBuilder.options.lazyloadThrottle,
-    //     elements_selector: '.' + this.pageBuilder.options.lazyloadClass,
-    //     data_src: this.pageBuilder.options.lazyloadSrcAttr.replace('data-', ''),
-    //     data_srcset: this.pageBuilder.options.lazyloadSrcSetAttr.replace('data-', ''),
-    //     callback_set: this.onLazyImageSet,
-    //     callback_load: this.onLazyImageLoad,
-    //     callback_processed: this.onLazyImageProcessed
-    // })
-  }
-
-  updateLazyload() {} // if (this.lazyload) {
-  //     this.lazyload.update()
-  // }
-
-  /**
-   * @param {Function} onShow
-   */
-
-
-  show(onShow) {
-    console.debug('▶️ #' + this.id);
-    this.rootElement.style.opacity = '1';
-    if (typeof onShow !== 'undefined') onShow();
-    this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
-    Dispatcher.commit(AFTER_PAGE_SHOW, this);
-  }
-  /**
-   * @param {Function} onHidden
-   */
-
-
-  hide(onHidden) {
-    Dispatcher.commit(BEFORE_PAGE_HIDE, this);
-    console.debug('◀️ #' + this.id);
-    this.rootElement.style.opacity = '0';
-    if (typeof onHidden !== 'undefined') onHidden();
-    Dispatcher.commit(AFTER_PAGE_HIDE, this);
-  }
-
-  initAjax() {
-    this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
-  }
-  /**
-   * Initialize page blocks on page.
-   */
-
-
-  async initBlocks() {
-    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-      /**
-       * New Block.
-       *
-       * @type {AbstractBlock}
-       */
-      let block = await this.initSingleBlock(this.blockElements[blockIndex]); // Prevent undefined blocks to be appended to block collection.
-
-      if (block) {
-        this.blocks.push(block);
-      }
-    } // Notify all blocks that page init is over.
-
-
-    for (let i = this.blocks.length - 1; i >= 0; i--) {
-      if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady();
-    }
-  }
-  /**
-   * Append new blocks which were not present at init.
-   */
-
-
-  async updateBlocks() {
-    console.debug('\t📯 Page DOM changed…'); // Update lazy load if init.
-
-    this.updateLazyload(); // Create new blocks
-
-    this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`);
-    this.blockLength = this.blockElements.length;
-
-    for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-      let blockElement = this.blockElements[blockIndex];
-      const existingBlock = this.getBlockById(blockElement.id);
-
-      if (existingBlock === null) {
-        try {
-          let block = await this.initSingleBlock(this.blockElements[blockIndex]);
-
-          if (block) {
-            this.blocks.push(block);
-            block.onPageReady();
-          }
-        } catch (e) {
-          console.info(e.message);
-        }
-      }
-    }
-  }
-  /**
-   * @param {HTMLElement} blockElement
-   * @return {AbstractBlock}
-   */
-
-
-  async initSingleBlock(blockElement) {
-    let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
-    let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType);
-
-    if (!blockInstance) {
-      return null;
-    } // Set values
-
-
-    blockInstance.type = blockType;
-    blockInstance.page = this;
-    blockInstance.rootElement = blockElement;
-    blockInstance.id = blockElement.id;
-    blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''; // Init everything
-
-    blockInstance.init();
-    blockInstance.initEvents();
-    return blockInstance;
-  }
-  /**
-   * Get a page block instance from its `id`.
-   *
-   * @param  {String} id
-   * @return {AbstractBlock|null}
-   */
-
-
-  getBlockById(id) {
-    for (const block of this.blocks) {
-      if (block.id && block.id === id) {
-        return block;
-      }
-    }
-
-    return null;
-  }
-  /**
-   * Get a page block index from its `id`.
-   *
-   * @param  {String} id
-   * @return {*|null}
-   */
-
-
-  getBlockIndexById(id) {
-    const l = this.blocks.length;
-
-    for (let i = 0; i < l; i++) {
-      if (this.blocks[i].id && this.blocks[i].id === id) {
-        return i;
-      }
-    }
-
-    return null;
-  }
-  /**
-   * Get the first page block instance from its `type`.
-   *
-   * @param  {String} type
-   * @return {AbstractBlock|null}
-   */
-
-
-  getFirstBlockByType(type) {
-    const index = this.getFirstBlockIndexByType(type);
-
-    if (this.blocks[index]) {
-      return this.blocks[index];
-    }
-
-    return null;
-  }
-  /**
-   * Get the first page block index from its `type`.
-   *
-   * @param  {String} type
-   * @return {*|null}
-   */
-
-
-  getFirstBlockIndexByType(type) {
-    const l = this.blocks.length;
-
-    for (let i = 0; i < l; i++) {
-      if (this.blocks[i].type && this.blocks[i].type === type) {
-        return i;
-      }
-    }
-
-    return null;
-  }
-  /**
-   * @abstract
-   */
-
-
-  onResize() {}
-  /**
-   * Called before init lazyload images.
-   */
-
-
-  beforeLazyload() {}
-  /**
-   * After image src switched.
-   *
-   * @abstract
-   * @param {HTMLImageElement} element
-   */
-
-
-  onLazyImageSet(element) {
-    console.debug('\t🖼 «' + element.id + '» set');
-  }
-  /**
-   * After lazyload image loaded.
-   *
-   * @abstract
-   * @param {HTMLImageElement} element
-   */
-
-
-  onLazyImageLoad(element) {
-    console.debug('\t🖼 «' + element.id + '» load');
-  }
-  /**
-   * Before lazyload.
-   *
-   * @abstract
-   */
-
-
-  onLazyImageProcessed(index) {
-    console.debug('\t🖼 Lazy load processed');
-  }
-
-}
-
-/**
- * @namespace
- * @type {Object} defaults                      - Default config
- * @property {String} defaults.wrapperId        - Id of the main wrapper
- * @property {String} defaults.pageBlockClass
- * @property {String} defaults.pageClass        - Class name used to identify the containers
- * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
- * @property {String} defaults.noAjaxLinkClass
- * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
- * @const
- * @default
- */
-
-const CONFIG = {
-  defaults: {
-    wrapperId: 'sb-wrapper',
-    pageBlockClass: 'page-block',
-    pageClass: 'page-content',
-    objectTypeAttr: 'data-node-type',
-    noAjaxLinkClass: 'no-ajax-link',
-    noPrefetchClass: 'no-prefetch'
-  }
-};
-class StartingBlocks {
-  constructor(config = {}) {
-    this.bottle = new bottle();
-    this.bootables = [];
-    this.bottle.value('Config', objectSpread({}, CONFIG.defaults, config));
-    this.provider('Dom', Dom);
-    this.provider('BlockBuilder', BlockBuilder);
-    this.instanceFactory('AbstractPage', c => {
-      return new AbstractPage(c);
-    });
-    this.bootableProvider('PageBuilder', PageBuilder);
-  }
-
-  provider(id, ClassName, ...args) {
-    if (!id || !ClassName) {
-      throw new Error('A parameter is missing');
-    }
-
-    this.bottle.provider(id, function () {
-      this.$get = container => {
-        return new ClassName(container, ...args);
-      };
-    });
-  }
-
-  factory(id, f) {
-    this.bottle.factory(id, f);
-  }
-
-  instanceFactory(id, f) {
-    this.bottle.instanceFactory(id, f);
-  }
-
-  bootableProvider(id, ClassName, ...args) {
-    this.provider(id, ClassName, ...args);
-    this.bootables.push(id);
-  }
-
-  boot() {
-    for (const serviceName of this.bootables) {
-      if (this.bottle.container.hasOwnProperty(serviceName)) {
-        this.bottle.container[serviceName].boot();
-      }
-    }
-  }
-
-}
-
-/**
  * Copyright © 2017, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2459,8 +2117,9 @@ class StartingBlocks {
  */
 
 class Pjax extends AbstractBootableService {
-  constructor(container) {
-    super(container, 'Pjax', ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']);
+  constructor(container, serviceName = 'Pjax') {
+    super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']);
+    debug(`☕️ ${serviceName} awake`);
     /**
      * Indicate if there is an animation in progress.
      *
@@ -2546,12 +2205,7 @@ class Pjax extends AbstractBootableService {
 
 
   load(url) {
-    const deferred = Utils.deferred(); // Show loader
-
-    if (this.hasService('GraphicLoader')) {
-      this.getService('GraphicLoader').show();
-    } // Check cache
-
+    const deferred = Utils.deferred(); // Check cache
 
     let request = null;
 
@@ -2789,12 +2443,7 @@ class Pjax extends AbstractBootableService {
 
 
   onNewPageLoaded(page) {
-    const currentStatus = this.getService('History').currentStatus();
-
-    if (this.hasService('GraphicLoader')) {
-      this.getService('GraphicLoader').hide();
-    } // Update body attributes (class, id, data-attributes
-
+    const currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
 
     this.getService('Dom').updateBodyAttributes(page); // Update the page title
 
@@ -2870,8 +2519,9 @@ class Pjax extends AbstractBootableService {
  */
 
 class History extends AbstractService {
-  constructor(container) {
-    super(container, 'History');
+  constructor(container, serviceName = 'History') {
+    super(container, serviceName);
+    debug(`☕️ ${serviceName} awake`);
     /**
      * Keep track of the status in historic order.
      *
@@ -2963,8 +2613,9 @@ class History extends AbstractService {
  */
 
 class Prefetch extends AbstractBootableService {
-  constructor(container) {
-    super(container, 'Prefetch', ['Pjax', 'Config']);
+  constructor(container, serviceName = 'Prefetch') {
+    super(container, serviceName, ['Pjax', 'Config']);
+    debug(`☕️ ${serviceName} awake`);
   }
 
   boot() {
@@ -3044,8 +2695,9 @@ class Prefetch extends AbstractBootableService {
  */
 
 class CacheProvider extends AbstractService {
-  constructor(container) {
-    super(container, 'CacheProvider');
+  constructor(container, serviceName = 'CacheProvider') {
+    super(container, serviceName);
+    debug(`☕️ ${serviceName} awake`);
     this.data = {};
   }
   /**
@@ -3798,8 +3450,9 @@ var lazysizes = createCommonjsModule(function (module) {
  * @author Adrien Scholaert
  */
 class Lazyload extends AbstractBootableService {
-  constructor(container) {
-    super(container, 'LazyLoad');
+  constructor(container, serviceName = 'LazyLoad') {
+    super(container, serviceName);
+    debug(`☕️ ${serviceName} awake`);
   }
 
 }
@@ -3825,47 +3478,129 @@ class Lazyload extends AbstractBootableService {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file GraphicLoader.js
+ * @file AbstractBlock.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
-
 /**
- * Handle your application main loader animation.
+ * Base class for creating block implementations.
  *
  * **Do not instanciate this class directly, create a sub-class**.
+ *
+ * @abstract
  */
-class GraphicLoader {
+
+class AbstractBlock extends AbstractService {
   /**
-   * Interface for a graphic loader element.
+   * Abstract block constructor.
    *
-   * Any child implementations must implements
-   * show and hide methods.
+   * It‘s better to extend this class by using `init` method instead
+   * of extending `constructor`.
+   *
+   * @param {Object} container
+   * @param {String} blockName
+   * @constructor
+   */
+  constructor(container, blockName = 'AbstractBlock') {
+    super(container, blockName);
+    /**
+     * Node Type block name type
+     *
+     * @type {String|null}
+     */
+
+    this.type = null;
+    /**
+     * Current page instance
+     *
+     * @type {AbstractPage|null}
+     */
+
+    this.page = null;
+    /**
+     * Container
+     * Root container HTMLElement for current block.
+     *
+     * @type {HTMLElement|null}
+     */
+
+    this.rootElement = null;
+    /**
+     * Block id
+     *
+     * @type {String|null}
+     */
+
+    this.id = null;
+    /**
+     * Node name
+     *
+     * @type {String}
+     */
+
+    this.name = null;
+  }
+  /**
+   * Basic members initialization for children classes.
+   * Do not search for page blocks here, use `onPageReady` method instead
    *
    * @abstract
    */
-  constructor() {
-    console.debug('🌀 Construct loader');
+
+
+  init() {
+    debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
   }
   /**
-   * Show loader.
+   * Bind load and resize events for this specific block.
+   *
+   * Do not forget to call `super.initEvents();` while extending this method.
    *
    * @abstract
    */
 
 
-  show() {
-    console.debug('🌀 Show loader');
+  initEvents() {}
+  /**
+   * Destroy current block.
+   *
+   * Do not forget to call `super.destroy();` while extending this method.
+   */
+
+
+  destroy() {
+    debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey');
+    this.destroyEvents();
   }
   /**
-   * Hide loader.
+   * Unbind event block events.
+   *
+   * Make sure you’ve used binded methods to be able to
+   * `off` them correctly.
+   *
+   * Do not forget to call `super.destroyEvents();` while extending this method.
    *
    * @abstract
    */
 
 
-  hide() {
-    console.debug('🌀 Hide loader');
-  }
+  destroyEvents() {}
+  /**
+   * Called on window resize
+   *
+   * @abstract
+   */
+
+
+  onResize() {}
+  /**
+   * Called once all page blocks have been created.
+   *
+   * @abstract
+   */
+
+
+  onPageReady() {}
 
 }
 
@@ -3897,6 +3632,11 @@ class AbstractInViewBlock extends AbstractBlock {
     this.observer.observe(this.rootElement);
   }
 
+  destroyEvents() {
+    super.destroyEvents();
+    this.unobserve();
+  }
+
   onIntersectionCallback(entries) {
     for (const entry of entries) {
       if (entry.intersectionRatio > 0) {
@@ -3913,6 +3653,174 @@ class AbstractInViewBlock extends AbstractBlock {
 
   unobserve() {
     this.observer.unobserve(this.rootElement);
+  }
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file AbstractTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating transition.
+ *
+ * @abstract
+ */
+
+class AbstractTransition {
+  /**
+   * Constructor.
+   * Do not override this method.
+   *
+   * @constructor
+   */
+  constructor() {
+    /**
+     * @type {AbstractPage|null} old Page instance
+     */
+    this.oldPage = null;
+    /**
+     * @type {AbstractPage|null}
+     */
+
+    this.newPage = null;
+    /**
+     * @type {Promise|null}
+     */
+
+    this.newPageLoading = null;
+  }
+  /**
+   * Initialize transition.
+   * Do not override this method.
+   *
+   * @param {AbstractPage} oldPage
+   * @param {Promise} newPagePromise
+   * @returns {Promise}
+   */
+
+
+  init(oldPage, newPagePromise) {
+    this.oldPage = oldPage;
+    this._newPagePromise = newPagePromise;
+    this.deferred = Utils.deferred();
+    this.newPageReady = Utils.deferred();
+    this.newPageLoading = this.newPageReady.promise;
+    this.start();
+
+    this._newPagePromise.then(newPage => {
+      this.newPage = newPage;
+      this.newPageReady.resolve();
+    });
+
+    return this.deferred.promise;
+  }
+  /**
+   * Call this function when the Transition is finished.
+   */
+
+
+  done() {
+    this.oldPage.destroy();
+    this.newPage.rootElement.style.visibility = 'visible';
+    this.deferred.resolve();
+  }
+  /**
+   * Entry point to create a custom Transition.
+   * @abstract
+   */
+
+
+  start() {}
+
+}
+
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file AbstractSplashscreen.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class AbstractSplashscreen extends AbstractBootableService {
+  constructor(container, serviceName = 'AbstractSplashscreen') {
+    super(container, serviceName);
+    this._splashscreenHidden = false;
+  }
+
+  set splashscreenHidden(value) {
+    this._splashscreenHidden = value;
+  }
+
+  get splashscreenHidden() {
+    return this._splashscreenHidden;
+  }
+
+  hide() {
+    return Promise.resolve();
+  }
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file DefaultTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Default Transition. Show / Hide content.
+ *
+ * @extends {AbstractTransition}
+ */
+
+class DefaultTransition extends AbstractTransition {
+  start() {
+    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+  }
+
+  finish() {
+    document.body.scrollTop = 0;
+    this.done();
   }
 
 }
@@ -4274,5 +4182,14 @@ class BootstrapMedia {
 
 }
 
+/*!
+ * @name Starting Blocks
+ * @license MIT
+ * @copyright Copyright © 2018, Rezo Zero
+ * @version 5.0.0
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ * @author Ambroise Maupate <ambroise@rezo-zero.com>
+ */
+
 export default StartingBlocks;
-export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, GraphicLoader, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };
+export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, AbstractSplashscreen, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };

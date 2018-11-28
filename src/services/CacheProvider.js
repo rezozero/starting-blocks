@@ -25,6 +25,7 @@
  */
 
 import AbstractService from '../abstracts/AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
  * Cache provider class.
@@ -32,8 +33,10 @@ import AbstractService from '../abstracts/AbstractService'
  * This class stores Ajax response in memory.
  */
 export default class CacheProvider extends AbstractService {
-    constructor (container) {
-        super(container, 'CacheProvider')
+    constructor (container, serviceName = 'CacheProvider') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
 
         this.data = {}
     }

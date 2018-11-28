@@ -13,7 +13,6 @@ export default class AbstractService {
         this.container = container
         this.serviceName = serviceName
 
-        console.debug(`${serviceName} awake`)
         this.checkDependencies(dependencies)
     }
 
