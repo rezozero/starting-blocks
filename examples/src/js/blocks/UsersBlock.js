@@ -114,10 +114,6 @@ export default class UsersBlock extends AbstractBlock {
         return super.onResize()
     }
 
-    onLoad () {
-        return super.onLoad()
-    }
-
     onPageReady () {
         return super.onPageReady()
     }

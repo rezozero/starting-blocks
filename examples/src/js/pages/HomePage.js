@@ -23,7 +23,8 @@
  * @author Ambroise Maupate
  */
 
-import { AbstractPage } from 'starting-blocks'
+import { AbstractPage, EventTypes } from 'starting-blocks'
+import { TweenMax, Power3 } from 'gsap'
 
 /**
  * Some example "home" page.
@@ -31,4 +32,50 @@ import { AbstractPage } from 'starting-blocks'
  * @extends {AbstractPage}
  * @class
  */
-export default class HomePage extends AbstractPage {}
+export default class HomePage extends AbstractPage {
+    constructor (container) {
+        super(container, 'HomePage')
+
+        // Elements
+        this.elements = []
+
+        // Bind methods
+        this.prepareShow = this.prepareShow.bind(this)
+        this.show = this.show.bind(this)
+    }
+
+    async init () {
+        await super.init()
+
+        this.elements = [...this.rootElement.querySelectorAll('.bg-white')]
+    }
+
+    initEvents () {
+        super.initEvents()
+
+        window.addEventListener(EventTypes.BEFORE_SPLASHSCREEN_HIDE, this.prepareShow)
+        window.addEventListener(EventTypes.START_SPLASHSCREEN_HIDE, this.show)
+    }
+
+    destroyEvents () {
+        super.destroyEvents()
+
+        window.removeEventListener(EventTypes.BEFORE_SPLASHSCREEN_HIDE, this.prepareShow)
+        window.removeEventListener(EventTypes.START_SPLASHSCREEN_HIDE, this.show)
+    }
+
+    prepareShow () {
+        TweenMax.set(this.elements, {
+            alpha: 0,
+            y: 200
+        })
+    }
+
+    show () {
+        TweenMax.staggerTo(this.elements, 1.2, {
+            alpha: 1,
+            ease: Power3.easeOut,
+            y: 0
+        }, 0.2)
+    }
+}

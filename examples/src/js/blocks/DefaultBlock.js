@@ -49,10 +49,6 @@ export default class DefaultBlock extends AbstractBlock {
         return super.onResize()
     }
 
-    onLoad () {
-        return super.onLoad()
-    }
-
     onPageReady () {
         return super.onPageReady()
     }

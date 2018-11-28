@@ -8,7 +8,6 @@ import Bottle from 'bottlejs'
 import PageBuilder from './services/PageBuilder'
 import BlockBuilder from './services/BlockBuilder'
 import Dom from './services/Dom'
-import TransitionFactory from './factories/TransitionFactory'
 import AbstractPage from './abstracts/AbstractPage'
 
 /**
@@ -49,7 +48,6 @@ export default class StartingBlocks {
         this.instanceFactory('AbstractPage', c => {
             return new AbstractPage(c)
         })
-        this.bootableProvider('PageBuilder', PageBuilder)
     }
 
     provider (id, ClassName, ...args) {
@@ -78,6 +76,8 @@ export default class StartingBlocks {
     }
 
     boot () {
+        this.bootableProvider('PageBuilder', PageBuilder)
+
         for (const serviceName of this.bootables) {
             if (this.bottle.container.hasOwnProperty(serviceName)) {
                 this.bottle.container[serviceName].boot()

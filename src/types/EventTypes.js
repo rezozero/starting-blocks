@@ -102,3 +102,24 @@ export const TRANSITION_START = 'SB_TRANSITION_START'
  * @type {String}
  */
 export const TRANSITION_COMPLETE = 'SB_TRANSITION_COMPLETE'
+
+/**
+ * Before splashscreen begin to hide.
+ *
+ * @type {String}
+ */
+export const BEFORE_SPLASHSCREEN_HIDE = 'SB_BEFORE_SPLASHSCREEN_HIDE'
+
+/**
+ * When splashscreen start to hide.
+ *
+ * @type {String}
+ */
+export const START_SPLASHSCREEN_HIDE = 'SB_START_SPLASHSCREEN_HIDE'
+
+/**
+ * After splashscreen hiding animation.
+ *
+ * @type {String}
+ */
+export const AFTER_SPLASHSCREEN_HIDE = 'SB_AFTER_SPLASHSCREEN_HIDE'

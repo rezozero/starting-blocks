@@ -24,7 +24,6 @@
  * @author Adrien Scholaert
  */
 
-import debounce from '../utils/debounce'
 import AbstractService from './AbstractService'
 
 /**
@@ -83,10 +82,6 @@ export default class AbstractBlock extends AbstractService {
          * @type {String}
          */
         this.name = null
-
-        // Bind methods
-        this.onResize = this.onResize.bind(this)
-        this.onResizeDebounce = debounce(this.onResize, 50, false)
     }
 
     /**
@@ -106,9 +101,7 @@ export default class AbstractBlock extends AbstractService {
      *
      * @abstract
      */
-    initEvents () {
-        window.addEventListener('resize', this.onResizeDebounce)
-    }
+    initEvents () {}
 
     /**
      * Destroy current block.
@@ -130,9 +123,7 @@ export default class AbstractBlock extends AbstractService {
      *
      * @abstract
      */
-    destroyEvents () {
-        window.removeEventListener('resize', this.onResizeDebounce)
-    }
+    destroyEvents () {}
 
     /**
      * Called on window resize

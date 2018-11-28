@@ -15,6 +15,7 @@ import StartingBlocks, {
     polyfills
 } from 'starting-blocks'
 import WebpackAsyncBlockBuilder from './services/WebpackAsyncBlockBuilder'
+import Splashscreen from './services/Splashscreen'
 import TransitionFactory from './factories/TransitionFactory'
 import HomePage from './pages/HomePage'
 import ExampleNav from './ExampleNav'
@@ -57,6 +58,7 @@ startingBlocks.provider('BlockBuilder', WebpackAsyncBlockBuilder)
 startingBlocks.bootableProvider('Prefetch', Prefetch)
 startingBlocks.bootableProvider('Pjax', Pjax)
 startingBlocks.bootableProvider('Lazyload', Lazyload)
+startingBlocks.bootableProvider('Splashscreen', Splashscreen)
 
 // Register pages
 startingBlocks.instanceFactory('home', c => {

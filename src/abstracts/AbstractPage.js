@@ -26,7 +26,6 @@
 
 import debounce from '../utils/debounce'
 import Dispatcher from '../dispatcher/Dispatcher'
-import AbstractBlock from './AbstractBlock'
 import {
     AFTER_PAGE_SHOW,
     BEFORE_PAGE_HIDE,
@@ -371,6 +370,8 @@ export default class AbstractPage extends AbstractService {
      * @abstract
      */
     onResize () {
-
+        for (const block of this.blocks) {
+            block.onResize()
+        }
     }
 }
