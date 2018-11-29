@@ -64,7 +64,7 @@ import 'gsap/CSSPlugin'
     startingBlocks.bootableProvider('Splashscreen', Splashscreen)
 
     // Register pages
-    startingBlocks.instanceFactory('home', c => {
+    startingBlocks.instanceFactory('HomePage', c => {
         return new HomePage(c)
     })
 

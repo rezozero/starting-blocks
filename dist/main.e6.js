@@ -66,29 +66,6 @@ const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT';
 
 const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW';
 /**
- * After page showed.
- *
- * @type {String}
- */
-
-const AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW';
-/**
- * Before page begins to hide.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-
-const BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE';
-/**
- * After page hiding animation.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-
-const AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE';
-/**
  * Before page transition begin.
  *
  * @type {String}
@@ -131,9 +108,6 @@ var EventTypes = /*#__PURE__*/Object.freeze({
   CONTAINER_READY: CONTAINER_READY,
   AFTER_PAGE_BOOT: AFTER_PAGE_BOOT,
   BEFORE_PAGE_SHOW: BEFORE_PAGE_SHOW,
-  AFTER_PAGE_SHOW: AFTER_PAGE_SHOW,
-  BEFORE_PAGE_HIDE: BEFORE_PAGE_HIDE,
-  AFTER_PAGE_HIDE: AFTER_PAGE_HIDE,
   TRANSITION_START: TRANSITION_START,
   TRANSITION_COMPLETE: TRANSITION_COMPLETE,
   BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
@@ -1484,11 +1458,6 @@ class AbstractPage extends AbstractService {
 
     if (this.blockLength) {
       await this.initBlocks();
-    } // Context
-
-
-    if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
-      this.initAjax();
     }
 
     this.initEvents();
@@ -1544,34 +1513,6 @@ class AbstractPage extends AbstractService {
   destroyEvents() {
     window.removeEventListener('resize', this.onResizeDebounce);
     this.domObserver.disconnect();
-  }
-  /**
-   * @param {Function} onShow
-   */
-
-
-  show(onShow) {
-    debug('▶️ #' + this.id);
-    this.rootElement.style.opacity = '1';
-    if (typeof onShow !== 'undefined') onShow();
-    this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
-    Dispatcher.commit(AFTER_PAGE_SHOW, this);
-  }
-  /**
-   * @param {Function} onHidden
-   */
-
-
-  hide(onHidden) {
-    Dispatcher.commit(BEFORE_PAGE_HIDE, this);
-    debug('◀️ #' + this.id);
-    this.rootElement.style.opacity = '0';
-    if (typeof onHidden !== 'undefined') onHidden();
-    Dispatcher.commit(AFTER_PAGE_HIDE, this);
-  }
-
-  initAjax() {
-    this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
   }
   /**
    * Initialize page blocks on page.
@@ -2089,6 +2030,148 @@ class Utils {
 }
 
 /**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file AbstractTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Base class for creating transition.
+ *
+ * @abstract
+ */
+
+class AbstractTransition {
+  /**
+   * Constructor.
+   * Do not override this method.
+   *
+   * @constructor
+   */
+  constructor() {
+    /**
+     * @type {AbstractPage|null} old Page instance
+     */
+    this.oldPage = null;
+    /**
+     * @type {AbstractPage|null}
+     */
+
+    this.newPage = null;
+    /**
+     * @type {Promise|null}
+     */
+
+    this.newPageLoading = null;
+  }
+  /**
+   * Initialize transition.
+   * Do not override this method.
+   *
+   * @param {AbstractPage} oldPage
+   * @param {Promise} newPagePromise
+   * @returns {Promise}
+   */
+
+
+  init(oldPage, newPagePromise) {
+    this.oldPage = oldPage;
+    this._newPagePromise = newPagePromise;
+    this.deferred = Utils.deferred();
+    this.newPageReady = Utils.deferred();
+    this.newPageLoading = this.newPageReady.promise;
+    this.start();
+
+    this._newPagePromise.then(newPage => {
+      this.newPage = newPage;
+      this.newPageReady.resolve();
+    });
+
+    return this.deferred.promise;
+  }
+  /**
+   * Call this function when the Transition is finished.
+   */
+
+
+  done() {
+    this.oldPage.destroy();
+    this.newPage.rootElement.style.visibility = 'visible';
+    this.deferred.resolve();
+  }
+  /**
+   * Entry point to create a custom Transition.
+   * @abstract
+   */
+
+
+  start() {}
+
+}
+
+/**
+ * Copyright © 2016, Ambroise Maupate
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @file DefaultTransition.js
+ * @author Quentin Neyraud
+ * @author Adrien Scholaert
+ */
+/**
+ * Default Transition. Show / Hide content.
+ *
+ * @extends {AbstractTransition}
+ */
+
+class DefaultTransition extends AbstractTransition {
+  start() {
+    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+  }
+
+  finish() {
+    document.body.scrollTop = 0;
+    this.done();
+  }
+
+}
+
+/**
  * Copyright © 2017, Ambroise Maupate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2118,7 +2201,7 @@ class Utils {
 
 class Pjax extends AbstractBootableService {
   constructor(container, serviceName = 'Pjax') {
-    super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']);
+    super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder']);
     debug(`☕️ ${serviceName} awake`);
     /**
      * Indicate if there is an animation in progress.
@@ -2385,7 +2468,11 @@ class Pjax extends AbstractBootableService {
 
 
   getTransition(prev, current) {
-    return this.getService('TransitionFactory').getTransition(prev, current);
+    if (this.hasService('TransitionFactory')) {
+      return this.getService('TransitionFactory').getTransition(prev, current);
+    } else {
+      return new DefaultTransition();
+    }
   }
   /**
    * Method called after a 'popstate' or from .goTo().
@@ -3657,105 +3744,6 @@ class AbstractInViewBlock extends AbstractBlock {
 
 }
 
-/**
- * Copyright © 2016, Ambroise Maupate
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file AbstractTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
- */
-/**
- * Base class for creating transition.
- *
- * @abstract
- */
-
-class AbstractTransition {
-  /**
-   * Constructor.
-   * Do not override this method.
-   *
-   * @constructor
-   */
-  constructor() {
-    /**
-     * @type {AbstractPage|null} old Page instance
-     */
-    this.oldPage = null;
-    /**
-     * @type {AbstractPage|null}
-     */
-
-    this.newPage = null;
-    /**
-     * @type {Promise|null}
-     */
-
-    this.newPageLoading = null;
-  }
-  /**
-   * Initialize transition.
-   * Do not override this method.
-   *
-   * @param {AbstractPage} oldPage
-   * @param {Promise} newPagePromise
-   * @returns {Promise}
-   */
-
-
-  init(oldPage, newPagePromise) {
-    this.oldPage = oldPage;
-    this._newPagePromise = newPagePromise;
-    this.deferred = Utils.deferred();
-    this.newPageReady = Utils.deferred();
-    this.newPageLoading = this.newPageReady.promise;
-    this.start();
-
-    this._newPagePromise.then(newPage => {
-      this.newPage = newPage;
-      this.newPageReady.resolve();
-    });
-
-    return this.deferred.promise;
-  }
-  /**
-   * Call this function when the Transition is finished.
-   */
-
-
-  done() {
-    this.oldPage.destroy();
-    this.newPage.rootElement.style.visibility = 'visible';
-    this.deferred.resolve();
-  }
-  /**
-   * Entry point to create a custom Transition.
-   * @abstract
-   */
-
-
-  start() {}
-
-}
-
 /*
  * Copyright © 2017, Rezo Zero
  *
@@ -3782,46 +3770,31 @@ class AbstractSplashscreen extends AbstractBootableService {
 
 }
 
-/**
- * Copyright © 2016, Ambroise Maupate
+/*
+ * Copyright © 2017, Rezo Zero
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @file DefaultTransition.js
- * @author Quentin Neyraud
- * @author Adrien Scholaert
+ * @file AbstractTransitionFactory.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 /**
- * Default Transition. Show / Hide content.
+ * Abstract Transition mapper class.
  *
- * @extends {AbstractTransition}
+ * This class maps your `data-transition` with your *ES6* classes.
+ *
+ * **You must define your own ClassFactory for each of your projects.**.
+ * @abstract
  */
 
-class DefaultTransition extends AbstractTransition {
-  start() {
-    Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-  }
-
-  finish() {
-    document.body.scrollTop = 0;
-    this.done();
-  }
+class AbstractTransitionFactory extends AbstractService {
+  /**
+   * Get Transition
+   *
+   * @param {Object} previousState
+   * @param {Object} state
+   * @returns {AbstractTransition}
+   * @abstract
+   */
+  getTransition(previousState, state) {}
 
 }
 
@@ -4192,4 +4165,4 @@ class BootstrapMedia {
  */
 
 export default StartingBlocks;
-export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, AbstractSplashscreen, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };
+export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractBlockBuilder, AbstractService, AbstractSplashscreen, AbstractTransitionFactory, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };

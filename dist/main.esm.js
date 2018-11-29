@@ -66,29 +66,6 @@ var AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT';
 
 var BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW';
 /**
- * After page showed.
- *
- * @type {String}
- */
-
-var AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW';
-/**
- * Before page begins to hide.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-
-var BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE';
-/**
- * After page hiding animation.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-
-var AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE';
-/**
  * Before page transition begin.
  *
  * @type {String}
@@ -131,9 +108,6 @@ var EventTypes = /*#__PURE__*/Object.freeze({
 	CONTAINER_READY: CONTAINER_READY,
 	AFTER_PAGE_BOOT: AFTER_PAGE_BOOT,
 	BEFORE_PAGE_SHOW: BEFORE_PAGE_SHOW,
-	AFTER_PAGE_SHOW: AFTER_PAGE_SHOW,
-	BEFORE_PAGE_HIDE: BEFORE_PAGE_HIDE,
-	AFTER_PAGE_HIDE: AFTER_PAGE_HIDE,
 	TRANSITION_START: TRANSITION_START,
 	TRANSITION_COMPLETE: TRANSITION_COMPLETE,
 	BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
@@ -4450,14 +4424,9 @@ function (_AbstractService) {
                 return this.initBlocks();
 
               case 6:
-                // Context
-                if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
-                  this.initAjax();
-                }
-
                 this.initEvents();
 
-              case 8:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -4523,37 +4492,6 @@ function (_AbstractService) {
     value: function destroyEvents() {
       window.removeEventListener('resize', this.onResizeDebounce);
       this.domObserver.disconnect();
-    }
-    /**
-     * @param {Function} onShow
-     */
-
-  }, {
-    key: "show",
-    value: function show(onShow) {
-      debug('▶️ #' + this.id);
-      this.rootElement.style.opacity = '1';
-      if (typeof onShow !== 'undefined') onShow();
-      this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning');
-      Dispatcher.commit(AFTER_PAGE_SHOW, this);
-    }
-    /**
-     * @param {Function} onHidden
-     */
-
-  }, {
-    key: "hide",
-    value: function hide(onHidden) {
-      Dispatcher.commit(BEFORE_PAGE_HIDE, this);
-      debug('◀️ #' + this.id);
-      this.rootElement.style.opacity = '0';
-      if (typeof onHidden !== 'undefined') onHidden();
-      Dispatcher.commit(AFTER_PAGE_HIDE, this);
-    }
-  }, {
-    key: "initAjax",
-    value: function initAjax() {
-      this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning');
     }
     /**
      * Initialize page blocks on page.
@@ -6139,6 +6077,159 @@ function () {
   return Utils;
 }();
 
+// true  -> String#at
+// false -> String#codePointAt
+var _stringAt = function (TO_STRING) {
+  return function (that, pos) {
+    var s = String(_defined(that));
+    var i = _toInteger(pos);
+    var l = s.length;
+    var a, b;
+    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+    a = s.charCodeAt(i);
+    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+      ? TO_STRING ? s.charAt(i) : a
+      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+  };
+};
+
+var $at = _stringAt(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+_iterDefine(String, 'String', function (iterated) {
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function () {
+  var O = this._t;
+  var index = this._i;
+  var point;
+  if (index >= O.length) return { value: undefined, done: true };
+  point = $at(O, index);
+  this._i += point.length;
+  return { value: point, done: false };
+});
+
+/**
+ * Base class for creating transition.
+ *
+ * @abstract
+ */
+
+var AbstractTransition =
+/*#__PURE__*/
+function () {
+  /**
+   * Constructor.
+   * Do not override this method.
+   *
+   * @constructor
+   */
+  function AbstractTransition() {
+    classCallCheck(this, AbstractTransition);
+
+    /**
+     * @type {AbstractPage|null} old Page instance
+     */
+    this.oldPage = null;
+    /**
+     * @type {AbstractPage|null}
+     */
+
+    this.newPage = null;
+    /**
+     * @type {Promise|null}
+     */
+
+    this.newPageLoading = null;
+  }
+  /**
+   * Initialize transition.
+   * Do not override this method.
+   *
+   * @param {AbstractPage} oldPage
+   * @param {Promise} newPagePromise
+   * @returns {Promise}
+   */
+
+
+  createClass(AbstractTransition, [{
+    key: "init",
+    value: function init(oldPage, newPagePromise) {
+      var _this = this;
+
+      this.oldPage = oldPage;
+      this._newPagePromise = newPagePromise;
+      this.deferred = Utils.deferred();
+      this.newPageReady = Utils.deferred();
+      this.newPageLoading = this.newPageReady.promise;
+      this.start();
+
+      this._newPagePromise.then(function (newPage) {
+        _this.newPage = newPage;
+
+        _this.newPageReady.resolve();
+      });
+
+      return this.deferred.promise;
+    }
+    /**
+     * Call this function when the Transition is finished.
+     */
+
+  }, {
+    key: "done",
+    value: function done() {
+      this.oldPage.destroy();
+      this.newPage.rootElement.style.visibility = 'visible';
+      this.deferred.resolve();
+    }
+    /**
+     * Entry point to create a custom Transition.
+     * @abstract
+     */
+
+  }, {
+    key: "start",
+    value: function start() {}
+  }]);
+
+  return AbstractTransition;
+}();
+
+/**
+ * Default Transition. Show / Hide content.
+ *
+ * @extends {AbstractTransition}
+ */
+
+var DefaultTransition =
+/*#__PURE__*/
+function (_AbstractTransition) {
+  inherits(DefaultTransition, _AbstractTransition);
+
+  function DefaultTransition() {
+    classCallCheck(this, DefaultTransition);
+
+    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
+  }
+
+  createClass(DefaultTransition, [{
+    key: "start",
+    value: function start() {
+      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
+    }
+  }, {
+    key: "finish",
+    value: function finish() {
+      document.body.scrollTop = 0;
+      this.done();
+    }
+  }]);
+
+  return DefaultTransition;
+}(AbstractTransition);
+
 /**
  * Pjax.
  */
@@ -6155,7 +6246,7 @@ function (_AbstractBootableServ) {
 
     classCallCheck(this, Pjax);
 
-    _this = possibleConstructorReturn(this, getPrototypeOf(Pjax).call(this, container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory']));
+    _this = possibleConstructorReturn(this, getPrototypeOf(Pjax).call(this, container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder']));
     debug("\u2615\uFE0F ".concat(serviceName, " awake"));
     /**
      * Indicate if there is an animation in progress.
@@ -6443,7 +6534,11 @@ function (_AbstractBootableServ) {
   }, {
     key: "getTransition",
     value: function getTransition(prev, current) {
-      return this.getService('TransitionFactory').getTransition(prev, current);
+      if (this.hasService('TransitionFactory')) {
+        return this.getService('TransitionFactory').getTransition(prev, current);
+      } else {
+        return new DefaultTransition();
+      }
     }
     /**
      * Method called after a 'popstate' or from .goTo().
@@ -7741,93 +7836,6 @@ function (_AbstractBlock) {
   return AbstractInViewBlock;
 }(AbstractBlock);
 
-/**
- * Base class for creating transition.
- *
- * @abstract
- */
-
-var AbstractTransition =
-/*#__PURE__*/
-function () {
-  /**
-   * Constructor.
-   * Do not override this method.
-   *
-   * @constructor
-   */
-  function AbstractTransition() {
-    classCallCheck(this, AbstractTransition);
-
-    /**
-     * @type {AbstractPage|null} old Page instance
-     */
-    this.oldPage = null;
-    /**
-     * @type {AbstractPage|null}
-     */
-
-    this.newPage = null;
-    /**
-     * @type {Promise|null}
-     */
-
-    this.newPageLoading = null;
-  }
-  /**
-   * Initialize transition.
-   * Do not override this method.
-   *
-   * @param {AbstractPage} oldPage
-   * @param {Promise} newPagePromise
-   * @returns {Promise}
-   */
-
-
-  createClass(AbstractTransition, [{
-    key: "init",
-    value: function init(oldPage, newPagePromise) {
-      var _this = this;
-
-      this.oldPage = oldPage;
-      this._newPagePromise = newPagePromise;
-      this.deferred = Utils.deferred();
-      this.newPageReady = Utils.deferred();
-      this.newPageLoading = this.newPageReady.promise;
-      this.start();
-
-      this._newPagePromise.then(function (newPage) {
-        _this.newPage = newPage;
-
-        _this.newPageReady.resolve();
-      });
-
-      return this.deferred.promise;
-    }
-    /**
-     * Call this function when the Transition is finished.
-     */
-
-  }, {
-    key: "done",
-    value: function done() {
-      this.oldPage.destroy();
-      this.newPage.rootElement.style.visibility = 'visible';
-      this.deferred.resolve();
-    }
-    /**
-     * Entry point to create a custom Transition.
-     * @abstract
-     */
-
-  }, {
-    key: "start",
-    value: function start() {}
-  }]);
-
-  return AbstractTransition;
-}();
-
 var AbstractSplashscreen =
 /*#__PURE__*/
 function (_AbstractBootableServ) {
@@ -7863,71 +7871,42 @@ function (_AbstractBootableServ) {
   return AbstractSplashscreen;
 }(AbstractBootableService);
 
-// true  -> String#at
-// false -> String#codePointAt
-var _stringAt = function (TO_STRING) {
-  return function (that, pos) {
-    var s = String(_defined(that));
-    var i = _toInteger(pos);
-    var l = s.length;
-    var a, b;
-    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
-    a = s.charCodeAt(i);
-    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
-      ? TO_STRING ? s.charAt(i) : a
-      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-  };
-};
-
-var $at = _stringAt(true);
-
-// 21.1.3.27 String.prototype[@@iterator]()
-_iterDefine(String, 'String', function (iterated) {
-  this._t = String(iterated); // target
-  this._i = 0;                // next index
-// 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function () {
-  var O = this._t;
-  var index = this._i;
-  var point;
-  if (index >= O.length) return { value: undefined, done: true };
-  point = $at(O, index);
-  this._i += point.length;
-  return { value: point, done: false };
-});
-
 /**
- * Default Transition. Show / Hide content.
+ * Abstract Transition mapper class.
  *
- * @extends {AbstractTransition}
+ * This class maps your `data-transition` with your *ES6* classes.
+ *
+ * **You must define your own ClassFactory for each of your projects.**.
+ * @abstract
  */
 
-var DefaultTransition =
+var AbstractTransitionFactory =
 /*#__PURE__*/
-function (_AbstractTransition) {
-  inherits(DefaultTransition, _AbstractTransition);
+function (_AbstractService) {
+  inherits(AbstractTransitionFactory, _AbstractService);
 
-  function DefaultTransition() {
-    classCallCheck(this, DefaultTransition);
+  function AbstractTransitionFactory() {
+    classCallCheck(this, AbstractTransitionFactory);
 
-    return possibleConstructorReturn(this, getPrototypeOf(DefaultTransition).apply(this, arguments));
+    return possibleConstructorReturn(this, getPrototypeOf(AbstractTransitionFactory).apply(this, arguments));
   }
 
-  createClass(DefaultTransition, [{
-    key: "start",
-    value: function start() {
-      Promise.all([this.newPageLoading]).then(this.finish.bind(this));
-    }
-  }, {
-    key: "finish",
-    value: function finish() {
-      document.body.scrollTop = 0;
-      this.done();
-    }
+  createClass(AbstractTransitionFactory, [{
+    key: "getTransition",
+
+    /**
+     * Get Transition
+     *
+     * @param {Object} previousState
+     * @param {Object} state
+     * @returns {AbstractTransition}
+     * @abstract
+     */
+    value: function getTransition(previousState, state) {}
   }]);
 
-  return DefaultTransition;
-}(AbstractTransition);
+  return AbstractTransitionFactory;
+}(AbstractService);
 
 /**
  * Copyright © 2016, Ambroise Maupate
@@ -8443,4 +8422,4 @@ function () {
  */
 
 export default StartingBlocks;
-export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractTransition, AbstractBlockBuilder, AbstractService, AbstractSplashscreen, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };
+export { EventTypes, PageBuilder, BlockBuilder, Pjax, History, Prefetch, CacheProvider, Lazyload, AbstractPage, AbstractBlock, AbstractInViewBlock, AbstractBlockBuilder, AbstractService, AbstractSplashscreen, AbstractTransitionFactory, AbstractTransition, DefaultTransition, Utils, Scroll, polyfills, gaTrackErrors, debounce, BootstrapMedia, Dispatcher };

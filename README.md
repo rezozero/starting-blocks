@@ -1,5 +1,7 @@
 # Starting blocks
-## A page transition and blocks ES6 framework by REZO ZERO
+
+Starting Blocks is a framework for ajax page, transitions and blocks written in vanilla JS, 
+made by [Rezo Zero](https://www.rezo-zero.com/).
 
 [![npm](https://img.shields.io/npm/l/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
 [![npm](https://img.shields.io/npm/v/starting-blocks.svg)](https://www.npmjs.com/package/starting-blocks)
@@ -11,125 +13,116 @@
 - [Quentin Neyraud](https://github.com/quentinneyraud)
 - [Maxime Bérard](https://github.com/maximeberard)
 
-## Spec
+## Features
 
-- Compatible from **Internet Explorer 10+**
-- *jQuery* 3.3.1
-- *jquery.waitforimages* (for dispatching *onLoad* events to pages and blocks)
-- *vanilla-lazyload* (for optional automatic image lazyloading)
-- *debounce* (http://davidwalsh.name/javascript-debounce-function)
-- *loglevel*
-- Native *window.Promise*. Make sure to use a polyfill for [Internet Explorer 10 - 11](https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.0/es6-promise.auto.js)
-- Native *window.MutationObserver*. Make sure to use a polyfill for [Internet Explorer 10](https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js)
-- Native *window.fetch* method to perform any XHR requests. If *window.fetch* is not available, XHR will be disabled. Make sure to use a polyfill for [Internet Explorer 10-11](https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js)
-- *Webpack* (for development)
+- Pjax : ajax + push state
+- Transition manager : enhance your website with page transitions
+- Blocks : dynamic interactive sections (map, slideshow, canvas...)
 
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.auto.min.js"
-        integrity="sha256-OI3N9zCKabDov2rZFzl8lJUXCcP7EmsGcGoP6DMXQCo="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js"
-        integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"
-        integrity="sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs="
-        crossorigin="anonymous"></script>
-```
+And more...
 
-## Install with Yarn
+- Image lazy loader
+- In view detection
+- Splash screen
+- Prefetch
+- Cache
+
+## Install with Yarn or NPM
 
 ```shell
-# Install starting-blocks
 yarn add starting-blocks
 ```
 
-Before using *Starting Blocks* in your own project as a dependency you’ll need and to **create your own** `main.js` file
-and your `ClassFactory.js` according to your website pages and blocks. Any other router dependencies can be
-customize such as `TransitionFactory` to fit your own navigation needs.
-
-*Starting Blocks* requires *jQuery*, *loglevel* and *jquery.waitforimages* as we do not provide it in our bundle. This is meant to allow CDN for
-these libraries as you may need them in your project dependencies too!
-
-You can use them for your *node_modules* and package them with your won project or use them as CDN like below:
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.2.0/jquery.waitforimages.min.js"
-        integrity="sha256-b9bqxZdvRHQNAL/WJysGQ/mFHym7gGjEtruZ6zTNm7c="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
-        integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
-        crossorigin="anonymous"></script>
+```shell
+npm install starting-blocks --save
 ```
 
-**Be careful:** `jquery.waitforimages.min.js` library must be loaded as CDN only because it won’t be compatible with you *Webpack* build.
-
-## Minimal usage
+## Usage
 
 *Starting Blocks* is bundled with *NPM* in order to use *ES6* `import` syntax.
-You won’t need to know where each class is stored, just use the *curly brace* syntax.
-This bundle is already compiled in ES5, so you don’t need to setup Babel into your *node_modules* folder.
+We highly recommend to use a module bundler and to write your code in es6 syntax. If you use a module bundler like
+**Webpack**, it will be able to remove dead code (when a *Starting Blocks* service is not use), 
+just use the *curly brace* syntax.
 
-Minimal configuration:
+Minimal configuration :
 ```js
-// Import Router class
-import {
-    Router,
-    polyfills
-} from 'starting-blocks'
-import * as log from 'loglevel'
+import StartingBlocks from 'starting-blocks'
 
-/*
- * Polyfills for Array.prototype.findIndex,  Array.prototype.find, Array.from, CustomEvent, 
- * console, requestAnimationFrame and cancelAnimationFrame
- */
-polyfills()
+// Instantiate starting blocks
+const startingBlocks = new StartingBlocks({
+    // ...options
+})
 
-/**
- * Config loglevel
- */
-log.setLevel(0)
-
-// Instanciate a Router
-const routerOptions = {
-    // ...
-}
-const router = new Router(routerOptions)
-
-// Init router
-router.init()
+// Boot
+startingBlocks.boot()
 ```
+
+## Services
+
+*Starting Blocks* use dependency injection
+You can use or provide some services to enhance your website :
+
+| Service name | Init type | Ready to use | Dependencies | Description
+| --- | --- | --- | --- | --- |
+| `Pjax` | `bootableProvider` | true | `History` | Enable ajax navigation with push state
+| `History` | `provider` | true | | | Helps to keep track of the navigation
+| `Prefetch` | `bootableProvider` | true | `Pjax` | Prefetch links on mouse enter (useful with `Pjax`)
+| `CacheProvider` | `provider` | true |  | Cache ajax requests (useful with `Pjax`)
+| `Lazyload` | `bootableProvider` | true |  | Lazy load images
+| `Splashscreen` | `bootableProvider` | false | | Add a splash screen for the first init
+| `TransitionFactory` | `bootableProvider` | false |  | Manage your page transitions
+
+#### Pjax
+
+```js
+import StartingBlocks, { History, Pjax } from 'starting-blocks'
+
+// ...Instantiate starting blocks
+
+// Add service
+startingBlocks.provider('History', History)
+startingBlocks.bootableProvider('Pjax', Pjax)
+
+// ...Boot
+```
+
+**Warning :** don't forget to structure your DOM and to add specific data attributes, see [this section](#a-js-router-made-to-work-with-html-partial-responses)
+
+#### Lazyload
+
+#### Splashscreen
+
+#### TransitionFactory
 
 ## A JS router made to work with HTML partial responses
 
 This ES6 javascript router has been designed to handle as well complete HTML responses as
 *partial* HTML responses to lighten backend process and bandwidth.
-One of the most recurrent variable or member: `$cont` is always referring to the current page’ main-section.
+One of the most recurrent variable or member: `rootElement` is always referring to the current page’ main-section.
 This is the DOM section which is extracted at the end of each complete AJAX requests. When it detects that AJAX
-response is *partial* it directly initialize `$cont` with the whole response data. Every new AJAX response will
+response is *partial* it directly initialize `rootElement` with the whole response data. Every new AJAX response will
 be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
 
-When `ajaxEnabled` is set to true and `window.fetch` is supported, **all links inside document body** are listened to load pages asynchronously and make transitions.
+When `Pjax` service is used and `window.fetch` is supported, **all links inside document body** are listened to load pages asynchronously and make transitions.
 
-To declare a partial DOM section as the `$cont` you must add some classes and
+To declare a partial DOM section as the `rootElement` you must add some classes and
 data to your HTML tags.
 
 ```html
 <div id="page-content-home"
      class="page-content page-content-ajax"
-     data-node-type="page"
+     data-node-type="HomePage"
      data-node-name="home"
      data-is-home="1"
      data-meta-title="Home page">
 </div>
 ```
+
 - `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website. **Make sure that your ID is not equals to your `data-node-name`.**
-- `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in your `Router` options (`pageClass: "page-content"`).
-- `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: page.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the `Router` construction (`'page' : Page`).
-- `data-node-name` is used to name your page object **and to rename body ID after it.**
-- `data-is-home`
+- `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in options (`pageClass: "page-content"`).
+- `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: HomePage.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the your *Starting Blocks* instance via `instanceFactory` method.
+- `data-node-name` is used to name your page object **and to rename body class and ID after it.**
+- `data-is-home` 0 or 1
 - `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
 
 You’ll find `index.html` and `page1.html` examples files. You can even test them
@@ -341,6 +334,10 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 - Type `npm run dev` to improve Starting blocks locally.
 - Type `npm run build` to optimize project in one file as: `main.js`.
 - Type `npm run demo` to build demo project in `examples/` folder.
+
+### Compatibility
+
+Don't forget to use some polyfill for 
 
 ### Demo
 

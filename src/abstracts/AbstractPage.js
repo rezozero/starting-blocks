@@ -25,12 +25,6 @@
  */
 
 import debounce from '../utils/debounce'
-import Dispatcher from '../dispatcher/Dispatcher'
-import {
-    AFTER_PAGE_SHOW,
-    BEFORE_PAGE_HIDE,
-    AFTER_PAGE_HIDE
-} from '../types/EventTypes'
 import AbstractService from './AbstractService'
 import { debug, warn } from '../utils/Logger'
 
@@ -136,11 +130,6 @@ export default class AbstractPage extends AbstractService {
             await this.initBlocks()
         }
 
-        // Context
-        if (this.getService('Config').ajaxEnabled && this.context === 'ajax') {
-            this.initAjax()
-        }
-
         this.initEvents()
     }
 
@@ -193,32 +182,6 @@ export default class AbstractPage extends AbstractService {
     destroyEvents () {
         window.removeEventListener('resize', this.onResizeDebounce)
         this.domObserver.disconnect()
-    }
-
-    /**
-     * @param {Function} onShow
-     */
-    show (onShow) {
-        debug('▶️ #' + this.id)
-        this.rootElement.style.opacity = '1'
-        if (typeof onShow !== 'undefined') onShow()
-        this.rootElement.classList.remove(this.getService('Config').pageClass + '-transitioning')
-        Dispatcher.commit(AFTER_PAGE_SHOW, this)
-    }
-
-    /**
-     * @param {Function} onHidden
-     */
-    hide (onHidden) {
-        Dispatcher.commit(BEFORE_PAGE_HIDE, this)
-        debug('◀️ #' + this.id)
-        this.rootElement.style.opacity = '0'
-        if (typeof onHidden !== 'undefined') onHidden()
-        Dispatcher.commit(AFTER_PAGE_HIDE, this)
-    }
-
-    initAjax () {
-        this.rootElement.classList.add(this.getService('Config').pageClass + '-transitioning')
     }
 
     /**

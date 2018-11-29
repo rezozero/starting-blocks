@@ -24,6 +24,7 @@
  * @author Adrien Scholaert
  */
 
+import { AbstractTransitionFactory } from 'starting-blocks'
 import FadeTransition from '../transitions/FadeTransition'
 import SlideTransition from '../transitions/SlideTransition'
 import BigTransition from '../transitions/BigTransition'
@@ -35,7 +36,7 @@ import BigTransition from '../transitions/BigTransition'
  *
  * **You must define your own ClassFactory for each of your projects.**.
  */
-export default class TransitionFactory {
+export default class TransitionFactory extends AbstractTransitionFactory {
     /**
      * Get Transition
      *

@@ -67,29 +67,6 @@ export const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT'
 export const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW'
 
 /**
- * After page showed.
- *
- * @type {String}
- */
-export const AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW'
-
-/**
- * Before page begins to hide.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-export const BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE'
-
-/**
- * After page hiding animation.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-export const AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE'
-
-/**
  * Before page transition begin.
  *
  * @type {String}

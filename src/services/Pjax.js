@@ -34,6 +34,7 @@ import {
     BEFORE_PAGE_LOAD
 } from '../types/EventTypes'
 import AbstractBootableService from '../abstracts/AbstractBootableService'
+import DefaultTransition from '../transitions/DefaultTransition'
 import { debug } from '../utils/Logger'
 
 /**
@@ -41,7 +42,7 @@ import { debug } from '../utils/Logger'
  */
 export default class Pjax extends AbstractBootableService {
     constructor (container, serviceName = 'Pjax') {
-        super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder', 'TransitionFactory'])
+        super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder'])
 
         debug(`☕️ ${serviceName} awake`)
 
@@ -301,7 +302,11 @@ export default class Pjax extends AbstractBootableService {
      * @return {AbstractTransition} Transition object
      */
     getTransition (prev, current) {
-        return this.getService('TransitionFactory').getTransition(prev, current)
+        if (this.hasService('TransitionFactory')) {
+            return this.getService('TransitionFactory').getTransition(prev, current)
+        } else {
+            return new DefaultTransition()
+        }
     }
 
     /**
