@@ -17,7 +17,7 @@ made by [Rezo Zero](https://www.rezo-zero.com/).
 
 - Pjax : ajax + push state
 - Transition manager : enhance your website with page transitions
-- Blocks : dynamic interactive sections (map, slideshow, canvas...)
+- Blocks : dynamic interactive sections (map, slideshow, ajax forms, canvas...)
 
 And more...
 
@@ -47,15 +47,31 @@ just use the *curly brace* syntax.
 Minimal configuration :
 ```js
 import StartingBlocks from 'starting-blocks'
+import HomePage from './pages/HomePage'
+import UsersBlock from './blocks/UsersBlock'
 
 // Instantiate starting blocks
 const startingBlocks = new StartingBlocks({
     // ...options
 })
 
+// Register pages
+// The service name need to map with the data-node-type attribute (see DOM Structure section)
+startingBlocks.instanceFactory('HomePage', c => {
+    return new HomePage(c)
+})
+
+// Register blocks
+// The service name need to map with the data-node-type attribute (see DOM Structure section)
+startingBlocks.instanceFactory('UsersBlock', c => {
+    return new UsersBlock(c)
+})
+
 // Boot
 startingBlocks.boot()
 ```
+
+Pages and blocks are mapped 
 
 ## Services
 
@@ -86,131 +102,66 @@ startingBlocks.bootableProvider('Pjax', Pjax)
 // ...Boot
 ```
 
-**Warning :** don't forget to structure your DOM and to add specific data attributes, see [this section](#a-js-router-made-to-work-with-html-partial-responses)
+⚠️ Don't forget to structure your DOM and to add specific data attributes, see [DOM structure section](#dom-structure)
 
 #### Lazyload
 
+Automatic lazy loader for images. We used [lazysizes](https://github.com/aFarkas/lazysizes).
+Include the service and add `lazyload` class to your image elements.
+
+```js
+import StartingBlocks, { Lazyload } from 'starting-blocks'
+
+// ...Instantiate starting blocks
+startingBlocks.bootableProvider('Lazyload', Lazyload)
+// ...Boot
+```
+
 #### Splashscreen
+
+We implemented a `Splashscreen` service that is used at the first init.
+Create your own class and extends our `AbstractSplashscreen`.
+
+```js
+import { AbstractSplashscreen, Dispatcher, EventTypes } from 'starting-blocks'
+
+export default class Splashscreen extends AbstractSplashscreen {
+    constructor (container) {
+        super(container, 'Splashscreen')
+        //... custom values
+    }
+
+    // You need to override this method
+    hide () {
+        return new Promise(resolve => {
+            // custom logic, animations...
+            resolve()
+        })
+    }
+}
+```
+
+```js
+import Splashscreen from './Splashscreen'
+
+// ...Instantiate starting blocks
+
+// Add service
+startingBlocks.bootableProvider('Splashscreen', Splashscreen)
+
+// ...Boot
+```
 
 #### TransitionFactory
 
-## A JS router made to work with HTML partial responses
-
-This ES6 javascript router has been designed to handle as well complete HTML responses as
-*partial* HTML responses to lighten backend process and bandwidth.
-One of the most recurrent variable or member: `rootElement` is always referring to the current page’ main-section.
-This is the DOM section which is extracted at the end of each complete AJAX requests. When it detects that AJAX
-response is *partial* it directly initialize `rootElement` with the whole response data. Every new AJAX response will
-be appended in the `#ajax-container` HTML section in order to smooth transitions between pages.
-
-When `Pjax` service is used and `window.fetch` is supported, **all links inside document body** are listened to load pages asynchronously and make transitions.
-
-To declare a partial DOM section as the `rootElement` you must add some classes and
-data to your HTML tags.
-
-```html
-<div id="page-content-home"
-     class="page-content page-content-ajax"
-     data-node-type="HomePage"
-     data-node-name="home"
-     data-is-home="1"
-     data-meta-title="Home page">
-</div>
-```
-
-- `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website. **Make sure that your ID is not equals to your `data-node-name`.**
-- `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in options (`pageClass: "page-content"`).
-- `data-node-type` *attribute* will be used to *route* your section to the corresponding JS class (in this example: HomePage.js). **Every route class must extends the `AbstractPage` class**. Then you have to declare your routes in the your *Starting Blocks* instance via `instanceFactory` method.
-- `data-node-name` is used to name your page object **and to rename body class and ID after it.**
-- `data-is-home` 0 or 1
-- `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
-
-You’ll find `index.html` and `page1.html` examples files. You can even test them
-by spawning a simple server with `npm run serve` command.
-Then go to your favorite browser and type `http://localhost:8080`.
-
-### Router dependencies
-
-A Router needs:
-
-- an options object in order to override default configuration with important parameters such as:
-    - a `ClassFactory` object to link all `data-node-type` value to their *ES6* classes (you must import each class you’ll declare in your routes). You‘ll have to redefine a `ClassFactory` for each project you begin with *Starting Blocks*.
-    - a `GraphicLoader` or extending class instance in order to trigger `show` or `hide` during AJAX requests.
-    - a `TransitionFactory` object to link all `data-transition` value to their *ES6* classes.
-
-You can look at the `example/src/app.js` file to see an instantiation example with few parameters.
-
-### Router options
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| ajaxEnabled | boolean | true | |
-| pageClass | string | 'page-content' | |
-| ajaxWrapperId | string | 'sb-wrapper' | |
-| objectTypeAttr | string | 'data-node-type' | |
-| noAjaxLinkClass | string | 'no-ajax-link' | |
-| noPrefetchLinkClass | string | 'no-prefetch' | |
-| pageBlockClass | string | '.page-block' | (with point) |
-| lazyloadEnabled | boolean | false | |
-| workerEnabled | boolean | false | |
-| prefetchEnabled | boolean | true | |
-| lazyloadSrcAttr | string | 'data-src' | |
-| lazyloadClass | string | 'lazyload' | |
-| lazyloadSrcSetAttr | string | 'data-srcset' | |
-| lazyloadThreshold | number | 300 | Lazyload treshold |
-| lazyloadThrottle | number | 150 | Duration of lazyload throttle |
-| useCache | boolean | true | |
-| classFactory | ClassFactory | ClassFactory | |
-| graphicLoader | GraphicLoader | GraphicLoader | |
-| transitionFactory | TransitionFactory | TransitionFactory | |
-
-### Pages overridable methods
-
-| Method | Description |
-| --- | --- |
-| `onLoad` | Called when all images and page are loaded. |
-| `showEnded` | After show animation ended. |
-| `onResize` | On viewport resize, this method is debounced. |
-| `beforeLazyload` | Called before init lazyload images. |
-| `onLazyImageSet` | After a lazyloaded image src switched. |
-| `onLazyImageLoad` | After a lazyloaded image loaded. |
-| `onLazyImageProcessed` | Before lazyload. |
-
-### Block overridable methods
-
-| Method | Description |
-| --- | --- |
-| `onLoad` | Called when all block images are loaded. |
-| `onResize` | On viewport resize, this method is debounced. |
-| `onPageReady` | Called once all page blocks have been created. |
-
-### Events
-
-| Const name | Event name | Description |
-| --- | --- | --- |
-| `BEFORE_PAGE_LOAD` | `SB_BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
-| `AFTER_PAGE_LOAD` | `SB_AFTER_PAGE_LOAD` | After `window.fetch` XHR request succeeded. |
-| `AFTER_DOM_APPENDED` | `SB_AFTER_DOM_APPENDED` | After Router appended new page DOM to `ajaxWrapperId`. |
-| `AFTER_PAGE_BOOT` | `SB_AFTER_PAGE_BOOT` | After Router create new page instance. |
-| `BEFORE_PAGE_SHOW` | `SB_BEFORE_PAGE_SHOW` | Before page begins to show, right after assets are loaded (images). |
-| `AFTER_PAGE_SHOW` | `SB_AFTER_PAGE_SHOW` | After page showed. |
-| `BEFORE_PAGE_HIDE` | `SB_BEFORE_PAGE_HIDE` | Before page begins to hide. *Be careful, this event must be triggered manually if hide() method is overriden.* |
-| `AFTER_PAGE_HIDE` | `SB_AFTER_PAGE_HIDE` | After page hiding animation. *Be careful, this event must be triggered manually if hide() method is overriden.* |
-
-⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
-
-### Transitions
-
-When AJAX navigation is enabled, transitions are used to manage animations between pages.
-
-To manage transitions, you can set `data-transition` attribute with a name on each link.
-
+When AJAX navigation is enabled, transitions can be used to manage animations between pages.
+To manage transitions, you can set `data-transition` attribute with a name on each link :
 ```html
 <a href="/contact" data-transition="fade">Contact</a>
 ```
 
-Then, create a **TransitionFactory** class and pass it to the **Router** instance.
-In this class, implement `getTransition (previousState, state, direction = null)` method.
+Then, create a **TransitionFactory** class and pass it to **Starting Blocks** as a service.
+In this class, implement `getTransition (previousState, state)` method.
 This method is called on each transition and give you access to state informations :
 
 - `previousState` and `state`
@@ -220,38 +171,43 @@ This method is called on each transition and give you access to state informatio
 Example:
 ```javascript
 // src/factories/TransitionFactory.js
-
 import DefaultTransition from './transitions/DefaultTransition';
 import FadeTransition from './transitions/FadeTransition';
 
 export default class TransitionFactory {
     getTransition (previousState, state) {
-        let transition = null
-
         switch (state.transitionName) {
             case 'fade':
-                transition = new FadeTransition()
-                break
+                return new FadeTransition()
             default:
-                transition = new DefaultTransition()
-                break
+                return new DefaultTransition()
         }
-
-        return transition
     }
 }
+```
+
+How to add it as a service :
+```js
+import TransitionFactory from '../factories/TransitionFactory'
+
+// ...Instantiate starting blocks
+
+// Add service
+startingBlocks.provider('TransitionFactory', TransitionFactory)
+
+// ...Boot
 ```
 
 To create a new transition you need to create a new class extending `AbstractTransition`. Implement `start()` method and use Promises to manages your animations.
 ⚠️ You have to wait for `this.newPageLoading` promise resolution to make sure the new page is accessible.
 Then, you have access to old and new Page instances.
 
-Example with fade animation:
+Example with fade animation (we used TweeLite from [gsap](https://github.com/greensock/GreenSock-JS) for this example):
 
 ```javascript
 // src/transitions/FadeTransition.js
-
 import AbstractTransition from '../AbstractTransition'
+import { TweenLite } from 'gsap'
 
 /**
  * Fade Transition class example. Fade Out / Fade In content.
@@ -274,10 +230,11 @@ export default class FadeTransition extends AbstractTransition {
      * @returns {Promise}
      */
     fadeOut () {
-        return new Promise((resolve) => {
-            this.oldPage.$cont.animate({
-                opacity: 0
-            }, 400, 'swing', resolve)
+        return new Promise(resolve => {
+            TweenLite.to(this.oldPage.rootElement, 0.4, {
+                alpha: 0,
+                onComplete: resolve
+            })
         })
     }
 
@@ -285,24 +242,149 @@ export default class FadeTransition extends AbstractTransition {
      * Fade in the new content
      */
     fadeIn () {
-        // Add display: none on the old container
-        this.oldPage.$cont.hide()
+       // Add display: none on the old container
+       this.oldPage.rootElement.style.display = 'none'
 
-        // Prepare new content css properties for the fade animation
-        this.newPage.$cont.css({
-            visibility: 'visible',
-            opacity: 0
-        })
+       // Prepare new content css properties for the fade animation
+       this.newPage.rootElement.style.visibility = 'visible'
+       this.newPage.rootElement.style.opacity = '0'
+        
+        // Scroll to the top
+        document.documentElement.scrollTop = 0
+        document.body.scrollTop = 0
 
         // fadeIn the new content container
-        this.newPage.$cont.animate({ opacity: 1 }, 400, () => {
-            document.body.scrollTop = 0
-            // IMPORTANT: Call this method at the end
-            this.done()
+        TweenLite.to(this.newPage.rootElement, 0.4, {
+            autoAlpha: 1,
+            onComplete: () => {
+                // IMPORTANT: Call this method at the end
+                this.done()
+            }
         })
     }
 }
 ```
+
+## DOM structure
+
+This ES6 javascript framework has been designed to handle as well complete HTML responses as
+*partial* HTML responses to lighten backend process and bandwidth.
+One of the most recurrent variable or member: `rootElement` is always referring to the current page main-section.
+This is the DOM section which is extracted at the end of each complete AJAX requests. When it detects that AJAX
+response is *partial* it directly initialize `rootElement` with the whole response data. Every new AJAX response will
+be appended in the `#sb-wrapper` HTML section in order to smooth transitions between pages.
+
+When `Pjax` service is used and `window.fetch` is supported, **all links inside document body** are listened to load pages asynchronously and make transitions.
+
+To declare a partial DOM section as the `rootElement` you must add some classes and
+data to your HTML tags.
+
+```html
+<div id="page-content-home"
+     class="page-content"
+     data-node-type="HomePage"
+     data-node-name="home"
+     data-is-home="1"
+     data-meta-title="Home page">
+</div>
+```
+
+- `id` *attribute* is obviously mandatory as it will be used to update your navigation and some other parts of your website. **Make sure that your ID is not equals to your `data-node-name`.**
+- `page-content` *class* is essential in order to extract your DOM section during AJAX request. You can customize this class name in options (`pageClass: "page-content"`).
+- `data-node-type` *attribute* will be used to map your section to the corresponding JS class (in this example: HomePage.js). **Every class must extends the `AbstractPage` or `AbstractBlock` class**. Then you have to declare your pages and blocks in your *Starting Blocks* instance via `instanceFactory` method.
+- `data-node-name` is used to name your page object **and to rename body class and ID after it.**
+- `data-is-home` 0 or 1
+- `data-meta-title` *attribute* will be used to change your new page *title* (`document.title`), it can be used in other cases such as some social network modules which require a clean page-title.
+
+You’ll find `index.html` and `page1.html` examples files. You can even test them
+by spawning a simple server with `npm run serve` command.
+Then go to your favorite browser and type `http://localhost:8080`.
+
+## Page
+
+Each custom page need to extends our `AbstractPage` class and to be register as a service in your *Starting Blocks* instance.
+Be careful that `data-node-type` attribute match with your service declaration.
+By default *Starting Blocks* will instantiate the `DefaultPage` class.
+
+**Best practice** : Create your own `DefaultPage` with your commons features then override the default 
+service and use it as base for your future pages :
+
+```js
+import { AbstractPage } from 'starting-blocks'
+
+export default class CustomDefaultPage extends AbstractPage {
+    //... commons methods
+}
+
+// Custom page example
+export default class HomePage extends CustomDefaultPage {
+    //... home page custom methods
+}
+``` 
+
+```js
+import CustomDefaultPage from './pages/CustomDefaultPage'
+
+// ...Instantiate starting blocks
+
+// Add service
+startingBlocks.instanceFactory('DefaultPage', c => {
+    return new CustomDefaultPage(c)
+})
+// ...Boot
+``` 
+
+#### Page overridable methods
+| Method | Description |
+| --- | --- |
+| `onResize` | On viewport resize, this method is debounced. |
+
+## Block
+
+A block is an interactive section of your website. For example, it can be a Slideshow, an ajax form, a map...
+*Starting blocks* automatically map those interactive sections with custom js class.
+Like custom page, create your own class extending our `AbstractBlock` or `AbstractInViewBlock` class then add them as service.
+`data-node-type` attribute and service name must match.
+
+#### Common block overridable methods
+| Method | Description |
+| --- | --- |
+| `onResize` | On viewport resize, this method is debounced. |
+| `onPageReady` | Called once all page blocks have been created. |
+
+#### In view block overrivable methods
+| Method | Description |
+| --- | --- |
+| `onIntersectionCallback` | Called when in view block state changed (in or out). |
+| `onScreen` | Called when block is in the viewport. |
+| `offScreen` | Called when block is out of the viewport. |
+
+## Options
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| wrapperId | string | 'sb-wrapper' |
+| pageBlockClass | string | 'page-block' |
+| pageClass | string | 'page-content' |
+| objectTypeAttr | string | 'data-node-type' |
+| noAjaxLinkClass | string | 'no-ajax-link' |
+| noPrefetchClass | string | 'no-prefetch' |
+
+## Events
+
+| Const name | Event name | Description |
+| --- | --- | --- |
+| `BEFORE_PAGE_LOAD` | `SB_BEFORE_PAGE_LOAD` | Before Router initialize XHR request to load new page. |
+| `AFTER_PAGE_LOAD` | `SB_AFTER_PAGE_LOAD` | After `window.fetch` XHR request succeeded. |
+| `AFTER_DOM_APPENDED` | `SB_AFTER_DOM_APPENDED` | After Router appended new page DOM to `wrapperId`. |
+| `AFTER_PAGE_BOOT` | `SB_AFTER_PAGE_BOOT` | After Router create new page instance. |
+| `CONTAINER_READY` | `SB_CONTAINER_READY` |  |
+| `TRANSITION_START` | `SB_TRANSITION_START` | |
+| `TRANSITION_COMPLETE` | `SB_TRANSITION_COMPLETE` | |
+| `BEFORE_SPLASHSCREEN_HIDE` | `SB_BEFORE_SPLASHSCREEN_HIDE` | |
+| `AFTER_SPLASHSCREEN_HIDE` | `SB_AFTER_SPLASHSCREEN_HIDE` | |
+
+⚠️ For those who use 2.1.7, we prefix events to avoid possible conflict with other libraries.
 
 ## Docs
 
@@ -335,10 +417,57 @@ To work locally on *Starting blocks*, we provided some HTML example files.
 - Type `npm run build` to optimize project in one file as: `main.js`.
 - Type `npm run demo` to build demo project in `examples/` folder.
 
-### Compatibility
+## Compatibility
 
-Don't forget to use some polyfill for 
+*Starting Blocks* use native `Promise`, `fetch`, `IntersectionObserver` and `MutationObserver`
+Don't forget to use some polyfills for old browsers.
 
-### Demo
+## Demo
 
 To launch the example you need to change the `examples/srv/js/config/config.example.js` file with your own information.
+
+## Go further with Starting Blocks
+
+Dynamically lazy load your blocks with a custom `BlockBuilder` (you need to use *webpack*).
+Create a custom *BlockBuilder* and override the default one:
+
+```js
+import { AbstractBlockBuilder } from 'starting-blocks'
+
+export default class WebpackAsyncBlockBuilder extends AbstractBlockBuilder {
+    // Dynamic import
+    async getBlockInstance (nodeTypeName) {
+        try {
+            const Block = await this.getModule(nodeTypeName)
+
+            if (!this.hasService(nodeTypeName)) {
+                this.container.$register({
+                    $name: nodeTypeName,
+                    $type: 'instanceFactory',
+                    $value: c => {
+                        return new Block(c)
+                    }
+                })
+            }
+
+            return this.getService(nodeTypeName).instance()
+        } catch (e) {
+            console.error(e.message)
+            return null
+        }
+    }
+
+    async getModule (nodeTypeName) {
+        return import(`../blocks/${nodeTypeName}` /* webpackChunkName: "block-" */)
+            .then(block => {
+                return block.default
+            })
+    }
+}
+```
+
+Then override the default `PageBuilder` service :
+```js
+// Custom block builder (dynamic import)
+startingBlocks.provider('BlockBuilder', WebpackAsyncBlockBuilder)
+```

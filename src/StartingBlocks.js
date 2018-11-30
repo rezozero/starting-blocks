@@ -8,7 +8,7 @@ import Bottle from 'bottlejs'
 import PageBuilder from './services/PageBuilder'
 import BlockBuilder from './services/BlockBuilder'
 import Dom from './services/Dom'
-import AbstractPage from './abstracts/AbstractPage'
+import DefaultPage from './pages/DefaultPage'
 
 /**
  * @namespace
@@ -48,8 +48,8 @@ export default class StartingBlocks {
 
         this.provider('Dom', Dom)
         this.provider('BlockBuilder', BlockBuilder)
-        this.instanceFactory('AbstractPage', c => {
-            return new AbstractPage(c)
+        this.instanceFactory('DefaultPage', c => {
+            return new DefaultPage(c)
         })
     }
 

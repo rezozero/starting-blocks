@@ -63,13 +63,6 @@ var CONTAINER_READY = 'SB_CONTAINER_READY';
 
 var AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT';
 /**
- * Before page begins to show, right after assets are loaded (images).
- *
- * @type {String}
- */
-
-var BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW';
-/**
  * Before page transition begin.
  *
  * @type {String}
@@ -111,7 +104,6 @@ var EventTypes = /*#__PURE__*/Object.freeze({
 	AFTER_DOM_APPENDED: AFTER_DOM_APPENDED,
 	CONTAINER_READY: CONTAINER_READY,
 	AFTER_PAGE_BOOT: AFTER_PAGE_BOOT,
-	BEFORE_PAGE_SHOW: BEFORE_PAGE_SHOW,
 	TRANSITION_START: TRANSITION_START,
 	TRANSITION_COMPLETE: TRANSITION_COMPLETE,
 	BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
@@ -3885,8 +3877,8 @@ function (_AbstractBootableServ) {
                 if (this.hasService(nodeTypeName)) {
                   this.page = this.getService(nodeTypeName).instance();
                 } else {
-                  nodeTypeName = 'AbstractPage';
-                  this.page = this.getService('AbstractPage').instance();
+                  nodeTypeName = 'DefaultPage';
+                  this.page = this.getService('DefaultPage').instance();
                 } // Set some values
 
 
@@ -4813,6 +4805,20 @@ function (_AbstractService) {
   return AbstractPage;
 }(AbstractService);
 
+var DefaultPage =
+/*#__PURE__*/
+function (_AbstractPage) {
+  inherits(DefaultPage, _AbstractPage);
+
+  function DefaultPage(container) {
+    classCallCheck(this, DefaultPage);
+
+    return possibleConstructorReturn(this, getPrototypeOf(DefaultPage).call(this, container, 'DefaultPage'));
+  }
+
+  return DefaultPage;
+}(AbstractPage);
+
 /**
  * @namespace
  * @type {Object} defaults                      - Default config
@@ -4852,8 +4858,8 @@ function () {
     window.startingBlocksDebugLevel = this.bottle.container.Config.debug;
     this.provider('Dom', Dom);
     this.provider('BlockBuilder', BlockBuilder);
-    this.instanceFactory('AbstractPage', function (c) {
-      return new AbstractPage(c);
+    this.instanceFactory('DefaultPage', function (c) {
+      return new DefaultPage(c);
     });
   }
 
@@ -6372,27 +6378,51 @@ function (_AbstractBootableServ) {
       } // When data are loaded
 
 
-      request.then(function (data) {
-        var container = _this2.getService('Dom').parseResponse(data); // Dispatch an event
+      request.then(
+      /*#__PURE__*/
+      function () {
+        var _ref = asyncToGenerator(
+        /*#__PURE__*/
+        regenerator.mark(function _callee(data) {
+          var container, page;
+          return regenerator.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  container = _this2.getService('Dom').parseResponse(data); // Dispatch an event
+
+                  Dispatcher.commit(AFTER_PAGE_LOAD, {
+                    container: container,
+                    currentHTML: _this2.getService('Dom').currentHTML
+                  }); // Add new container to the DOM
+
+                  _this2.getService('Dom').putContainer(container); // Dispatch an event
 
 
-        Dispatcher.commit(AFTER_PAGE_LOAD, {
-          container: container,
-          currentHTML: _this2.getService('Dom').currentHTML
-        }); // Add new container to the DOM
+                  Dispatcher.commit(AFTER_DOM_APPENDED, {
+                    container: container,
+                    currentHTML: _this2.getService('Dom').currentHTML
+                  }); // Build page
 
-        _this2.getService('Dom').putContainer(container); // Dispatch an event
+                  _context.next = 6;
+                  return _this2.getService('PageBuilder').buildPage(container);
 
+                case 6:
+                  page = _context.sent;
+                  deferred.resolve(page);
 
-        Dispatcher.commit(AFTER_DOM_APPENDED, {
-          container: container,
-          currentHTML: _this2.getService('Dom').currentHTML
-        }); // Build page
+                case 8:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
 
-        var page = _this2.getService('PageBuilder').buildPage(container);
-
-        deferred.resolve(page);
-      }).catch(function (err) {
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }()).catch(function (err) {
         console.error(err);
 
         _this2.forceGoTo(url);

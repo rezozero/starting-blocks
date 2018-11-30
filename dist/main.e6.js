@@ -59,13 +59,6 @@ const CONTAINER_READY = 'SB_CONTAINER_READY';
 
 const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT';
 /**
- * Before page begins to show, right after assets are loaded (images).
- *
- * @type {String}
- */
-
-const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW';
-/**
  * Before page transition begin.
  *
  * @type {String}
@@ -107,7 +100,6 @@ var EventTypes = /*#__PURE__*/Object.freeze({
   AFTER_DOM_APPENDED: AFTER_DOM_APPENDED,
   CONTAINER_READY: CONTAINER_READY,
   AFTER_PAGE_BOOT: AFTER_PAGE_BOOT,
-  BEFORE_PAGE_SHOW: BEFORE_PAGE_SHOW,
   TRANSITION_START: TRANSITION_START,
   TRANSITION_COMPLETE: TRANSITION_COMPLETE,
   BEFORE_SPLASHSCREEN_HIDE: BEFORE_SPLASHSCREEN_HIDE,
@@ -1035,8 +1027,8 @@ class PageBuilder extends AbstractBootableService {
     if (this.hasService(nodeTypeName)) {
       this.page = this.getService(nodeTypeName).instance();
     } else {
-      nodeTypeName = 'AbstractPage';
-      this.page = this.getService('AbstractPage').instance();
+      nodeTypeName = 'DefaultPage';
+      this.page = this.getService('DefaultPage').instance();
     } // Set some values
 
 
@@ -1677,6 +1669,19 @@ class AbstractPage extends AbstractService {
 
 }
 
+/*
+ * Copyright © 2017, Rezo Zero
+ *
+ * @file DefaultPage.js
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ */
+class DefaultPage extends AbstractPage {
+  constructor(container) {
+    super(container, 'DefaultPage');
+  }
+
+}
+
 /**
  * @namespace
  * @type {Object} defaults                      - Default config
@@ -1709,8 +1714,8 @@ class StartingBlocks {
     window.startingBlocksDebugLevel = this.bottle.container.Config.debug;
     this.provider('Dom', Dom);
     this.provider('BlockBuilder', BlockBuilder);
-    this.instanceFactory('AbstractPage', c => {
-      return new AbstractPage(c);
+    this.instanceFactory('DefaultPage', c => {
+      return new DefaultPage(c);
     });
   }
 
@@ -2312,7 +2317,7 @@ class Pjax extends AbstractBootableService {
     } // When data are loaded
 
 
-    request.then(data => {
+    request.then(async data => {
       const container = this.getService('Dom').parseResponse(data); // Dispatch an event
 
       Dispatcher.commit(AFTER_PAGE_LOAD, {
@@ -2327,7 +2332,7 @@ class Pjax extends AbstractBootableService {
         currentHTML: this.getService('Dom').currentHTML
       }); // Build page
 
-      const page = this.getService('PageBuilder').buildPage(container);
+      const page = await this.getService('PageBuilder').buildPage(container);
       deferred.resolve(page);
     }).catch(err => {
       console.error(err);

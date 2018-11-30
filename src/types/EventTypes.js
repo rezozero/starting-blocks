@@ -60,13 +60,6 @@ export const CONTAINER_READY = 'SB_CONTAINER_READY'
 export const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT'
 
 /**
- * Before page begins to show, right after assets are loaded (images).
- *
- * @type {String}
- */
-export const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW'
-
-/**
  * Before page transition begin.
  *
  * @type {String}

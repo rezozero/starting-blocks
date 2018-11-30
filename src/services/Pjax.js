@@ -155,7 +155,7 @@ export default class Pjax extends AbstractBootableService {
 
         // When data are loaded
         request
-            .then(data => {
+            .then(async data => {
                 const container = this.getService('Dom').parseResponse(data)
 
                 // Dispatch an event
@@ -174,7 +174,7 @@ export default class Pjax extends AbstractBootableService {
                 })
 
                 // Build page
-                const page = this.getService('PageBuilder').buildPage(container)
+                const page = await this.getService('PageBuilder').buildPage(container)
 
                 deferred.resolve(page)
             })

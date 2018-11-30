@@ -56,8 +56,8 @@ export default class PageBuilder extends AbstractBootableService {
         if (this.hasService(nodeTypeName)) {
             this.page = this.getService(nodeTypeName).instance()
         } else {
-            nodeTypeName = 'AbstractPage'
-            this.page = this.getService('AbstractPage').instance()
+            nodeTypeName = 'DefaultPage'
+            this.page = this.getService('DefaultPage').instance()
         }
 
         // Set some values
