@@ -1,17 +1,14 @@
 language: node_js
 node_js:
-  - "node"
-  - "lts/*"
-  - "10"
-  - "8"
+- node
+- lts/*
+- '10'
+- '8'
 script:
-  # Copy config for demo
-  - cp examples/src/js/config/config.example.js examples/src/js/config/config.js
-  - echo "Generating bundle.js…"
-  # Only generate bundle, not demo
-  - npm run build
-  # Only generate demo
-  - npm run demo
+- cp examples/src/js/config/config.example.js examples/src/js/config/config.js
+- echo "Generating bundle.js…"
+- npm run build
+- npm run demo
 skip_cleanup: true
 jobs:
   include:
@@ -35,4 +32,5 @@ jobs:
         email: ambroise@rezo-zero.com
         provider: npm
         api_key:
-          secure: qUF3vsQehzYm3LYa1ocNKzMEGxswnzMVP8zm4JRLt5MKEtOml9SzvFOnOjUDfWuBl64bi9HnY/3x8KKJDoeU4ls9ONBNyYaHNRAe9RyCZzhnxLtV2SbPaTx1RxhCbm0EQKzEGedqghYK6FGx/bvsqRWLh4GtWpgd+t4n7fVeCN6SyxGzdSUjlqRcNIpXBPMP7XX93PN2Fbv7k5OkbOc7ZRDW4c+OzSpYOvPCbtRqQYZmMVnbdoqKTZMwlbGfcpuHM5Jj61Yqq2J7bDx7F+3WdKcFeRJUm47FXdK8EBJWleaXvLCjrNdPFt6/UobMOtOSsXGpDgwl1tCNT4QE8OXjxTwfGTEoQi9zGBvhiY1Piczldd9xLAooXAJcvzsoYXYPFSqyXuiCdN9y2eQ6yPS3h552FMJIAhk1ncX2UA2kiiMYg1wdkZbq3sNHxTvSOSSzd65k9kL/F7jTHs6Vgn5k2vOMUBsNvMdmOgf/SUXynDasxnzWje2oWIohy9cMIbr3vfmemNHGHJUalgeQEY3gHGxygHqRWdaF0xwwpSpA1czYuIpFhSWbCz3/oUFv6hJsNYs8kWyiqL6mH7BtPvFm/2+TbiYA2n5fm7ApkDj6HrsM2lEZxS40lAUgLdQ8nwFzJQ3/mIelSrpXu+H96E8cAoRXw9loaIyvW7l96I958og=
+          secure: ghCDQ6wIjCRhYb3pfCMydSETFyJFkZ6B74NnyRFMP/7RtWCFv7K+g9xbvzta4ru/Y1lnM+GVYIpd9DkiwkrOi10foFGqSOnYfqDzwXN/DgdM1sgM2hMwWnh3cXljmJzU3MHJuu/QzxJDeadt3hMBo6GrYh5HXwAwAZ5egrnFcJC2x0szuORtGCFHJxV9dxQGyIw6LTwi9tU7sUY+0BNy/IjiMUDlOvSLIguL7VdZnq2/3o9YU+7EWgpCMSm9nKqdA4ChQ0lCKyom5JBTqZjE8O2krvVMbkEcIi9XBYLy8dbtZXZ1DXoA7HAuUgReVf3b6qra8rMCwbrsO7pzwseLvXcAFq4ZM0ZA1Ty04kZlyOmVJMhxDHjHX1mWuPrMCLau18M/E8qpyeUWArSTb2/hW51OKwqTZ2iSaiZVUmkyYpK8o5gI6OSWzMi/9EPAvZe4hl2e3fnYr7Hn4FCYB58lXGfh299KCZSSNuinAmGcRl5euJk/ZLKmpbGaLFJMulhNQcNnxMFsK/2q5m9Uqgv6UM+vF3IuKrWKyanR0PnPedHMhqo/6jWqIAcZ+kwXvC965y0xHFQpElZ45u36NSoqmQTMTr0wM+R6RTgT5808LviegHzSbMgXdDj9rweQphkWK2XnNTsLlFooQSdiXwBmXWgM+VRhPmVLD7eCS9vnI6w=
+
