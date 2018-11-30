@@ -1544,6 +1544,7 @@ class AbstractPage extends AbstractService {
     for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
       let blockElement = this.blockElements[blockIndex];
       const existingBlock = this.getBlockById(blockElement.id);
+      if (!blockElement.id) break;
 
       if (existingBlock === null) {
         try {
@@ -1566,6 +1567,7 @@ class AbstractPage extends AbstractService {
 
 
   async initSingleBlock(blockElement) {
+    if (!blockElement.id) return null;
     let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
     let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType);
 
