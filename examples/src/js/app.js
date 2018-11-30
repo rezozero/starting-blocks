@@ -11,7 +11,6 @@ import StartingBlocks, {
     History,
     Prefetch,
     CacheProvider,
-    Lazyload,
     polyfills
 } from 'starting-blocks'
 import WebpackAsyncBlockBuilder from './services/WebpackAsyncBlockBuilder'
@@ -20,6 +19,7 @@ import TransitionFactory from './factories/TransitionFactory'
 import HomePage from './pages/HomePage'
 import ExampleNav from './ExampleNav'
 import 'gsap/CSSPlugin'
+import 'lazysizes'
 
 (() => {
     // BEING IMPORTANT (Bug Safari 10.1)
@@ -42,6 +42,8 @@ import 'gsap/CSSPlugin'
      */
     const nav = new ExampleNav()
 
+    // console.log(StartingBlocks)
+
     /**
      * Build a new starting blocks
      */
@@ -60,7 +62,6 @@ import 'gsap/CSSPlugin'
     // Add bootable services
     startingBlocks.bootableProvider('Prefetch', Prefetch)
     startingBlocks.bootableProvider('Pjax', Pjax)
-    startingBlocks.bootableProvider('Lazyload', Lazyload)
     startingBlocks.bootableProvider('Splashscreen', Splashscreen)
 
     // Register pages

@@ -12,7 +12,6 @@ made by [Rezo Zero](https://www.rezo-zero.com/).
 * [Usage](#usage)
 * [Services](#services)
   - [Pjax](#pjax)
-  - [Lazyload](#lazyload)
   - [Splashscreen](#splashscreen)
   - [TransitionFactory](#transitionfactory)
 * [DOM structure](#dom-structure)
@@ -39,7 +38,6 @@ made by [Rezo Zero](https://www.rezo-zero.com/).
 
 And more...
 
-- Image lazy-loader
 - In view detection
 - Splashscreen 
 - Prefetch
@@ -102,7 +100,6 @@ You can use or provide these standard services to enhance your website :
 | `History` | `provider` | true | | | Helps to keep track of the navigation state
 | `Prefetch` | `bootableProvider` | true | `Pjax` | Prefetch links on mouse enter (useful with `Pjax`)
 | `CacheProvider` | `provider` | true |  | Cache ajax requests (useful with `Pjax`)
-| `Lazyload` | `bootableProvider` | true |  | Handles lazyloaded images
 | `Splashscreen` | `bootableProvider` | false | | Add a splash screen for the first init
 | `TransitionFactory` | `bootableProvider` | false |  | Instantiate page transitions objects according to your *Pjax* context
 
@@ -121,19 +118,6 @@ startingBlocks.bootableProvider('Pjax', Pjax)
 ```
 
 ⚠️ Don't forget to prepare your DOM adding specific *data attributes* and required *classes*, see [DOM structure section](#dom-structure)
-
-#### Lazyload
-
-Automatic lazy-loader for images. We use the well-known *[lazysizes](https://github.com/aFarkas/lazysizes)* library.
-Include the service and add `lazyload` class to your image elements and change your `src` attributes to `data-src`. Read *lazysizes* documentation for further usage.
-
-```js
-import StartingBlocks, { Lazyload } from 'starting-blocks'
-
-// ...Instantiate starting blocks
-startingBlocks.bootableProvider('Lazyload', Lazyload)
-// ...Boot
-```
 
 #### Splashscreen
 
