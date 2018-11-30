@@ -4569,23 +4569,31 @@ function (_AbstractService) {
 
               case 4:
                 if (!(blockIndex < this.blockLength)) {
-                  _context3.next = 21;
+                  _context3.next = 23;
                   break;
                 }
 
                 blockElement = this.blockElements[blockIndex];
                 existingBlock = this.getBlockById(blockElement.id);
 
-                if (!(existingBlock === null)) {
-                  _context3.next = 18;
+                if (blockElement.id) {
+                  _context3.next = 9;
                   break;
                 }
 
-                _context3.prev = 8;
-                _context3.next = 11;
+                return _context3.abrupt("break", 23);
+
+              case 9:
+                if (!(existingBlock === null)) {
+                  _context3.next = 20;
+                  break;
+                }
+
+                _context3.prev = 10;
+                _context3.next = 13;
                 return this.initSingleBlock(this.blockElements[blockIndex]);
 
-              case 11:
+              case 13:
                 block = _context3.sent;
 
                 if (block) {
@@ -4593,25 +4601,25 @@ function (_AbstractService) {
                   block.onPageReady();
                 }
 
-                _context3.next = 18;
+                _context3.next = 20;
                 break;
 
-              case 15:
-                _context3.prev = 15;
-                _context3.t0 = _context3["catch"](8);
+              case 17:
+                _context3.prev = 17;
+                _context3.t0 = _context3["catch"](10);
                 warn(_context3.t0.message);
 
-              case 18:
+              case 20:
                 blockIndex++;
                 _context3.next = 4;
                 break;
 
-              case 21:
+              case 23:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[8, 15]]);
+        }, _callee3, this, [[10, 17]]);
       }));
 
       return function updateBlocks() {
@@ -4634,21 +4642,29 @@ function (_AbstractService) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
-                _context4.next = 3;
-                return this.getService('BlockBuilder').getBlockInstance(blockType);
-
-              case 3:
-                blockInstance = _context4.sent;
-
-                if (blockInstance) {
-                  _context4.next = 6;
+                if (blockElement.id) {
+                  _context4.next = 2;
                   break;
                 }
 
                 return _context4.abrupt("return", null);
 
-              case 6:
+              case 2:
+                blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr);
+                _context4.next = 5;
+                return this.getService('BlockBuilder').getBlockInstance(blockType);
+
+              case 5:
+                blockInstance = _context4.sent;
+
+                if (blockInstance) {
+                  _context4.next = 8;
+                  break;
+                }
+
+                return _context4.abrupt("return", null);
+
+              case 8:
                 // Set values
                 blockInstance.type = blockType;
                 blockInstance.page = this;
@@ -4660,7 +4676,7 @@ function (_AbstractService) {
                 blockInstance.initEvents();
                 return _context4.abrupt("return", blockInstance);
 
-              case 14:
+              case 16:
               case "end":
                 return _context4.stop();
             }

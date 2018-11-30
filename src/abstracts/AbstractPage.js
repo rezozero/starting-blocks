@@ -222,6 +222,8 @@ export default class AbstractPage extends AbstractService {
             let blockElement = this.blockElements[blockIndex]
             const existingBlock = this.getBlockById(blockElement.id)
 
+            if (!blockElement.id) break
+
             if (existingBlock === null) {
                 try {
                     let block = await this.initSingleBlock(this.blockElements[blockIndex])
@@ -242,6 +244,8 @@ export default class AbstractPage extends AbstractService {
      * @return {AbstractBlock}
      */
     async initSingleBlock (blockElement) {
+        if (!blockElement.id) return null
+
         let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr)
         let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType)
 
