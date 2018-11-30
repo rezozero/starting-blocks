@@ -24,53 +24,24 @@
  */
 
 import Utils from '../utils/Utils'
+import AbstractBootableService from '../abstracts/AbstractBootableService'
+import { debug } from '../utils/Logger'
 
 /**
  * Prefetch.
  *
  * @type {Object}
  */
-export default class Prefetch {
-    constructor ({
-        noPrefetchClass = 'no-prefetch'
-    } = {}) {
-        /**
-         * Class name used to ignore prefetch on links.
-         *
-         * @type {string}
-         * @default
-         */
-        this.noPrefetchClass = noPrefetchClass
+export default class Prefetch extends AbstractBootableService {
+    constructor (container, serviceName = 'Prefetch') {
+        super(container, serviceName, ['Pjax', 'Config'])
 
-        /**
-         * @type {(Worker|null)}
-         */
-        this._worker = null
-
-        /**
-         * @type {(Pjax|null)}
-         */
-        this._pjax = null
-
-        /**
-         * @type {(CacheProvider|null)}
-         */
-        this._cacheProvider = null
+        debug(`☕️ ${serviceName} awake`)
     }
 
-    set worker (value) {
-        this._worker = value
-    }
+    boot () {
+        super.boot()
 
-    set pjax (value) {
-        this._pjax = value
-    }
-
-    set cacheProvider (value) {
-        this._cacheProvider = value
-    }
-
-    init () {
         if (!window.history.pushState) {
             return false
         }
@@ -82,22 +53,32 @@ export default class Prefetch {
     onLinkEnter (evt) {
         let el = evt.target
 
-        while (el && !this._pjax.getHref(el)) {
+        while (el && !this.getService('Pjax').getHref(el)) {
             el = el.parentNode
         }
 
-        if (!el || el.classList.contains(this.noPrefetchClass)) {
+        if (!el || el.classList.contains(this.getService('Config').noPrefetchClass)) {
             return
         }
 
-        let url = this._pjax.getHref(el)
+        let url = this.getService('Pjax').getHref(el)
 
         // Check if the link is eligible for Pjax
-        if (this._pjax.preventCheck(evt, el) && (this._cacheProvider && !this._cacheProvider.get(url))) {
-            let xhr = Utils.request(url, this._worker)
+        if (this.getService('Pjax').preventCheck(evt, el)) {
+            if (this.hasService('CacheProvider') && this.getService('CacheProvider').get(url)) {
+                return
+            }
 
-            if (this._cacheProvider) {
-                this._cacheProvider.set(url, xhr)
+            let serviceWorker = null
+
+            if (this.hasService('Worker')) {
+                serviceWorker = this.getService('Worker')
+            }
+
+            let xhr = Utils.request(url, serviceWorker)
+
+            if (this.hasService('CacheProvider')) {
+                this.getService('CacheProvider').set(url, xhr)
             }
         }
     }

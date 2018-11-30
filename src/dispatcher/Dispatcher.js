@@ -23,13 +23,15 @@
  * @author Ambroise Maupate
  */
 
+import { debug } from '../utils/Logger'
+
 /**
  * Event dispatcher.
  */
 export default class Dispatcher {
     static commit (eventType, detail) {
         const event = new window.CustomEvent(eventType, { detail })
-        console.debug('🚩 Dispatched ' + eventType)
+        debug('🚩 Dispatched ' + eventType)
         window.dispatchEvent(event)
     }
 }

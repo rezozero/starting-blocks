@@ -24,7 +24,6 @@
  */
 
 import Utils from '../utils/Utils'
-import History from './History'
 import Dispatcher from '../dispatcher/Dispatcher'
 import {
     CONTAINER_READY,
@@ -34,59 +33,18 @@ import {
     TRANSITION_COMPLETE,
     BEFORE_PAGE_LOAD
 } from '../types/EventTypes'
+import AbstractBootableService from '../abstracts/AbstractBootableService'
+import DefaultTransition from '../transitions/DefaultTransition'
+import { debug } from '../utils/Logger'
 
 /**
  * Pjax.
  */
-export default class Pjax {
-    /**
-     * Constructor.
-     *
-     * @param {Object} options
-     * @param {string} [options.noAjaxLinkClass=no-ajax-link] - The link class name to prevent ajax
-     */
-    constructor ({
-        noAjaxLinkClass = 'no-ajax-link'
-    } = {}) {
-        /**
-         * @type {string}
-         */
-        this.noAjaxLinkClass = noAjaxLinkClass
+export default class Pjax extends AbstractBootableService {
+    constructor (container, serviceName = 'Pjax') {
+        super(container, serviceName, ['Dom', 'Config', 'History', 'PageBuilder'])
 
-        /**
-         * @type {(Kernel|null)}
-         */
-        this._kernel = null
-
-        /**
-         * @type {(History|null)}
-         */
-        this._history = null
-
-        /**
-         * @type {(Dom|null)}
-         */
-        this._dom = null
-
-        /**
-         * @type {(CacheProvider|null)}
-         */
-        this._cacheProvider = null
-
-        /**
-         * @type {(TransitionFactory|null)}
-         */
-        this._transitionFactory = null
-
-        /**
-         * @type {(GraphicLoader|null)}
-         */
-        this._graphicLoader = null
-
-        /**
-         * @type {(Worker|null)}
-         */
-        this._worker = null
+        debug(`☕️ ${serviceName} awake`)
 
         /**
          * Indicate if there is an animation in progress.
@@ -103,46 +61,18 @@ export default class Pjax {
         this.onStateChange = this.onStateChange.bind(this)
     }
 
-    set kernel (value) {
-        this._kernel = value
-    }
-
-    set history (value) {
-        this._history = value
-    }
-
-    set dom (value) {
-        this._dom = value
-    }
-
-    set cacheProvider (value) {
-        this._cacheProvider = value
-    }
-
-    set graphicLoader (value) {
-        this._graphicLoader = value
-    }
-
-    set worker (value) {
-        this._worker = value
-    }
-
-    set transitionFactory (value) {
-        this._transitionFactory = value
-    }
-
     /**
      * Init the events.
      *
      * @private
      */
-    init () {
-        this._history = new History()
+    boot () {
+        super.boot()
 
-        const wrapper = this._dom.getWrapper()
+        const wrapper = this.getService('Dom').getWrapper()
         wrapper.setAttribute('aria-live', 'polite')
 
-        this.currentState = this._history.add(this.getCurrentUrl(), null, 'static')
+        this.currentState = this.getService('History').add(this.getCurrentUrl(), null, 'static')
 
         this.bindEvents()
     }
@@ -200,50 +130,51 @@ export default class Pjax {
     load (url) {
         const deferred = Utils.deferred()
 
-        // Show loader
-        if (this._graphicLoader) {
-            this._graphicLoader.show()
-        }
-
         // Check cache
         let request = null
 
-        if (this._cacheProvider) {
-            request = this._cacheProvider.get(url)
+        if (this.hasService('CacheProvider')) {
+            request = this.getService('CacheProvider').get(url)
         }
 
         // If no cache, make request
         if (!request) {
-            request = Utils.request(url, this._worker)
+            let serviceWorker = null
+
+            if (this.hasService('Worker')) {
+                serviceWorker = this.getService('Worker')
+            }
+
+            request = Utils.request(url, serviceWorker)
 
             // If cache provider, cache the request
-            if (this._cacheProvider) {
-                this._cacheProvider.set(url, request)
+            if (this.hasService('CacheProvider')) {
+                this.getService('CacheProvider').set(url, request)
             }
         }
 
         // When data are loaded
         request
-            .then(data => {
-                const container = this._dom.parseResponse(data)
+            .then(async data => {
+                const container = this.getService('Dom').parseResponse(data)
 
                 // Dispatch an event
                 Dispatcher.commit(AFTER_PAGE_LOAD, {
                     container,
-                    currentHTML: this._dom.currentHTML
+                    currentHTML: this.getService('Dom').currentHTML
                 })
 
                 // Add new container to the DOM
-                this._dom.putContainer(container)
+                this.getService('Dom').putContainer(container)
 
                 // Dispatch an event
                 Dispatcher.commit(AFTER_DOM_APPENDED, {
                     container,
-                    currentHTML: this._dom.currentHTML
+                    currentHTML: this.getService('Dom').currentHTML
                 })
 
                 // Build page
-                const page = this._kernel.buildPage(container)
+                const page = await this.getService('PageBuilder').buildPage(container)
 
                 deferred.resolve(page)
             })
@@ -360,7 +291,7 @@ export default class Pjax {
         // In case you're trying to load the same page
         if (Utils.cleanLink(href) === Utils.cleanLink(window.location.href)) { return false }
 
-        return !element.classList.contains(this.noAjaxLinkClass)
+        return !element.classList.contains(this.getService('Config').noAjaxLinkClass)
     }
 
     /**
@@ -371,7 +302,11 @@ export default class Pjax {
      * @return {AbstractTransition} Transition object
      */
     getTransition (prev, current) {
-        return this._transitionFactory.getTransition(prev, current)
+        if (this.hasService('TransitionFactory')) {
+            return this.getService('TransitionFactory').getTransition(prev, current)
+        } else {
+            return new DefaultTransition()
+        }
     }
 
     /**
@@ -384,20 +319,20 @@ export default class Pjax {
 
         if (this.transitionProgress) { this.forceGoTo(newUrl) }
 
-        if (this._history.currentStatus().url === newUrl) { return false }
+        if (this.getService('History').currentStatus().url === newUrl) { return false }
 
         // If transition name is a string, a link have been click
         // Otherwise back/forward buttons have been pressed
         if (typeof transitionName === 'string' || isAjax) {
-            this.currentState = this._history.add(newUrl, transitionName, 'ajax')
+            this.currentState = this.getService('History').add(newUrl, transitionName, 'ajax')
         } else {
-            this.currentState = this._history.add(newUrl, null, '_history')
+            this.currentState = this.getService('History').add(newUrl, null, '_history')
         }
 
         // Dispatch an event to inform that the page is being load
         Dispatcher.commit(BEFORE_PAGE_LOAD, {
-            currentStatus: this._history.currentStatus(),
-            prevStatus: this._history.prevStatus()
+            currentStatus: this.getService('History').currentStatus(),
+            prevStatus: this.getService('History').prevStatus()
         })
 
         // Load the page with the new url (promise is return)
@@ -405,8 +340,8 @@ export default class Pjax {
 
         // Get the page transition instance (from prev and current state)
         const transition = this.getTransition(
-            this._history.prevStatus(),
-            this._history.currentStatus()
+            this.getService('History').prevStatus(),
+            this.getService('History').currentStatus()
         )
 
         this.transitionProgress = true
@@ -414,13 +349,13 @@ export default class Pjax {
         // Dispatch an event that the transition is started
         Dispatcher.commit(TRANSITION_START, {
             transition: transition,
-            currentStatus: this._history.currentStatus(),
-            prevStatus: this._history.prevStatus()
+            currentStatus: this.getService('History').currentStatus(),
+            prevStatus: this.getService('History').prevStatus()
         })
 
         // Start the transition (with the current page, and the new page load promise)
         const transitionPromise = transition.init(
-            this._kernel.page,
+            this.getService('PageBuilder').page,
             newPagePromise
         )
 
@@ -435,16 +370,12 @@ export default class Pjax {
      * @param {AbstractPage} page
      */
     onNewPageLoaded (page) {
-        const currentStatus = this._history.currentStatus()
-
-        if (this._graphicLoader) {
-            this._graphicLoader.hide()
-        }
+        const currentStatus = this.getService('History').currentStatus()
 
         // Update body attributes (class, id, data-attributes
-        this._dom.updateBodyAttributes(page)
+        this.getService('Dom').updateBodyAttributes(page)
         // Update the page title
-        this._dom.updatePageTitle(page)
+        this.getService('Dom').updatePageTitle(page)
         // Send google analytic data
         Utils.trackGoogleAnalytics()
 
@@ -457,8 +388,8 @@ export default class Pjax {
 
         Dispatcher.commit(CONTAINER_READY, {
             currentStatus,
-            prevStatus: this._history.prevStatus(),
-            currentHTML: this._dom.currentHTML,
+            prevStatus: this.getService('History').prevStatus(),
+            currentHTML: this.getService('Dom').currentHTML,
             page
         })
     }
@@ -479,8 +410,8 @@ export default class Pjax {
         }
 
         Dispatcher.commit(TRANSITION_COMPLETE, {
-            currentStatus: this._history.currentStatus(),
-            prevStatus: this._history.prevStatus()
+            currentStatus: this.getService('History').currentStatus(),
+            prevStatus: this.getService('History').prevStatus()
         })
     }
 }

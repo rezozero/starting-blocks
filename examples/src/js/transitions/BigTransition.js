@@ -61,7 +61,7 @@ export default class FadeTransition extends AbstractTransition {
      */
     startAnim () {
         return new Promise((resolve) => {
-            TweenMax.to(this.oldPage.container, 0.75, {
+            TweenMax.to(this.oldPage.rootElement, 0.75, {
                 alpha: 0
             })
 
@@ -85,20 +85,17 @@ export default class FadeTransition extends AbstractTransition {
      */
     endAnim () {
         // Add display: none on the old container
-        this.oldPage.container.style.display = 'none'
+        this.oldPage.rootElement.style.display = 'none'
 
         // Prepare new content css properties for the fade animation
-        this.newPage.container.style.visibility = 'visible'
-        this.newPage.container.style.opacity = '0'
-
-        // IMPORTANT Call this method just after set visibility to visible
-        this.newPage.updateLazyload()
+        this.newPage.rootElement.style.visibility = 'visible'
+        this.newPage.rootElement.style.opacity = '0'
 
         // Scroll to the top
         document.documentElement.scrollTop = 0
         document.body.scrollTop = 0
 
-        TweenMax.to(this.newPage.container, 0.75, {
+        TweenMax.to(this.newPage.rootElement, 0.75, {
             alpha: 1
         })
 

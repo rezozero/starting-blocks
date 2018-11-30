@@ -1,5 +1,7 @@
 // import work from 'webworkify-webpack'
 
+import { debug } from './Logger'
+
 /**
  * Utils class
  */
@@ -193,7 +195,7 @@ export default class Utils {
      */
     static trackGoogleAnalytics () {
         if (typeof window.ga !== 'undefined') {
-            console.debug('🚩 Push Analytics for: ' + window.location.pathname)
+            debug('🚩 Push Analytics for: ' + window.location.pathname)
             window.ga('send', 'pageview', {
                 'page': window.location.pathname,
                 'title': document.title

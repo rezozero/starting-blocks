@@ -127,5 +127,6 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/phpstorm
 
-# Config
+# Config & Examples dist
 /examples/src/js/config/config.js
+/examples/dist/

@@ -26,46 +26,23 @@
  * @author Adrien Scholaert <adrien@rezo-zero.com>
  */
 
+import AbstractService from '../abstracts/AbstractService'
+import { debug } from '../utils/Logger'
+
 /**
  * Class that is going to deal with DOM parsing/manipulation.
  */
-export default class Dom {
+export default class Dom extends AbstractService {
     /**
      * Constructor.
      *
-     * @params options
-     * @param {String} [options.wrapperId=sb-wrapper']
-     * @param {String} [options.objectTypeAttr=data-node-type']
-     * @param {String} [options.pageClass=page-content]
+     * @param {Object} container
+     * @param {String} serviceName
      */
-    constructor ({
-        wrapperId = 'sb-wrapper',
-        objectTypeAttr = 'data-node-type',
-        pageClass = 'page-content'
-    } = {}) {
-        /**
-         * Id of the main wrapper
-         *
-         * @type {String}
-         * @default
-         */
-        this.wrapperId = wrapperId
+    constructor (container, serviceName = 'Dom') {
+        super(container, serviceName)
 
-        /**
-         * The data attribute name to find the node type
-         *
-         * @type {string}
-         * @default
-         */
-        this.objectTypeAttr = objectTypeAttr
-
-        /**
-         * Class name used to identify the containers
-         *
-         * @type {String}
-         * @default
-         */
-        this.pageClass = pageClass
+        debug(`☕️ ${serviceName} awake`)
 
         /**
          * Full HTML String of the current page.
@@ -100,7 +77,7 @@ export default class Dom {
      * @return {HTMLElement} element
      */
     getWrapper () {
-        const wrapper = document.getElementById(this.wrapperId)
+        const wrapper = document.getElementById(this.getService('Config').wrapperId)
 
         if (!wrapper) {
             throw new Error('Starting Blocks: Wrapper not found!')
@@ -116,7 +93,7 @@ export default class Dom {
      * @returns {string}
      */
     getNodeType (container) {
-        return container.getAttribute(this.objectTypeAttr)
+        return container.getAttribute(this.getService('Config').objectTypeAttr)
     }
 
     /**
@@ -137,7 +114,7 @@ export default class Dom {
 
         if (!container) {
             throw new Error(`Starting Blocks: container not found! Did you use at least
-            one dom element with ".${this.pageClass}" class and "data-node-type" attribute?`)
+            one dom element with ".${this.getService('Config').pageClass}" class and "data-node-type" attribute?`)
         }
 
         return container
@@ -161,7 +138,7 @@ export default class Dom {
      * @return {HTMLElement} element
      */
     parseContainer (element) {
-        return element.querySelector(`.${this.pageClass}[data-node-type]`)
+        return element.querySelector(`.${this.getService('Config').pageClass}[data-node-type]`)
     }
 
     /**

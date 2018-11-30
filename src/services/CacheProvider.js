@@ -13,49 +13,64 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL
  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @file GraphicLoader.js
+ * @file CacheProvider.js
  * @author Ambroise Maupate
+ * @author Adrien Scholaert
  */
+
+import AbstractService from '../abstracts/AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
- * Handle your application main loader animation.
+ * Cache provider class.
  *
- * **Do not instanciate this class directly, create a sub-class**.
+ * This class stores Ajax response in memory.
  */
-export default class GraphicLoader {
-    /**
-     * Interface for a graphic loader element.
-     *
-     * Any child implementations must implements
-     * show and hide methods.
-     *
-     * @abstract
-     */
-    constructor () {
-        console.debug('🌀 Construct loader')
+export default class CacheProvider extends AbstractService {
+    constructor (container, serviceName = 'CacheProvider') {
+        super(container, serviceName)
+
+        debug(`☕️ ${serviceName} awake`)
+
+        this.data = {}
     }
 
     /**
-     * Show loader.
-     *
-     * @abstract
+     * @param  {String} key
+     * @return {Boolean}
      */
-    show () {
-        console.debug('🌀 Show loader')
+    exists (key) {
+        return key in this.data
     }
 
     /**
-     * Hide loader.
-     *
-     * @abstract
+     * @param  {String} href
+     * @return {Object}
      */
-    hide () {
-        console.debug('🌀 Hide loader')
+    get (href) {
+        return this.data[href]
+    }
+
+    /**
+     * @param  {String} key
+     * @param  {Object} data
+     * @return {CacheProvider}  this
+     */
+    set (key, data) {
+        this.data[key] = data
+        return this
+    }
+
+    /**
+     * Flush the cache
+     */
+    reset () {
+        this.data = {}
     }
 }

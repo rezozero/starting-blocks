@@ -1,6 +1,6 @@
 {
     "name": "starting-blocks",
-    "version": "4.2.6",
+    "version": "5.0.0",
     "description": "A JS page and blocks framework written in ES6 to go along Roadiz CMS or any other great CMS.",
     "author": "Rezo Zero",
     "license": "MIT",
@@ -29,9 +29,9 @@
     "main": "dist/main.umd.js",
     "module": "dist/main.esm.js",
     "dependencies": {
-        "@babel/polyfill": "^7.0.0",
-        "axios": "^0.18.0",
-        "vanilla-lazyload": "^10.17.0"
+        "bottlejs": "^1.7.1",
+        "gsap": "^2.0.2",
+        "lazysizes": "^4.1.4"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -52,6 +52,7 @@
         "@babel/plugin-syntax-dynamic-import": "^7.0.0",
         "@babel/plugin-syntax-import-meta": "^7.0.0",
         "@babel/plugin-transform-runtime": "^7.0.0",
+        "@babel/polyfill": "^7.0.0",
         "@babel/preset-env": "^7.0.0",
         "@babel/register": "^7.0.0",
         "@babel/runtime": "^7.0.0",
@@ -77,7 +78,6 @@
         "eslint-plugin-standard": "^4.0.0",
         "event-hooks-webpack-plugin": "^2.1.0",
         "extract-text-webpack-plugin": "^4.0.0-beta.0",
-        "gsap": "^2.0.2",
         "html-webpack-include-assets-plugin": "^1.0.5",
         "html-webpack-multi-build-plugin": "^1.0.0",
         "html-webpack-plugin": "^4.0.0-beta.1",

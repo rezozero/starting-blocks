@@ -29,19 +29,27 @@ import { AbstractPage } from 'starting-blocks'
  * Some example "page".
  *
  * @extends {AbstractPage}
- * @private
+ * @class
  */
 export default class DefaultPage extends AbstractPage {
-    init () {
-        super.init()
+    constructor (container) {
+        super(container, 'DefaultPage')
+
+        // Values
 
         /**
          * @type {HTMLElement}
          */
-        this.duplicateButtonElement = this.container.querySelectorAll('a.duplicate-last')[0]
+        this.duplicateButtonElement = null
 
-        // Binded methods
+        // Bind methods
         this.onButtonClick = this.onButtonClick.bind(this)
+    }
+
+    init () {
+        super.init()
+
+        this.duplicateButtonElement = this.rootElement.querySelectorAll('a.duplicate-last')[0]
     }
 
     initEvents () {
@@ -64,7 +72,7 @@ export default class DefaultPage extends AbstractPage {
         e.preventDefault()
         let newBlockElement = this.blockElements[this.blockElements.length - 1].cloneNode(true)
         newBlockElement.setAttribute('id', `block-${this.blockElements.length + 1}`)
-        this.container.appendChild(newBlockElement)
+        this.rootElement.appendChild(newBlockElement)
         return false
     }
 

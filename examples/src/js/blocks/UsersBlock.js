@@ -31,21 +31,30 @@ import * as Api from '../api/Api'
 import * as Utils from '../utils/utils'
 
 export default class UsersBlock extends AbstractBlock {
-    async init () {
-        super.init()
+    constructor (container) {
+        super(container, 'UsersBlock')
 
         // Elements
-        this.avatarContainer = this.container.querySelectorAll('.avatar-cont')[0]
-        this.contributorsListingContainer = this.container.querySelectorAll('.usersblock__contributors-list')[0]
+        this.avatarContainer = null
+        this.contributorsListingContainer = null
 
         // Values
         this.data = null
         this.owner = null
         this.contributors = []
         this.initialUrl = 'https://api.github.com/repos/rezozero/starting-blocks'
+    }
+
+    async init () {
+        super.init()
+
+        // Elements
+        this.avatarContainer = this.page.rootElement.querySelectorAll('.avatar-cont')[0]
+        this.contributorsListingContainer = this.page.rootElement.querySelectorAll('.usersblock__contributors-list')[0]
 
         // Init request
         this.data = await Api.getData(this.initialUrl)
+
         this.fillData(this.data)
     }
 
@@ -92,8 +101,6 @@ export default class UsersBlock extends AbstractBlock {
 
             this.contributorsListingContainer.insertAdjacentHTML('afterbegin', tpl)
         }
-
-        this.page.updateLazyload()
     }
 
     async setAvatar () {
@@ -105,10 +112,6 @@ export default class UsersBlock extends AbstractBlock {
 
     onResize () {
         return super.onResize()
-    }
-
-    onLoad () {
-        return super.onLoad()
     }
 
     onPageReady () {
