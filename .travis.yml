@@ -17,10 +17,7 @@ skip_cleanup: true
 jobs:
   include:
     - stage: npm release
-      branches:
-        only:
-          - master
-      node_js: "8"
+      node_js: "lts/*"
       script:
         # Copy config for demo
         - cp examples/src/js/config/config.example.js examples/src/js/config/config.js
@@ -31,6 +28,8 @@ jobs:
         - npm run demo
         - echo "Deploying to npm…"
       deploy:
+        on:
+          tags: true
         # Do not reset files to send bundle.js
         # to NPMJS
         skip_cleanup: true
