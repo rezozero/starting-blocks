@@ -25,21 +25,21 @@
  */
 
 /**
- * Before Router initialize XHR request to load new page.
+ * Before initialize XHR request to load new page.
  *
  * @type {String}
  */
 export const BEFORE_PAGE_LOAD = 'SB_BEFORE_PAGE_LOAD'
 
 /**
- * After Router XHR request succeeded.
+ * After XHR request succeeded.
  *
  * @type {String}
  */
 export const AFTER_PAGE_LOAD = 'SB_AFTER_PAGE_LOAD'
 
 /**
- * After Router appended new page DOM to page-container.
+ * After Dom service appended new page DOM to page-container.
  *
  * @type {String}
  */
@@ -53,41 +53,11 @@ export const AFTER_DOM_APPENDED = 'SB_AFTER_DOM_APPENDED'
 export const CONTAINER_READY = 'SB_CONTAINER_READY'
 
 /**
- * After Router create new page instance.
+ * After PageBuilder create new page instance.
  *
  * @type {String}
  */
 export const AFTER_PAGE_BOOT = 'SB_AFTER_PAGE_BOOT'
-
-/**
- * Before page begins to show, right after assets are loaded (images).
- *
- * @type {String}
- */
-export const BEFORE_PAGE_SHOW = 'SB_BEFORE_PAGE_SHOW'
-
-/**
- * After page showed.
- *
- * @type {String}
- */
-export const AFTER_PAGE_SHOW = 'SB_AFTER_PAGE_SHOW'
-
-/**
- * Before page begins to hide.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-export const BEFORE_PAGE_HIDE = 'SB_BEFORE_PAGE_HIDE'
-
-/**
- * After page hiding animation.
- * Be careful, this must be triggered manually if hide() method is overriden.
- *
- * @type {String}
- */
-export const AFTER_PAGE_HIDE = 'SB_AFTER_PAGE_HIDE'
 
 /**
  * Before page transition begin.
@@ -102,3 +72,24 @@ export const TRANSITION_START = 'SB_TRANSITION_START'
  * @type {String}
  */
 export const TRANSITION_COMPLETE = 'SB_TRANSITION_COMPLETE'
+
+/**
+ * Before splashscreen begin to hide.
+ *
+ * @type {String}
+ */
+export const BEFORE_SPLASHSCREEN_HIDE = 'SB_BEFORE_SPLASHSCREEN_HIDE'
+
+/**
+ * When splashscreen start to hide.
+ *
+ * @type {String}
+ */
+export const START_SPLASHSCREEN_HIDE = 'SB_START_SPLASHSCREEN_HIDE'
+
+/**
+ * After splashscreen hiding animation.
+ *
+ * @type {String}
+ */
+export const AFTER_SPLASHSCREEN_HIDE = 'SB_AFTER_SPLASHSCREEN_HIDE'

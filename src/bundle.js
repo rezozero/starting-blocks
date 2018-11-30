@@ -1,43 +1,38 @@
-import tmpRouter from './router/Router'
-import tmpCacheProvider from './router/CacheProvider'
-import tmpGraphicLoader from './utils/GraphicLoader'
-import tmpAbstractPage from './abstracts/AbstractPage'
-import tmpAbstractBlock from './abstracts/AbstractBlock'
-import tmpAbstractTransition from './abstracts/AbstractTransition'
-import tmpDefaultTransition from './transitions/DefaultTransition'
-import tmpUtils from './utils/Utils'
-import tmpScroll from './utils/Scroll'
-import tmppolyfills from './utils/polyfills'
-import tmpgaTrackErrors from './utils/gaTrackErrors'
-import tmpdebounce from './utils/debounce'
-import tmpBootstrapMedia from './utils/BootstrapMedia'
-import * as tmpEventTypes from './types/EventTypes'
+/*!
+ * @name Starting Blocks
+ * @license MIT
+ * @copyright Copyright © 2018, Rezo Zero
+ * @version 5.0.0
+ * @author Adrien Scholaert <adrien@rezo-zero.com>
+ * @author Ambroise Maupate <ambroise@rezo-zero.com>
+ */
 
-/** @private */
-export const Router = tmpRouter
-/** @private */
-export const CacheProvider = tmpCacheProvider
-/** @private */
-export const GraphicLoader = tmpGraphicLoader
-/** @private */
-export const AbstractPage = tmpAbstractPage
-/** @private */
-export const AbstractBlock = tmpAbstractBlock
-/** @private */
-export const AbstractTransition = tmpAbstractTransition
-/** @private */
-export const Utils = tmpUtils
-/** @private */
-export const Scroll = tmpScroll
-/** @private */
-export const polyfills = tmppolyfills
-/** @private */
-export const gaTrackErrors = tmpgaTrackErrors
-/** @private */
-export const debounce = tmpdebounce
-/** @private */
-export const BootstrapMedia = tmpBootstrapMedia
-/** @private */
-export const EventTypes = tmpEventTypes
-/** @private */
-export const DefaultTransition = tmpDefaultTransition
+import * as EventTypes from './types/EventTypes'
+import StartingBlocks from './StartingBlocks'
+
+export { default as PageBuilder } from './services/PageBuilder'
+export { default as BlockBuilder } from './services/BlockBuilder'
+export { default as Pjax } from './services/Pjax'
+export { default as History } from './services/History'
+export { default as Prefetch } from './services/Prefetch'
+export { default as CacheProvider } from './services/CacheProvider'
+export { default as Lazyload } from './services/Lazyload'
+export { default as AbstractPage } from './abstracts/AbstractPage'
+export { default as AbstractBlock } from './abstracts/AbstractBlock'
+export { default as AbstractInViewBlock } from './abstracts/AbstractInViewBlock'
+export { default as AbstractBlockBuilder } from './abstracts/AbstractBlockBuilder'
+export { default as AbstractService } from './abstracts/AbstractService'
+export { default as AbstractSplashscreen } from './abstracts/AbstractSplashscreen'
+export { default as AbstractTransitionFactory } from './abstracts/AbstractTransitionFactory'
+export { default as AbstractTransition } from './abstracts/AbstractTransition'
+export { default as DefaultTransition } from './transitions/DefaultTransition'
+export { default as Utils } from './utils/Utils'
+export { default as Scroll } from './utils/Scroll'
+export { default as polyfills } from './utils/polyfills'
+export { default as gaTrackErrors } from './utils/gaTrackErrors'
+export { default as debounce } from './utils/debounce'
+export { default as BootstrapMedia } from './utils/BootstrapMedia'
+export { default as Dispatcher } from './dispatcher/Dispatcher'
+export { EventTypes }
+
+export default StartingBlocks

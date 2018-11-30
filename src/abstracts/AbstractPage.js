@@ -24,18 +24,9 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
-import $ from 'jquery'
-import Lazyload from 'vanilla-lazyload'
 import debounce from '../utils/debounce'
-import Dispatcher from '../dispatcher/Dispatcher'
-import {
-    BEFORE_PAGE_SHOW,
-    AFTER_PAGE_SHOW,
-    BEFORE_PAGE_HIDE,
-    AFTER_PAGE_HIDE
-} from '../types/EventTypes'
-import AbstractBlock from './AbstractBlock'
+import AbstractService from './AbstractService'
+import { debug, warn } from '../utils/Logger'
 
 /**
  * Base class for creating page implementations.
@@ -44,90 +35,48 @@ import AbstractBlock from './AbstractBlock'
  *
  * @abstract
  */
-export default class AbstractPage {
+export default class AbstractPage extends AbstractService {
     /**
      * Base constructor for Pages.
-     *
-     * Do not override this method, override `init` method instead.
-     *
-     * @param  {Router}  router
-     * @param  {HTMLElement}  container
-     * @param  {String}  context
-     * @param  {String}  type
-     *
      * @constructor
      */
-    constructor (router, container, context, type) {
-        type = type || 'page'
-
-        if (!container) {
-            throw new Error('AbstractPage need a container (HTMLElement) to be defined.')
-        }
-
-        if (!router) {
-            throw new Error('AbstractPage need a Router instance to be defined.')
-        }
+    constructor (container) {
+        super(container, 'AbstractPage')
 
         /**
-         * Router
+         * Container element
          *
-         * @type {Router}
+         * @type {HTMLElement}
          */
-        this.router = router
-
-        /**
-         * Container element (Jquery)
-         *
-         * @type {jQuery}
-         */
-        this.$cont = $(container)
-
-        if (!this.$cont) {
-            throw new Error(`AbstractPage: container not found!`)
-        }
+        this.rootElement = null
 
         /**
          * Page id
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.id = this.$cont.attr('id')
-
-        if (!this.$cont) {
-            throw new Error(`AbstractPage: container have no id!`)
-        }
+        this.id = null
 
         /**
          * Page context (static or ajax)
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.context = context
+        this.context = null
 
         /**
          * Page type
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.type = type
+        this.type = null
 
         /**
          * Is home ?
          *
-         * @type {Boolean}
+         * @type {boolean}
          */
-        this.isHome = false
-
-        if (this.$cont.attr('data-is-home') === '1') {
-            this.isHome = true
-        }
-
-        /**
-         * Lazyload instance
-         *
-         * @type {Lazyload|null}
-         */
-        this.lazyload = null
+        this.isHome = null
 
         /**
          * AbstractBlock collection.
@@ -139,22 +88,20 @@ export default class AbstractPage {
         /**
          * Node name
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.name = (this.$cont.length) ? this.$cont.attr('data-node-name') : ''
-        this.metaTitle = (this.$cont.length) ? this.$cont.attr('data-meta-title') : ''
+        this.name = null
 
-        // Binded methods
+        /**
+         * Meta title
+         * @type {String|null}
+         */
+        this.metaTitle = null
+
+        // Bind methods
         this.onResize = this.onResize.bind(this)
         this.onResizeDebounce = debounce(this.onResize, 50, false)
         this.bindedUpdateBlocks = debounce(this.updateBlocks.bind(this), 50, false)
-        this.onLoad = this.onLoad.bind(this)
-        this.onLazyImageSet = this.onLazyImageSet.bind(this)
-        this.onLazyImageLoad = this.onLazyImageLoad.bind(this)
-        this.onLazyImageProcessed = this.onLazyImageProcessed.bind(this)
-
-        // Debug
-        log.debug('✳️ #' + this.id + ' %c[' + type + '] [' + this.context + ']', 'color:grey')
     }
 
     /**
@@ -164,28 +111,23 @@ export default class AbstractPage {
      * of extending page constructor.
      */
     async init () {
+        // Debug
+        debug('✳️ #' + this.id + ' %c[' + this.type + '] [' + this.context + ']', 'color:grey')
+
         /**
-         * jQuery blocks collection.
+         * HTMLElement blocks collection.
          *
-         * @type {jQuery}
+         * @type {Array}
          */
-        this.$blocks = this.$cont.find(this.router.options.pageBlockClass)
+        this.blockElements = [...this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)]
+
         /**
          * @type {Number}
          */
-        this.blockLength = this.$blocks.length
+        this.blockLength = this.blockElements.length
+
         if (this.blockLength) {
             await this.initBlocks()
-        }
-
-        // Context
-        if (this.router.options.ajaxEnabled && this.context === 'ajax') {
-            this.initAjax()
-        }
-
-        // Lazyload
-        if (this.router.options.lazyloadEnabled) {
-            this.initLazyload()
         }
 
         this.initEvents()
@@ -195,58 +137,38 @@ export default class AbstractPage {
      * Destroy current page and all its blocks.
      */
     destroy () {
-        log.debug('🗑 #' + this.id)
-        this.$cont.remove()
+        debug('🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+        this.rootElement.parentNode.removeChild(this.rootElement)
         this.destroyEvents()
 
-        /*
-         * Do not remove name class on body if destroyed page is the same as current one.
-         */
-        if (this.router.page !== null && this.router.page.name !== this.name) {
-            this.router.$body.removeClass(this.name)
+        // Do not remove name class on body if destroyed page is the same as current one.
+        if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.name !== this.name) {
+            document.body.classList.remove(this.name)
         }
 
-        /*
-         * Do not remove type class on body if destroyed page is the same as current one.
-         */
-        if (this.router.page !== null && this.router.page.type !== this.type) {
-            this.router.$body.removeClass(this.type)
+        // Do not remove type class on body if destroyed page is the same as current one.
+        if (this.getService('PageBuilder').page !== null && this.getService('PageBuilder').page.type !== this.type) {
+            document.body.classList.remove(this.type)
         }
 
-        // --- Blocks --- //
+        // Blocks
         if (this.blocks !== null) {
             for (let blockIndex in this.blocks) {
-                this.blocks[blockIndex].destroy()
+                if (this.blocks.hasOwnProperty(blockIndex)) {
+                    this.blocks[blockIndex].destroy()
+                }
             }
-        }
-        /*
-         * Remove Lazyload instance and listeners
-         */
-        if (this.lazyload !== null) {
-            this.lazyload.destroy()
-            this.lazyload = null
         }
     }
 
     /**
      * Initialize basic events.
-     *
-     * Such as waitForImages.
      */
     initEvents () {
-        if (this.$cont.find('img').length) {
-            this.$cont.waitForImages({
-                finished: this.onLoad,
-                waitForAll: true
-            })
-        } else {
-            this.onLoad()
-        }
-
         window.addEventListener('resize', this.onResizeDebounce)
 
         this.domObserver = new window.MutationObserver(this.bindedUpdateBlocks)
-        this.domObserver.observe(this.$cont.get(0), {
+        this.domObserver.observe(this.rootElement, {
             childList: true,
             attributes: false,
             characterData: false,
@@ -263,75 +185,6 @@ export default class AbstractPage {
     }
 
     /**
-     * Init lazyload
-     *
-     * @private
-     */
-    initLazyload () {
-        this.beforeLazyload()
-        this.lazyload = new Lazyload({
-            threshold: this.router.options.lazyloadThreshold,
-            throttle: this.router.options.lazyloadThrottle,
-            elements_selector: '.' + this.router.options.lazyloadClass,
-            data_src: this.router.options.lazyloadSrcAttr.replace('data-', ''),
-            data_srcset: this.router.options.lazyloadSrcSetAttr.replace('data-', ''),
-            callback_set: this.onLazyImageSet,
-            callback_load: this.onLazyImageLoad,
-            callback_processed: this.onLazyImageProcessed
-        })
-    }
-
-    /**
-     * @private
-     */
-    onLoad () {
-        /**
-         * Date when onLoad was triggered.
-         * @type {Date}
-         */
-        this.loadDate = new Date()
-        /**
-         * Duration between router loaded page and when onLoad was triggered.
-         * @type {Date}
-         */
-        this.loadDuration = this.loadDate - this.router.loadBeginDate
-
-        Dispatcher.commit(BEFORE_PAGE_SHOW, this)
-    }
-
-    updateLazyload () {
-        if (this.lazyload) {
-            this.lazyload.update()
-        }
-    }
-
-    /**
-     * @param {Function} onShow
-     */
-    show (onShow) {
-        log.debug('▶️ #' + this.id)
-        this.$cont[0].style.opacity = '1'
-        if (typeof onShow !== 'undefined') onShow()
-        this.$cont.removeClass(this.router.options.pageClass + '-transitioning')
-        Dispatcher.commit(AFTER_PAGE_SHOW, this)
-    }
-
-    /**
-     * @param {Function} onHidden
-     */
-    hide (onHidden) {
-        Dispatcher.commit(BEFORE_PAGE_HIDE, this)
-        log.debug('◀️ #' + this.id)
-        this.$cont[0].style.opacity = '0'
-        if (typeof onHidden !== 'undefined') onHidden()
-        Dispatcher.commit(AFTER_PAGE_HIDE, this)
-    }
-
-    initAjax () {
-        this.$cont.addClass(this.router.options.pageClass + '-transitioning')
-    }
-
-    /**
      * Initialize page blocks on page.
      */
     async initBlocks () {
@@ -341,17 +194,15 @@ export default class AbstractPage {
              *
              * @type {AbstractBlock}
              */
-            let block = await this.initSingleBlock(this.$blocks.eq(blockIndex))
+            let block = await this.initSingleBlock(this.blockElements[blockIndex])
 
-            /*
-             * Prevent undefined blocks to be appended to block collection.
-             */
-            this.blocks.push(block)
+            // Prevent undefined blocks to be appended to block collection.
+            if (block) {
+                this.blocks.push(block)
+            }
         }
 
-        /*
-         * Notify all blocks that page init is over.
-         */
+        // Notify all blocks that page init is over.
         for (let i = this.blocks.length - 1; i >= 0; i--) {
             if (typeof this.blocks[i].onPageReady === 'function') this.blocks[i].onPageReady()
         }
@@ -361,45 +212,53 @@ export default class AbstractPage {
      * Append new blocks which were not present at init.
      */
     async updateBlocks () {
-        log.debug('\t📯 Page DOM changed…')
+        debug('\t📯 Page DOM changed…')
 
-        /*
-         * Update Lazyload if init.
-         */
-        this.updateLazyload()
-
-        /*
-         * Create new blocks
-         */
-        this.$blocks = this.$cont.find(this.router.options.pageBlockClass)
-        this.blockLength = this.$blocks.length
+        // Create new blocks
+        this.blockElements = this.rootElement.querySelectorAll(`.${this.getService('Config').pageBlockClass}`)
+        this.blockLength = this.blockElements.length
 
         for (let blockIndex = 0; blockIndex < this.blockLength; blockIndex++) {
-            let $block = this.$blocks[blockIndex]
+            let blockElement = this.blockElements[blockIndex]
+            const existingBlock = this.getBlockById(blockElement.id)
 
-            if (!this.getBlockById($block.id)) {
+            if (existingBlock === null) {
                 try {
-                    let block = await this.initSingleBlock(this.$blocks.eq(blockIndex))
-                    this.blocks.push(block)
-                    block.onPageReady()
+                    let block = await this.initSingleBlock(this.blockElements[blockIndex])
+
+                    if (block) {
+                        this.blocks.push(block)
+                        block.onPageReady()
+                    }
                 } catch (e) {
-                    log.info(e.message)
+                    warn(e.message)
                 }
             }
         }
     }
 
     /**
-     * @param {jQuery} $singleBlock
+     * @param {HTMLElement} blockElement
      * @return {AbstractBlock}
      */
-    async initSingleBlock ($singleBlock) {
-        let type = $singleBlock[0].getAttribute(this.router.options.objectTypeAttr)
-        let blockInstance = await this.router.classFactory.getBlockInstance(this, $singleBlock, type)
+    async initSingleBlock (blockElement) {
+        let blockType = blockElement.getAttribute(this.getService('Config').objectTypeAttr)
+        let blockInstance = await this.getService('BlockBuilder').getBlockInstance(blockType)
 
         if (!blockInstance) {
-            return new AbstractBlock(this, $singleBlock, type)
+            return null
         }
+
+        // Set values
+        blockInstance.type = blockType
+        blockInstance.page = this
+        blockInstance.rootElement = blockElement
+        blockInstance.id = blockElement.id
+        blockInstance.name = blockElement.hasAttribute('data-node-name') ? blockElement.getAttribute('data-node-name') : ''
+
+        // Init everything
+        blockInstance.init()
+        blockInstance.initEvents()
 
         return blockInstance
     }
@@ -411,10 +270,12 @@ export default class AbstractPage {
      * @return {AbstractBlock|null}
      */
     getBlockById (id) {
-        const index = this.getBlockIndexById(id)
-        if (this.blocks[index]) {
-            return this.blocks[index]
+        for (const block of this.blocks) {
+            if (block.id && block.id === id) {
+                return block
+            }
         }
+
         return null
     }
 
@@ -425,15 +286,14 @@ export default class AbstractPage {
      * @return {*|null}
      */
     getBlockIndexById (id) {
-        for (let i in this.blocks) {
-            if (this.blocks.hasOwnProperty(i)) {
-                if (this.blocks[i] &&
-                    this.blocks[i].id &&
-                    this.blocks[i].id === id) {
-                    return i
-                }
+        const l = this.blocks.length
+
+        for (let i = 0; i < l; i++) {
+            if (this.blocks[i].id && this.blocks[i].id === id) {
+                return i
             }
         }
+
         return null
     }
 
@@ -448,6 +308,7 @@ export default class AbstractPage {
         if (this.blocks[index]) {
             return this.blocks[index]
         }
+
         return null
     }
 
@@ -458,15 +319,14 @@ export default class AbstractPage {
      * @return {*|null}
      */
     getFirstBlockIndexByType (type) {
-        for (let i in this.blocks) {
-            if (this.blocks.hasOwnProperty(i)) {
-                if (this.blocks[i] &&
-                    this.blocks[i].type &&
-                    this.blocks[i].type === type) {
-                    return i
-                }
+        const l = this.blocks.length
+
+        for (let i = 0; i < l; i++) {
+            if (this.blocks[i].type && this.blocks[i].type === type) {
+                return i
             }
         }
+
         return null
     }
 
@@ -474,40 +334,8 @@ export default class AbstractPage {
      * @abstract
      */
     onResize () {
-
-    }
-
-    /**
-     * Called before init lazyload images.
-     */
-    beforeLazyload () {}
-
-    /**
-     * After image src switched.
-     *
-     * @abstract
-     * @param {HTMLImageElement} element
-     */
-    onLazyImageSet (element) {
-        log.debug('\t🖼 «' + element.id + '» set')
-    }
-
-    /**
-     * After lazyload image loaded.
-     *
-     * @abstract
-     * @param {HTMLImageElement} element
-     */
-    onLazyImageLoad (element) {
-        log.debug('\t🖼 «' + element.id + '» load')
-    }
-
-    /**
-     * Before lazyload.
-     *
-     * @abstract
-     */
-    onLazyImageProcessed (index) {
-        log.debug('\t🖼 Lazy load processed')
+        for (const block of this.blocks) {
+            block.onResize()
+        }
     }
 }

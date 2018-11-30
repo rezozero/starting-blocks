@@ -1,4 +1,4 @@
-import getConfig from './build/config'
-import getWebpackConfig from './build/build'
+import getConfig from './examples/webpack/config'
+import getWebpackConfig from './examples/webpack/build'
 
 module.exports = getWebpackConfig(getConfig())

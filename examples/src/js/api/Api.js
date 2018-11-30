@@ -27,16 +27,15 @@
  */
 
 import config from '../config/config'
-import request from 'axios'
 
-export function getData (url, params = {}) {
-    return request
-        .get(url, {
-            params: {
-                ...params,
-                access_token: config.token
-            }
-        })
-        .then(({ data }) => data)
-        .catch(e => console.error(e.message))
+export async function getData (sourceUrl, params = {}) {
+    const url = new URL(sourceUrl)
+    const mergedParams = { ...params, access_token: config.token }
+
+    Object.keys(mergedParams).forEach(key => url.searchParams.append(key, mergedParams[key]))
+
+    const result = await window.fetch(url.toString())
+    const json = await result.json()
+
+    return json
 }

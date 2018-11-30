@@ -39,19 +39,19 @@ export default class AbstractTransition {
      */
     constructor () {
         /**
-         * @type {AbstractPage} old Page instance
+         * @type {AbstractPage|null} old Page instance
          */
-        this.oldPage = undefined
+        this.oldPage = null
 
         /**
-         * @type {AbstractPage}
+         * @type {AbstractPage|null}
          */
-        this.newPage = undefined
+        this.newPage = null
 
         /**
-         * @type {Promise}
+         * @type {Promise|null}
          */
-        this.newPageLoading = undefined
+        this.newPageLoading = null
     }
 
     /**
@@ -85,8 +85,7 @@ export default class AbstractTransition {
      */
     done () {
         this.oldPage.destroy()
-        this.newPage.$cont[0].style.visibility = 'visible'
-        this.newPage.updateLazyload()
+        this.newPage.rootElement.style.visibility = 'visible'
         this.deferred.resolve()
     }
 

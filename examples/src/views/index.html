@@ -48,7 +48,29 @@
           crossorigin="anonymous"/>
     <link rel="stylesheet" href="../css/demo.css">
 </head>
-<body id="home" class="home-page home bg-light">
+<body id="home-page" class="home-page bg-light">
+
+<div id="splashscreen">
+    <div class="splashscreen-inner">
+        <div class="spinner">
+            <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="length" fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+            </svg>
+            <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+            </svg>
+            <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+            </svg>
+            <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+            </svg>
+        </div>
+        <div class="splashscreen-text">Loading...</div>
+    </div>
+    <div class="splashscreen-bg"></div>
+</div>
+
 <div id="big-transition">
     <div id="big-transition-vertical">
         <div></div>
@@ -100,10 +122,10 @@
 </nav>
 <main role="main" id="sb-wrapper">
     <div id="page-home-page"
-         class="page-content page-content-ajax home-page"
+         class="page-content page-content-ajax"
          data-node-name="home-page"
          data-is-home="1"
-         data-node-type="home"
+         data-node-type="HomePage"
          data-meta-title="Home page">
         <div class="container">
             <div class="row">
@@ -162,7 +184,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="inview-00"
+                         data-direction="left"
+                         data-node-type="InViewBlock"
+                         class="card my-3 border-light rounded box-shadow page-block">
                         <img id="first-image"
                              width="700"
                              class="card-img-top img-fluid"
@@ -174,15 +199,21 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
-                        <img class="card-img-top lazyload img-fluid"
-                             id="snd-image1"
-                             width="700"
-                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
-                             data-src="/img/test2.jpg"
-                             alt="Lazyloaded img">
+                    <div id="inview-01"
+                         data-direction="right"
+                         data-node-type="InViewBlock"
+                         class="card my-3 border-light rounded box-shadow page-block">
+                        <picture>
+                            <source data-srcset="/img/test2.webp" type="image/webp" />
+                            <img class="card-img-top img-fluid lazyload"
+                                 id="snd-image1"
+                                 width="700"
+                                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
+                                 data-src="/img/test2.jpg"
+                                 alt="Lazyloaded img">
+                        </picture>
                         <div class="card-body">
-                            <p class="card-text">Lazyloaded image.</p>
+                            <p class="card-text">Lazyloaded picture with webp (for chrome).</p>
                         </div>
                     </div>
                 </div>
@@ -319,7 +350,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="in-view-block-1"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="left"
+                         data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="3-image"
                              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
@@ -332,7 +366,10 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="in-view-block-2"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="right"
+                         data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="4-image"
                              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
@@ -343,7 +380,10 @@
                             <p class="card-text">Lazyloaded image.</p>
                         </div>
                     </div>
-                    <div class="card my-3 border-light rounded box-shadow">
+                    <div id="in-view-block-3"
+                         class="card my-3 border-light rounded box-shadow page-block"
+                         data-direction="right"
+                         data-node-type="InViewBlock">
                         <img class="card-img-top lazyload img-fluid"
                              id="5-image"
                              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPsqAcAAZUBCZuIJhEAAAAASUVORK5CYII="
@@ -364,23 +404,14 @@
         </div>
     </footer>
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.auto.min.js"
-        integrity="sha256-OI3N9zCKabDov2rZFzl8lJUXCcP7EmsGcGoP6DMXQCo="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/MutationObserver.js/0.3.2/mutationobserver.min.js"
-        integrity="sha256-BnmK1H6/rOiNcr4iGCjIyQqSO9hnMBZGJ0inXObQrTY="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"
-        integrity="sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.2.0/jquery.waitforimages.min.js"
-        integrity="sha256-b9bqxZdvRHQNAL/WJysGQ/mFHym7gGjEtruZ6zTNm7c="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.1/loglevel.min.js"
-        integrity="sha256-AfynOKFjHWwlIEH3xY8lNK2sm2P2rxyiA749uLUXPh4="
-        crossorigin="anonymous"></script>
+
+<% for (key in htmlWebpackPlugin.options.modernScripts) { %>
+    <script type="module" src="<%= htmlWebpackPlugin.options.modernScripts[key] %>"></script>
+<% } %>
+
+<% for (key in htmlWebpackPlugin.options.legacyScripts) { %>
+    <script nomodule defer src="<%= htmlWebpackPlugin.options.legacyScripts[key] %>"></script>
+<% } %>
+
 </body>
 </html>

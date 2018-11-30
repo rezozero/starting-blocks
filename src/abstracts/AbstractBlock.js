@@ -24,8 +24,8 @@
  * @author Adrien Scholaert
  */
 
-import * as log from 'loglevel'
-import debounce from '../utils/debounce'
+import AbstractService from './AbstractService'
+import { debug } from '../utils/Logger'
 
 /**
  * Base class for creating block implementations.
@@ -34,68 +34,55 @@ import debounce from '../utils/debounce'
  *
  * @abstract
  */
-export default class AbstractBlock {
+export default class AbstractBlock extends AbstractService {
     /**
      * Abstract block constructor.
      *
      * It‘s better to extend this class by using `init` method instead
      * of extending `constructor`.
      *
-     * @param  {AbstractPage} page
-     * @param  {jQuery} $cont
-     * @param  {String} type
-     *
+     * @param {Object} container
+     * @param {String} blockName
      * @constructor
      */
-    constructor (page, $cont, type) {
-        type = type || 'block'
+    constructor (container, blockName = 'AbstractBlock') {
+        super(container, blockName)
+
+        /**
+         * Node Type block name type
+         *
+         * @type {String|null}
+         */
+        this.type = null
 
         /**
          * Current page instance
          *
-         * @type {AbstractPage}
+         * @type {AbstractPage|null}
          */
-        this.page = page
+        this.page = null
 
         /**
          * Container
-         * jQuery DOM object for current block.
+         * Root container HTMLElement for current block.
          *
-         * @type {jQuery}
+         * @type {HTMLElement|null}
          */
-        this.$cont = $cont
+        this.rootElement = null
 
         /**
          * Block id
          *
-         * @type {String}
+         * @type {String|null}
          */
-        this.id = $cont.attr('id')
-
-        /**
-         * Block type
-         *
-         * @type {String}
-         */
-        this.type = type
+        this.id = null
 
         /**
          * Node name
          *
          * @type {String}
          */
-        this.name = (this.$cont.length) ? this.$cont.attr('data-node-name') : ''
-
-        // Binded methods
-        this.onResize = this.onResize.bind(this)
-        this.onLoad = this.onLoad.bind(this)
-        this.onResizeDebounce = debounce(this.onResize, 50, false)
-
-        // Debugs
-        log.debug('\t✳️ #' + this.id + ' %c[' + type + ']', 'color:grey')
-
-        this.init()
-        this.initEvents()
+        this.name = null
     }
 
     /**
@@ -104,7 +91,9 @@ export default class AbstractBlock {
      *
      * @abstract
      */
-    init () {}
+    init () {
+        debug('\t✳️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
+    }
 
     /**
      * Bind load and resize events for this specific block.
@@ -113,18 +102,7 @@ export default class AbstractBlock {
      *
      * @abstract
      */
-    initEvents () {
-        if (this.$cont.find('img').length) {
-            this.$cont.waitForImages({
-                finished: this.onLoad,
-                waitForAll: true
-            })
-        } else {
-            this.onLoad()
-        }
-
-        window.addEventListener('resize', this.onResizeDebounce)
-    }
+    initEvents () {}
 
     /**
      * Destroy current block.
@@ -132,7 +110,7 @@ export default class AbstractBlock {
      * Do not forget to call `super.destroy();` while extending this method.
      */
     destroy () {
-        log.debug('\t🗑 #' + this.id)
+        debug('\t🗑️ #' + this.id + ' %c[' + this.type + ']', 'color:grey')
         this.destroyEvents()
     }
 
@@ -146,9 +124,7 @@ export default class AbstractBlock {
      *
      * @abstract
      */
-    destroyEvents () {
-        window.removeEventListener('resize', this.onResizeDebounce)
-    }
+    destroyEvents () {}
 
     /**
      * Called on window resize
@@ -156,13 +132,6 @@ export default class AbstractBlock {
      * @abstract
      */
     onResize () {}
-
-    /**
-     * Called once images are loaded
-     *
-     * @abstract
-     */
-    onLoad () {}
 
     /**
      * Called once all page blocks have been created.

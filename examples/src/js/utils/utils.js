@@ -28,10 +28,10 @@
 
 export function loadImage (url) {
     return new Promise(resolve => {
-        const $img = new window.Image()
-        $img.addEventListener('load', () => {
-            resolve($img)
+        const imageElement = new window.Image()
+        imageElement.addEventListener('load', () => {
+            resolve(imageElement)
         })
-        $img.src = url
+        imageElement.src = url
     })
 }

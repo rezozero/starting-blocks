@@ -1,35 +1,6 @@
-/**
- * Copyright (c) 2017. Ambroise Maupate and Julien Blanchet
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * Except as contained in this notice, the name of the ROADIZ shall not
- * be used in advertising or otherwise to promote the sale, use or other dealings
- * in this Software without prior written authorization from Ambroise Maupate and Julien Blanchet.
- *
- * @file Utils.js
- * @author Maxime Bérard
- * @author Adrien Scholaert <adrien@rezo-zero.com>
- */
+// import work from 'webworkify-webpack'
 
-import $ from 'jquery'
-import * as log from 'loglevel'
-import work from 'webworkify-webpack'
+import { debug } from './Logger'
 
 /**
  * Utils class
@@ -90,38 +61,38 @@ export default class Utils {
      * Start a fetch request
      *
      * @param {String} url
-     * @param {Boolean} workerEnabled
+     * @param {Worker|null} worker
      * @return {Promise}
      */
-    static request (url, workerEnabled = false) {
+    static request (url, worker) {
         const dfd = Utils.deferred()
         const timeout = window.setTimeout(() => {
             window.clearTimeout(timeout)
             dfd.reject('timeout!')
         }, Utils.requestTimeout())
 
-        if (window.Worker && workerEnabled) {
+        if (window.Worker && worker) {
             /**
              * @type {Window.Worker}
              */
-            const worker = work(require.resolve('../workers/Request.worker.js'))
+            // const worker = work(require.resolve('../workers/Request.worker.js'))
 
             // Listen worker event message
-            worker.addEventListener('message', function (e) {
-                const data = JSON.parse(e.data)
-
-                if (data.err) {
-                    window.clearTimeout(timeout)
-                    worker.terminate()
-                    dfd.reject(data.err)
-                } else {
-                    worker.terminate()
-                    return dfd.resolve(data.res)
-                }
-            })
+            // worker.addEventListener('message', function (e) {
+            //     const data = JSON.parse(e.data)
+            //
+            //     if (data.err) {
+            //         window.clearTimeout(timeout)
+            //         worker.terminate()
+            //         dfd.reject(data.err)
+            //     } else {
+            //         worker.terminate()
+            //         return dfd.resolve(data.res)
+            //     }
+            // })
 
             // Send url to the worker
-            worker.postMessage({url})
+            // worker.postMessage({ url })
         } else {
             const headers = new window.Headers()
             headers.append('X-Starting-Blocks', 'yes')
@@ -193,47 +164,6 @@ export default class Utils {
     }
 
     /**
-     * Get style value.
-     *
-     * @param  {jQuery} $el [element to check]
-     * @param  {String} style
-     * @return {Number}
-     */
-    static getStyleVal ($el, style) {
-        const elStyle = $el.css(style)
-        return Math.round(Number(elStyle.substr(0, elStyle.length - 2)))
-    }
-
-    /**
-     * Add class custom.
-     *
-     * @param {HTMLElement} el [dom element]
-     * @param {String} classToAdd  [class to add]
-     */
-    static addClass (el, classToAdd) {
-        if (el.classList) el.classList.add(classToAdd)
-        else el.className += ' ' + classToAdd
-    }
-
-    /**
-     * Remove class custom.
-     *
-     * @param {HTMLElement} el
-     * @param {String} classToRemove
-     */
-    static removeClass (el, classToRemove) {
-        if (el.classList) {
-            el.classList.remove(classToRemove)
-        } else {
-            el.className = el.className.replace(new RegExp('(^|\\b)' + classToRemove.split(' ').join('|') + '(\\b|$)', 'gi'), '')
-            const posLastCar = el.className.length - 1
-            if (el.className[posLastCar] === ' ') {
-                el.className = el.className.substring(0, posLastCar)
-            }
-        }
-    }
-
-    /**
      * Get random number.
      *
      * @param  {Number} min [min value]
@@ -261,44 +191,11 @@ export default class Utils {
     }
 
     /**
-     * Replace placeholder for browser that
-     * do not support it.
-     */
-    static replacePlaceholder () {
-        const $placeholder = $('[placeholder]')
-        if (typeof window.Modernizr !== 'undefined') {
-            if (!window.Modernizr.input.placeholder) {
-                $placeholder.focus(function () {
-                    const input = $(this)
-                    if (input.val() === input.attr('placeholder')) {
-                        input.val('')
-                        input.removeClass('placeholder')
-                    }
-                }).blur(function () {
-                    const input = $(this)
-                    if (input.val() === '' || input.val() === input.attr('placeholder')) {
-                        input.addClass('placeholder')
-                        input.val(input.attr('placeholder'))
-                    }
-                }).blur()
-                $placeholder.parents('form').submit(function () {
-                    $(this).find('[placeholder]').each(function () {
-                        const input = $(this)
-                        if (input.val() === input.attr('placeholder')) {
-                            input.val('')
-                        }
-                    })
-                })
-            }
-        }
-    }
-
-    /**
      * Send a GA page view event when context is AJAX.
      */
     static trackGoogleAnalytics () {
         if (typeof window.ga !== 'undefined') {
-            log.debug('🚩 Push Analytics for: ' + window.location.pathname)
+            debug('🚩 Push Analytics for: ' + window.location.pathname)
             window.ga('send', 'pageview', {
                 'page': window.location.pathname,
                 'title': document.title
