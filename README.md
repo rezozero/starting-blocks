@@ -71,8 +71,6 @@ startingBlocks.instanceFactory('UsersBlock', c => {
 startingBlocks.boot()
 ```
 
-Pages and blocks are mapped 
-
 ## Services
 
 *Starting Blocks* use dependency injection
