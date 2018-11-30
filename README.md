@@ -1,4 +1,4 @@
-# Starting blocks
+# Starting Blocks
 
 *Starting Blocks* is a framework for ajax page, transitions and blocks written in vanilla JS, 
 made by [Rezo Zero](https://www.rezo-zero.com/).
@@ -25,7 +25,7 @@ made by [Rezo Zero](https://www.rezo-zero.com/).
 * [Events](#events)
 * [Docs](#docs)
 * [Naming conventions](#naming-conventions)
-* [Improving Starting blocks](#improving-starting-blocks)
+* [Improving Starting Blocks](#improving-starting-blocks)
 * [Compatibility](#compatibility)
 * [Demo](#demo)
 * [Go further with Starting Blocks](#go-further-with-starting-blocks)
@@ -438,7 +438,7 @@ let imageElements = imageContainer.querySelectorAll('.image')
 To work locally on *Starting Blocks*, you’ll find some HTML files in `examples/` folder.
 
 - Install dependencies: `yarn`.
-- Type `npm run dev` to improve Starting blocks locally.
+- Type `npm run dev` to improve *Starting Blocks* locally.
 - Type `npm run build` to optimize project in one file as: `main.js`.
 - Type `npm run demo` to build demo project in `examples/` folder.
 
