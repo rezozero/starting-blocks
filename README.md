@@ -357,6 +357,7 @@ startingBlocks.instanceFactory('DefaultPage', c => {
 ``` 
 
 #### Page overridable methods
+
 | Method | Description |
 | --- | --- |
 | `onResize` | On viewport resize, this method is debounced. |
@@ -369,17 +370,19 @@ Create your own class extending our `AbstractBlock` or `AbstractInViewBlock` the
 `data-node-type` attribute content and your service name must match.
 
 #### Common block overridable methods in AbstractBlock
+
 | Method | Description |
 | --- | --- |
-| `onResize` | On viewport resize, this method is debounced. |
-| `onPageReady` | Called once all page blocks have been created. |
+| `onResize` | On viewport resize, this method is *debounced* of 50ms. |
+| `onPageReady` | Triggered once all page blocks have been created. |
 
 #### In-view block overridable methods in AbstractInViewBlock
+
 | Method | Description |
 | --- | --- |
-| `onIntersectionCallback` | Called when in view block state changed (in or out). |
-| `onScreen` | Called when block is in the viewport. |
-| `offScreen` | Called when block is out of the viewport. |
+| `onIntersectionCallback` | Triggered when in view block state changed (in or out). |
+| `onScreen` | Called when block is **in** the viewport. |
+| `offScreen` | Called when block is **out** of the viewport. |
 
 `AbstractInViewBlock` extends `AbstractBlock` and thus implements each of its methods too.
 
