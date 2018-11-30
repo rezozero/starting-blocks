@@ -302,12 +302,20 @@ To declare a partial DOM section as the `rootElement` you must add some classes 
 data to your HTML tags.
 
 ```html
+<!-- Page (HomePage.js) -->
 <div id="page-content-home"
      class="page-content"
      data-node-type="HomePage"
      data-node-name="home"
      data-is-home="1"
      data-meta-title="Home page">
+    
+    <!-- Block (GalleryBlock.js)  -->
+    <div id="home-page-gallery"
+         class="page-block"
+         data-node-type="GalleryBlock">
+        <img src="https://media.giphy.com/media/6LBVNUvqzY3tu/giphy.gif" alt="Display me…">
+    </div>
 </div>
 ```
 
