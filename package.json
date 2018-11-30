@@ -23,17 +23,15 @@
         "doc": "esdoc -c esdoc.json"
     },
     "engines": {
-        "node": ">=4.2.0",
-        "npm": "^3.0.0"
+        "node": ">=8.0.0",
+        "npm": ">=5.0.0"
     },
     "main": "dist/main.umd.js",
     "module": "dist/main.esm.js",
-    "dependencies": {
+    "devDependencies": {
         "bottlejs": "^1.7.1",
         "gsap": "^2.0.2",
-        "lazysizes": "^4.1.4"
-    },
-    "devDependencies": {
+        "lazysizes": "^4.1.4",
         "@babel/cli": "^7.0.0",
         "@babel/core": "^7.0.0",
         "@babel/plugin-proposal-class-properties": "^7.0.0",
