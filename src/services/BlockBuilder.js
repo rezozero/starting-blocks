@@ -27,7 +27,7 @@ export default class BlockBuilder extends AbstractBlockBuilder {
      */
     async getBlockInstance (blockType) {
         if (this.hasService(blockType)) {
-            return this.getService(blockType)
+            return this.getService(blockType).instance()
         }
 
         return null
