@@ -80,6 +80,7 @@
         "html-webpack-plugin": "^4.0.0-beta.1",
         "http-server": "^0.11.1",
         "imports-loader": "^0.8.0",
+        "intersection-observer": "^0.5.1",
         "lazysizes": "^4.1.4",
         "post-compile-webpack-plugin": "^0.1.2",
         "rollup": "^0.66.6",

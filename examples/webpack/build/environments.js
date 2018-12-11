@@ -63,7 +63,13 @@ export default {
 
         return {
             entry: {
-                app: ['whatwg-fetch', 'es6-promise', 'url-polyfill', paths.clientDemo('js/app.js')]
+                app: [
+                    'whatwg-fetch',
+                    'es6-promise',
+                    'intersection-observer',
+                    'url-polyfill',
+                    paths.clientDemo('js/app.js')
+                ]
             },
             output: {
                 path: paths.distDemo(),
