@@ -1,4 +1,4 @@
-define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload", "utils/debounce"], function (exports, _loglevel, _TweenMax, _waitForImages, _jquery, _Lazyload, _debounce) {
+define(["exports", "loglevel", "waitForImages", "jquery", "Lazyload", "utils/debounce"], function (exports, _loglevel, _waitForImages, _jquery, _Lazyload, _debounce) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -7,8 +7,6 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
     exports.AbstractPage = undefined;
 
     var _loglevel2 = _interopRequireDefault(_loglevel);
-
-    var _TweenMax2 = _interopRequireDefault(_TweenMax);
 
     var _waitForImages2 = _interopRequireDefault(_waitForImages);
 
@@ -267,9 +265,10 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
             _loglevel2.default.debug('▶️ #' + this.id);
 
             // Animate
-            TweenLite.to(this.$cont, 0.6, { opacity: 1, onComplete: function onComplete() {
-                    if (typeof onShow !== 'undefined') onShow();
-                } });
+            this.$cont.css({
+                opacity: 1
+            });
+            if (typeof onShow !== 'undefined') onShow();
         };
 
         /**
@@ -291,9 +290,10 @@ define(["exports", "loglevel", "TweenMax", "waitForImages", "jquery", "Lazyload"
         AbstractPage.prototype.hide = function hide(onHidden) {
             _loglevel2.default.debug('◀️ #' + this.id);
 
-            TweenLite.to(this.$cont, 0.6, { opacity: 0, onComplete: function onComplete() {
-                    if (typeof onHidden !== 'undefined') onHidden();
-                } });
+            this.$cont.css({
+                opacity: 0
+            });
+            if (typeof onHidden !== 'undefined') onHidden();
         };
 
         AbstractPage.prototype.initAjax = function initAjax() {

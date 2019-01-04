@@ -23,7 +23,6 @@
  * @author Ambroise Maupate
  */
 import log from "loglevel";
-import TweenMax from "TweenMax";
 import waitForImages from "waitForImages";
 import $ from "jquery";
 import Lazyload from 'Lazyload';
@@ -255,9 +254,10 @@ export class AbstractPage {
         log.debug('▶️ #' + this.id);
 
         // Animate
-        TweenLite.to(this.$cont, 0.6, {opacity:1, onComplete: () => {
-            if (typeof onShow !== 'undefined') onShow();
-        }});
+        this.$cont.css({
+            opacity: 1
+        });
+        if (typeof onShow !== 'undefined') onShow();
     }
 
     /**
@@ -275,9 +275,10 @@ export class AbstractPage {
     hide(onHidden) {
         log.debug('◀️ #' + this.id);
 
-        TweenLite.to(this.$cont, 0.6, {opacity:0, onComplete: () => {
-            if (typeof onHidden !== 'undefined') onHidden();
-        }});
+        this.$cont.css({
+            opacity: 0
+        });
+        if (typeof onHidden !== 'undefined') onHidden();
     }
 
     initAjax() {
@@ -324,7 +325,7 @@ export class AbstractPage {
         }
         return null;
     }
-    
+
     /**
      * Get a page block index from its `id`.
      *
@@ -341,7 +342,7 @@ export class AbstractPage {
         }
         return null;
     }
-    
+
     /**
      * Get the first page block instance from its `type`.
      *

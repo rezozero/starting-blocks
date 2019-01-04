@@ -15,10 +15,9 @@
 
 ## Usage
 
-- Install `gulp-cli` if you do not have it yet `npm install -g gulp-cli`.
-- Install dependencies: `npm install` and `bower install`.
-- Type `gulp watch` to convert ES6 scripts to `dist/` folder in background.
-- Type `gulp` to optimize project in one file in `build/` folder.
+- Install dependencies: `npm install` and `npm run install`.
+- Type `npm run dev` to convert ES6 scripts to `dist/` folder in background.
+- Type `npm run build` to optimize project in one file in `dist/` folder.
 
 RequireJS bootstrap file :
 
@@ -26,11 +25,11 @@ RequireJS bootstrap file :
 requirejs.config({
     baseUrl: './dist',
     paths: {
-        jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-        TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
-        TweenLite: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
-        //Draggable: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
-        //CSSPlugin: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
+        jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
+        TweenMax: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
+        TweenLite: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
+        //Draggable: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
+        //CSSPlugin: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
         waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
         loglevel: "./../bower_components/loglevel/dist/loglevel.min"
     }
@@ -53,11 +52,11 @@ with your own website path or your *Roadiz* theme *static* path.
 
 ```js
 var paths = {
-    jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
-    TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
-    TweenLite: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
-    //Draggable: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
-    //CSSPlugin: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
+    jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min',
+    TweenMax: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min",
+    TweenLite: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenLite.min",
+    //Draggable: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/utils/Draggable.min",
+    //CSSPlugin: "https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSPlugin.min",
     waitForImages: '/path/to/your/website/bower_components/waitForImages/dist/jquery.waitforimages.min',
     // Include current page-block sources from their location in bower_components
     // if you are using bower to fetch this lib.

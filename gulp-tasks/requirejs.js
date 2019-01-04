@@ -10,10 +10,6 @@ gulp.task('requirejs', ['babel'], function() {
         name: "./../bootstrap",
         paths: {
             jquery: 'empty:',
-            TweenMax: "empty:",
-            TweenLite: "empty:",
-            //Draggable: "empty:",
-            //CSSPlugin: "empty:",
             isMobile: './../bower_components/vanilla-lazyload/dist/lazyload',
             Lazyload: './../bower_components/isMobile/isMobile.min',
             waitForImages: './../bower_components/waitForImages/dist/jquery.waitforimages.min',
