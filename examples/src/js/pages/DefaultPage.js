@@ -46,8 +46,8 @@ export default class DefaultPage extends AbstractPage {
         this.onButtonClick = this.onButtonClick.bind(this)
     }
 
-    init () {
-        super.init()
+    async init () {
+        await super.init()
 
         this.duplicateButtonElement = this.rootElement.querySelectorAll('a.duplicate-last')[0]
     }
