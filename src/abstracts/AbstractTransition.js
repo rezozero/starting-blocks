@@ -60,11 +60,15 @@ export default class AbstractTransition {
      *
      * @param {AbstractPage} oldPage
      * @param {Promise} newPagePromise
+     * @param {HTMLElement} el
+     * @param {Object} cursorPosition
      * @returns {Promise}
      */
-    init (oldPage, newPagePromise) {
+    init (oldPage, newPagePromise, el, cursorPosition) {
         this.oldPage = oldPage
         this._newPagePromise = newPagePromise
+        this.originElement = el
+        this.cursorPosition = cursorPosition
 
         this.deferred = Utils.deferred()
         this.newPageReady = Utils.deferred()
@@ -87,6 +91,17 @@ export default class AbstractTransition {
         this.oldPage.destroy()
         this.newPage.rootElement.style.visibility = 'visible'
         this.deferred.resolve()
+    }
+
+    scrollTop () {
+        if (document.scrollingElement) {
+            document.scrollingElement.scrollTop = 0
+            document.scrollingElement.scrollTo(0, 0)
+        } else {
+            document.body.scrollTop = 0
+            document.documentElement.scrollTop = 0
+            window.scrollTo(0, 0)
+        }
     }
 
     /**

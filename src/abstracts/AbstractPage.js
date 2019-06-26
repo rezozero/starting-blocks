@@ -334,6 +334,10 @@ export default class AbstractPage extends AbstractService {
         return null
     }
 
+    appendDom () {
+        this.getService('Dom').putContainer(this.rootElement)
+    }
+
     /**
      * @abstract
      */

@@ -28,6 +28,8 @@
 
 import AbstractService from '../abstracts/AbstractService'
 import { debug } from '../utils/Logger'
+import Dispatcher from '../dispatcher/Dispatcher'
+import { AFTER_DOM_APPENDED } from '../types/EventTypes'
 
 /**
  * Class that is going to deal with DOM parsing/manipulation.
@@ -129,6 +131,12 @@ export default class Dom extends AbstractService {
         element.style.visibility = 'hidden'
         const wrapper = this.getWrapper()
         wrapper.appendChild(element)
+
+        // Dispatch an event
+        Dispatcher.commit(AFTER_DOM_APPENDED, {
+            element,
+            currentHTML: this.getService('Dom').currentHTML
+        })
     }
 
     /**

@@ -69,13 +69,7 @@ export default class Prefetch extends AbstractBootableService {
                 return
             }
 
-            let serviceWorker = null
-
-            if (this.hasService('Worker')) {
-                serviceWorker = this.getService('Worker')
-            }
-
-            let xhr = Utils.request(url, serviceWorker)
+            let xhr = Utils.request(url)
 
             if (this.hasService('CacheProvider')) {
                 this.getService('CacheProvider').set(url, xhr)
