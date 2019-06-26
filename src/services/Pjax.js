@@ -28,7 +28,6 @@ import Dispatcher from '../dispatcher/Dispatcher'
 import {
     CONTAINER_READY,
     AFTER_PAGE_LOAD,
-    AFTER_DOM_APPENDED,
     TRANSITION_START,
     TRANSITION_COMPLETE,
     BEFORE_PAGE_LOAD
@@ -102,12 +101,14 @@ export default class Pjax extends AbstractBootableService {
      *
      * @param {String} url
      * @param {String} transitionName
+     * @param {HTMLElement} element The <a> element
+     * @param {Object} cursorPosition
      */
-    goTo (url, transitionName) {
+    goTo (url, transitionName, element, cursorPosition) {
         const currentPosition = window.scrollY
         window.history.pushState(null, null, url)
         window.scrollTo(0, currentPosition)
-        this.onStateChange(transitionName, true)
+        this.onStateChange(transitionName, true, element, cursorPosition)
     }
 
     /**
@@ -240,7 +241,11 @@ export default class Pjax extends AbstractBootableService {
 
             const href = this.getHref(el)
             const transitionName = this.getTransitionName(el)
-            this.goTo(href, transitionName)
+            const cursorPosition = {
+                x: evt.clientX,
+                y: evt.clientY
+            }
+            this.goTo(href, transitionName, el, cursorPosition)
         }
     }
 
@@ -304,7 +309,7 @@ export default class Pjax extends AbstractBootableService {
      *
      * @private
      */
-    onStateChange (transitionName = null, isAjax = false) {
+    onStateChange (transitionName = null, isAjax = false, el = null, cursorPosition = null) {
         const newUrl = this.getCurrentUrl()
 
         if (this.transitionProgress) { this.forceGoTo(newUrl) }
@@ -346,7 +351,9 @@ export default class Pjax extends AbstractBootableService {
         // Start the transition (with the current page, and the new page load promise)
         const transitionPromise = transition.init(
             this.getService('PageBuilder').page,
-            newPagePromise
+            newPagePromise,
+            el,
+            cursorPosition
         )
 
         newPagePromise.then(this.onNewPageLoaded)
