@@ -1104,7 +1104,7 @@ class BlockBuilder extends AbstractBlockBuilder {
 
   async getBlockInstance(blockType) {
     if (this.hasService(blockType)) {
-      return this.getService(blockType);
+      return this.getService(blockType).instance();
     }
 
     return null;
@@ -1243,7 +1243,12 @@ class Dom extends AbstractService {
   putContainer(element) {
     element.style.visibility = 'hidden';
     const wrapper = this.getWrapper();
-    wrapper.appendChild(element);
+    wrapper.appendChild(element); // Dispatch an event
+
+    Dispatcher.commit(AFTER_DOM_APPENDED, {
+      element,
+      currentHTML: this.getService('Dom').currentHTML
+    });
   }
   /**
    * Get container selector.
@@ -1658,6 +1663,10 @@ class AbstractPage extends AbstractService {
 
     return null;
   }
+
+  appendDom() {
+    this.getService('Dom').putContainer(this.rootElement);
+  }
   /**
    * @abstract
    */
@@ -1705,6 +1714,7 @@ const CONFIG = {
     objectTypeAttr: 'data-node-type',
     noAjaxLinkClass: 'no-ajax-link',
     noPrefetchClass: 'no-prefetch',
+    manualDomAppend: false,
     debug: 0
   }
 };
@@ -1758,7 +1768,6 @@ class StartingBlocks {
 
 }
 
-// import work from 'webworkify-webpack'
 /**
  * Utils class
  */
@@ -1827,43 +1836,38 @@ class Utils {
    * Start a fetch request
    *
    * @param {String} url
-   * @param {Worker|null} worker
    * @return {Promise}
    */
 
 
-  static request(url, worker) {
+  static request(url) {
     const dfd = Utils.deferred();
     const timeout = window.setTimeout(() => {
       window.clearTimeout(timeout);
       dfd.reject('timeout!');
     }, Utils.requestTimeout());
+    const headers = new window.Headers();
+    headers.append('X-Starting-Blocks', 'yes');
+    headers.append('X-Allow-Partial', 'yes');
+    headers.append('X-Requested-With', 'XMLHttpRequest');
+    window.fetch(url, {
+      method: 'GET',
+      headers: headers,
+      cache: 'default',
+      credentials: 'same-origin'
+    }).then(res => {
+      window.clearTimeout(timeout);
 
-    if (window.Worker && worker) ; else {
-      const headers = new window.Headers();
-      headers.append('X-Starting-Blocks', 'yes');
-      headers.append('X-Allow-Partial', 'yes');
-      headers.append('X-Requested-With', 'XMLHttpRequest');
-      window.fetch(url, {
-        method: 'GET',
-        headers: headers,
-        cache: 'default',
-        credentials: 'same-origin'
-      }).then(res => {
-        window.clearTimeout(timeout);
+      if (res.status >= 200 && res.status < 300) {
+        return dfd.resolve(res.text());
+      }
 
-        if (res.status >= 200 && res.status < 300) {
-          return dfd.resolve(res.text());
-        }
-
-        const err = new Error(res.statusText || res.status);
-        return dfd.reject(err);
-      }).catch(err => {
-        window.clearTimeout(timeout);
-        dfd.reject(err);
-      });
-    }
-
+      const err = new Error(res.statusText || res.status);
+      return dfd.reject(err);
+    }).catch(err => {
+      window.clearTimeout(timeout);
+      dfd.reject(err);
+    });
     return dfd.promise;
   }
   /**
@@ -2096,13 +2100,17 @@ class AbstractTransition {
    *
    * @param {AbstractPage} oldPage
    * @param {Promise} newPagePromise
+   * @param {HTMLElement} el
+   * @param {Object} cursorPosition
    * @returns {Promise}
    */
 
 
-  init(oldPage, newPagePromise) {
+  init(oldPage, newPagePromise, el, cursorPosition) {
     this.oldPage = oldPage;
     this._newPagePromise = newPagePromise;
+    this.originElement = el;
+    this.cursorPosition = cursorPosition;
     this.deferred = Utils.deferred();
     this.newPageReady = Utils.deferred();
     this.newPageLoading = this.newPageReady.promise;
@@ -2124,6 +2132,17 @@ class AbstractTransition {
     this.oldPage.destroy();
     this.newPage.rootElement.style.visibility = 'visible';
     this.deferred.resolve();
+  }
+
+  scrollTop() {
+    if (document.scrollingElement) {
+      document.scrollingElement.scrollTop = 0;
+      document.scrollingElement.scrollTo(0, 0);
+    } else {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      window.scrollTo(0, 0);
+    }
   }
   /**
    * Entry point to create a custom Transition.
@@ -2265,14 +2284,16 @@ class Pjax extends AbstractBootableService {
    *
    * @param {String} url
    * @param {String} transitionName
+   * @param {HTMLElement} element The <a> element
+   * @param {Object} cursorPosition
    */
 
 
-  goTo(url, transitionName) {
+  goTo(url, transitionName, element, cursorPosition) {
     const currentPosition = window.scrollY;
     window.history.pushState(null, null, url);
     window.scrollTo(0, currentPosition);
-    this.onStateChange(transitionName, true);
+    this.onStateChange(transitionName, true, element, cursorPosition);
   }
   /**
    * Force the browser to go to a certain url.
@@ -2305,13 +2326,7 @@ class Pjax extends AbstractBootableService {
 
 
     if (!request) {
-      let serviceWorker = null;
-
-      if (this.hasService('Worker')) {
-        serviceWorker = this.getService('Worker');
-      }
-
-      request = Utils.request(url, serviceWorker); // If cache provider, cache the request
+      request = Utils.request(url); // If cache provider, cache the request
 
       if (this.hasService('CacheProvider')) {
         this.getService('CacheProvider').set(url, request);
@@ -2325,14 +2340,12 @@ class Pjax extends AbstractBootableService {
       Dispatcher.commit(AFTER_PAGE_LOAD, {
         container,
         currentHTML: this.getService('Dom').currentHTML
-      }); // Add new container to the DOM
+      }); // Add new container to the DOM if manual DOM Append is disable
 
-      this.getService('Dom').putContainer(container); // Dispatch an event
+      if (!this.getService('Config').manualDomAppend) {
+        this.getService('Dom').putContainer(container);
+      } // Build page
 
-      Dispatcher.commit(AFTER_DOM_APPENDED, {
-        container,
-        currentHTML: this.getService('Dom').currentHTML
-      }); // Build page
 
       const page = await this.getService('PageBuilder').buildPage(container);
       deferred.resolve(page);
@@ -2407,7 +2420,11 @@ class Pjax extends AbstractBootableService {
       this.linkHash = el.hash.split('#')[1];
       const href = this.getHref(el);
       const transitionName = this.getTransitionName(el);
-      this.goTo(href, transitionName);
+      const cursorPosition = {
+        x: evt.clientX,
+        y: evt.clientY
+      };
+      this.goTo(href, transitionName, el, cursorPosition);
     }
   }
   /**
@@ -2488,7 +2505,7 @@ class Pjax extends AbstractBootableService {
    */
 
 
-  onStateChange(transitionName = null, isAjax = false) {
+  onStateChange(transitionName = null, isAjax = false, el = null, cursorPosition = null) {
     const newUrl = this.getCurrentUrl();
 
     if (this.transitionProgress) {
@@ -2524,7 +2541,7 @@ class Pjax extends AbstractBootableService {
       prevStatus: this.getService('History').prevStatus()
     }); // Start the transition (with the current page, and the new page load promise)
 
-    const transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise);
+    const transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise, el, cursorPosition);
     newPagePromise.then(this.onNewPageLoaded);
     transitionPromise.then(this.onTransitionEnd);
   }
@@ -2741,13 +2758,7 @@ class Prefetch extends AbstractBootableService {
         return;
       }
 
-      let serviceWorker = null;
-
-      if (this.hasService('Worker')) {
-        serviceWorker = this.getService('Worker');
-      }
-
-      let xhr = Utils.request(url, serviceWorker);
+      let xhr = Utils.request(url);
 
       if (this.hasService('CacheProvider')) {
         this.getService('CacheProvider').set(url, xhr);

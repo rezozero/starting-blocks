@@ -4019,7 +4019,7 @@
 	                  break;
 	                }
 
-	                return _context.abrupt("return", this.getService(blockType));
+	                return _context.abrupt("return", this.getService(blockType).instance());
 
 	              case 2:
 	                return _context.abrupt("return", null);
@@ -4180,7 +4180,12 @@
 	    value: function putContainer(element) {
 	      element.style.visibility = 'hidden';
 	      var wrapper = this.getWrapper();
-	      wrapper.appendChild(element);
+	      wrapper.appendChild(element); // Dispatch an event
+
+	      Dispatcher.commit(AFTER_DOM_APPENDED, {
+	        element: element,
+	        currentHTML: this.getService('Dom').currentHTML
+	      });
 	    }
 	    /**
 	     * Get container selector.
@@ -4787,6 +4792,11 @@
 
 	      return null;
 	    }
+	  }, {
+	    key: "appendDom",
+	    value: function appendDom() {
+	      this.getService('Dom').putContainer(this.rootElement);
+	    }
 	    /**
 	     * @abstract
 	     */
@@ -4858,6 +4868,7 @@
 	    objectTypeAttr: 'data-node-type',
 	    noAjaxLinkClass: 'no-ajax-link',
 	    noPrefetchClass: 'no-prefetch',
+	    manualDomAppend: false,
 	    debug: 0
 	  }
 	};
@@ -5883,44 +5894,39 @@
 	     * Start a fetch request
 	     *
 	     * @param {String} url
-	     * @param {Worker|null} worker
 	     * @return {Promise}
 	     */
 
 	  }, {
 	    key: "request",
-	    value: function request(url, worker) {
+	    value: function request(url) {
 	      var dfd = Utils.deferred();
 	      var timeout = window.setTimeout(function () {
 	        window.clearTimeout(timeout);
 	        dfd.reject('timeout!');
 	      }, Utils.requestTimeout());
+	      var headers = new window.Headers();
+	      headers.append('X-Starting-Blocks', 'yes');
+	      headers.append('X-Allow-Partial', 'yes');
+	      headers.append('X-Requested-With', 'XMLHttpRequest');
+	      window.fetch(url, {
+	        method: 'GET',
+	        headers: headers,
+	        cache: 'default',
+	        credentials: 'same-origin'
+	      }).then(function (res) {
+	        window.clearTimeout(timeout);
 
-	      if (window.Worker && worker) ; else {
-	        var headers = new window.Headers();
-	        headers.append('X-Starting-Blocks', 'yes');
-	        headers.append('X-Allow-Partial', 'yes');
-	        headers.append('X-Requested-With', 'XMLHttpRequest');
-	        window.fetch(url, {
-	          method: 'GET',
-	          headers: headers,
-	          cache: 'default',
-	          credentials: 'same-origin'
-	        }).then(function (res) {
-	          window.clearTimeout(timeout);
+	        if (res.status >= 200 && res.status < 300) {
+	          return dfd.resolve(res.text());
+	        }
 
-	          if (res.status >= 200 && res.status < 300) {
-	            return dfd.resolve(res.text());
-	          }
-
-	          var err = new Error(res.statusText || res.status);
-	          return dfd.reject(err);
-	        }).catch(function (err) {
-	          window.clearTimeout(timeout);
-	          dfd.reject(err);
-	        });
-	      }
-
+	        var err = new Error(res.statusText || res.status);
+	        return dfd.reject(err);
+	      }).catch(function (err) {
+	        window.clearTimeout(timeout);
+	        dfd.reject(err);
+	      });
 	      return dfd.promise;
 	    }
 	    /**
@@ -6177,17 +6183,21 @@
 	   *
 	   * @param {AbstractPage} oldPage
 	   * @param {Promise} newPagePromise
+	   * @param {HTMLElement} el
+	   * @param {Object} cursorPosition
 	   * @returns {Promise}
 	   */
 
 
 	  createClass(AbstractTransition, [{
 	    key: "init",
-	    value: function init(oldPage, newPagePromise) {
+	    value: function init(oldPage, newPagePromise, el, cursorPosition) {
 	      var _this = this;
 
 	      this.oldPage = oldPage;
 	      this._newPagePromise = newPagePromise;
+	      this.originElement = el;
+	      this.cursorPosition = cursorPosition;
 	      this.deferred = Utils.deferred();
 	      this.newPageReady = Utils.deferred();
 	      this.newPageLoading = this.newPageReady.promise;
@@ -6211,6 +6221,18 @@
 	      this.oldPage.destroy();
 	      this.newPage.rootElement.style.visibility = 'visible';
 	      this.deferred.resolve();
+	    }
+	  }, {
+	    key: "scrollTop",
+	    value: function scrollTop() {
+	      if (document.scrollingElement) {
+	        document.scrollingElement.scrollTop = 0;
+	        document.scrollingElement.scrollTo(0, 0);
+	      } else {
+	        document.body.scrollTop = 0;
+	        document.documentElement.scrollTop = 0;
+	        window.scrollTo(0, 0);
+	      }
 	    }
 	    /**
 	     * Entry point to create a custom Transition.
@@ -6337,15 +6359,17 @@
 	     *
 	     * @param {String} url
 	     * @param {String} transitionName
+	     * @param {HTMLElement} element The <a> element
+	     * @param {Object} cursorPosition
 	     */
 
 	  }, {
 	    key: "goTo",
-	    value: function goTo(url, transitionName) {
+	    value: function goTo(url, transitionName, element, cursorPosition) {
 	      var currentPosition = window.scrollY;
 	      window.history.pushState(null, null, url);
 	      window.scrollTo(0, currentPosition);
-	      this.onStateChange(transitionName, true);
+	      this.onStateChange(transitionName, true, element, cursorPosition);
 	    }
 	    /**
 	     * Force the browser to go to a certain url.
@@ -6382,13 +6406,7 @@
 
 
 	      if (!request) {
-	        var serviceWorker = null;
-
-	        if (this.hasService('Worker')) {
-	          serviceWorker = this.getService('Worker');
-	        }
-
-	        request = Utils.request(url, serviceWorker); // If cache provider, cache the request
+	        request = Utils.request(url); // If cache provider, cache the request
 
 	        if (this.hasService('CacheProvider')) {
 	          this.getService('CacheProvider').set(url, request);
@@ -6412,24 +6430,21 @@
 	                  Dispatcher.commit(AFTER_PAGE_LOAD, {
 	                    container: container,
 	                    currentHTML: _this2.getService('Dom').currentHTML
-	                  }); // Add new container to the DOM
+	                  }); // Add new container to the DOM if manual DOM Append is disable
 
-	                  _this2.getService('Dom').putContainer(container); // Dispatch an event
+	                  if (!_this2.getService('Config').manualDomAppend) {
+	                    _this2.getService('Dom').putContainer(container);
+	                  } // Build page
 
 
-	                  Dispatcher.commit(AFTER_DOM_APPENDED, {
-	                    container: container,
-	                    currentHTML: _this2.getService('Dom').currentHTML
-	                  }); // Build page
-
-	                  _context.next = 6;
+	                  _context.next = 5;
 	                  return _this2.getService('PageBuilder').buildPage(container);
 
-	                case 6:
+	                case 5:
 	                  page = _context.sent;
 	                  deferred.resolve(page);
 
-	                case 8:
+	                case 7:
 	                case "end":
 	                  return _context.stop();
 	              }
@@ -6516,7 +6531,11 @@
 	        this.linkHash = el.hash.split('#')[1];
 	        var href = this.getHref(el);
 	        var transitionName = this.getTransitionName(el);
-	        this.goTo(href, transitionName);
+	        var cursorPosition = {
+	          x: evt.clientX,
+	          y: evt.clientY
+	        };
+	        this.goTo(href, transitionName, el, cursorPosition);
 	      }
 	    }
 	    /**
@@ -6603,6 +6622,8 @@
 	    value: function onStateChange() {
 	      var transitionName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 	      var isAjax = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	      var el = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+	      var cursorPosition = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 	      var newUrl = this.getCurrentUrl();
 
 	      if (this.transitionProgress) {
@@ -6638,7 +6659,7 @@
 	        prevStatus: this.getService('History').prevStatus()
 	      }); // Start the transition (with the current page, and the new page load promise)
 
-	      var transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise);
+	      var transitionPromise = transition.init(this.getService('PageBuilder').page, newPagePromise, el, cursorPosition);
 	      newPagePromise.then(this.onNewPageLoaded);
 	      transitionPromise.then(this.onTransitionEnd);
 	    }
@@ -6843,13 +6864,7 @@
 	          return;
 	        }
 
-	        var serviceWorker = null;
-
-	        if (this.hasService('Worker')) {
-	          serviceWorker = this.getService('Worker');
-	        }
-
-	        var xhr = Utils.request(url, serviceWorker);
+	        var xhr = Utils.request(url);
 
 	        if (this.hasService('CacheProvider')) {
 	          this.getService('CacheProvider').set(url, xhr);
