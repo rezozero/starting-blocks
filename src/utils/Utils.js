@@ -1,5 +1,3 @@
-// import work from 'webworkify-webpack'
-
 import { debug } from './Logger'
 
 /**
@@ -61,63 +59,38 @@ export default class Utils {
      * Start a fetch request
      *
      * @param {String} url
-     * @param {Worker|null} worker
      * @return {Promise}
      */
-    static request (url, worker) {
+    static request (url) {
         const dfd = Utils.deferred()
         const timeout = window.setTimeout(() => {
             window.clearTimeout(timeout)
             dfd.reject('timeout!')
         }, Utils.requestTimeout())
 
-        if (window.Worker && worker) {
-            /**
-             * @type {Window.Worker}
-             */
-            // const worker = work(require.resolve('../workers/Request.worker.js'))
+        const headers = new window.Headers()
+        headers.append('X-Starting-Blocks', 'yes')
+        headers.append('X-Allow-Partial', 'yes')
+        headers.append('X-Requested-With', 'XMLHttpRequest')
 
-            // Listen worker event message
-            // worker.addEventListener('message', function (e) {
-            //     const data = JSON.parse(e.data)
-            //
-            //     if (data.err) {
-            //         window.clearTimeout(timeout)
-            //         worker.terminate()
-            //         dfd.reject(data.err)
-            //     } else {
-            //         worker.terminate()
-            //         return dfd.resolve(data.res)
-            //     }
-            // })
+        window.fetch(url, {
+            method: 'GET',
+            headers: headers,
+            cache: 'default',
+            credentials: 'same-origin'
+        }).then(res => {
+            window.clearTimeout(timeout)
 
-            // Send url to the worker
-            // worker.postMessage({ url })
-        } else {
-            const headers = new window.Headers()
-            headers.append('X-Starting-Blocks', 'yes')
-            headers.append('X-Allow-Partial', 'yes')
-            headers.append('X-Requested-With', 'XMLHttpRequest')
+            if (res.status >= 200 && res.status < 300) {
+                return dfd.resolve(res.text())
+            }
 
-            window.fetch(url, {
-                method: 'GET',
-                headers: headers,
-                cache: 'default',
-                credentials: 'same-origin'
-            }).then(res => {
-                window.clearTimeout(timeout)
-
-                if (res.status >= 200 && res.status < 300) {
-                    return dfd.resolve(res.text())
-                }
-
-                const err = new Error(res.statusText || res.status)
-                return dfd.reject(err)
-            }).catch(err => {
-                window.clearTimeout(timeout)
-                dfd.reject(err)
-            })
-        }
+            const err = new Error(res.statusText || res.status)
+            return dfd.reject(err)
+        }).catch(err => {
+            window.clearTimeout(timeout)
+            dfd.reject(err)
+        })
 
         return dfd.promise
     }

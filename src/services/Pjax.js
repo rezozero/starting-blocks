@@ -28,7 +28,6 @@ import Dispatcher from '../dispatcher/Dispatcher'
 import {
     CONTAINER_READY,
     AFTER_PAGE_LOAD,
-    AFTER_DOM_APPENDED,
     TRANSITION_START,
     TRANSITION_COMPLETE,
     BEFORE_PAGE_LOAD
@@ -102,12 +101,14 @@ export default class Pjax extends AbstractBootableService {
      *
      * @param {String} url
      * @param {String} transitionName
+     * @param {HTMLElement} element The <a> element
+     * @param {Object} cursorPosition
      */
-    goTo (url, transitionName) {
+    goTo (url, transitionName, element, cursorPosition) {
         const currentPosition = window.scrollY
         window.history.pushState(null, null, url)
         window.scrollTo(0, currentPosition)
-        this.onStateChange(transitionName, true)
+        this.onStateChange(transitionName, true, element, cursorPosition)
     }
 
     /**
@@ -139,13 +140,7 @@ export default class Pjax extends AbstractBootableService {
 
         // If no cache, make request
         if (!request) {
-            let serviceWorker = null
-
-            if (this.hasService('Worker')) {
-                serviceWorker = this.getService('Worker')
-            }
-
-            request = Utils.request(url, serviceWorker)
+            request = Utils.request(url)
 
             // If cache provider, cache the request
             if (this.hasService('CacheProvider')) {
@@ -164,14 +159,10 @@ export default class Pjax extends AbstractBootableService {
                     currentHTML: this.getService('Dom').currentHTML
                 })
 
-                // Add new container to the DOM
-                this.getService('Dom').putContainer(container)
-
-                // Dispatch an event
-                Dispatcher.commit(AFTER_DOM_APPENDED, {
-                    container,
-                    currentHTML: this.getService('Dom').currentHTML
-                })
+                // Add new container to the DOM if manual DOM Append is disable
+                if (!this.getService('Config').manualDomAppend) {
+                    this.getService('Dom').putContainer(container)
+                }
 
                 // Build page
                 const page = await this.getService('PageBuilder').buildPage(container)
@@ -250,7 +241,11 @@ export default class Pjax extends AbstractBootableService {
 
             const href = this.getHref(el)
             const transitionName = this.getTransitionName(el)
-            this.goTo(href, transitionName)
+            const cursorPosition = {
+                x: evt.clientX,
+                y: evt.clientY
+            }
+            this.goTo(href, transitionName, el, cursorPosition)
         }
     }
 
@@ -314,7 +309,7 @@ export default class Pjax extends AbstractBootableService {
      *
      * @private
      */
-    onStateChange (transitionName = null, isAjax = false) {
+    onStateChange (transitionName = null, isAjax = false, el = null, cursorPosition = null) {
         const newUrl = this.getCurrentUrl()
 
         if (this.transitionProgress) { this.forceGoTo(newUrl) }
@@ -356,7 +351,9 @@ export default class Pjax extends AbstractBootableService {
         // Start the transition (with the current page, and the new page load promise)
         const transitionPromise = transition.init(
             this.getService('PageBuilder').page,
-            newPagePromise
+            newPagePromise,
+            el,
+            cursorPosition
         )
 
         newPagePromise.then(this.onNewPageLoaded)
