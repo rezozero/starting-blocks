@@ -30,6 +30,7 @@ const CONFIG = {
         objectTypeAttr: 'data-node-type',
         noAjaxLinkClass: 'no-ajax-link',
         noPrefetchClass: 'no-prefetch',
+        manualDomAppend: false,
         debug: 0
     }
 }

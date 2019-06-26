@@ -139,13 +139,7 @@ export default class Pjax extends AbstractBootableService {
 
         // If no cache, make request
         if (!request) {
-            let serviceWorker = null
-
-            if (this.hasService('Worker')) {
-                serviceWorker = this.getService('Worker')
-            }
-
-            request = Utils.request(url, serviceWorker)
+            request = Utils.request(url)
 
             // If cache provider, cache the request
             if (this.hasService('CacheProvider')) {
@@ -164,14 +158,10 @@ export default class Pjax extends AbstractBootableService {
                     currentHTML: this.getService('Dom').currentHTML
                 })
 
-                // Add new container to the DOM
-                this.getService('Dom').putContainer(container)
-
-                // Dispatch an event
-                Dispatcher.commit(AFTER_DOM_APPENDED, {
-                    container,
-                    currentHTML: this.getService('Dom').currentHTML
-                })
+                // Add new container to the DOM if manual DOM Append is disable
+                if (!this.getService('Config').manualDomAppend) {
+                    this.getService('Dom').putContainer(container)
+                }
 
                 // Build page
                 const page = await this.getService('PageBuilder').buildPage(container)
