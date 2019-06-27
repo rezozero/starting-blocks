@@ -138,7 +138,7 @@ var store = _global[SHARED] || (_global[SHARED] = {});
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
   version: _core.version,
-  mode: _library ? 'pure' : 'global',
+  mode: 'global',
   copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 });
 });
@@ -235,7 +235,7 @@ var _objectDp = {
 
 var defineProperty = _objectDp.f;
 var _wksDefine = function (name) {
-  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
   if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: _wksExt.f(name) });
 };
 
@@ -984,7 +984,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
       // Set @@toStringTag to native iterators
       _setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -993,7 +993,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
     $default = function values() { return $native.call(this); };
   }
   // Define iterator
-  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
     _hide(proto, ITERATOR, $default);
   }
   // Plug for library
@@ -3725,8 +3725,8 @@ function () {
 
     classCallCheck(this, AbstractService);
 
-    this.container = container;
-    this.serviceName = serviceName;
+    this._container = container;
+    this._serviceName = serviceName;
     this.checkDependencies(dependencies);
   }
 
@@ -3736,7 +3736,7 @@ function () {
   }, {
     key: "hasService",
     value: function hasService(serviceName) {
-      return this.container.hasOwnProperty(serviceName);
+      return this._container.hasOwnProperty(serviceName);
     }
   }, {
     key: "checkDependencies",
@@ -3751,7 +3751,7 @@ function () {
           var serviceName = _step.value;
 
           if (!this.hasService(serviceName)) {
-            throw new DependencyNotFulfilledException(this.serviceName, serviceName);
+            throw new DependencyNotFulfilledException(this._serviceName, serviceName);
           }
         }
       } catch (err) {
@@ -3776,7 +3776,23 @@ function () {
         throw new UnknownServiceException(serviceName);
       }
 
-      return this.container[serviceName];
+      return this._container[serviceName];
+    }
+  }, {
+    key: "serviceName",
+    get: function get() {
+      return this._serviceName;
+    },
+    set: function set(value) {
+      this._serviceName = value;
+    }
+  }, {
+    key: "container",
+    get: function get() {
+      return this._container;
+    },
+    set: function set(value) {
+      this._container = value;
     }
   }]);
 
@@ -4786,11 +4802,6 @@ function (_AbstractService) {
 
       return null;
     }
-  }, {
-    key: "appendDom",
-    value: function appendDom() {
-      this.getService('Dom').putContainer(this.rootElement);
-    }
     /**
      * @abstract
      */
@@ -4850,6 +4861,7 @@ function (_AbstractPage) {
  * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
  * @property {String} defaults.noAjaxLinkClass
  * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+ * @property {boolean} defaults.manualDomAppend
  * @const
  * @default
  */
@@ -6146,30 +6158,50 @@ _iterDefine(String, 'String', function (iterated) {
 
 var AbstractTransition =
 /*#__PURE__*/
-function () {
+function (_AbstractService) {
+  inherits(AbstractTransition, _AbstractService);
+
   /**
    * Constructor.
    * Do not override this method.
    *
    * @constructor
    */
-  function AbstractTransition() {
+  function AbstractTransition(container) {
+    var _this;
+
+    var serviceName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Transition';
+    var dependencies = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
     classCallCheck(this, AbstractTransition);
 
+    _this = possibleConstructorReturn(this, getPrototypeOf(AbstractTransition).call(this, container, serviceName, dependencies));
     /**
      * @type {AbstractPage|null} old Page instance
      */
-    this.oldPage = null;
+
+    _this.oldPage = null;
     /**
      * @type {AbstractPage|null}
      */
 
-    this.newPage = null;
+    _this.newPage = null;
     /**
      * @type {Promise|null}
      */
 
-    this.newPageLoading = null;
+    _this.newPageLoading = null;
+    /**
+     * @type {(HTMLElement|null)}
+     */
+
+    _this.originElement = null;
+    /**
+     * @type {(Object|null)}
+     */
+
+    _this.cursorPosition = null;
+    return _this;
   }
   /**
    * Initialize transition.
@@ -6177,8 +6209,8 @@ function () {
    *
    * @param {AbstractPage} oldPage
    * @param {Promise} newPagePromise
-   * @param {HTMLElement} el
-   * @param {Object} cursorPosition
+   * @param {(HTMLElement|null)} el The html element where the transition has been launched
+   * @param {Object} cursorPosition The cursor position when the transition has been launched
    * @returns {Promise}
    */
 
@@ -6186,7 +6218,7 @@ function () {
   createClass(AbstractTransition, [{
     key: "init",
     value: function init(oldPage, newPagePromise, el, cursorPosition) {
-      var _this = this;
+      var _this2 = this;
 
       this.oldPage = oldPage;
       this._newPagePromise = newPagePromise;
@@ -6198,9 +6230,9 @@ function () {
       this.start();
 
       this._newPagePromise.then(function (newPage) {
-        _this.newPage = newPage;
+        _this2.newPage = newPage;
 
-        _this.newPageReady.resolve();
+        _this2.newPageReady.resolve();
       });
 
       return this.deferred.promise;
@@ -6212,8 +6244,13 @@ function () {
   }, {
     key: "done",
     value: function done() {
-      this.oldPage.destroy();
-      this.newPage.rootElement.style.visibility = 'visible';
+      this.destroyOldPage();
+      var visibility = this.newPage.rootElement.style.visibility;
+
+      if (visibility !== 'inherit' || visibility !== 'hidden') {
+        this.newPage.rootElement.style.visibility = 'visible';
+      }
+
       this.deferred.resolve();
     }
   }, {
@@ -6228,6 +6265,56 @@ function () {
         window.scrollTo(0, 0);
       }
     }
+  }, {
+    key: "destroyOldPage",
+    value: function destroyOldPage() {
+      if (this.oldPage) {
+        this.oldPage.destroy();
+        this.oldPage = null;
+      }
+    }
+  }, {
+    key: "buildNewPage",
+    value: function () {
+      var _buildNewPage = asyncToGenerator(
+      /*#__PURE__*/
+      regenerator.mark(function _callee() {
+        var pjaxService, domService, pageBuilderService;
+        return regenerator.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!this.container) {
+                  _context.next = 9;
+                  break;
+                }
+
+                pjaxService = this.getService('Pjax');
+                domService = this.getService('Dom');
+                pageBuilderService = this.getService('PageBuilder'); // Add the new dom
+
+                domService.putContainer(pjaxService.containerElement); // Build the new page
+
+                _context.next = 7;
+                return pageBuilderService.buildPage(pjaxService.containerElement);
+
+              case 7:
+                this.newPage = _context.sent;
+                // Then notify
+                pjaxService.onNewPageLoaded(this.newPage);
+
+              case 9:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      return function buildNewPage() {
+        return _buildNewPage.apply(this, arguments);
+      };
+    }()
     /**
      * Entry point to create a custom Transition.
      * @abstract
@@ -6239,7 +6326,7 @@ function () {
   }]);
 
   return AbstractTransition;
-}();
+}(AbstractService);
 
 /**
  * Default Transition. Show / Hide content.
@@ -6299,7 +6386,13 @@ function (_AbstractBootableServ) {
      * @type {Boolean}
      */
 
-    _this.transitionProgress = false; // Bind methods
+    _this.transitionProgress = false;
+    /**
+     * @type {(HTMLElement|null)}
+     * The latest page content loaded
+     */
+
+    _this.containerElement = null; // Bind methods
 
     _this.onNewPageLoaded = _this.onNewPageLoaded.bind(assertThisInitialized(assertThisInitialized(_this)));
     _this.onTransitionEnd = _this.onTransitionEnd.bind(assertThisInitialized(assertThisInitialized(_this)));
@@ -6414,31 +6507,39 @@ function (_AbstractBootableServ) {
         var _ref = asyncToGenerator(
         /*#__PURE__*/
         regenerator.mark(function _callee(data) {
-          var container, page;
+          var page;
           return regenerator.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  container = _this2.getService('Dom').parseResponse(data); // Dispatch an event
+                  _this2.containerElement = _this2.getService('Dom').parseResponse(data); // Dispatch an event
 
                   Dispatcher.commit(AFTER_PAGE_LOAD, {
-                    container: container,
+                    container: _this2.containerElement,
                     currentHTML: _this2.getService('Dom').currentHTML
                   }); // Add new container to the DOM if manual DOM Append is disable
 
-                  if (!_this2.getService('Config').manualDomAppend) {
-                    _this2.getService('Dom').putContainer(container);
-                  } // Build page
+                  if (_this2.getService('Config').manualDomAppend) {
+                    _context.next = 10;
+                    break;
+                  }
+
+                  _this2.getService('Dom').putContainer(_this2.containerElement); // Build page
 
 
-                  _context.next = 5;
-                  return _this2.getService('PageBuilder').buildPage(container);
+                  _context.next = 6;
+                  return _this2.getService('PageBuilder').buildPage(_this2.containerElement);
 
-                case 5:
+                case 6:
                   page = _context.sent;
                   deferred.resolve(page);
+                  _context.next = 11;
+                  break;
 
-                case 7:
+                case 10:
+                  deferred.resolve(null);
+
+                case 11:
                 case "end":
                   return _context.stop();
               }
@@ -6667,26 +6768,28 @@ function (_AbstractBootableServ) {
   }, {
     key: "onNewPageLoaded",
     value: function onNewPageLoaded(page) {
-      var currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
+      if (page) {
+        var currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
 
-      this.getService('Dom').updateBodyAttributes(page); // Update the page title
+        this.getService('Dom').updateBodyAttributes(page); // Update the page title
 
-      this.getService('Dom').updatePageTitle(page); // Send google analytic data
+        this.getService('Dom').updatePageTitle(page); // Send google analytic data
 
-      Utils.trackGoogleAnalytics(); // Update the current state
+        Utils.trackGoogleAnalytics(); // Update the current state
 
-      if (this.currentState && page) {
-        if (!this.currentState.data.title && page.metaTitle) {
-          this.currentState.data.title = page.metaTitle;
+        if (this.currentState && page) {
+          if (!this.currentState.data.title && page.metaTitle) {
+            this.currentState.data.title = page.metaTitle;
+          }
         }
-      }
 
-      Dispatcher.commit(CONTAINER_READY, {
-        currentStatus: currentStatus,
-        prevStatus: this.getService('History').prevStatus(),
-        currentHTML: this.getService('Dom').currentHTML,
-        page: page
-      });
+        Dispatcher.commit(CONTAINER_READY, {
+          currentStatus: currentStatus,
+          prevStatus: this.getService('History').prevStatus(),
+          currentHTML: this.getService('Dom').currentHTML,
+          page: page
+        });
+      }
     }
     /**
      * Function called as soon the transition is finished.

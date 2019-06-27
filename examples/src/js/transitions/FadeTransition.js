@@ -63,21 +63,19 @@ export default class FadeTransition extends AbstractTransition {
     /**
      * Fade in the new content
      */
-    fadeIn () {
-        // Add display: none on the old container
-        this.oldPage.rootElement.style.display = 'none'
+    async fadeIn () {
+        // Destroy old page
+        this.destroyOldPage()
 
-        // Prepare new content css properties for the fade animation
-        this.newPage.rootElement.style.visibility = 'visible'
-        this.newPage.rootElement.style.opacity = '0'
+        // Manually append and build the new page
+        await this.buildNewPage()
 
-        // Scroll to the top
-        document.documentElement.scrollTop = 0
-        document.body.scrollTop = 0
+        // Scroll top
+        this.scrollTop()
 
         // fadeIn the new content container
         TweenLite.to(this.newPage.rootElement, 0.4, {
-            alpha: 1,
+            autoAlpha: 1,
             onComplete: () => {
                 // IMPORTANT: Call this method at the end
                 this.done()

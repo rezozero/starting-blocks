@@ -83,20 +83,21 @@ export default class FadeTransition extends AbstractTransition {
     /**
      * Fade in the new content
      */
-    endAnim () {
-        // Add display: none on the old container
-        this.oldPage.rootElement.style.display = 'none'
+    async endAnim () {
+        // Destroy old page
+        this.destroyOldPage()
 
-        // Prepare new content css properties for the fade animation
-        this.newPage.rootElement.style.visibility = 'visible'
-        this.newPage.rootElement.style.opacity = '0'
+        // Manually append and build the new page
+        await this.buildNewPage()
 
-        // Scroll to the top
-        document.documentElement.scrollTop = 0
-        document.body.scrollTop = 0
+        // Scroll top
+        this.scrollTop()
 
-        TweenMax.to(this.newPage.rootElement, 0.75, {
-            alpha: 1
+        // Fade animation
+        TweenMax.fromTo(this.newPage.rootElement, 0.75, {
+            autoAlpha: 0
+        }, {
+            autoAlpha: 1
         })
 
         TweenMax.staggerTo(this.horizontalElements, 0.5, {
@@ -110,6 +111,7 @@ export default class FadeTransition extends AbstractTransition {
                 autoAlpha: 0
             })
 
+            // IMPORTANT: Call this method at the end
             this.done()
         })
     }

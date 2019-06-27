@@ -53,6 +53,12 @@ export default class Pjax extends AbstractBootableService {
          */
         this.transitionProgress = false
 
+        /**
+         * @type {(HTMLElement|null)}
+         * The latest page content loaded
+         */
+        this.containerElement = null
+
         // Bind methods
         this.onNewPageLoaded = this.onNewPageLoaded.bind(this)
         this.onTransitionEnd = this.onTransitionEnd.bind(this)
@@ -151,23 +157,25 @@ export default class Pjax extends AbstractBootableService {
         // When data are loaded
         request
             .then(async data => {
-                const container = this.getService('Dom').parseResponse(data)
+                this.containerElement = this.getService('Dom').parseResponse(data)
 
                 // Dispatch an event
                 Dispatcher.commit(AFTER_PAGE_LOAD, {
-                    container,
+                    container: this.containerElement,
                     currentHTML: this.getService('Dom').currentHTML
                 })
 
                 // Add new container to the DOM if manual DOM Append is disable
                 if (!this.getService('Config').manualDomAppend) {
-                    this.getService('Dom').putContainer(container)
+                    this.getService('Dom').putContainer(this.containerElement)
+
+                    // Build page
+                    const page = await this.getService('PageBuilder').buildPage(this.containerElement)
+
+                    deferred.resolve(page)
+                } else {
+                    deferred.resolve(null)
                 }
-
-                // Build page
-                const page = await this.getService('PageBuilder').buildPage(container)
-
-                deferred.resolve(page)
             })
             .catch((err) => {
                 console.error(err)
@@ -367,28 +375,30 @@ export default class Pjax extends AbstractBootableService {
      * @param {AbstractPage} page
      */
     onNewPageLoaded (page) {
-        const currentStatus = this.getService('History').currentStatus()
+        if (page) {
+            const currentStatus = this.getService('History').currentStatus()
 
-        // Update body attributes (class, id, data-attributes
-        this.getService('Dom').updateBodyAttributes(page)
-        // Update the page title
-        this.getService('Dom').updatePageTitle(page)
-        // Send google analytic data
-        Utils.trackGoogleAnalytics()
+            // Update body attributes (class, id, data-attributes
+            this.getService('Dom').updateBodyAttributes(page)
+            // Update the page title
+            this.getService('Dom').updatePageTitle(page)
+            // Send google analytic data
+            Utils.trackGoogleAnalytics()
 
-        // Update the current state
-        if (this.currentState && page) {
-            if (!this.currentState.data.title && page.metaTitle) {
-                this.currentState.data.title = page.metaTitle
+            // Update the current state
+            if (this.currentState && page) {
+                if (!this.currentState.data.title && page.metaTitle) {
+                    this.currentState.data.title = page.metaTitle
+                }
             }
-        }
 
-        Dispatcher.commit(CONTAINER_READY, {
-            currentStatus,
-            prevStatus: this.getService('History').prevStatus(),
-            currentHTML: this.getService('Dom').currentHTML,
-            page
-        })
+            Dispatcher.commit(CONTAINER_READY, {
+                currentStatus,
+                prevStatus: this.getService('History').prevStatus(),
+                currentHTML: this.getService('Dom').currentHTML,
+                page
+            })
+        }
     }
 
     /**

@@ -64,26 +64,27 @@ export default class SlideTransition extends AbstractTransition {
     /**
      * Slide in the new content
      */
-    slideIn () {
-        TweenLite.set(this.oldPage.rootElement, {
-            display: 'none'
-        })
+    async slideIn () {
+        // Destroy old page
+        this.destroyOldPage()
 
-        TweenLite.set(this.newPage.rootElement, {
+        // Manually append and build the new page
+        await this.buildNewPage()
+
+        // Scroll top
+        this.scrollTop()
+
+        // Animate the new page
+        TweenLite.fromTo(this.newPage.rootElement, 0.75, {
             visibility: 'visible',
             alpha: 0,
             xPercent: -25
-        })
-
-        // Scroll top
-        document.documentElement.scrollTop = 0
-        document.body.scrollTop = 0
-
-        TweenLite.to(this.newPage.rootElement, 0.75, {
+        }, {
             xPercent: 0,
             alpha: 1,
             ease: Power4.easeOut,
             onComplete: () => {
+                // IMPORTANT: Call this method at the end
                 this.done()
             }
         })
