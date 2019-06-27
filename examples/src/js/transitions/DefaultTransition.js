@@ -38,8 +38,10 @@ export default class DefaultTransition extends AbstractTransition {
             .then(this.finish.bind(this))
     }
 
-    finish () {
-        document.body.scrollTop = 0
+    async finish () {
+        this.destroyOldPage()
+        this.scrollTop()
+        await this.buildNewPage()
         this.done()
     }
 }

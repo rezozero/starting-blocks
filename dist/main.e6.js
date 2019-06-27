@@ -939,21 +939,21 @@ class DependencyNotFulfilledException extends Error {
  */
 class AbstractService {
   constructor(container = {}, serviceName = 'AbstractService', dependencies = ['Config']) {
-    this.container = container;
-    this.serviceName = serviceName;
+    this._container = container;
+    this._serviceName = serviceName;
     this.checkDependencies(dependencies);
   }
 
   init() {}
 
   hasService(serviceName) {
-    return this.container.hasOwnProperty(serviceName);
+    return this._container.hasOwnProperty(serviceName);
   }
 
   checkDependencies(dependencies = []) {
     for (const serviceName of dependencies) {
       if (!this.hasService(serviceName)) {
-        throw new DependencyNotFulfilledException(this.serviceName, serviceName);
+        throw new DependencyNotFulfilledException(this._serviceName, serviceName);
       }
     }
   }
@@ -963,7 +963,23 @@ class AbstractService {
       throw new UnknownServiceException(serviceName);
     }
 
-    return this.container[serviceName];
+    return this._container[serviceName];
+  }
+
+  get serviceName() {
+    return this._serviceName;
+  }
+
+  set serviceName(value) {
+    this._serviceName = value;
+  }
+
+  get container() {
+    return this._container;
+  }
+
+  set container(value) {
+    this._container = value;
   }
 
 }
@@ -1663,10 +1679,6 @@ class AbstractPage extends AbstractService {
 
     return null;
   }
-
-  appendDom() {
-    this.getService('Dom').putContainer(this.rootElement);
-  }
   /**
    * @abstract
    */
@@ -1702,6 +1714,7 @@ class DefaultPage extends AbstractPage {
  * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
  * @property {String} defaults.noAjaxLinkClass
  * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+ * @property {boolean} defaults.manualDomAppend
  * @const
  * @default
  */
@@ -2071,17 +2084,19 @@ class Utils {
  * @abstract
  */
 
-class AbstractTransition {
+class AbstractTransition extends AbstractService {
   /**
    * Constructor.
    * Do not override this method.
    *
    * @constructor
    */
-  constructor() {
+  constructor(container, serviceName = 'Transition', dependencies = []) {
+    super(container, serviceName, dependencies);
     /**
      * @type {AbstractPage|null} old Page instance
      */
+
     this.oldPage = null;
     /**
      * @type {AbstractPage|null}
@@ -2093,6 +2108,16 @@ class AbstractTransition {
      */
 
     this.newPageLoading = null;
+    /**
+     * @type {(HTMLElement|null)}
+     */
+
+    this.originElement = null;
+    /**
+     * @type {(Object|null)}
+     */
+
+    this.cursorPosition = null;
   }
   /**
    * Initialize transition.
@@ -2100,8 +2125,8 @@ class AbstractTransition {
    *
    * @param {AbstractPage} oldPage
    * @param {Promise} newPagePromise
-   * @param {HTMLElement} el
-   * @param {Object} cursorPosition
+   * @param {(HTMLElement|null)} el The html element where the transition has been launched
+   * @param {Object} cursorPosition The cursor position when the transition has been launched
    * @returns {Promise}
    */
 
@@ -2129,8 +2154,13 @@ class AbstractTransition {
 
 
   done() {
-    this.oldPage.destroy();
-    this.newPage.rootElement.style.visibility = 'visible';
+    this.destroyOldPage();
+    const visibility = this.newPage.rootElement.style.visibility;
+
+    if (visibility !== 'inherit' || visibility !== 'hidden') {
+      this.newPage.rootElement.style.visibility = 'visible';
+    }
+
     this.deferred.resolve();
   }
 
@@ -2142,6 +2172,27 @@ class AbstractTransition {
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
       window.scrollTo(0, 0);
+    }
+  }
+
+  destroyOldPage() {
+    if (this.oldPage) {
+      this.oldPage.destroy();
+      this.oldPage = null;
+    }
+  }
+
+  async buildNewPage() {
+    if (this.container) {
+      const pjaxService = this.getService('Pjax');
+      const domService = this.getService('Dom');
+      const pageBuilderService = this.getService('PageBuilder'); // Add the new dom
+
+      domService.putContainer(pjaxService.containerElement); // Build the new page
+
+      this.newPage = await pageBuilderService.buildPage(pjaxService.containerElement); // Then notify
+
+      pjaxService.onNewPageLoaded(this.newPage);
     }
   }
   /**
@@ -2236,7 +2287,13 @@ class Pjax extends AbstractBootableService {
      * @type {Boolean}
      */
 
-    this.transitionProgress = false; // Bind methods
+    this.transitionProgress = false;
+    /**
+     * @type {(HTMLElement|null)}
+     * The latest page content loaded
+     */
+
+    this.containerElement = null; // Bind methods
 
     this.onNewPageLoaded = this.onNewPageLoaded.bind(this);
     this.onTransitionEnd = this.onTransitionEnd.bind(this);
@@ -2335,20 +2392,21 @@ class Pjax extends AbstractBootableService {
 
 
     request.then(async data => {
-      const container = this.getService('Dom').parseResponse(data); // Dispatch an event
+      this.containerElement = this.getService('Dom').parseResponse(data); // Dispatch an event
 
       Dispatcher.commit(AFTER_PAGE_LOAD, {
-        container,
+        container: this.containerElement,
         currentHTML: this.getService('Dom').currentHTML
       }); // Add new container to the DOM if manual DOM Append is disable
 
       if (!this.getService('Config').manualDomAppend) {
-        this.getService('Dom').putContainer(container);
-      } // Build page
+        this.getService('Dom').putContainer(this.containerElement); // Build page
 
-
-      const page = await this.getService('PageBuilder').buildPage(container);
-      deferred.resolve(page);
+        const page = await this.getService('PageBuilder').buildPage(this.containerElement);
+        deferred.resolve(page);
+      } else {
+        deferred.resolve(null);
+      }
     }).catch(err => {
       console.error(err);
       this.forceGoTo(url);
@@ -2554,26 +2612,28 @@ class Pjax extends AbstractBootableService {
 
 
   onNewPageLoaded(page) {
-    const currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
+    if (page) {
+      const currentStatus = this.getService('History').currentStatus(); // Update body attributes (class, id, data-attributes
 
-    this.getService('Dom').updateBodyAttributes(page); // Update the page title
+      this.getService('Dom').updateBodyAttributes(page); // Update the page title
 
-    this.getService('Dom').updatePageTitle(page); // Send google analytic data
+      this.getService('Dom').updatePageTitle(page); // Send google analytic data
 
-    Utils.trackGoogleAnalytics(); // Update the current state
+      Utils.trackGoogleAnalytics(); // Update the current state
 
-    if (this.currentState && page) {
-      if (!this.currentState.data.title && page.metaTitle) {
-        this.currentState.data.title = page.metaTitle;
+      if (this.currentState && page) {
+        if (!this.currentState.data.title && page.metaTitle) {
+          this.currentState.data.title = page.metaTitle;
+        }
       }
-    }
 
-    Dispatcher.commit(CONTAINER_READY, {
-      currentStatus,
-      prevStatus: this.getService('History').prevStatus(),
-      currentHTML: this.getService('Dom').currentHTML,
-      page
-    });
+      Dispatcher.commit(CONTAINER_READY, {
+        currentStatus,
+        prevStatus: this.getService('History').prevStatus(),
+        currentHTML: this.getService('Dom').currentHTML,
+        page
+      });
+    }
   }
   /**
    * Function called as soon the transition is finished.

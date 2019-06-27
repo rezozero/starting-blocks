@@ -19,6 +19,7 @@ import DefaultPage from './pages/DefaultPage'
  * @property {String} defaults.objectTypeAttr   - The data attribute name to find the node type
  * @property {String} defaults.noAjaxLinkClass
  * @property {String} defaults.noPrefetchClass  - Class name used to ignore prefetch on links.
+ * @property {boolean} defaults.manualDomAppend
  * @const
  * @default
  */

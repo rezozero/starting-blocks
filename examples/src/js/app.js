@@ -48,6 +48,7 @@ import 'lazysizes'
      * Build a new starting blocks
      */
     const startingBlocks = new StartingBlocks({
+        manualDomAppend: true,
         debug: 1
     })
 

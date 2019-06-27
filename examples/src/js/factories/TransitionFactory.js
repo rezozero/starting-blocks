@@ -50,23 +50,31 @@ export default class TransitionFactory extends AbstractTransitionFactory {
          *
          * Ex: when back or prev button its pressed we use FadeTransition
          */
-        if (state && state.context === 'history') {
-            return new FadeTransition()
-        }
 
         let transition
 
-        switch (state.transitionName) {
-        case 'slide':
-            transition = new SlideTransition()
-            break
-        case 'fade':
+        if (state && state.context === 'history') {
             transition = new FadeTransition()
-            break
-        default:
-            transition = new BigTransition()
-            break
+            transition.serviceName = 'FadeTransition'
+        } else {
+            switch (state.transitionName) {
+            case 'slide':
+                transition = new SlideTransition()
+                transition.serviceName = 'SlideTransition'
+                break
+            case 'fade':
+                transition = new FadeTransition()
+                transition.serviceName = 'FadeTransition'
+                break
+            default:
+                transition = new BigTransition()
+                transition.serviceName = 'BigTransition'
+
+                break
+            }
         }
+
+        transition.container = this.container
 
         return transition
     }

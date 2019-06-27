@@ -24,20 +24,23 @@
  * @author Adrien Scholaert
  */
 import Utils from '../utils/Utils'
+import AbstractService from './AbstractService'
 
 /**
  * Base class for creating transition.
  *
  * @abstract
  */
-export default class AbstractTransition {
+export default class AbstractTransition extends AbstractService {
     /**
      * Constructor.
      * Do not override this method.
      *
      * @constructor
      */
-    constructor () {
+    constructor (container, serviceName = 'Transition', dependencies = []) {
+        super(container, serviceName, dependencies)
+
         /**
          * @type {AbstractPage|null} old Page instance
          */
@@ -52,6 +55,16 @@ export default class AbstractTransition {
          * @type {Promise|null}
          */
         this.newPageLoading = null
+
+        /**
+         * @type {(HTMLElement|null)}
+         */
+        this.originElement = null
+
+        /**
+         * @type {(Object|null)}
+         */
+        this.cursorPosition = null
     }
 
     /**
@@ -60,8 +73,8 @@ export default class AbstractTransition {
      *
      * @param {AbstractPage} oldPage
      * @param {Promise} newPagePromise
-     * @param {HTMLElement} el
-     * @param {Object} cursorPosition
+     * @param {(HTMLElement|null)} el The html element where the transition has been launched
+     * @param {Object} cursorPosition The cursor position when the transition has been launched
      * @returns {Promise}
      */
     init (oldPage, newPagePromise, el, cursorPosition) {
@@ -69,7 +82,6 @@ export default class AbstractTransition {
         this._newPagePromise = newPagePromise
         this.originElement = el
         this.cursorPosition = cursorPosition
-
         this.deferred = Utils.deferred()
         this.newPageReady = Utils.deferred()
         this.newPageLoading = this.newPageReady.promise
@@ -88,8 +100,13 @@ export default class AbstractTransition {
      * Call this function when the Transition is finished.
      */
     done () {
-        this.oldPage.destroy()
-        this.newPage.rootElement.style.visibility = 'visible'
+        this.destroyOldPage()
+
+        const visibility = this.newPage.rootElement.style.visibility
+        if (visibility !== 'inherit' || visibility !== 'hidden') {
+            this.newPage.rootElement.style.visibility = 'visible'
+        }
+
         this.deferred.resolve()
     }
 
@@ -101,6 +118,28 @@ export default class AbstractTransition {
             document.body.scrollTop = 0
             document.documentElement.scrollTop = 0
             window.scrollTo(0, 0)
+        }
+    }
+
+    destroyOldPage () {
+        if (this.oldPage) {
+            this.oldPage.destroy()
+            this.oldPage = null
+        }
+    }
+
+    async buildNewPage () {
+        if (this.container) {
+            const pjaxService = this.getService('Pjax')
+            const domService = this.getService('Dom')
+            const pageBuilderService = this.getService('PageBuilder')
+
+            // Add the new dom
+            domService.putContainer(pjaxService.containerElement)
+            // Build the new page
+            this.newPage = await pageBuilderService.buildPage(pjaxService.containerElement)
+            // Then notify
+            pjaxService.onNewPageLoaded(this.newPage)
         }
     }
 
