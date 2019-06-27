@@ -390,6 +390,7 @@ You can pass some options when instantiating `StartingBlocks` object:
 | objectTypeAttr | string | 'data-node-type' |
 | noAjaxLinkClass | string | 'no-ajax-link' |
 | noPrefetchClass | string | 'no-prefetch' |
+| manualDomAppend | boolean | false | To manually manage page build directly in transition instances
 
 ## Events
 
